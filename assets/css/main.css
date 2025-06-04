@@ -1,0 +1,32 @@
+@import '@fortawesome/fontawesome-free/css/all.css';
+@import "tailwindcss";
+
+
+:root {
+    /* Complementarios */
+    --color-azul: #07bfbf;
+    --color-naranja: #ff8000;
+    --color-verde: #1ebf07;
+    --color-purpura: #800080;
+    /* Rojos */
+    --color-rojo-suave: #e03c3c;
+    --color-rojo: #bf0707;
+    --color-rojo-oscuro: #961915;
+
+    --color-rojo-claro: #ff9999;
+    --color-rojo-claro-trp5: #fbe6e8;
+    /* Blanco y negro rojizos */
+    --color-blanco: #f8f8f8;
+    --color-negro: #1a0000;
+    --color-negro-rojizo: #150101;
+    /* Grises */
+    --color-gris-claro: #f0dcdc;
+    --color-gris: #bfa3a3;
+    --color-gris-oscuro: #4d2d2d;
+
+    /* Bootstrap colors */
+    --color-primary: #0d6efd;
+    --color-info: #0dcaf0;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+}
