@@ -1,10 +1,10 @@
 <script setup>
-import DatosPaciente from '../components/Forms/DatosPaciente.vue';
+import Paciente from '../../components/Forms/Paciente.vue';
 definePageMeta({
     layout: 'authentication'
 });
 </script>
 
 <template>
-    <DatosPaciente/>
+    <Paciente/>
 </template>

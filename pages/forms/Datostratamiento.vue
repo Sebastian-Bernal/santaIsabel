@@ -1,6 +1,6 @@
 <script setup>
 // Eliminar pagina
-import DatosTratamiento from '../../components/Login/DatosTratamiento.vue';
+import DatosTratamiento from '../../components/Forms/DatosTratamiento.vue';
 definePageMeta({
     layout: 'authentication'
 });

@@ -1,6 +1,6 @@
 <script setup>
 // Eliminar pagina
-import DatosCuidador from '../../components/Login/DatosCuidador.vue';
+import DatosCuidador from '../../components/Forms/DatosCuidador.vue';
 definePageMeta({
     layout: 'authentication'
 });

@@ -1,11 +1,11 @@
 <script setup>
 // Eliminar pagina
-import DatosConsulta from '../../components/Login/DatosConsulta.vue';
+import DatosServicios from '../../components/Forms/DatosServicios.vue';
 definePageMeta({
     layout: 'authentication'
 });
 </script>
 
 <template>
-    <DatosConsulta/>
+    <DatosServicios/>
 </template>
