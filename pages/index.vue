@@ -1,10 +1,110 @@
 <script setup>
-import DatosPaciente from '../components/Forms/DatosPaciente.vue';
+import Formulario from '../../components/Forms/Formulario.vue';
+import Input from '../../components/Forms/Input.vue';
+import { useIndexedDBStore } from '../stores/indexedDB.js';
+import { ref, onMounted } from "vue";
+import Wizard from '../components/Forms/Wizard.vue';
+
 definePageMeta({
     layout: 'authentication'
 });
+
+const formData = ref({
+    nombre: '',
+    tipoDocumento: '',
+    documento: '',
+    diagnosticos: [{ tipo: '', cie10: '' }]
+});
+
+const añadirDiagnostico = () => {
+    const ultimoDiagnostico = formData.value.diagnosticos[formData.value.diagnosticos.length - 1];
+    if (ultimoDiagnostico.tipo === '' || ultimoDiagnostico.cie10 === '') {
+        console.log('Por favor, complete el diagnóstico actual antes de añadir uno nuevo.');
+        return;
+    } else {
+        formData.value.diagnosticos.push({ tipo: '', cie10: '' });
+    }
+
+};
+
+// Importar el store de IndexedDB
+const indexedDBStore = useIndexedDBStore();
+
+onMounted(async() => {
+    await indexedDBStore.initialize();
+
+    const paciente = {id: 1, nombre: 'Juan', }
+    indexedDBStore.almacen = 'Paciente'
+    indexedDBStore.guardardatos(paciente)
+});
+
 </script>
 
 <template>
-    <DatosPaciente/>
+    <Wizard :secciones="[
+        { numPagina: 1, ruta: '/', color: 'bg-sky-700 text-white' },
+        { numPagina: 2, ruta: '/forms/DatosCuidador', color: 'bg-gray-300' },
+        { numPagina: 3, ruta: '/forms/DatosConsulta', color: 'bg-gray-300' }
+    ]"></Wizard>
+    <Formulario :datos="{
+        titulo: 'Datos del paciente',
+        botones: [
+            { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
+            { texto: 'Siguiente', ruta: '/forms/DatosCuidador', color: 'bg-[var(--color-primary)]' }
+        ]
+    }">
+        <div class="md:w-4/5 w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Paciente</label>
+                    <div class="flex gap-2">
+                    <nuxt-link to="/forms/DatosPacienteNuevo">
+                        <button type="button"
+                            class="w-[25px] h-[25px] flex justify-center items-center bg-[var(--color-green)] text-white rounded-full hover:opacity-75">
+                            <i class="fa-solid fa-pencil text-xs"></i>
+                        </button>
+                    </nuxt-link>
+                    <nuxt-link to="/forms/DatosPacienteNuevo">
+                        <button type="button"
+                            class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </nuxt-link>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:flex items-center gap-3">
+                    <Input v-model="formData.nombre" type="text" id="nombre" name="nombre"
+                        placeholder="Nombres y Apellidos" tamaño="w-full" />
+                </div>
+            </div>
+
+            <div class="md:w-4/5 w-full flex items-center gap-3 flex-col md:flex-row">
+                <select v-model="formData.tipoDocumento" name="tipoDocumento" id="tipoDocumento"
+                    class="mt-1 text-gray-500 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    <option value="" selected>Tipo de documento</option>
+                    <option value="cedula">Cedula de ciudadania</option>
+                    <option value="extranjera">Cedula Extranjera</option>
+                </select>
+                <Input v-model="formData.documento" type="number" id="documento" name="documento"
+                    placeholder="Número de documento" tamaño="w-full" />
+            </div>
+
+            <div class="md:w-4/5 w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-sm font-medium text-gray-700">Diagnosticos</label>
+                    <button type="button" @click="añadirDiagnostico"
+                        class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="scrollDiagnosticos flex flex-col items-center gap-3 max-h-[100px] overflow-y-auto">
+                    <div class="w-full flex gap-3" v-for="diagnostico in formData.diagnosticos" :key="diagnostico.id">
+                        <Input v-model="formData.diagnosticos[formData.diagnosticos.length - 1].tipo" type="text"
+                            id="tipo" name="tipo" placeholder="Tipo" tamaño="w-4/5" />
+                        <Input v-model="formData.diagnosticos[formData.diagnosticos.length - 1].cie10" type="text"
+                            id="cie10" name="cie10" placeholder="CIE-10" tamaño="w-1/5" />
+                    </div>
+                </div>
+            </div>
+    </Formulario>
 </template>

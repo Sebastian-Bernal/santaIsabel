@@ -1,0 +1,288 @@
+<script setup>
+// importando los reursos
+import { defineProps, computed, ref, watch } from 'vue';
+import BotonAccion from './BotonAccion.vue';
+import Input from '../../components/Forms/Input.vue';
+
+import { usePaginacion } from '../../composables/usePaginacion.js'
+import { useColumnasResponsivas } from '../../composables/useTablasResponsive';
+import { useOrdenamiento } from '../../composables/useDatosOrdenadosTabla';
+
+// 
+const btnAcciones = ref(null)
+
+// funciones
+const props = defineProps({
+    columnas: {
+        type: [Array, String],
+        required: true,
+        default: ''
+    },
+    acciones: {
+        type: [Object, String],
+        default: ''
+    },
+    datos: {
+        type: [Object],
+        required: true,
+        dafault: []
+    },
+    headerTabla: {
+        type: [Object],
+    }
+});
+
+
+
+// tamaño de pantalla
+const {
+    columnasVisibles,
+    columnasSobrantes,
+    collapse,
+    activarCollapse,
+    screenWidth,
+} = useColumnasResponsivas(ref(props.columnas));
+
+
+// Acomodar datos de menor a mayor segun columna
+const {
+    busqueda,
+    sortedItems,
+    datosOrdenados
+} = useOrdenamiento(computed(() => props.datos.content));
+
+
+// Paginador
+const {
+    paginaActual,
+    itemsPorPagina,
+    totalPaginas,
+    ultimaPagina,
+    cambiarItemsPorPagina,
+    siguientePagina,
+    paginaAnterior,
+    irAPagina,
+    datosPaginados,
+} = usePaginacion(datosOrdenados);
+
+
+// Funciones
+const mostrarAcciones = (id) => {
+    btnAcciones.value = btnAcciones.value === id ? null : id;
+};
+
+// Al buscar cambia a primera pagina
+watch(busqueda, (nuevoValor, anteriorValor) => {
+    if (nuevoValor !== anteriorValor) {
+        paginaActual.value = 1;
+    }
+});
+
+// Tamaño numero de columnas
+const estiloColumnas = computed(() => {
+    if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
+
+    const tamaños = columnasVisibles.value
+        .map(col => col.tamaño && !isNaN(col.tamaño) ? `${col.tamaño}px` : '80px')
+        .join(' ');
+
+    return {
+        gridTemplateColumns: `${tamaños}${props.acciones.botones ? ' 100px' : ''}`
+    };
+});
+
+</script>
+
+<template>
+    <div class="h-[90%]">
+        <!-- Header -->
+        <div class="flex w-[100%] justify-between items-cent px-10 mt-5 md:flex-row flex-col gap-3">
+            <h1 class="font-bold text-2xl tituloTabla text-gray-800">
+                {{ props.headerTabla.titulo }}
+            </h1>
+            <div class="flex gap-3 md:w-[50%] justify-end">
+                <Input placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
+                <div class="flex gap-1 items-center">
+                    <button
+                        class="text-white w-[30px] h-[30px] rounded-full bg-[var(--color-primary)] hover:opacity-75">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <h4>Agregar</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="m-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
+            <div class="w-full">
+
+                <!-- Header titulos de props Columnas -->
+                <div class="sticky top-0 z-[0] grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white bg-[var(--color-primary)]"
+                    :style="estiloColumnas">
+                    <h2 v-for="col in columnasVisibles" :key="col.titulo"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                        {{ col.titulo }}
+                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down"></i>
+                    </h2>
+                    <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
+                </div>
+
+                <hr class="horizontal">
+
+                <!-- Body tabla -->
+                <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center"
+                    :style="estiloColumnas">
+
+                    <div v-for="(col, key) in columnasVisibles" :key="key"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                        <p class="text-black">{{ fila[col.titulo] }}</p>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div v-if="acciones.botones"
+                        class="flex items-center justify-center accionesTabla text-center gap-2"
+                        :class="acciones.class">
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action" />
+
+                        <button @click="activarCollapse(id)" v-if="collapse"
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
+                            <i class="fa-solid fa-plus text-gray-600"></i>
+                        </button>
+
+                        <button @click="mostrarAcciones(id)" v-if="collapse"
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+
+                            <div v-if="btnAcciones === id" class="acciones" :id="id">
+                                <BotonAccion v-for="action in acciones.icons" :key="action" :tipo="action" />
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- collapse -->
+                    <div class="collapse-text col-span-full" :id="id">
+                        <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
+                            <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
+                                <p class="text-[var(--color-primary)] text-xs font-bold border-t-gray-200 mb-2 truncate">{{ col.titulo }}</p>
+                                {{ fila[col.titulo] }}
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Paginador -->
+        <div class="mt-[10px] flex justify-between items-center h-[30px] px-10">
+            <p class="text-sm text-gray-500">
+                Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+
+            <div class="btnsPagina flex items-center gap-3">
+                <button v-if="paginaActual > 1"
+                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                    @click="paginaAnterior()">
+                    <i class="fa-solid fa-angle-left"></i>
+                </button>
+                <div class="flex gap-2 pagina">
+                    <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
+                        class="text-gray-600 hover:bg-[var(--color-gray-200)] cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        {{ paginaActual - 1 }}</h2>
+                    <h2
+                        class="bg-[var(--color-gray-200)] text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        {{ paginaActual }}</h2>
+                    <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
+                        class="text-gray-600 hover:bg-[var(--color-gray-200)] cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        {{ paginaActual + 1 }}</h2>
+                </div>
+                <button v-if="paginaActual != totalPaginas"
+                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                    @click="siguientePagina()">
+                    <i class="fa-solid fa-angle-right"></i>
+                </button>
+            </div>
+
+            <div class="flex gap-2 items-center">
+                <p class="text-sm text-gray-500">Número de registros</p>
+                <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
+                    @change="cambiarItemsPorPagina($event.target.value)">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+
+<style scoped>
+.containerTable::-webkit-scrollbar {
+    display: none;
+}
+
+.bodyTable:nth-child(even) {
+    background-color: var(--color-primary-claro);
+}
+
+.bodyTable:hover:nth-child(even) {
+    background-color: var(--color-gris);
+}
+
+.bodyTable:hover {
+    background-color: var(--color-gris);
+}
+
+.btnActions {
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    padding: .40rem;
+    margin: 0;
+    border-radius: 50%;
+}
+
+.collapse-text {
+    display: none;
+    margin-top: 20px;
+    pointer-events: none;
+    justify-content: space-evenly;
+}
+
+.collapseActive {
+    display: flex;
+    pointer-events: all;
+}
+
+.acciones {
+    position: relative;
+    left: -50px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.acciones button {
+    width: 60px;
+    height: 25px;
+    border-radius: 0;
+}
+
+.acciones button:hover {
+    opacity: 1;
+}
+
+/* Paginador css */
+.btnsPagina button {
+    background: linear-gradient(to left, var(--color-primary), var(--color-azul));
+}
+
+.horizontal {
+    color: var(--color-gris);
+}
+</style>
