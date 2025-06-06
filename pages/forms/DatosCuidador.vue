@@ -2,7 +2,7 @@
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Forms/Input.vue';
 import Wizard from '../components/Forms/Wizard.vue';
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 definePageMeta({
     layout: 'authentication'
 });
@@ -10,30 +10,48 @@ definePageMeta({
 const formData = ref({
     motivo: '',
     enfermedad: '',
-    antecedentes: '',
+    antecedentes: [{ valor: ''}]
 });
 
-const antecedentes = ['Hipertensión', 'Diabetes', 'Asma', 'Enfermedad cardíaca'];
-const enfermedades = ['Gripe', 'Resfriado', 'Infección urinaria', 'Dolor de cabeza'];
+const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
+const enfermedades = ref(['Gripe', 'Resfriado', 'Dolor de cabeza']);
 
-const añadirDiagnostico = () => {
-    const ultimoDiagnostico = formData.value.diagnosticos[formData.value.diagnosticos.length - 1];
-    if (ultimoDiagnostico.tipo === '' || ultimoDiagnostico.cie10 === '') {
-        console.log('Por favor, complete el diagnóstico actual antes de añadir uno nuevo.');
-        return;
+// Guardar los datos en localStorage
+watch(formData, (newValue) => {
+    localStorage.setItem('formData', JSON.stringify(newValue));
+}, { deep: true });
+
+onMounted(() => {
+    traerDatos();
+});
+
+const traerDatos = () => {
+    const datosGuardados = localStorage.getItem('formData');
+    if (datosGuardados) {
+        formData.value = JSON.parse(datosGuardados);
     } else {
-        formData.value.diagnosticos.push({ tipo: '', cie10: '' });
+        console.log('No hay datos guardados en localStorage.');
     }
-
 };
 
+
+// Funciones para manejar los antecedentes y enfermedades
 const agregarAntecedente = () => {
-    if (formData.value.antecedentes.trim() === '') {
+    ultimoAntecedente = formData.value.antecedentes[formData.value.antecedentes.length - 1];
+    if (ultimoAntecedente.valor === '') {
         console.log('Por favor, ingrese un antecedente antes de agregar.');
         return;
     }
-    antecedentes.push(formData.value.antecedentes);
-    formData.value.antecedentes = ''; // Limpiar el campo de entrada
+    formData.value.diagnosticos.push({ valor: '' });
+};
+
+const agregarEnfermedad = () => {
+    if (formData.value.enfermedad === '') {
+        console.log('Por favor, ingrese un antecedente antes de agregar.');
+        return;
+    }
+    enfermedades.value.push(formData.value.enfermedad);
+    formData.value.enfermedad = ''; // Limpiar el campo de entrada
 };
 </script>
 
@@ -44,7 +62,7 @@ const agregarAntecedente = () => {
         { numPagina: 3, ruta: '/forms/DatosConsulta', color: 'bg-gray-300' }
     ]"/>
     <Formulario :datos="{
-        titulo: 'Datos del cuidador',
+        titulo: 'Datos de la consulta',
         botones: [
             { texto: 'Atras', ruta: '/', color: 'bg-gray-500' },
             { texto: 'Siguiente', ruta: '/forms/Datosconsulta', color: 'bg-[var(--color-primary)]' }
@@ -59,12 +77,12 @@ const agregarAntecedente = () => {
                 </div>
             </div>
 
-            <div class="md:w-4/5 w-full flex md:flex-row flex-col gap-3">
-                <div class="md:w-2/4">
+            <div class="md:w-4/5 w-full flex flex-col gap-3">
                     <div class="flex items-center gap-1 h-[40px] mb-2 w-full">
-                        <div class="flex items-center gap-3 w-full">
-                            <Input v-model="formData.antecedentes" type="text" id="antecedentes" name="antecedentes"
+                        <div class="flex items-center gap-3 w-full" v-for="(antecedente, i) in formData.antecedentes" :key="id">
+                            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
                                 placeholder="Antecedentes" tamaño="w-full" />
+                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarDiagnostico(i)"></i>
                         </div>
                         <button type="button" @click="agregarAntecedente()"
                             class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
@@ -77,12 +95,12 @@ const agregarAntecedente = () => {
                             <p class="block text-sm font-medium text-gray-700">Antecedentes del paciente</p>
                         </div>
                         <div class="flex flex-col items-center w-full">
-                            <p v-for="antecedente in antecedentes" class="text-gray-500 text-sm">{{ antecedente }}</p>
+                            <p v-for="antecedente in antecedentesDatos" class="text-gray-500 text-sm">{{ antecedente }}</p>
                         </div>
                     </div>
-                </div>
+            </div>
 
-                <div class="md:w-2/4">
+            <div class="md:w-4/5 w-full flex flex-col gap-3">
                     <div class="flex items-center gap-1 h-[40px] mb-2 w-full">
                         <div class="flex items-center gap-3 w-full">
                             <Input v-model="formData.enfermedad" type="text" id="enfermedad" name="enfermedad"
@@ -102,8 +120,6 @@ const agregarAntecedente = () => {
                             <p v-for="enfermedad in enfermedades" class="text-gray-500 text-sm">{{ enfermedad }}</p>
                         </div>
                     </div>
-                </div>
-
             </div>
 
     </Formulario>>

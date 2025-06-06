@@ -26,7 +26,7 @@ const props = defineProps({
         <!-- Botones Formulario -->
         <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[20px] left-auto right-auto">
             <nuxtLink v-for="boton in datos.botones" :to="boton.ruta" class="md:w-2/4 w-full">
-                <button type="submit" :class="boton.color"
+                <button type="submit" :class="boton.color" @click="$emit('submit', formData)"
                     class="w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ boton.texto }}
                 </button>
