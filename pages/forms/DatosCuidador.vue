@@ -8,8 +8,20 @@ definePageMeta({
 });
 
 const formData = ref({
-    motivo: '',
-    enfermedad: '',
+    HistoriaClinica: {
+        motivo: '',
+        signosVitales: {
+            ta: '',
+            fc: '',
+            fr: '',
+            t: '',
+            SATo2: '',
+        },
+        fecha_historia: '',
+        id_paciente: '',
+        id_profesional: ''
+    },
+    enfermedad: [{valor:''}],
     antecedentes: [{ valor: ''}]
 });
 
@@ -37,21 +49,45 @@ const traerDatos = () => {
 
 // Funciones para manejar los antecedentes y enfermedades
 const agregarAntecedente = () => {
-    ultimoAntecedente = formData.value.antecedentes[formData.value.antecedentes.length - 1];
-    if (ultimoAntecedente.valor === '') {
+    const ultimoAntecedente = formData.value.Antecedentes.at(-1).valor;
+    if (ultimoAntecedente === '') {
         console.log('Por favor, ingrese un antecedente antes de agregar.');
         return;
     }
-    formData.value.diagnosticos.push({ valor: '' });
+    formData.value.Antecedentes.push({ 
+        id: '',
+        valor: '',
+        id_paciente: ''
+    });
+};
+
+const eliminarAntecedente = (index) => {
+    if (formData.value.Antecedentes.length > 1) {
+        formData.value.Antecedentes.splice(index, 1);
+    } else {
+        console.log('Debe haber al menos un antecedente.');
+    }
 };
 
 const agregarEnfermedad = () => {
-    if (formData.value.enfermedad === '') {
-        console.log('Por favor, ingrese un antecedente antes de agregar.');
+    const ultimoAntecedente = formData.value.Enfermedad.at(-1).valor;
+    if (ultimoAntecedente === '') {
+        console.log('Por favor, ingrese un valor antes de agregar.');
         return;
     }
-    enfermedades.value.push(formData.value.enfermedad);
-    formData.value.enfermedad = ''; // Limpiar el campo de entrada
+    formData.value.Enfermedad.push({ 
+        valor: '',
+        fecha_diagnostico: '',
+        fecha_rehabilitacion: '',
+    });
+};
+
+const eliminarEnfermedad = (index) => {
+    if (formData.value.Enfermedad.length > 1) {
+        formData.value.Enfermedad.splice(index, 1);
+    } else {
+        console.log('Debe haber al menos un valor.');
+    }
 };
 </script>
 
@@ -71,23 +107,26 @@ const agregarEnfermedad = () => {
         <div class="md:w-4/5 w-full">
                 <label class="block text-sm font-medium text-gray-700">Consulta</label>
                 <div class="flex items-center gap-3">
-                    <textarea v-model="formData.motivo" id="motivo" name="motivo" placeholder="Motivo de consulta"
+                    <textarea v-model="formData.HistoriaClinica.motivo" id="motivo" name="motivo" placeholder="Motivo de consulta"
                         rows="3"
                         class="w-full mt-1 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
                 </div>
             </div>
 
             <div class="md:w-4/5 w-full flex flex-col gap-3">
-                    <div class="flex items-center gap-1 h-[40px] mb-2 w-full">
-                        <div class="flex items-center gap-3 w-full" v-for="(antecedente, i) in formData.antecedentes" :key="id">
-                            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
-                                placeholder="Antecedentes" tamaño="w-full" />
-                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarDiagnostico(i)"></i>
-                        </div>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium text-gray-700">Antecedentes</label>
                         <button type="button" @click="agregarAntecedente()"
                             class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                             <i class="fa-solid fa-plus"></i>
                         </button>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 mb-2 w-full max-h-[100px] overflow-y-auto">
+                        <div class="flex items-center gap-3 w-full" v-for="(antecedente, i) in formData.Antecedentes" :key="id">
+                            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
+                                placeholder="Antecedentes" tamaño="w-full" />
+                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarAntecedente(i)"></i>
+                        </div>
                     </div>
 
                     <div class="flex flex-col gap-3 border border-gray-300 rounded-md p-2">
@@ -101,15 +140,19 @@ const agregarEnfermedad = () => {
             </div>
 
             <div class="md:w-4/5 w-full flex flex-col gap-3">
-                    <div class="flex items-center gap-1 h-[40px] mb-2 w-full">
-                        <div class="flex items-center gap-3 w-full">
-                            <Input v-model="formData.enfermedad" type="text" id="enfermedad" name="enfermedad"
-                                placeholder="Enfermedad Actual" tamaño="w-full" />
-                        </div>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-sm font-medium text-gray-700">Enfermedades</label>
                         <button type="button" @click="agregarEnfermedad()"
                             class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                             <i class="fa-solid fa-plus"></i>
                         </button>
+                    </div>
+                    <div class="flex flex-col items-center gap-1 mb-2 w-full max-h-[100px] overflow-y-auto">
+                        <div class="flex items-center gap-3 w-full" v-for="(enfermedad, i) in formData.Enfermedad" :key="id">
+                            <Input v-model="enfermedad.valor" type="text" id="enfermedad" name="enfermedad"
+                                placeholder="Enfermedad Actual" tamaño="w-full" />
+                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarEnfermedad(i)"></i>
+                        </div>
                     </div>
 
                     <div class="flex flex-col gap-3 border border-gray-300 rounded-md p-2">

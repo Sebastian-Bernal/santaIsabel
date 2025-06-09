@@ -8,7 +8,7 @@ definePageMeta({
 import { ref } from 'vue';
 
 const formData = ref({
-    servicios: [],
+    Plan_manejo_procedimientos: [],
 });
 
 const nuevoServicio = ref({
@@ -19,19 +19,37 @@ const nuevoServicio = ref({
 
 const añadirServicio = () => {
     const servicio = nuevoServicio.value;
-    if (!servicio.descripcion || !servicio.cantidad || !servicio.mes) {
+    if (!servicio.descripcion) {
         console.log('Por favor, complete el servicio actual antes de añadir uno nuevo.');
         return;
     }
-
-    formData.value.servicios.push({ ...servicio });
-
+    formData.value.Plan_manejo_procedimientos.push({ ...servicio });
+    console.log(formData.value.Plan_manejo_procedimientos)
     // Reiniciar el objeto nuevoServicio
     nuevoServicio.value = {
         descripcion: '',
         cantidad: '',
         mes: ''
     };
+};
+
+// Guardar los datos en localStorage
+
+watch(formData, (newValue) => {
+    localStorage.setItem('formData', JSON.stringify(newValue));
+}, { deep: true });
+
+onMounted(() => {
+    traerDatos();
+});
+
+const traerDatos = () => {
+    const datosGuardados = localStorage.getItem('formData');
+    if (datosGuardados) {
+        formData.value = JSON.parse(datosGuardados);
+    } else {
+        console.log('No hay datos guardados en localStorage.');
+    }
 };
 
 
@@ -42,7 +60,6 @@ const añadirServicio = () => {
         titulo: 'Datos del servicio',
         botones: [
             { texto: 'Atras', ruta: '/forms/DatosConsulta', color: 'bg-gray-500' },
-            { texto: 'Registrar', ruta: '/forms/DatosConsulta', color: 'bg-[var(--color-primary)]' }
         ]
     }">
         <div class="md:w-4/5 w-full">
@@ -69,14 +86,14 @@ const añadirServicio = () => {
             </button>
         </div>
 
-        <div v-if="formData.servicios.length > 0"
+        <div v-if="formData.Plan_manejo_procedimientos ? formData.Plan_manejo_procedimientos.length > 0 : false"
             class="md:w-4/5 w-full max-h-[300px] overflow-y-auto border border-gray-300 rounded-md p-2">
             <div class="grid grid-cols-3 text-center text-xs justify-between items-center gap-3">
                 <h4>Descripcion</h4>
                 <h4>Cantidad</h4>
                 <h4>Mes</h4>
             </div>
-            <div v-for="(servicio, index) in formData.servicios" :key="index"
+            <div v-for="(servicio, index) in formData.Plan_manejo_procedimientos" :key="index"
                 class="grid grid-cols-3 text-center justify-between items-center gap-3 mt-3">
                 <p tamaño="text-xs">{{ servicio.descripcion }}</p>
                 <p tamaño="text-xs">{{ servicio.cantidad }}</p>

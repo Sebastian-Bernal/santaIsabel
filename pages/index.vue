@@ -4,30 +4,73 @@ import Input from '../../components/Forms/Input.vue';
 import { ref, onMounted } from "vue";
 import Wizard from '../components/Forms/Wizard.vue';
 import { pacientes } from '../data/pacientes.js';
-import { useIndexedDBStore } from '../stores/indexedDB.js';
-
-// Delcaracionde variables y funciones
-const { $swal } = useNuxtApp();
-
-const indexedDBStore = useIndexedDBStore();
-
-const formData = ref({
-    nombre: '',
-    tipoDocumento: '',
-    documento: '',
-    diagnosticos: [{ tipo: '', cie10: '' }]
-});
-
-const fechaModificacion = ref('');
+import { useFormData } from '../composables/useFormData.js'
+import {agregarItem} from '../composables/useFormData.js'
 
 definePageMeta({
     layout: 'authentication'
 });
 
+// Delcaracionde variables y funciones
+const { $swal } = useNuxtApp();
+const fechaModificacion = ref('');
+const formComplete = ref(false);
+const formData = ref({
+    Paciente: {
+        name: '',
+        type_doc: '',
+        No_document: ''
+    },
+    Diagnosticos: [{
+        id: '',
+        tipo: '',
+        CIE_10: '',
+        id_paciente: '',
+        rol_attention: ''
+    }],
+    Antecedentes: [{ 
+        id: '',
+        valor: '',
+        id_paciente: ''
+    }],
+    Enfermedad: [{ 
+        valor: '',
+        fecha_diagnostico: '',
+        fecha_rehabilitacion: '',
+    }],
+    HistoriaClinica: {
+        motivo: '',
+        signosVitales: {
+            ta: '',
+            fc: '',
+            fr: '',
+            t: '',
+            SATo2: '',
+        },
+        fecha_historia: '',
+        id_paciente: '',
+        id_profesional: ''
+    },
+    examenFisico: {
+        Peso: '',
+        altura: '',
+        otros: '',
+        id_historiaClinica: ''
+    },
+    AnalisisTratamiento: {
+        analisis: '',
+        tratamiento: ''
+    },
+    Plan_manejo_medicamentos: [],
+    Plan_manejo_procedimientos: [],
+});
 
-// Gueardar los datos en localStorage
+
+// Guardar los datos en localStorage
 watch(formData, (newValue) => {
     localStorage.setItem('formData', JSON.stringify(newValue));
+
+    // if(formData.Paciente.name !== '', )
 }, { deep: true });
 
 onMounted(() => {
@@ -47,38 +90,42 @@ const traerDatos = () => {
 
 // Funciones para manejar los diagnosticos
 const añadirDiagnostico = () => {
-    const ultimoDiagnostico = formData.value.diagnosticos[formData.value.diagnosticos.length - 1];
+    const ultimoDiagnostico = formData.value.Diagnosticos[formData.value.Diagnosticos.length - 1];
     if (ultimoDiagnostico.tipo === '' || ultimoDiagnostico.cie10 === '') {
         console.log('Por favor, complete el diagnóstico actual antes de añadir uno nuevo.');
         return;
     } else {
-        formData.value.diagnosticos.push({ tipo: '', cie10: '' });
+        formData.value.Diagnosticos.push({
+        id: '',
+        tipo: '',
+        CIE_10: '',
+        id_paciente: '',
+        rol_attention: ''
+    });
     }
 };
 
 const eliminarDiagnostico = (index) => {
-    if (formData.value.diagnosticos.length > 1) {
-        formData.value.diagnosticos.splice(index, 1);
+    if (formData.value.Diagnosticos.length > 1) {
+        formData.value.Diagnosticos.splice(index, 1);
     } else {
         console.log('Debe haber al menos un diagnóstico.');
     }
 };
 
 
-
 // Funcion para autocompletar el paciente
 const pacienteExistente = () => {
     const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === formData.value.nombre.toLowerCase()
+        p => p.nombre.toLowerCase() === formData.value.Paciente.name.toLowerCase()
     )
 
     if (paciente) {
-        formData.value.tipoDocumento = paciente.tipoDocumento
-        formData.value.documento = paciente.documento
+        formData.value.Paciente.type_doc = paciente.tipoDocumento
+        formData.value.Paciente.No_document = paciente.documento
         fechaModificacion.value = paciente.fechaModificacion
 
-        onSubmit();
-    } else {
+    } else if (!paciente && formData.value.nombre !== '') {
         $swal.fire({
             icon: 'warning',
             title: 'Paciente no encontrado',
@@ -90,20 +137,6 @@ const pacienteExistente = () => {
             showCancelButton: true
         })
     }
-};
-
-const onSubmit = async() => {
-    await indexedDBStore.initialize();
-
-    indexedDBStore.almacen = 'Paciente';
-    indexedDBStore.guardardatos({
-        id: 2,
-        nombre: formData.value.nombre,
-        tipoDocumento: formData.value.tipoDocumento,
-        documento: formData.value.documento,
-        diagnosticos: formData.value.diagnosticos,
-        fechaModificacion: new Date().toLocaleDateString()
-    });
 };
 
 </script>
@@ -119,7 +152,8 @@ const onSubmit = async() => {
         botones: [
             { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
             { texto: 'Siguiente', ruta: '/forms/DatosCuidador', color: 'bg-[var(--color-primary)]' }
-        ]
+        ],
+        formData: formData.value
     }">
         <div class="md:w-4/5 w-full">
             <div class="flex justify-between items-center mb-2">
@@ -141,8 +175,8 @@ const onSubmit = async() => {
                 </div>
             </div>
             <div class="grid grid-cols-1 md:flex items-center gap-3">
-                <Input v-model="formData.nombre" type="text" id="nombre" name="nombre" list="nombreList" @blur="pacienteExistente"
-                    placeholder="Nombre del paciente" tamaño="w-full" autocomplete="none"/>
+                <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
+                    @blur="pacienteExistente" placeholder="Nombre del paciente" tamaño="w-full" autocomplete="none" />
                 <datalist id="nombreList">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.nombre">
                     </option>
@@ -151,13 +185,13 @@ const onSubmit = async() => {
         </div>
 
         <div class="md:w-4/5 w-full flex items-center gap-3 flex-col md:flex-row">
-            <select v-model="formData.tipoDocumento" name="tipoDocumento" id="tipoDocumento"
+            <select v-model="formData.Paciente.type_doc" name="tipoDocumento" id="tipoDocumento"
                 class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <option value="" selected>Tipo de documento</option>
                 <option value="cedula">Cedula de ciudadania</option>
                 <option value="extranjera">Cedula Extranjera</option>
             </select>
-            <Input v-model="formData.documento" type="number" id="documentoList" name="documento"
+            <Input v-model="formData.Paciente.No_document" type="number" id="documentoList" name="documento"
                 placeholder="Número de documento" tamaño="w-full" />
             <datalist id="documentoList">
                 <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>
@@ -174,11 +208,11 @@ const onSubmit = async() => {
             </div>
 
             <div class="scrollDiagnosticos flex flex-col items-center gap-3 max-h-[100px] overflow-y-auto">
-                <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.diagnosticos" :key="id">
-                    <Input v-model="diagnostico.tipo" type="text" id="tipo"
-                        name="tipo" placeholder="Tipo" tamaño="w-4/5" />
-                    <Input v-model="diagnostico.cie10" type="text"
-                        id="cie10" name="cie10" placeholder="CIE-10" tamaño="w-1/5" />
+                <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos" :key="id">
+                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
+                        tamaño="w-4/5" />
+                    <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
+                        tamaño="w-1/5" />
                     <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarDiagnostico(i)"></i>
                 </div>
             </div>

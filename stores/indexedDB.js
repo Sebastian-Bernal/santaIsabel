@@ -21,13 +21,13 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const pacientes = db.createObjectStore('Paciente', { keyPath: 'id' });
                     pacientes.createIndex("buscapaciente", "id", { unique: true });
 
-                    const diagnostico = db.createObjectStore('Diagnostico', { keyPath: 'id' });
+                    const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'id' });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
 
                     const antecedentes = db.createObjectStore('Antecedentes', { keyPath: 'id' });
                     antecedentes.createIndex("buscaantecedentes", "id_antecedente", { unique: true });
 
-                    const enfermedadActual = db.createObjectStore('EnfermedadActual', { keyPath: 'id' });
+                    const enfermedadActual = db.createObjectStore('Enfermedad', { keyPath: 'id' });
                     enfermedadActual.createIndex("buscaenfermedadActual", "enfermedad", { unique: true });
 
                     const historiaClinica = db.createObjectStore('HistoriaClinica', { keyPath: 'id' });
@@ -39,10 +39,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const analisisTratamiento = db.createObjectStore('AnalisisTratamiento', { keyPath: 'id' });
                     analisisTratamiento.createIndex("buscaanalisisTratamiento", "analisis", { unique: false });
 
-                    const planManejoMedicamentos = db.createObjectStore('PlanManejoMedicamentos', { keyPath: 'id' });
+                    const planManejoMedicamentos = db.createObjectStore('Plan_manejo_medicamentos', { keyPath: 'id' });
                     planManejoMedicamentos.createIndex("buscaMedicamentos", "descripcion", { unique: false });
 
-                    const planManejoProcedimientos = db.createObjectStore('PlanManejoProcedimientos', { keyPath: 'id' });
+                    const planManejoProcedimientos = db.createObjectStore('Plan_manejo_procedimientos', { keyPath: 'id' });
                     planManejoProcedimientos.createIndex("buscaProcedimientos", "descripcion", { unique: false });
 
                 }

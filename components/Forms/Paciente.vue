@@ -16,19 +16,6 @@ const formData = ref({
     telefono: ''
 });
 
-onMounted(() => {
-    traerDatos();
-});
-
-const traerDatos = () => {
-    const datosGuardados = localStorage.getItem('formData');
-    if (datosGuardados) {
-        formData.value = JSON.parse(datosGuardados);
-    } else {
-        console.log('No hay datos guardados en localStorage.');
-    }
-};
-
 </script>
 
 <template>
