@@ -21,22 +21,22 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const pacientes = db.createObjectStore('Paciente', { keyPath: 'id' });
                     pacientes.createIndex("buscapaciente", "id", { unique: true });
 
-                    const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'id' });
+                    const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'tipo' });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
 
-                    const antecedentes = db.createObjectStore('Antecedentes', { keyPath: 'id' });
+                    const antecedentes = db.createObjectStore('Antecedentes', { keyPath: 'valor' });
                     antecedentes.createIndex("buscaantecedentes", "id_antecedente", { unique: true });
 
-                    const enfermedadActual = db.createObjectStore('Enfermedad', { keyPath: 'id' });
+                    const enfermedadActual = db.createObjectStore('Enfermedad', { keyPath: 'valor' });
                     enfermedadActual.createIndex("buscaenfermedadActual", "enfermedad", { unique: true });
 
-                    const historiaClinica = db.createObjectStore('HistoriaClinica', { keyPath: 'id' });
+                    const historiaClinica = db.createObjectStore('HistoriaClinica', { keyPath: 'motivo' });
                     historiaClinica.createIndex("buscahistoriaClinica", "id_historiaClinica", { unique: false });
 
-                    const examenFisico = db.createObjectStore('ExamenFisico', { keyPath: 'id' });
+                    const examenFisico = db.createObjectStore('ExamenFisico', { keyPath: 'otros' });
                     examenFisico.createIndex("buscaexamenFisico", "historiaClinica", { unique: false });
 
-                    const analisisTratamiento = db.createObjectStore('AnalisisTratamiento', { keyPath: 'id' });
+                    const analisisTratamiento = db.createObjectStore('AnalisisTratamiento', { keyPath: 'analisis' });
                     analisisTratamiento.createIndex("buscaanalisisTratamiento", "analisis", { unique: false });
 
                     const planManejoMedicamentos = db.createObjectStore('Plan_manejo_medicamentos', { keyPath: 'id' });

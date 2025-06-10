@@ -19,19 +19,19 @@ const formData = ref({
     Paciente: {
         name: '',
         type_doc: '',
-        No_document: ''
+        No_document: '',
     },
     Diagnosticos: [{
         id: '',
         tipo: '',
         CIE_10: '',
         id_paciente: '',
-        rol_attention: ''
+        rol_attention: '',
     }],
     Antecedentes: [{ 
         id: '',
         valor: '',
-        id_paciente: ''
+        id_paciente: '',
     }],
     Enfermedad: [{ 
         valor: '',
@@ -55,11 +55,11 @@ const formData = ref({
         Peso: '',
         altura: '',
         otros: '',
-        id_historiaClinica: ''
+        id_historiaClinica: '',
     },
     AnalisisTratamiento: {
         analisis: '',
-        tratamiento: ''
+        tratamiento: '',
     },
     Plan_manejo_medicamentos: [],
     Plan_manejo_procedimientos: [],
@@ -70,7 +70,11 @@ const formData = ref({
 watch(formData, (newValue) => {
     localStorage.setItem('formData', JSON.stringify(newValue));
 
-    // if(formData.Paciente.name !== '', )
+    if(formData.value.Paciente.name !== "" && formData.value.Paciente.type_doc !== "" && formData.value.Paciente.No_document !== "" && formData.value.Diagnosticos.at(-1).tipo !== "" ){
+        formComplete.value = true
+    } else {
+        formComplete.value = false
+    }
 }, { deep: true });
 
 onMounted(() => {
@@ -125,7 +129,7 @@ const pacienteExistente = () => {
         formData.value.Paciente.No_document = paciente.documento
         fechaModificacion.value = paciente.fechaModificacion
 
-    } else if (!paciente && formData.value.nombre !== '') {
+    } else if (!paciente && formData.value.Paciente.name !== '') {
         $swal.fire({
             icon: 'warning',
             title: 'Paciente no encontrado',
@@ -151,10 +155,10 @@ const pacienteExistente = () => {
         titulo: 'Datos del paciente',
         botones: [
             { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-            { texto: 'Siguiente', ruta: '/forms/DatosCuidador', color: 'bg-[var(--color-primary)]' }
+            { texto: 'Siguiente', ruta: formComplete ? '/forms/DatosCuidador' : '', color: 'bg-[var(--color-primary)]' }
         ],
         formData: formData.value
-    }">
+    }">     
         <div class="md:w-4/5 w-full">
             <div class="flex justify-between items-center mb-2">
                 <label for="email" class="block text-sm font-medium text-gray-700">Paciente</label>
