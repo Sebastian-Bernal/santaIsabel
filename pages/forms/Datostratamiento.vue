@@ -7,9 +7,7 @@ definePageMeta({
     layout: 'authentication'
 });
 
-const formData = ref({
-    Plan_manejo_medicamentos: [],
-});
+const {formData, traerDatos, guardarDatos} = useFormData();
 
 const nuevoMedicamento = ref({
     medicamento: '',
@@ -25,8 +23,8 @@ const añadirMedicamento = () => {
         console.log('Por favor, complete el medicamento actual antes de añadir uno nuevo.');
         return;
     }
-
-    formData.value.Plan_manejo_medicamentos.push({ ...medicamento });
+    console.log(nuevoMedicamento.value)
+    formData.Plan_manejo_medicamentos.push({ ...medicamento });
     nuevoMedicamento.value = {
         medicamento: '',
         presentacion: '',
@@ -39,21 +37,12 @@ const añadirMedicamento = () => {
 // Guardar los datos en localStorage
 
 watch(formData, (newValue) => {
-    localStorage.setItem('formData', JSON.stringify(newValue));
+    guardarDatos(newValue)
 }, { deep: true });
 
 onMounted(() => {
     traerDatos();
 });
-
-const traerDatos = () => {
-    const datosGuardados = localStorage.getItem('formData');
-    if (datosGuardados) {
-        formData.value = JSON.parse(datosGuardados);
-    } else {
-        console.log('No hay datos guardados en localStorage.');
-    }
-};
 
 </script>
 

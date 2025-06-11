@@ -4,73 +4,23 @@ import Input from '../../components/Forms/Input.vue';
 import { ref, onMounted } from "vue";
 import Wizard from '../components/Forms/Wizard.vue';
 import { pacientes } from '../data/pacientes.js';
-import { useFormData } from '../composables/useFormData.js'
-import {agregarItem} from '../composables/useFormData.js'
-
 definePageMeta({
     layout: 'authentication'
 });
+
+const {formData, traerDatos, guardarDatos, agregarItem, eliminarItem} = useFormData();
 
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const formComplete = ref(false);
-const formData = ref({
-    Paciente: {
-        name: '',
-        type_doc: '',
-        No_document: '',
-    },
-    Diagnosticos: [{
-        id: '',
-        tipo: '',
-        CIE_10: '',
-        id_paciente: '',
-        rol_attention: '',
-    }],
-    Antecedentes: [{ 
-        id: '',
-        valor: '',
-        id_paciente: '',
-    }],
-    Enfermedad: [{ 
-        valor: '',
-        fecha_diagnostico: '',
-        fecha_rehabilitacion: '',
-    }],
-    HistoriaClinica: {
-        motivo: '',
-        signosVitales: {
-            ta: '',
-            fc: '',
-            fr: '',
-            t: '',
-            SATo2: '',
-        },
-        fecha_historia: '',
-        id_paciente: '',
-        id_profesional: ''
-    },
-    examenFisico: {
-        Peso: '',
-        altura: '',
-        otros: '',
-        id_historiaClinica: '',
-    },
-    AnalisisTratamiento: {
-        analisis: '',
-        tratamiento: '',
-    },
-    Plan_manejo_medicamentos: [],
-    Plan_manejo_procedimientos: [],
-});
 
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    localStorage.setItem('formData', JSON.stringify(newValue));
+    guardarDatos(newValue);
 
-    if(formData.value.Paciente.name !== "" && formData.value.Paciente.type_doc !== "" && formData.value.Paciente.No_document !== "" && formData.value.Diagnosticos.at(-1).tipo !== "" ){
+    if(formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "" && formData.Diagnosticos.at(-1).tipo !== "" ){
         formComplete.value = true
     } else {
         formComplete.value = false
@@ -81,55 +31,20 @@ onMounted(() => {
     traerDatos();
 });
 
-const traerDatos = () => {
-    const datosGuardados = localStorage.getItem('formData');
-    if (datosGuardados) {
-        formData.value = JSON.parse(datosGuardados);
-    } else {
-        console.log('No hay datos guardados en localStorage.');
-    }
-};
-
-
-
-// Funciones para manejar los diagnosticos
-const añadirDiagnostico = () => {
-    const ultimoDiagnostico = formData.value.Diagnosticos[formData.value.Diagnosticos.length - 1];
-    if (ultimoDiagnostico.tipo === '' || ultimoDiagnostico.cie10 === '') {
-        console.log('Por favor, complete el diagnóstico actual antes de añadir uno nuevo.');
-        return;
-    } else {
-        formData.value.Diagnosticos.push({
-        id: '',
-        tipo: '',
-        CIE_10: '',
-        id_paciente: '',
-        rol_attention: ''
-    });
-    }
-};
-
-const eliminarDiagnostico = (index) => {
-    if (formData.value.Diagnosticos.length > 1) {
-        formData.value.Diagnosticos.splice(index, 1);
-    } else {
-        console.log('Debe haber al menos un diagnóstico.');
-    }
-};
-
 
 // Funcion para autocompletar el paciente
 const pacienteExistente = () => {
     const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === formData.value.Paciente.name.toLowerCase()
+        p => p.nombre.toLowerCase() === formData.Paciente.name.toLowerCase()
     )
 
     if (paciente) {
-        formData.value.Paciente.type_doc = paciente.tipoDocumento
-        formData.value.Paciente.No_document = paciente.documento
+        formData.Paciente.type_doc = paciente.tipoDocumento
+        formData.Paciente.No_document = paciente.documento
+        formData.Paciente.id = paciente.id
         fechaModificacion.value = paciente.fechaModificacion
 
-    } else if (!paciente && formData.value.Paciente.name !== '') {
+    } else if (!paciente && formData.Paciente.name !== '') {
         $swal.fire({
             icon: 'warning',
             title: 'Paciente no encontrado',
@@ -205,7 +120,7 @@ const pacienteExistente = () => {
         <div class="md:w-4/5 w-full">
             <div class="flex justify-between items-center mb-2">
                 <label class="block text-sm font-medium text-gray-700">Diagnosticos</label>
-                <button type="button" @click="añadirDiagnostico"
+                <button type="button" @click="agregarItem('Diagnosticos', {id: '',tipo: '',CIE_10: '',id_paciente: '',rol_attention: '',}, 'tipo')"
                     class="w-[25px] h-[25px] flex justify-center items-center bg-blue-500 text-white rounded-full hover:bg-blue-600">
                     <i class="fa-solid fa-plus"></i>
                 </button>
@@ -217,7 +132,7 @@ const pacienteExistente = () => {
                         tamaño="w-4/5" />
                     <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
                         tamaño="w-1/5" />
-                    <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarDiagnostico(i)"></i>
+                    <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarItem('Diagnosticos', i)"></i>
                 </div>
             </div>
         </div>

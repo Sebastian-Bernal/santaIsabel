@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, onUnmounted, defineProps } from 'vue';
+import { ref, onMounted, defineProps } from 'vue';
 import { useIndexedDBStore } from '../../stores/indexedDB.js'
+import { useFormPendiente } from '../../stores/formularioPendiente.js'
 const { $swal } = useNuxtApp();
 
 // DEfinicion de variables
@@ -12,6 +13,7 @@ const props = defineProps({
 });
 
 const formData = ref();
+const form = useFormPendiente();
 
 // Funcion para enviar formulario
 const enviarForm = async () => {
@@ -21,7 +23,13 @@ const enviarForm = async () => {
         try {
             // await enviarApi(formData.value); Función para enviar a la API
             await guardarIndexedDB(JSON.parse(JSON.stringify(formData.value)));
-            alert('Formulario enviado exitosamente a la API.');
+            $swal.fire({
+                title: "Se ha enviado correctamente!",
+                icon: "success",
+                draggable: true
+            });
+            localStorage.removeItem('formData');
+            window.location.href = '/'
         } catch (error) {
             console.error('Error enviando a la API. Guardando localmente:', error);
             await guardarIndexedDB(formData.value);
@@ -88,6 +96,19 @@ const validarForm = async () => {
     await enviarForm();
 };
 
+const alertValidacion = (ruta) => {
+    if (ruta === '') {
+        $swal.fire({
+            position: "top-end",
+            text: "Falta campos por llenar, por favor ingrese valores",
+            showConfirmButton: false,
+            timer: 1500,
+            background: '#d33',
+            color: '#fff'
+        });
+    }
+};
+
 // Funcion para guardar en indexedDB
 async function guardarIndexedDB(data) {
 
@@ -97,7 +118,7 @@ async function guardarIndexedDB(data) {
     // Paciente
     if (data.Paciente) {
         store.almacen = 'Paciente';
-        await store.guardardatos({ ...data.Paciente, id: generarId() });
+        await store.guardardatos({ ...data.Paciente });
     }
 
     // Diagnosticos
@@ -127,7 +148,7 @@ async function guardarIndexedDB(data) {
     // HistoriaClinica
     if (data.HistoriaClinica) {
         store.almacen = 'HistoriaClinica';
-        await store.guardardatos({ ...data.HistoriaClinica });
+        await store.guardardatos({ ...data.HistoriaClinica, id: null });
     }
 
     // Examen Fisico
@@ -167,43 +188,48 @@ function generarId() {
 
 
 // Funcion para formulario pendiente 
+const formPendiente = async () => {
+    const store = useIndexedDBStore();
 
-const formularioPendiente = false;
-
-const enviarFormulario = () => {
-    if (formularioPendiente) {
-
-        $swal.fire({
-            title: "Ha vuelto la conexion!",
-            html: "Hay un formulario pendiente por enviar, deseas enviarlo?",
-            timer: 5000,
-            timerProgressBar: true,
-            showCancelButton: true,
-            cancelButtonColor: '#d33',
-            cancelButtonText: 'Cancelar',
-            confirmButtonText: "Si, Registrar",
-            confirmButtonColor: '#3085d6',
-        }).then((result) => {
-            if (result.isConfirmed) {
-                console.log("registrando..");
-                // enviarApi()
-            } else {
-                console.log('subir despues')
-            }
-        });
+    store.almacen = 'HistoriaClinica'
+    const result = await store.buscar_no_enviados();
+    if (result[0] && !form.subirDespues) {
+        enviarFormularioPendiente()
     }
-};
+}
+
+const enviarFormularioPendiente = () => {
+    $swal.fire({
+        title: "Ha vuelto la conexion!",
+        html: "Hay un formulario pendiente por enviar, deseas enviarlo?",
+        timer: 5000,
+        timerProgressBar: true,
+        showCancelButton: true,
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: "Si, Registrar",
+        confirmButtonColor: '#3085d6',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log("registrando..");
+            // enviarApi()
+        } else {
+            console.log('subir despues');
+            form.subirDespues = true
+        }
+    });
+}
 
 onMounted(() => {
     const isOnline = navigator.onLine
     if (isOnline) {
-        enviarFormulario()
+        formPendiente();
     }
 });
+
 </script>
 
 <template>
-
     <div
         class="lg:w-3/5 md:w-4/5 w-[90%] min-h-3/4 max-h-3/4 bg-white rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center">
         <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
@@ -218,7 +244,7 @@ onMounted(() => {
         <!-- Botones Formulario -->
         <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[20px] left-auto right-auto">
             <nuxtLink v-for="boton in datos.botones" :to="boton.ruta" class="md:w-2/4 w-full">
-                <button :class="boton.color" @click="boton.submit ? validarForm() : null"
+                <button :class="boton.color" @click="boton.submit ? validarForm() : alertValidacion(boton.ruta)"
                     class="w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ boton.texto }}
                 </button>

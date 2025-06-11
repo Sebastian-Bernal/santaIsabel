@@ -1,15 +1,12 @@
 <script setup>
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Forms/Input.vue';
+import { ref } from 'vue';
 definePageMeta({
     layout: 'authentication'
 });
 
-import { ref } from 'vue';
-
-const formData = ref({
-    Plan_manejo_procedimientos: [],
-});
+const {formData, traerDatos, guardarDatos} = useFormData();
 
 const nuevoServicio = ref({
     descripcion: '',
@@ -23,8 +20,7 @@ const añadirServicio = () => {
         console.log('Por favor, complete el servicio actual antes de añadir uno nuevo.');
         return;
     }
-    formData.value.Plan_manejo_procedimientos.push({ ...servicio });
-    console.log(formData.value.Plan_manejo_procedimientos)
+    formData.Plan_manejo_procedimientos.push({ ...servicio });
     // Reiniciar el objeto nuevoServicio
     nuevoServicio.value = {
         descripcion: '',
@@ -36,22 +32,12 @@ const añadirServicio = () => {
 // Guardar los datos en localStorage
 
 watch(formData, (newValue) => {
-    localStorage.setItem('formData', JSON.stringify(newValue));
+    guardarDatos(newValue)
 }, { deep: true });
 
 onMounted(() => {
     traerDatos();
 });
-
-const traerDatos = () => {
-    const datosGuardados = localStorage.getItem('formData');
-    if (datosGuardados) {
-        formData.value = JSON.parse(datosGuardados);
-    } else {
-        console.log('No hay datos guardados en localStorage.');
-    }
-};
-
 
 </script>
 

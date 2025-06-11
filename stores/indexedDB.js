@@ -174,6 +174,12 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             return await borrardato(key).then(() => {
                 return leerdatos()
             })
+        },
+
+        async buscar_no_enviados(){
+            this.almacen = 'HistoriaClinica'
+            let datos = await this.leerdatos()
+            return datos.map( dato => dato.id === null )
         }
 
     }

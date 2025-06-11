@@ -3,45 +3,19 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Forms/Input.vue';
 import Wizard from '../components/Forms/Wizard.vue';
 import { ref, watch } from 'vue';
-
-const formData = ref({
-    HistoriaClinica: {
-        motivo: '',
-        signosVitales: {
-            ta: '',
-            fc: '',
-            fr: '',
-            t: '',
-            SATo2: '',
-        },
-        fecha_historia: '',
-        id_paciente: '',
-        id_profesional: ''
-    },
-    examenFisico: {
-        Peso: '',
-        altura: '',
-        otros: '',
-        id_historiaClinica: ''
-    },
-    AnalisisTratamiento: {
-        analisis: '',
-        tratamiento: ''
-    },
-});
-const formComplete = ref(false);
-
 definePageMeta({
     layout: 'authentication'
 });
 
+const {formData, traerDatos, guardarDatos} = useFormData();
+const formComplete = ref(false);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    localStorage.setItem('formData', JSON.stringify(newValue));
+    guardarDatos(newValue)
 
-    if (formData.value.HistoriaClinica.signosVitales.ta !== "" && formData.value.HistoriaClinica.signosVitales.fc !== "" && formData.value.HistoriaClinica.signosVitales.fr !== "" && formData.value.HistoriaClinica.signosVitales.t !== "" && formData.value.HistoriaClinica.signosVitales.SATo2 !== "" 
-    && formData.value.examenFisico.otros !== "" && formData.value.AnalisisTratamiento.analisis !== "" && formData.value.AnalisisTratamiento.tratamiento !== "") {
+    if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
+        && formData.examenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
         formComplete.value = true
     } else {
         formComplete.value = false
@@ -52,14 +26,6 @@ onMounted(() => {
     traerDatos();
 });
 
-const traerDatos = () => {
-    const datosGuardados = localStorage.getItem('formData');
-    if (datosGuardados) {
-        formData.value = JSON.parse(datosGuardados);
-    } else {
-        console.log('No hay datos guardados en localStorage.');
-    }
-};
 </script>
 
 <template>
@@ -96,9 +62,13 @@ const traerDatos = () => {
 
         <div class="md:w-4/5 w-full">
             <label class="block text-sm font-medium text-gray-700">Examen Fisico</label>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3  md:flex-row flex-col">
+                <Input v-model="formData.examenFisico.Peso" type="number" id="examenFisico" name="examenFisico"
+                    placeholder="Peso" tamaño="w-full" />
+                <Input v-model="formData.examenFisico.altura" type="number" id="examenFisico" name="examenFisico"
+                    placeholder="Altura" tamaño="w-full" />
                 <Input v-model="formData.examenFisico.otros" type="text" id="examenFisico" name="examenFisico"
-                    placeholder="Peso/ Altura" tamaño="w-full" />
+                    placeholder="Otros" tamaño="w-full" />
             </div>
         </div>
 
@@ -118,7 +88,8 @@ const traerDatos = () => {
                     <option value="" selected>Condicion de Rehabilitacion</option>
                     <option value="Total o parcial">Total o Parcial</option>
                     <option value="Sin potencial de rehabilitacion">Sin potencial de rehabilitacion</option>
-                    <option value="Cuidados paliativos o de mantenimiento">Cuidados paliativos o de mantenimiento</option>
+                    <option value="Cuidados paliativos o de mantenimiento">Cuidados paliativos o de mantenimiento
+                    </option>
                 </select>
 
                 <div class="md:w-2/5 w-full flex items-center gap-1">
