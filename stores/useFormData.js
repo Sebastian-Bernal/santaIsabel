@@ -98,11 +98,16 @@ export const useFormData = defineStore('FormData', () => {
         localStorage.setItem('formData', JSON.stringify(newValue));
     };
 
+    const limpiar = (key) => {
+        localStorage.removeItem(key);
+    };
+
     return {
         formData,
         traerDatos,
         guardarDatos,
         agregarItem,
+        limpiar,
         eliminarItem
     }
 });

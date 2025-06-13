@@ -1,8 +1,7 @@
 <template>
     <div class="cargando">
         <div class="w-full h-full flex items-center justify-center flex-col relative">
-            <img src="assets/img/logo_ares_h-02.png" class="logo"/>
-            <img src="assets/img/lanza_ares.png" class="lanza" alt="Lanza Ares">
+            <p></p>
         </div>
     </div>
 </template>

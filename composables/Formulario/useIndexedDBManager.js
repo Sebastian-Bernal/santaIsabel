@@ -22,9 +22,9 @@ export async function guardarEnIndexedDB(data) {
     await guardarConAlmacen('HistoriaClinica', { ...data.HistoriaClinica, id: null });
     await guardarConAlmacen('ExamenFisico', data.examenFisico);
     await guardarConAlmacen('AnalisisTratamiento', data.AnalisisTratamiento);
-
-    await guardarConAlmacen('Plan_manejo_medicamentos', data.Plan_manejo_medicamentos?.map(m => ({ ...m, id: generarId() })) || []);
-    await guardarConAlmacen('Plan_manejo_procedimientos', data.Plan_manejo_procedimietos?.map(p => ({ ...p, id: generarId() })) || []);
+    // 
+    await guardarConAlmacen('Plan_manejo_medicamentos', { ...data.Plan_manejo_medicamentos, id: generarId() } );
+    await guardarConAlmacen('Plan_manejo_procedimientos', { ...data.Plan_manejo_procedimietos, id: generarId() });
 }
 
 function generarId() {

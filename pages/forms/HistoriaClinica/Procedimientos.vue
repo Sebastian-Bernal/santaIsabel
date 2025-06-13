@@ -1,6 +1,8 @@
 <script setup>
 import Formulario from '../../components/Forms/Formulario.vue';
-import Input from '../../components/Forms/Input.vue';
+import Input from '../../components/Inputs/Input.vue';
+import Label from '~/components/Labels/Label.vue';
+import Section from '~/components/Forms/Section.vue';
 import { ref } from 'vue';
 definePageMeta({
     layout: 'authentication'
@@ -43,27 +45,24 @@ onMounted(() => {
 
 <template>
     <Formulario :datos="{
-        titulo: 'Datos del servicio',
+        titulo: 'Datos del procedimiento',
         botones: [
-            { texto: 'Atras', ruta: '/forms/DatosConsulta', color: 'bg-gray-500' },
+            { texto: 'Atras', ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-500' },
         ]
     }">
-        <div class="md:w-4/5 w-full">
-            <label class="block text-sm font-medium text-gray-700">Plan de manejo</label>
-            <div class="flex items-center gap-3">
+
+            <Label forLabel="descripcion">Plan de manejo</Label>
+            <Section>
                 <Input v-model="nuevoServicio.descripcion" type="text" id="descripcion" name="descripcion"
                     placeholder="Descripcion" tamaño="w-full" />
-            </div>
-        </div>
+            </Section>
 
-        <div class="md:w-4/5 w-full">
-            <div class="flex items-center gap-3">
-
+            <Section>
                 <Input v-model="nuevoServicio.cantidad" type="text" id="cantidad" name="cantidad" placeholder="Cantidad"
                     tamaño="w-1/2" />
                 <Input v-model="nuevoServicio.mes" type="text" id="mes" name="mes" placeholder="Mes" tamaño="w-1/2" />
-            </div>
-        </div>
+            </Section>
+
 
         <div class="md:w-4/5 w-full flex justify-end">
             <button type="button" @click="añadirServicio"

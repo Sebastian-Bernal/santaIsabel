@@ -2,11 +2,11 @@
 // importando los reursos
 import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
-import Input from '../../components/Forms/Input.vue';
+import Input from '../Inputs/Input.vue';
 
-import { usePaginacion } from '../../composables/usePaginacion.js'
-import { useColumnasResponsivas } from '../../composables/useTablasResponsive';
-import { useOrdenamiento } from '../../composables/useDatosOrdenadosTabla';
+import { usePaginacion } from '../../composables/Tabla/usePaginacion.js'
+import { useColumnasResponsivas } from '../../composables/Tabla/useTablasResponsive';
+import { useOrdenamiento } from '../../composables/Tabla/useDatosOrdenadosTabla';
 
 // 
 const btnAcciones = ref(null)

@@ -7,7 +7,7 @@ export function useFormStorage(key = 'formData') {
         localStorage.setItem(key, JSON.stringify(data));
     };
 
-    const traer = () => {
+    const traerDatos = () => {
         const saved = localStorage.getItem(key);
         formData.value = saved ? JSON.parse(saved) : null;
     };
@@ -16,5 +16,5 @@ export function useFormStorage(key = 'formData') {
         localStorage.removeItem(key);
     };
 
-    return { formData, guardar, traer, limpiar };
+    return { formData, guardar, traerDatos, limpiar };
 }
