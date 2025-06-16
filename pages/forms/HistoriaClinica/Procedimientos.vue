@@ -3,12 +3,19 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
+import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 import { ref } from 'vue';
 definePageMeta({
     layout: 'authentication'
 });
 
-const {formData, traerDatos, guardarDatos} = useFormData();
+const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
+
+const {
+    formData,
+    traerDatos,
+    guardarDatos,
+} = historiaClinicaStore;
 
 const nuevoServicio = ref({
     descripcion: '',

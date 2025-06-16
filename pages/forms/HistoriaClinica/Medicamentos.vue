@@ -4,12 +4,18 @@ import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import { ref } from 'vue';
-
+import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 definePageMeta({
     layout: 'authentication'
 });
 
-const { formData, traerDatos, guardarDatos } = useFormData();
+const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
+
+const {
+    formData,
+    traerDatos,
+    guardarDatos,
+} = historiaClinicaStore;
 
 const nuevoMedicamento = ref({
     medicamento: '',
@@ -25,7 +31,6 @@ const añadirMedicamento = () => {
         console.log('Por favor, complete el medicamento actual antes de añadir uno nuevo.');
         return;
     }
-    console.log(nuevoMedicamento.value)
     formData.Plan_manejo_medicamentos.push({ ...medicamento });
     nuevoMedicamento.value = {
         medicamento: '',

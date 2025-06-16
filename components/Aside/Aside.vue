@@ -1,27 +1,75 @@
 <template>
-    <div class="aside backdrop-blur bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-        <div class="flex flex-col justify-between h-full py-10 px-2">
-            <div class="border-t-2 border-gray-700 flex flex-col gap-3">
-                <h2>Inicio</h2>
-                <h2>Usuario</h2>
-                <h2>Inicio</h2>
-                <h2>Usuario</h2>
-                <h2>Inicio</h2>
-                <h2>Usuario</h2>
-                <h2>Inicio</h2>
-                <h2>Usuario</h2>
-                <h2>Usuario</h2>
+    <div class="section-asidebar">
+        <div class="section-asidebar__content">
+
+            <div class="left" @click="cambiarEstadoFalse()">
+                <ButtonAside v-for="button in buttons" :data="button" />
             </div>
-            <div class="border-t-2 border-gray-700">
-                <h2>Cerrar Sesion</h2>
-                <h2>Usuario</h2>
-            </div>
+
         </div>
     </div>
 </template>
 
+<script setup>
+import ButtonAside from './ButtonAside.vue';
+import { buttons } from '../../data/Buttons.js';
+
+</script>
+
 <style scoped>
-.aside {
+.section-asidebar {
+    margin: 10px;
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
     grid-area: aside;
+}
+
+.section-asidebar__content {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    height: 60%;
+    background-color: var(--color-rojo-suave);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding-left: 3px;
+}
+
+/* Contenedores botones */
+
+.left {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    .section-asidebar {
+        width: 100%;
+        height: 30px;
+        margin: 0;
+    }
+
+    .section-asidebar__content {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        justify-content: space-between;
+        border-radius: 0;
+        background-color: transparent;
+    }
+
+    .left {
+        width: 100%;
+        flex-direction: row;
+        padding: 0;
+    }
 }
 </style>

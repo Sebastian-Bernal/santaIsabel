@@ -13,5 +13,7 @@
     --color-warning: #ffc107;
     --color-danger: #dc3545;
     --color-green: #94c53d;
+    --color-default: #326872;
+    --color-default-claro: #c0dee3;
     font-family: Roboto Slab, sans-serif;
 }

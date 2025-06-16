@@ -4,29 +4,18 @@ export async function guardarEnIndexedDB(data) {
     const store = useIndexedDBStore();
     await store.initialize();
 
-    const guardarConAlmacen = async (almacen, datos) => {
+    for (const [almacen, contenido] of Object.entries(data)) {
+        console.log(almacen, contenido)
         store.almacen = almacen;
-        if (Array.isArray(datos)) {
-            for (const item of datos) {
+
+        if(almacen === 'HistoriaClinica'){
+            await store.guardardatos({ ...contenido, id: null })
+        } else if (Array.isArray(contenido)) {
+            for (const item of contenido) {
                 await store.guardardatos({ ...item });
             }
-        } else {
-            await store.guardardatos({ ...datos });
+        } else if (typeof contenido === 'object' && contenido !== null) {
+            await store.guardardatos({ ...contenido });
         }
-    };
-
-    await guardarConAlmacen('Paciente', data.Paciente);
-    await guardarConAlmacen('Diagnosticos', data.Diagnosticos);
-    await guardarConAlmacen('Antecedentes', data.Antecedentes);
-    await guardarConAlmacen('Enfermedad', data.Enfermedad);
-    await guardarConAlmacen('HistoriaClinica', { ...data.HistoriaClinica, id: null });
-    await guardarConAlmacen('ExamenFisico', data.examenFisico);
-    await guardarConAlmacen('AnalisisTratamiento', data.AnalisisTratamiento);
-    // 
-    await guardarConAlmacen('Plan_manejo_medicamentos', { ...data.Plan_manejo_medicamentos, id: generarId() } );
-    await guardarConAlmacen('Plan_manejo_procedimientos', { ...data.Plan_manejo_procedimietos, id: generarId() });
-}
-
-function generarId() {
-    return crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-}
+    }
+};

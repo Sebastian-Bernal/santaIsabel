@@ -1,4 +1,5 @@
 <script setup>
+import Wizard from './Wizard.vue';
 import { onMounted, defineProps } from 'vue';
 import { useIndexedDBStore } from '../../stores/indexedDB.js'
 import { useFormPendiente } from '../../stores/formularioPendiente.js'
@@ -12,8 +13,10 @@ const props = defineProps({
         required: true
     }
 });
+
 const { formData, validarYEnviar } = useFormulario(props.datos.formStore);
 const form = useFormPendiente();
+
 
 const alertValidacion = (ruta) => {
     if (ruta === '') {
@@ -73,8 +76,9 @@ const enviarFormularioPendiente = () => {
 </script>
 
 <template>
+    <Wizard :secciones="props.datos.secciones" />
     <div
-        class="lg:w-3/5 md:w-4/5 w-[90%] h-3/4 bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center">
+        class="lg:w-3/5 md:w-4/5 w-[90%] h-3/4 bg-white rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center">
         <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">

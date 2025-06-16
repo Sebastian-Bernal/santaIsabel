@@ -1,10 +1,3 @@
-<script setup>
-import { useApiRest } from '../stores/apiRest';
-import Navbar from '~/components/Navbar/Navbar.vue';
-import Aside from '~/components/Aside/Aside.vue';
-const estado = useApiRest();
-</script>
-
 <template>
     <div class="containerMain">
         <Loader v-if="estado.cargando"></Loader>
@@ -13,27 +6,35 @@ const estado = useApiRest();
         <div class="section-content">
             <div class="container-content">
                 <slot></slot>
-                <Footer></Footer>
             </div>
         </div>
+        <Footer></Footer>
     </div>
 </template>
+
+<script setup>
+import { useApiRest } from '../stores/apiRest';
+const estado = useApiRest();
+</script>
 
 <style scoped>
 .containerMain {
     display: grid;
     grid-template-areas:
-        "aside main";
-    grid-template-rows: 1fr;
-    grid-template-columns: 120px 1fr;
+        "navbar navbar"
+        "aside main"
+        "footer footer";
+    grid-template-rows: 60px 1fr 50px;
+    grid-template-columns: 80px 1fr;
     height: 100vh;
+    background: radial-gradient(at left top, var(--color-default), var(--color-default-claro));
     overflow-y: none;
 }
 
 @media screen and (max-width: 768px) {
     .containerMain {
-        grid-template-areas: "navbar" "aside" "main";
-        grid-template-rows: 40px 60px 1fr;
+        grid-template-areas: "navbar" "aside" "main" "footer";
+        grid-template-rows: 45px 60px 1fr 40px;
         grid-template-columns: 1fr;
     }
 
@@ -45,6 +46,10 @@ const estado = useApiRest();
 .section-content {
     grid-area: main;
     overflow-y: hidden;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 0 10px;
+    padding: 0 0 10px 0;
+    border-radius: 15px 15px 15px 0;
 }
 
 .container-content {

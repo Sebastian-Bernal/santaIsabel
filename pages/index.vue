@@ -3,10 +3,10 @@
 </script>
 
 <template>
-    <div class="p-10 h-[120vh]">
+    <div class="p-15 h-[120vh]">
         <nuxtLink to="/forms/HistoriaClinica/Paso1">Registrar</nuxtLink>
 
-        <div class="services-hero h-[300px] bg-blue-100 rounded flex items-center my-5">
+        <div class="services-hero h-[150px] rounded flex items-center my-5">
             <div class="container">
                 <div class="justify-center">
                     <div class="flex flex-col justify-center items-center">

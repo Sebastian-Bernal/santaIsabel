@@ -18,17 +18,17 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                 const request = indexedDB.open('datos-santaIsabel', 1)
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result
-                    const pacientes = db.createObjectStore('Paciente', { keyPath: 'id' });
-                    pacientes.createIndex("buscapaciente", "id", { unique: true });
+                    const pacientes = db.createObjectStore('Paciente', { keyPath: 'No_document' });
+                    pacientes.createIndex("buscapaciente", "id_paciente", { unique: false });
 
                     const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'tipo' });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
 
                     const antecedentes = db.createObjectStore('Antecedentes', { keyPath: 'valor' });
-                    antecedentes.createIndex("buscaantecedentes", "id_antecedente", { unique: true });
+                    antecedentes.createIndex("buscaantecedentes", "id_antecedente", { unique: false });
 
                     const enfermedadActual = db.createObjectStore('Enfermedad', { keyPath: 'valor' });
-                    enfermedadActual.createIndex("buscaenfermedadActual", "enfermedad", { unique: true });
+                    enfermedadActual.createIndex("buscaenfermedadActual", "enfermedad", { unique: false });
 
                     const historiaClinica = db.createObjectStore('HistoriaClinica', { keyPath: 'motivo' });
                     historiaClinica.createIndex("buscahistoriaClinica", "id_historiaClinica", { unique: false });
@@ -39,10 +39,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const analisisTratamiento = db.createObjectStore('AnalisisTratamiento', { keyPath: 'analisis' });
                     analisisTratamiento.createIndex("buscaanalisisTratamiento", "analisis", { unique: false });
 
-                    const planManejoMedicamentos = db.createObjectStore('Plan_manejo_medicamentos', { keyPath: 'id' });
+                    const planManejoMedicamentos = db.createObjectStore('Plan_manejo_medicamentos', { keyPath: 'medicamento' });
                     planManejoMedicamentos.createIndex("buscaMedicamentos", "descripcion", { unique: false });
 
-                    const planManejoProcedimientos = db.createObjectStore('Plan_manejo_procedimientos', { keyPath: 'id' });
+                    const planManejoProcedimientos = db.createObjectStore('Plan_manejo_procedimientos', { keyPath: 'descripcion' });
                     planManejoProcedimientos.createIndex("buscaProcedimientos", "descripcion", { unique: false });
 
                 }

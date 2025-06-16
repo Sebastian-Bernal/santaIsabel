@@ -1,22 +1,20 @@
 import { useFormStorage } from './useFormStorage';
-import { useFormData } from '../../stores/useFormData.js';
 import { guardarEnIndexedDB } from './useIndexedDBManager';
-import { useFormPendiente } from '@/stores/formularioPendiente';
-import { useNuxtApp } from '#app';
 
-export function useFormulario() {
+export function useFormulario(storeName) {
     const { $swal } = useNuxtApp();
-    const form = useFormPendiente();
-    const { formData, traerDatos, limpiar } = useFormStorage();
+
+    // Traer informacion de la store por key del formulario en localStorage
+    const { formData, traerDatos, limpiar } = useFormStorage(storeName);
 
     const enviarFormulario = async () => {
         const online = navigator.onLine;
-
+        console.log(formData.value, storeName)
         if (online) {
             try {
                 // mandar a api
                 await guardarEnIndexedDB(JSON.parse(JSON.stringify(formData.value)));
-                $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' });
+                await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
                 limpiar();
                 window.location.href = '/';
             } catch (e) {
