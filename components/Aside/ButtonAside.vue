@@ -6,13 +6,13 @@
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </NuxtLink>
         <!-- Desplegable nombre de seccion, "right" -->
-        <div class="right z-999 absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-rojo-claro)] p-[10px] w-[150px] rounded-r-3xl" @click="activeButton(data.id)">
+        <div class="right z-999 absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px] rounded-r-3xl" @click="activeButton(data.id)">
             <NuxtLink :to="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}</h3>
             </NuxtLink>
             <!-- Desplegable submenu, "down" -->
             <div class="down absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 pointer-events-none p-[10px] w-[150px] rounded-br-3xl" :class="{ 'ocultar': data.secciones.length == 0 }">
-                <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-gris-claro)] hover:text-[var(--color-naranja)]" v-for="seccion in data.secciones">
+                <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]" v-for="seccion in data.secciones">
                     <NuxtLink :to="`/${data.nombre}/${seccion.titulo}`"
                         @click="footer.cambiarSecciones(seccion.subSecciones)">
                         {{ seccion.titulo }}
@@ -41,7 +41,7 @@ button {
 }
 
 button .active {
-    background-color: var(--color-rojo);
+    background-color: var(--color-default-oscuro);
     color: var(--color-blanco);
     transition: background-color 0.3s ease, color 0.3s ease;
 }

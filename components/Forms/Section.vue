@@ -4,7 +4,7 @@ const props = defineProps({
 });
 </script>
 <template>
-    <div class="md:w-4/5 w-full">
+    <div class="md:w-5/6 w-full">
         <div class="flex justify-between items-start gap-3 w-full" :class="styles">
             <slot></slot>
         </div>

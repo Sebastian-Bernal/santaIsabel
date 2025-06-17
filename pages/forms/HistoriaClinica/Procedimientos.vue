@@ -3,11 +3,9 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
+import Fondo from '~/components/Fondo.vue';
 import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 import { ref } from 'vue';
-definePageMeta({
-    layout: 'authentication'
-});
 
 const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
 
@@ -51,12 +49,13 @@ onMounted(() => {
 </script>
 
 <template>
-    <Formulario :datos="{
-        titulo: 'Datos del procedimiento',
-        botones: [
-            { texto: 'Atras', ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-500' },
-        ]
-    }">
+    <Fondo>
+        <Formulario :datos="{
+            titulo: 'Datos del procedimiento',
+            botones: [
+                { texto: 'Atras', ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-500' },
+            ]
+        }" tamaño="w-[60%] h-[60%]">
 
             <Label forLabel="descripcion">Plan de manejo</Label>
             <Section>
@@ -71,27 +70,28 @@ onMounted(() => {
             </Section>
 
 
-        <div class="md:w-4/5 w-full flex justify-end">
-            <button type="button" @click="añadirServicio"
-                class="bg-gray-500 text-white text-xs font-semibold mt-2 py-2 px-3 rounded cursor-pointer hover:opacity-75">
-                Añadir servicio
-            </button>
-        </div>
-
-        <div v-if="formData.Plan_manejo_procedimientos ? formData.Plan_manejo_procedimientos.length > 0 : false"
-            class="md:w-4/5 w-full max-h-[300px] overflow-y-auto border border-gray-300 rounded-md p-2">
-            <div class="grid grid-cols-3 text-center text-xs justify-between items-center gap-3">
-                <h4>Descripcion</h4>
-                <h4>Cantidad</h4>
-                <h4>Mes</h4>
+            <div class="md:w-4/5 w-full flex justify-end">
+                <button type="button" @click="añadirServicio"
+                    class="bg-gray-500 text-white text-xs font-semibold mt-2 py-2 px-3 rounded cursor-pointer hover:opacity-75">
+                    Añadir servicio
+                </button>
             </div>
-            <div v-for="(servicio, index) in formData.Plan_manejo_procedimientos" :key="index"
-                class="grid grid-cols-3 text-center justify-between items-center gap-3 mt-3">
-                <p tamaño="text-xs">{{ servicio.descripcion }}</p>
-                <p tamaño="text-xs">{{ servicio.cantidad }}</p>
-                <p tamaño="text-xs">{{ servicio.mes }}</p>
-            </div>
-        </div>
 
-    </Formulario>
+            <div v-if="formData.Plan_manejo_procedimientos ? formData.Plan_manejo_procedimientos.length > 0 : false"
+                class="md:w-4/5 w-full max-h-[300px] overflow-y-auto border border-gray-300 rounded-md p-2">
+                <div class="grid grid-cols-3 text-center text-xs justify-between items-center gap-3">
+                    <h4>Descripcion</h4>
+                    <h4>Cantidad</h4>
+                    <h4>Mes</h4>
+                </div>
+                <div v-for="(servicio, index) in formData.Plan_manejo_procedimientos" :key="index"
+                    class="grid grid-cols-3 text-center justify-between items-center gap-3 mt-3">
+                    <p tamaño="text-xs">{{ servicio.descripcion }}</p>
+                    <p tamaño="text-xs">{{ servicio.cantidad }}</p>
+                    <p tamaño="text-xs">{{ servicio.mes }}</p>
+                </div>
+            </div>
+
+        </Formulario>
+    </Fondo>
 </template>

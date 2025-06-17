@@ -27,7 +27,7 @@ const estado = useApiRest();
     grid-template-rows: 60px 1fr 50px;
     grid-template-columns: 80px 1fr;
     height: 100vh;
-    background: radial-gradient(at left top, var(--color-default), var(--color-default-claro));
+    background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
     overflow-y: none;
 }
 
@@ -46,7 +46,6 @@ const estado = useApiRest();
 .section-content {
     grid-area: main;
     overflow-y: hidden;
-    background-color: rgba(255, 255, 255, 0.8);
     margin: 0 10px;
     padding: 0 0 10px 0;
     border-radius: 15px 15px 15px 0;

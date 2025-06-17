@@ -30,7 +30,7 @@ const formComplete = ref(false);
 watch(formData, (newValue) => {
     guardarDatos(newValue);
 
-    if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "" && formData.Diagnosticos.at(-1).tipo !== "") {
+    if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "") {
         formComplete.value = true
     } else {
         formComplete.value = false
@@ -71,23 +71,27 @@ const pacienteExistente = () => {
 </script>
 
 <template>
-    <Fondo>
+    <div class="w-full h-full flex flex-col items-center">
         <FormularioWizard :datos="{
             titulo: 'Datos del paciente',
+            tituloFormulario: 'Nueva Historia Clinica',
             botones: [
                 { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Siguiente', ruta: formComplete ? '/forms/HistoriaClinica/Paso2' : '', color: 'bg-[var(--color-primary)]' }
+                { texto: 'Siguiente', ruta: formComplete ? '/forms/HistoriaClinica/Paso2' : '', color: 'bg-blue-500' }
             ],
             formData: formData.value,
             secciones: [
-                { numPagina: 1, ruta: '/forms/HistoriaClinica/Paso1', color: 'bg-sky-700 text-white' },
+                { numPagina: 1, ruta: '/forms/HistoriaClinica/Paso1', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 2, ruta: '/forms/HistoriaClinica/Paso2', color: 'bg-gray-300' },
                 { numPagina: 3, ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-300' }
             ]
-        }">
+        }" tamaño="w-[80%] h-[82%]">
 
             <Section>
-                <Label forLabel="nombre" size="text-sm">Paciente</Label>
+                <div class="flex gap-3 items-center">
+                    <i class="fa-solid fa-user text-blue-500"></i>
+                    <Label forLabel="nombre" size="text-sm">Paciente</Label>
+                </div>
                 <div class="flex gap-2 items-center">
                     <p class="text-xs">{{ fechaModificacion }}</p>
                     <nuxt-link to="" v-if="fechaModificacion">
@@ -105,6 +109,9 @@ const pacienteExistente = () => {
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.nombre">
                     </option>
                 </datalist>
+                <Select v-model="formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento"
+                    :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }]"
+                    placeholder="Tipo de documento" tamaño="w-full"></Select>
             </Section>
 
 
@@ -115,32 +122,26 @@ const pacienteExistente = () => {
                 <datalist id="documentoList">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>
                 </datalist>
-                <Select v-model="formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento"
-                    :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }]"
-                    placeholder="Tipo de documento" tamaño="w-full"></Select>
+                <Input v-model="formData.Paciente.direccion" type="text" id="direccion" name="direccion"
+                    placeholder="Direccion Completa" tamaño="w-full" />
             </Section>
 
 
-
-            <Section styles="mb-2">
-                <Label forLabel="tipo" size="text-sm">Diagnosticos</Label>
-                <Button color="bg-blue-500"
-                    @click="agregarItem('Diagnosticos', { id: '', tipo: '', CIE_10: '', id_paciente: '', rol_attention: '', }, 'tipo')">
-                    <i class="fa-solid fa-plus"></i>
-                </Button>
-            </Section>
-
-            <Section styles="flex-col max-h-[100px] overflow-y-auto">
-                <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
-                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
-                        tamaño="w-4/5" />
-                    <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
-                        tamaño="w-1/5" />
-                    <i v-if="i > 0" class="fa-solid fa-close text-gray-500"
-                        @click="eliminarItem('Diagnosticos', i)"></i>
+            <Section styles="mt-3">
+                <div class="flex gap-3 items-center">
+                    <i class="fa-solid fa-users text-blue-500"></i>
+                    <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
                 </div>
             </Section>
 
+            <Section>
+                <Input v-model="formData.nombreAcompañante" type="text" id="nombreAcompañante" name="nombreAcompañante"
+                    placeholder="Nombre completo del acompañante" tamaño="w-full" />
+                <Select v-model="formData.parentesco" id="parentesco" name="parentesco"
+                    :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, {text: 'Hijo', value: 'Hijo'}, {text: 'Conyuge', value: 'Conyuge'}, {text: 'Hermano/a', value: 'Hermano/a'}]"
+                    placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
+            </Section>
+
         </FormularioWizard>
-    </Fondo>
+    </div>
 </template>

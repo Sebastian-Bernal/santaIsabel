@@ -1,6 +1,6 @@
 <template>
-    <div class="section-asidebar">
-        <div class="section-asidebar__content">
+    <div class="section-asidebar m-[10px] ml-[15px] flex items-center">
+        <div class="section-asidebar__content fixed flex flex-col items-center rounded-2xl h-[60%] ">
 
             <div class="left" @click="cambiarEstadoFalse()">
                 <ButtonAside v-for="button in buttons" :data="button" />
@@ -18,23 +18,12 @@ import { buttons } from '../../data/Buttons.js';
 
 <style scoped>
 .section-asidebar {
-    margin: 10px;
-    margin-left: 15px;
-    display: flex;
-    align-items: center;
     grid-area: aside;
 }
 
 .section-asidebar__content {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 10px;
-    height: 60%;
-    background-color: var(--color-rojo-suave);
+    background-color: var(--color-default-claro);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 16px;
     padding-left: 3px;
 }
 

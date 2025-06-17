@@ -20,11 +20,11 @@ const estructuraHistoriaClinica = {
         valor: '',
         id_paciente: '',
     }],
-    Enfermedad: [{
+    Enfermedad: {
         valor: '',
         fecha_diagnostico: '',
         fecha_rehabilitacion: '',
-    }],
+    },
     HistoriaClinica: {
         motivo: '',
         signosVitales: {

@@ -10,7 +10,11 @@ const props = defineProps({
     datos: {
         type: [Object, Array],
         required: true
-    }
+    },
+    tamaño: {
+        type: String,
+        default: "lg:w-3/5 md:w-4/5 w-[90%] h-3/4"
+    },
 });
 const { formData, validarYEnviar } = useFormulario(props.datos.formStore);
 const form = useFormPendiente();
@@ -74,7 +78,7 @@ const enviarFormularioPendiente = () => {
 
 <template>
     <div
-        class="lg:w-3/5 md:w-4/5 w-[90%] h-3/4 bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center">
+        class="bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center" :class="tamaño">
         <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
@@ -84,7 +88,7 @@ const enviarFormularioPendiente = () => {
             </div>
         </form>
         <!-- Botones Formulario -->
-        <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[20px] left-auto right-auto">
+        <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
             <nuxtLink v-for="boton in datos.botones" :to="boton.ruta" class="md:w-2/4 w-full">
                 <button :class="boton.color" @click="boton.submit ? validarYEnviar() : alertValidacion(boton.ruta)"
                     class="w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
