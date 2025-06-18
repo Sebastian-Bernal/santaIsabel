@@ -24,7 +24,7 @@ const estado = useApiRest();
         "navbar navbar"
         "aside main"
         "footer footer";
-    grid-template-rows: 60px 1fr 50px;
+    grid-template-rows: 60px 1fr 40px;
     grid-template-columns: 80px 1fr;
     height: 100vh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));

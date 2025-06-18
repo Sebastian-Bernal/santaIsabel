@@ -8,7 +8,7 @@ export const useSeccionFooter = defineStore('subSecciones', {
     }),
     actions: {
         cambiarSecciones (subSecciones) {
-            this.secciones = subSecciones;
+            this.secciones = subSecciones ? subSecciones : null;
             sessionStorage.setItem('seccionesGuardadas', JSON.stringify(this.secciones));
         },
         seccionesGuardadas () {

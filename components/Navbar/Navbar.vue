@@ -1,6 +1,6 @@
 <script setup>
 import DropdownNavbar from './DropdownNavbar.vue'
-import BreadCrumb from './BreadCrumb.vue';
+import BreadCrumb from './Breadcrumb.vue';
 import { useShowNavbar } from '../../composables/navbarResponsive.js';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
 
@@ -19,6 +19,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
             <ul class="navbar__content__list"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
+                <li class="flex gap-1 text-xs"><i class="fa-solid fa-calendar text-blue-500"></i>Miercoles, 18 Junio</li>
                 <li>
                     <BreadCrumb titulo="seccion" />
                 </li>

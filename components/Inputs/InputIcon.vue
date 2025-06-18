@@ -6,7 +6,7 @@ const emit = defineEmits(['update:modelValue']);
 <template>
     <div class="relative">
     <label>{{ label }}</label>
-    <input :placeholder="placeholder" class="inputFondo rounded-xl w-full bg-[var(--color-primary-claro)]" @input="$emit('update:modelValue', $event.target.value)"/>
+    <input :placeholder="placeholder" class="inputFondo rounded-xl w-full bg-gray-100" @input="$emit('update:modelValue', $event.target.value)"/>
     <i class="fa-solid iconInput absolute left-[10px] top-[47.5%] text-gray-600" :class="icon"></i>
     </div>
 </template>

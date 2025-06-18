@@ -2,7 +2,8 @@
 // importando los reursos
 import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
-import Input from '../Inputs/Input.vue';
+import InputIcon from '../Inputs/InputIcon.vue';
+import Button from '../Buttons/Button.vue'
 
 import { usePaginacion } from '../../composables/Tabla/usePaginacion.js'
 import { useColumnasResponsivas } from '../../composables/Tabla/useTablasResponsive';
@@ -96,20 +97,24 @@ const estiloColumnas = computed(() => {
 <template>
     <div class="h-[90%]">
         <!-- Header -->
-        <div class="flex w-[100%] justify-between items-cent px-10 mt-5 md:flex-row flex-col gap-3">
-            <h1 class="font-bold text-2xl tituloTabla text-gray-800">
-                {{ props.headerTabla.titulo }}
-            </h1>
-            <div class="flex gap-3 md:w-[50%] justify-end">
-                <Input placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
-                <div class="flex gap-1 items-center">
-                    <button
-                        class="text-white w-[30px] h-[30px] rounded-full bg-[var(--color-primary)] hover:opacity-75">
-                        <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <h4>Agregar</h4>
-                </div>
+        <div class="flex w-[100%] justify-between items-center px-10 mt-5 md:flex-row flex-col gap-3">
+            <div>
+                <h1 class="font-bold text-2xl tituloTabla text-gray-800">
+                    {{ props.headerTabla.titulo }}
+                </h1>
+                <p>{{ props.headerTabla.descripcion }}</p>
             </div>
+            <div class="flex gap-3 md:w-[50%] justify-end">
+                <InputIcon placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
+
+                <nuxt-link to="/Pacientes/Ingresar" class="flex gap-1 items-center">
+                    <Button color="bg-blue-500">
+                        <i class="fa-solid fa-plus"></i>
+                    </Button>
+                    <h4>Agregar</h4>
+                </nuxt-link>
+            </div>
+
         </div>
 
         <!-- Tabla -->
@@ -117,8 +122,8 @@ const estiloColumnas = computed(() => {
             <div class="w-full">
 
                 <!-- Header titulos de props Columnas -->
-                <div class="sticky top-0 z-[0] grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white bg-[var(--color-primary)]"
-                    :style="estiloColumnas">
+                <div class="sticky top-0 z-[0] grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
+                    :class="headerTabla.color" :style="estiloColumnas">
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         {{ col.titulo }}
@@ -163,7 +168,9 @@ const estiloColumnas = computed(() => {
                     <div class="collapse-text col-span-full" :id="id">
                         <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
                             <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
-                                <p class="text-[var(--color-primary)] text-xs font-bold border-t-gray-200 mb-2 truncate">{{ col.titulo }}</p>
+                                <p
+                                    class="text-[var(--color-primary)] text-xs font-bold border-t-gray-200 mb-2 truncate">
+                                    {{ col.titulo }}</p>
                                 {{ fila[col.titulo] }}
                             </h2>
                         </div>

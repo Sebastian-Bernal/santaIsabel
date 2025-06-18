@@ -3,8 +3,7 @@ import Dashboard from '../components/Dashboard/Dashboard.vue'
 </script>
 
 <template>
-    <div class="p-15 bg-white">
+    <div class="px-15 py-10 bg-gray-100">
         <Dashboard></Dashboard>
-        <nuxtLink to="/forms/HistoriaClinica/Paso1">Registrar</nuxtLink>
     </div>
 </template>

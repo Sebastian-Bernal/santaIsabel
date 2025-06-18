@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import InputBgGray from '~/components/Inputs/InputBgGray.vue';
+import InputBgGray from '~/components/Inputs/InputIcon.vue';
 import { defineProps } from 'vue';
 
 const props = defineProps(['titulo']);

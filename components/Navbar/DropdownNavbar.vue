@@ -24,7 +24,7 @@ const titulo = defineProps(['nombre', 'icon','submenu']);
     position: absolute;
     top: 50px;
     margin-left: -60px;
-    background-color: var(--color-negro-rojizo);
+    background-color: var(--color-default-oscuro);
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

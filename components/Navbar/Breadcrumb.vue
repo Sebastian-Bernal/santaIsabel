@@ -3,7 +3,7 @@
         <i class="fa-solid fa-house"></i>
     </a>
     <div class="dropdown">
-        <div class="flex text-white borde rounded-lg bg-black" aria-label="Breadcrumb">
+        <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
                 <li class="inline-flex items-center">
                     <a href="/"
@@ -59,7 +59,7 @@ li:hover .dropdown{
     position: absolute;
     top: 50px;
     margin-left: -60px;
-    background-color: var(--color-negro-rojizo);
+    background-color: var(--color-default-oscuro);
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);

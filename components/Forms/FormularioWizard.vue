@@ -86,7 +86,7 @@ const enviarFormularioPendiente = () => {
         <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
-            <div class="w-full flex flex-col items-center py-3 gap-[15px] max-h-[80%] md:overflow-y-none overflow-y-auto">
+            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[80%] md:overflow-y-none overflow-y-auto">
                 <!-- Contenido del formulario -->
                 <slot></slot>
             </div>
@@ -102,3 +102,13 @@ const enviarFormularioPendiente = () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Scroll */
+.scrollForm::-webkit-scrollbar {
+    display: block;
+    width: 3px;
+}
+
+
+</style>

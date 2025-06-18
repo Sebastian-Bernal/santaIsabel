@@ -53,7 +53,7 @@ onMounted(() => {
         <Formulario :datos="{
             titulo: 'Datos del procedimiento',
             botones: [
-                { texto: 'Atras', ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-500' },
+                { texto: 'Atras', ruta: '/Historias/Paso3', color: 'bg-gray-500' },
             ]
         }" tamaño="w-[60%] h-[60%]">
 

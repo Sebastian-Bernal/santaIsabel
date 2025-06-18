@@ -2,7 +2,6 @@
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Textarea from '~/components/Textareas/Textarea.vue';
-import Fondo from '~/components/Fondo.vue';
 import Section from '~/components/Forms/Section.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
@@ -10,7 +9,7 @@ import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinic
 import { ref, watch, onMounted } from 'vue';
 
 // Declaracion de variables
-const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
+const historiaClinicaStore = useHistoriaClinicaStore();
 
 const {
     formData,
@@ -48,15 +47,15 @@ onMounted(() => {
             titulo: 'Consulta Medica',
             tituloFormulario: 'Nueva Historia Clinica',
             botones: [
-                { texto: 'Atras', ruta: '/forms/HistoriaClinica/Paso1', color: 'bg-gray-500' },
-                { texto: 'Siguiente', ruta: formComplete ? '/forms/HistoriaClinica/Paso3' : '', color: 'bg-blue-500' }
+                { texto: 'Atras', ruta: '/Historias/Ingresar', color: 'bg-gray-500' },
+                { texto: 'Siguiente', ruta: formComplete ? '/Historias/Paso3' : '', color: 'bg-blue-500' }
             ],
             secciones: [
-                { numPagina: 1, ruta: '/forms/HistoriaClinica/Paso1', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/forms/HistoriaClinica/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 3, ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-300' }
+                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[80%] h-[82%]">
+        }" tamaño="w-[80%] h-[85%]">
 
             <Section styles="flex-col">
                 <div class="flex gap-3 items-center">
@@ -86,7 +85,10 @@ onMounted(() => {
             </Section>
 
             <Section class="mt-3">
-                <Label forLabel="antecedentes">Antecedentes</Label>
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-folder text-blue-500"></i>
+                    <Label forLabel="antecedentes">Antecedentes</Label>
+                </div>
                 <Button color="bg-blue-500"
                     @click="agregarItem('Antecedentes', { id: '', valor: '', id_paciente: '', }, 'valor')">
                     <i class="fa-solid fa-plus"></i>
@@ -102,7 +104,7 @@ onMounted(() => {
             </Section>
             <!-- Registro de antecedentes -->
             <Section>
-                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md">
+                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md py-5">
                     <div class="flex items-center w-full justify-center">
                         <p class="block text-sm font-medium text-gray-700">Antecedentes Personales</p>
                     </div>
@@ -110,7 +112,7 @@ onMounted(() => {
                         <p v-for="antecedente in antecedentesDatos" class="text-gray-500 text-sm">{{ antecedente }}</p>
                     </div>
                 </div>
-                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md">
+                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md py-5">
                     <div class="flex items-center w-full justify-center">
                         <p class="block text-sm font-medium text-gray-700">Antecedentes Familiares</p>
                     </div>

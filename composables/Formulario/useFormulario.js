@@ -38,7 +38,7 @@ export function useFormulario(storeName) {
                 title: 'Historia sin plan de medicamentos',
                 html: '¿Deseas registrar <strong>medicamentos</strong>?',
                 showCancelButton: true,
-                confirmButtonText: '<a href="/forms/HistoriaClinica/Medicamentos">Sí</a>',
+                confirmButtonText: '<a href="/Historias/Medicamentos">Sí</a>',
                 cancelButtonText: 'No, continuar',
             });
             if (res.isConfirmed) return;
@@ -50,7 +50,7 @@ export function useFormulario(storeName) {
                 title: 'Historia sin procedimientos',
                 html: '¿Deseas registrar <strong>procedimientos</strong>?',
                 showCancelButton: true,
-                confirmButtonText: '<a href="/forms/HistoriaClinica/Procedimientos">Sí</a>',
+                confirmButtonText: '<a href="/Historias/Procedimientos">Sí</a>',
                 cancelButtonText: 'No, continuar',
             });
             if (res.isConfirmed) return;

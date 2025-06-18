@@ -5,12 +5,11 @@ import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import Section from '~/components/Forms/Section.vue';
-import Fondo from '~/components/Fondo.vue'
 import { ref, onMounted } from "vue";
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 
-const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
+const historiaClinicaStore = useHistoriaClinicaStore();
 
 const {
     formData,
@@ -60,7 +59,7 @@ const pacienteExistente = () => {
             title: 'Paciente no encontrado',
             text: 'El paciente ingresado no está registrado.',
             confirmButtonColor: '#3085d6',
-            confirmButtonText: '<a href="/forms/DatosPacienteNuevo">Registrar</a>',
+            confirmButtonText: '<a href="/Pacientes/Ingresar">Registrar</a>',
             cancelButton: 'Cancelar',
             cancelButtonColor: '#d33',
             showCancelButton: true
@@ -77,15 +76,15 @@ const pacienteExistente = () => {
             tituloFormulario: 'Nueva Historia Clinica',
             botones: [
                 { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Siguiente', ruta: formComplete ? '/forms/HistoriaClinica/Paso2' : '', color: 'bg-blue-500' }
+                { texto: 'Siguiente', ruta: formComplete ? '/Historias/Paso2' : '', color: 'bg-blue-500' }
             ],
             formData: formData.value,
             secciones: [
-                { numPagina: 1, ruta: '/forms/HistoriaClinica/Paso1', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/forms/HistoriaClinica/Paso2', color: 'bg-gray-300' },
-                { numPagina: 3, ruta: '/forms/HistoriaClinica/Paso3', color: 'bg-gray-300' }
+                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-gray-300' },
+                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[80%] h-[82%]">
+        }" tamaño="w-[80%] h-[85%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -97,7 +96,7 @@ const pacienteExistente = () => {
                     <nuxt-link to="" v-if="fechaModificacion">
                         <Button color="bg-[var(--color-green)]"><i class="fa-solid fa-pencil"></i></Button>
                     </nuxt-link>
-                    <nuxt-link to="/forms/DatosPacienteNuevo">
+                    <nuxt-link to="/Pacientes/Ingresar">
                         <Button color="bg-blue-500"><i class="fa-solid fa-plus"></i></Button>
                     </nuxt-link>
                 </div>
@@ -105,15 +104,12 @@ const pacienteExistente = () => {
             <Section>
                 <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
                     @blur="pacienteExistente" placeholder="Nombre del paciente" tamaño="w-full" />
-                <datalist id="nombreList">
+                <datalist id="nombreList" class="h-[300px]">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.nombre">
+                        cedula: {{ paciente.documento }}
                     </option>
                 </datalist>
-                <Select v-model="formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento"
-                    :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }]"
-                    placeholder="Tipo de documento" tamaño="w-full"></Select>
             </Section>
-
 
 
             <Section styles="flex-col md:flex-row">
@@ -122,8 +118,9 @@ const pacienteExistente = () => {
                 <datalist id="documentoList">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>
                 </datalist>
-                <Input v-model="formData.Paciente.direccion" type="text" id="direccion" name="direccion"
-                    placeholder="Direccion Completa" tamaño="w-full" />
+                <Select v-model="formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento"
+                    :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }]"
+                    placeholder="Tipo de documento" tamaño="w-full"></Select>
             </Section>
 
 

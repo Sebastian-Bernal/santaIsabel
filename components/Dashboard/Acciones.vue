@@ -6,6 +6,7 @@ const actions = [
         description: 'Registrar un nuevo paciente',
         icon: 'fa-plus',
         color: 'bg-blue-600 hover:bg-blue-700',
+        url: '/Pacientes/Ingresar',
         action: () => console.log('Nuevo paciente')
     },
     {
@@ -13,6 +14,7 @@ const actions = [
         description: 'Buscar historia clínica',
         icon: 'fa-search',
         color: 'bg-green-600 hover:bg-green-700',
+        url: '/Pacientes/Buscar',
         action: () => console.log('Buscar historia')
     },
     {
@@ -20,6 +22,7 @@ const actions = [
         description: 'Crear historia clínica',
         icon: 'fa-file',
         color: 'bg-purple-600 hover:bg-purple-700',
+        url: '/Historias/Ingresar',
         action: () => console.log('Nueva historia')
     },
     {
@@ -39,15 +42,20 @@ const actions = [
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
             <div class="space-y-3">
 
-                <button v-for="action in actions" class="w-full p-4 rounded-lg text-white transition-colors duration-200" :class="action.color">
-                    <div class="flex items-center space-x-3">
-                        <i class="fa-solid" :class="action.icon"></i>
-                        <div class="text-left">
-                            <div class="font-medium">{{ action.title }}</div>
-                            <div class="text-sm opacity-90">{{ action.description }}</div>
+
+                <button v-for="action in actions"
+                    class="w-full p-4 rounded-lg text-white transition-colors duration-200" :class="action.color">
+                    <nuxt-link :to="action.url">
+                        <div class="flex items-center space-x-3">
+                            <i class="fa-solid" :class="action.icon"></i>
+                            <div class="text-left">
+                                <div class="font-medium">{{ action.title }}</div>
+                                <div class="text-sm opacity-90">{{ action.description }}</div>
+                            </div>
                         </div>
-                    </div>
+                    </nuxt-link>
                 </button>
+
             </div>
         </div>
 
@@ -70,7 +78,7 @@ const actions = [
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
-                        <Activity class="h-4 w-4 text-purple-600" />
+                        <i class="fa-solid fa-clock h-4 w-4 text-purple-600"></i>
                         <span class="text-sm text-gray-600">Tiempo promedio</span>
                     </div>
                     <span class="font-semibold text-gray-900">25 min</span>

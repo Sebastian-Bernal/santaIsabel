@@ -1,6 +1,12 @@
+<script setup>
+import ButtonAside from './ButtonAside.vue';
+import { buttons } from '../../data/Buttons.js';
+
+</script>
+
 <template>
     <div class="section-asidebar m-[10px] ml-[15px] flex items-center">
-        <div class="section-asidebar__content fixed flex flex-col items-center rounded-2xl h-[60%] ">
+        <div ref="asideRef" class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
 
             <div class="left" @click="cambiarEstadoFalse()">
                 <ButtonAside v-for="button in buttons" :data="button" />
@@ -9,12 +15,6 @@
         </div>
     </div>
 </template>
-
-<script setup>
-import ButtonAside from './ButtonAside.vue';
-import { buttons } from '../../data/Buttons.js';
-
-</script>
 
 <style scoped>
 .section-asidebar {
