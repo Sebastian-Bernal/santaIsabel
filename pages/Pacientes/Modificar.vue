@@ -6,17 +6,19 @@ import Section from '~/components/Forms/Section.vue';
 import Select from '~/components/Selects/Select.vue';
 import { ubicacion } from '../../data/colombia.js'
 import { ref, computed, watch, onMounted } from 'vue'
-import { useNuevoPacienteStore } from '~/composables/Formulario/NuevoPaciente';
+import { useModificacionPacienteStore } from '~/composables/Formulario/ModificarPaciente';
+import { pacientes } from '~/data/pacientes.js';
 
-const nuevoPacienteStore = useNuevoPacienteStore(); // Se instancia aquí
+const modificacionPacienteStore = useModificacionPacienteStore(); // Se instancia aquí
 
 const {
     formData,
     traerDatos,
     guardarDatos,
-} = nuevoPacienteStore;
+} = modificacionPacienteStore;
 
 const formComplete = ref(false);
+const pacienteAModificar = computed(() => formData.Paciente.name ? formData.Paciente.name : 'Paciente')
 
 watch(formData, (newValue) => {
     guardarDatos(newValue);
@@ -36,12 +38,38 @@ const ciudades = computed(() => {
     return ubicacion.filter(data => data.departamento === formData.Paciente.departamento)[0].ciudades
 }
 );
+
+const pacienteExistente = () => {
+    const paciente = pacientes.value.find(
+        p => p.nombre.toLowerCase() === formData.Paciente.name.toLowerCase()
+    )
+
+    if (paciente) {
+        formData.Paciente.type_doc = paciente.tipoDocumento
+        formData.Paciente.nacimiento = paciente.fechaNacimiento
+        formData.Paciente.No_document = paciente.documento
+        formData.Paciente.id = paciente.id
+        formData.Paciente.genero = paciente.genero
+        formData.Paciente.departamento = paciente.departamento
+        formData.Paciente.municipio = paciente.municipio
+        formData.Paciente.zona = paciente.zona
+        formData.Paciente.barrio = paciente.barrio
+        formData.Paciente.direccion = paciente.direccion
+        formData.Paciente.celular = paciente.celular
+        formData.Paciente.telefono = paciente.telefono
+        formData.Paciente.Regimen = paciente.Regimen
+        formData.Paciente.poblacionVulnerable = paciente.poblacionVulnerable
+        formData.Paciente.Tipo = paciente.Tipo
+        formData.Paciente.Eps = paciente.eps
+
+    }
+};
 </script>
 
 <template>
     <div class="w-full h-full flex flex-col items-center">
         <Formulario class="mt-3" :datos="{
-            titulo: 'Nuevo paciente',
+            titulo: 'Modificar informacion de ' + pacienteAModificar,
             botones: [
                 { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
                 { texto: 'Registrar', ruta: '', color: 'bg-blue-500', submit: formComplete ? true : false }
@@ -58,7 +86,12 @@ const ciudades = computed(() => {
 
             <Section class="md:flex-row flex-col">
                 <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre"
-                    placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" />
+                    placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" list="nombreList" @blur="pacienteExistente" />
+                <datalist id="nombreList" class="h-[300px]">
+                    <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.nombre">
+                        cedula: {{ paciente.documento }}
+                    </option>
+                </datalist>
                 <Input v-model="formData.Paciente.nacimiento" type="date" id="nacimiento" name="nacimiento"
                     placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
             </Section>
@@ -72,7 +105,7 @@ const ciudades = computed(() => {
                 <Input v-model="formData.Paciente.No_document" type="number" id="documento" name="documento"
                     placeholder="Número de documento" tamaño="w-full" />
                 <Select v-model="formData.Paciente.genero" id="genero" name="genero"
-                    :options="[{ text: 'Masculino', value: 'masculino' }, { text: 'Femenino', value: 'femenino' }, { text: 'Otro', value: 'otro' }]"
+                    :options="[{ text: 'Masculino', value: 'Masculino' }, { text: 'Femenino', value: 'Femenino' }, { text: 'Otro', value: 'otro' }]"
                     placeholder="Genero" tamaño="w-full"></Select>
             </Section>
 
@@ -97,7 +130,7 @@ const ciudades = computed(() => {
                     </option>
                 </datalist>
                 <Select v-model="formData.Paciente.zona" id="zona" name="zona"
-                    :options="[{ text: 'Rural', value: 'rural' }, { text: 'Urbana', value: 'urbana' }]"
+                    :options="[{ text: 'Rural', value: 'Rural' }, { text: 'Urbana', value: 'Urbana' }]"
                     placeholder="Zona" tamaño="md:w-1/3 w-full"></Select>
             </Section>
 

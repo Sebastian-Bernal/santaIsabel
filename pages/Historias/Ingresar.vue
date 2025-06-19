@@ -71,7 +71,7 @@ const pacienteExistente = () => {
 
 <template>
     <div class="w-full h-full flex flex-col items-center">
-        <FormularioWizard :datos="{
+        <FormularioWizard class="mt-3" :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
             botones: [
@@ -84,7 +84,7 @@ const pacienteExistente = () => {
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-gray-300' },
                 { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[80%] h-[85%]">
+        }" tamaño="w-[90%] h-[97%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -93,12 +93,12 @@ const pacienteExistente = () => {
                 </div>
                 <div class="flex gap-2 items-center">
                     <p class="text-xs">{{ fechaModificacion }}</p>
-                    <nuxt-link to="" v-if="fechaModificacion">
+                    <a href="/Pacientes/Modificar" v-if="fechaModificacion">
                         <Button color="bg-[var(--color-green)]"><i class="fa-solid fa-pencil"></i></Button>
-                    </nuxt-link>
-                    <nuxt-link to="/Pacientes/Ingresar">
+                    </a>
+                    <a href="/Pacientes/Ingresar">
                         <Button color="bg-blue-500"><i class="fa-solid fa-plus"></i></Button>
-                    </nuxt-link>
+                    </a>
                 </div>
             </Section>
             <Section>

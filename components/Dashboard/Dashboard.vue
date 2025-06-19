@@ -10,7 +10,7 @@ const stats = [
         value: '1,234',
         change: '+12%',
         changeType: 'positive',
-        icon: 'Users',
+        icon: 'fa-users',
         color: 'blue'
     },
     {
@@ -18,7 +18,7 @@ const stats = [
         value: '28',
         change: '+8%',
         changeType: 'positive',
-        icon: 'FileText',
+        icon: 'fa-file',
         color: 'green'
     },
     {
@@ -26,7 +26,7 @@ const stats = [
         value: '45',
         change: '+15%',
         changeType: 'positive',
-        icon: 'Calendar',
+        icon: 'fa-calendar',
         color: 'purple'
     },
     {
@@ -34,7 +34,7 @@ const stats = [
         value: '7',
         change: '-5%',
         changeType: 'negative',
-        icon: 'AlertCircle',
+        icon: 'fa-file-export',
         color: 'orange'
     }
 ];

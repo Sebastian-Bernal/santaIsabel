@@ -286,7 +286,7 @@ const estiloColumnas = computed(() => {
 
 /* Paginador css */
 .btnsPagina button {
-    background: linear-gradient(to left, var(--color-primary), var(--color-azul));
+    background: linear-gradient(to left, var(--color-default), var(--color-default-oscuro));
 }
 
 .horizontal {

@@ -1,12 +1,19 @@
 <script setup>
+import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import ButtonAside from './ButtonAside.vue';
 import { buttons } from '../../data/Buttons.js';
 
+const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
+const cambiarEstadoFalse = () => {
+    if (showNavbarBurguer.value) {
+        cambiarEstado(false);
+    }
+};
 </script>
 
 <template>
     <div class="section-asidebar m-[10px] ml-[15px] flex items-center">
-        <div ref="asideRef" class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
+        <div class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
 
             <div class="left" @click="cambiarEstadoFalse()">
                 <ButtonAside v-for="button in buttons" :data="button" />
@@ -37,7 +44,11 @@ import { buttons } from '../../data/Buttons.js';
     align-items: center;
 }
 
-
+button .active {
+    background: #000;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 
 @media screen and (max-width: 768px) {
     .section-asidebar {

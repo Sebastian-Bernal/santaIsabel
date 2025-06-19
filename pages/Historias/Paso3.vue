@@ -42,7 +42,7 @@ onMounted(() => {
 
 <template>
     <div class="w-full h-full flex flex-col items-center">
-        <FormularioWizard :datos="{
+        <FormularioWizard class="mt-3" :datos="{
             titulo: 'Examen y Analisis',
             tituloFormulario: 'Nueva Historia Clinica',
             botones: [
@@ -55,7 +55,7 @@ onMounted(() => {
                 { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
             ],
             formStore: 'HistoriaClinica'
-        }" tamaño="w-[80%] h-[85%]">
+        }" tamaño="w-[90%] h-[97%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -130,7 +130,7 @@ onMounted(() => {
                     <Label forLabel="rehabilitacion">Tratamiento</Label>
                 </div>
             </Section>
-            <Section class="md:flex-row flex-col mb-5">
+            <Section class="md:flex-row flex-col mb-10">
                 <Select v-model="formData.AnalisisTratamiento.tratamiento" id="rehabilitacion" name="rehabilitacion"
                     :options="[{ text: 'Total o Parcial', value: 'Total o Parcial' }, { text: 'Sin potencial de rehabilitacion', value: 'Sin potencial de rehabilitacion' }, { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }]"
                     placeholder="Condicion de rehabilitacion" tamaño="md:w-3/5 w-full"></Select>

@@ -13,7 +13,7 @@ export const createFormStore = (storeId, estructuraInicial) => {
                 const data = JSON.parse(datosGuardados);
                 Object.assign(formData.value, data);
             } else {
-                console.log('No hay datos')
+                console.log('No hay datos', storeId)
             }
         };
 

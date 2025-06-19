@@ -49,6 +49,7 @@ const estado = useApiRest();
     margin: 0 10px;
     padding: 0 0 10px 0;
     border-radius: 15px 15px 15px 0;
+    background-color: rgba(0,0,0,0.3);
 }
 
 .container-content {

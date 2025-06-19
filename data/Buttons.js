@@ -3,7 +3,7 @@ import { ref } from "vue";
 export const buttons = ref([
     {
         id: 1,
-        nombre: "Empresa",
+        nombre: "Empresas",
         secciones: [
             {
                 titulo: 'Resoluciones',
@@ -39,7 +39,7 @@ export const buttons = ref([
             }
         ],
         icon: "fa-building",
-        tamaño: 'max-h-[290px]',
+        tamaño: 'max-h-[37vh] pt-6',
         active: false,
     },
     {
@@ -57,7 +57,7 @@ export const buttons = ref([
             }
         ],
         icon: "fa-file",
-        tamaño: 'max-h-[190px]',
+        tamaño: 'max-h-[25vh]',
         active: false,
     },
     {
@@ -78,7 +78,7 @@ export const buttons = ref([
             }
         ],
         icon: "fa-user",
-        tamaño: 'max-h-[190px]',
+        tamaño: 'max-h-[25vh]',
         showUp: true,
         active: false,
     },
@@ -97,7 +97,7 @@ export const buttons = ref([
             }
         ],
         icon: "fa-receipt",
-        tamaño: 'max-h-[290px]',
+        tamaño: 'max-h-[37vh]',
         showUp: true,
         active: false,
     },

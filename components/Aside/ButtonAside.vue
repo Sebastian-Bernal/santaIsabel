@@ -1,15 +1,10 @@
 <script setup>
 import { activeButton, sessionActive } from '../../stores/ButtonActive';
 import { useSeccionFooter } from '../../stores/NavigationFooter';
-import { ref, reactive, onMounted, nextTick } from 'vue';
+import { onMounted } from 'vue';
 
 const titulo = defineProps(['data']);
 const footer = useSeccionFooter();
-const desplegableAbajo = ref('');
-
-const paddingRight = () => {
-    document.getElementById
-}
 
 onMounted(() => {
     sessionActive();
@@ -18,20 +13,20 @@ onMounted(() => {
 
 <template>
     <button :class="{ 'active': data.active }"
-        class="z-999 border-none cursor-pointer text-[var(--color-gris-claro)] p-[15px] flex relative rounded-l-full hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
+        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] p-[15px] flex relative rounded-l-full hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
         <!-- Icono boton -->
-        <NuxtLink class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all">
+        <a class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all">
             <i class="fa-solid text-xl" :class="data.icon"></i>
-        </NuxtLink>
+        </a>
 
         <!-- Desplegable nombre de seccion, "right" -->
         <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px] rounded-r-3xl"
         :class="{'hover:rounded-[0_30px_0_0] ': !data.showUp, 'hover:rounded-[0_0_30px_0]': data.showUp}"
             @click="activeButton(data.id)">
-            <NuxtLink :to="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
+            <a :href="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
                 </h3>
-            </NuxtLink>
+            </a>
 
             <!-- Desplegable submenu, "down" -->
             <div id="data.id"
@@ -39,10 +34,10 @@ onMounted(() => {
                 :class="[data.tamaño, {'up': data.showUp}]">
                 <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
                     v-for="seccion in data.secciones">
-                    <NuxtLink :to="`/${data.nombre}/${seccion.titulo}`"
+                    <a :href="`/${data.nombre}/${seccion.titulo}`"
                         @click="footer.cambiarSecciones(seccion.subSecciones)">
                         {{ seccion.titulo }}
-                    </NuxtLink>
+                    </a>
                 </h3>
             </div>
 
@@ -55,9 +50,8 @@ button {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button .active {
-    background: var(--color-default-oscuro);
-    color: #fff;
+.active {
+    background: rgba(255,255,255,0.3);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 

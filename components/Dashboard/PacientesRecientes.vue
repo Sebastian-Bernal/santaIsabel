@@ -51,7 +51,7 @@ const recentPatients = [
                 <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">{{ patient.service }}</p>
                     <div class="flex items-center text-sm text-gray-500 mt-1">
-                        <Clock class="h-3 w-3 mr-1" />
+                        <i class="h-3 w-3 mr-2 fa-solid fa-clock " ></i>
                         {{ patient.lastVisit }}
                     </div>
                 </div>
@@ -60,9 +60,6 @@ const recentPatients = [
                     <span class="px-2 py-1 text-xs font-medium rounded-full" :class="patient.status === 'Completado' ? 'bg-green-600 text-white' : 'bg-amber-300'"  >
                         {{ patient.status }}
                     </span>
-                    <button class="text-gray-400 hover:text-gray-600">
-                        <FileText class="h-4 w-4" />
-                    </button>
                 </div>
             </div>
         </div>

@@ -38,11 +38,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
 <style scoped>
 .navbar {
-    position: fixed;
-    right: 0;
-    left: 0;
     padding: 10px 10px 5px 10px;
-    backdrop-filter: blur(10px);
     grid-area: navbar;
 }
 

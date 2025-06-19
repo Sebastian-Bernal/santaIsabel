@@ -1,12 +1,12 @@
 <script setup>
-defineProps(['label','placeholder','icon','modelValue']);
+defineProps(['label','placeholder','icon','modelValue','list']);
 const emit = defineEmits(['update:modelValue']);
 </script>
 
 <template>
     <div class="relative">
     <label>{{ label }}</label>
-    <input :placeholder="placeholder" class="inputFondo rounded-xl w-full bg-gray-100" @input="$emit('update:modelValue', $event.target.value)"/>
+    <input :list="list" :placeholder="placeholder" class="inputFondo rounded-xl w-full bg-gray-100 border border-gray-300" @input="$emit('update:modelValue', $event.target.value)"/>
     <i class="fa-solid iconInput absolute left-[10px] top-[47.5%] text-gray-600" :class="icon"></i>
     </div>
 </template>

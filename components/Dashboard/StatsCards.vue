@@ -16,7 +16,7 @@ const props = defineProps({
                 <p class="text-2xl font-bold text-gray-900 mt-1">{{ data.value }}</p>
             </div>
             <div class="p-3 rounded-full">
-                <Icon class="h-6 w-6" />
+                <i class="h-6 w-6 fa-solid text-gray-600" :class="data.icon"></i>
             </div>
         </div>
         <div class="mt-4 flex items-center">

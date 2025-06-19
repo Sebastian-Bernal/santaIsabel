@@ -78,20 +78,20 @@ const enviarFormularioPendiente = () => {
 
 <template>
     <div
-        class="bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative flex flex-col items-center" :class="tamaño">
-        <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
+        class="bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative z-1 flex flex-col items-center" :class="tamaño">
+        <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
-            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[80%] md:overflow-y-none overflow-y-auto">
+            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[87%] overflow-y-auto">
                 <!-- Contenido del formulario -->
                 <slot></slot>
             </div>
         </form>
         <!-- Botones Formulario -->
         <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-            <nuxtLink v-for="boton in datos.botones" :to="boton.ruta" class="md:w-2/4 w-full">
+            <nuxtLink v-for="boton in datos.botones" :to="boton.ruta">
                 <button :class="boton.color" @click="boton.submit ? validarYEnviar() : alertValidacion(boton.ruta)"
-                    class="w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                    class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ boton.texto }}
                 </button>
             </nuxtLink>
@@ -101,9 +101,36 @@ const enviarFormularioPendiente = () => {
 
 <style scoped>
 /* Scroll */
+/* Scroll */
+
 .scrollForm::-webkit-scrollbar {
-    display: block;
-    width: 5px;
-    color: var(--color-gray-200);
+    height: 7px;
+    width: 7px;
+}
+
+.scrollForm::-webkit-scrollbar-track {
+    border-radius: 2px;
+    background-color: #DFE9EB;
+}
+
+.scrollForm::-webkit-scrollbar-track:hover {
+    background-color: #B8C0C2;
+}
+
+.scrollForm::-webkit-scrollbar-track:active {
+    background-color: #B8C0C2;
+}
+
+.scrollForm::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: #326872;
+}
+
+.scrollForm::-webkit-scrollbar-thumb:hover {
+    background-color: #576A72;
+}
+
+.scrollForm::-webkit-scrollbar-thumb:active {
+    background-color: #107072;
 }
 </style>

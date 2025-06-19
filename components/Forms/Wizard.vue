@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="w-[80%] flex justify-between items-center gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-2xl">
+    <div class="w-full flex justify-between items-center gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-2xl">
         <h2 class="text-white font-bold text-2xl">{{ titulo }}</h2>
         <div class="flex items-center ">
         <nuxtLink v-for="(seccion, index) in secciones" :key="index" :to="seccion.ruta" class="flex items-center">

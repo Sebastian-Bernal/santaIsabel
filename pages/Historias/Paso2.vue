@@ -43,7 +43,7 @@ onMounted(() => {
 
 <template>
     <div class="w-full h-full flex flex-col items-center">
-        <FormularioWizard :datos="{
+        <FormularioWizard class="mt-3" :datos="{
             titulo: 'Consulta Medica',
             tituloFormulario: 'Nueva Historia Clinica',
             botones: [
@@ -55,7 +55,7 @@ onMounted(() => {
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[80%] h-[85%]">
+        }" tamaño="w-[90%] h-[97%]">
 
             <Section styles="flex-col">
                 <div class="flex gap-3 items-center">
