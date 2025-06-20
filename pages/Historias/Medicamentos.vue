@@ -3,7 +3,8 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
-import Fondo from '~/components/Fondo.vue';
+import Fondo from '~/components/Fondos/Fondo.vue';
+import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { ref } from 'vue';
 import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 
@@ -105,6 +106,15 @@ onMounted(() => {
                     <p class="text-base">{{ medicamento.cantidad }}</p>
                     <p class="text-base">{{ medicamento.dosis }}</p>
                 </div>
+            </div>
+
+            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+                <nuxtLink to="/Historias/Paso3">
+                    <ButtonForm color="bg-gray-500"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Atras
+                    </ButtonForm>
+                </nuxtLink>
             </div>
 
         </Formulario>

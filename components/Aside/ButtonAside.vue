@@ -1,13 +1,16 @@
 <script setup>
-import { activeButton, sessionActive } from '../../stores/ButtonActive';
+// import { activeButton, sessionActive } from '../../stores/ButtonActive';
+import { useButtonsAside } from '../../stores/ButtonActive';
 import { useSeccionFooter } from '../../stores/NavigationFooter';
 import { onMounted } from 'vue';
 
+const storeAside = useButtonsAside();
 const titulo = defineProps(['data']);
 const footer = useSeccionFooter();
 
 onMounted(() => {
-    sessionActive();
+    storeAside.getbuttons
+    storeAside.sessionActive();
 });
 </script>
 
@@ -22,7 +25,7 @@ onMounted(() => {
         <!-- Desplegable nombre de seccion, "right" -->
         <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px] rounded-r-3xl"
         :class="{'hover:rounded-[0_30px_0_0] ': !data.showUp, 'hover:rounded-[0_0_30px_0]': data.showUp}"
-            @click="activeButton(data.id)">
+            @click="storeAside.activeButton(data.id)">
             <a :href="`/${data.nombre}/index`" @click="footer.cambiarSecciones(null)">
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
                 </h3>

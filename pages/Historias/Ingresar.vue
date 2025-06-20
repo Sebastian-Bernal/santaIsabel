@@ -4,6 +4,7 @@ import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
+import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
 import { ref, onMounted } from "vue";
 import { pacientes } from '../data/pacientes.js';
@@ -15,10 +16,7 @@ const {
     formData,
     traerDatos,
     guardarDatos,
-    agregarItem,
-    eliminarItem
 } = historiaClinicaStore;
-
 
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();
@@ -27,13 +25,12 @@ const formComplete = ref(false);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    guardarDatos(newValue);
-
     if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "") {
         formComplete.value = true
     } else {
         formComplete.value = false
     }
+    guardarDatos(newValue);
 }, { deep: true });
 
 onMounted(() => {
@@ -67,6 +64,18 @@ const pacienteExistente = () => {
     }
 };
 
+const validarform = () => {
+    if (!formComplete.value) {
+        $swal.fire({
+            position: "top-end",
+            text: "Falta campos por llenar, por favor ingrese valores",
+            showConfirmButton: false,
+            timer: 1500,
+            background: '#d33',
+            color: '#fff'
+        });
+    }
+};
 </script>
 
 <template>
@@ -74,10 +83,6 @@ const pacienteExistente = () => {
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
-            botones: [
-                { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Siguiente', ruta: formComplete ? '/Historias/Paso2' : '', color: 'bg-blue-500' }
-            ],
             formData: formData.value,
             secciones: [
                 { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
@@ -138,6 +143,21 @@ const pacienteExistente = () => {
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, {text: 'Hijo', value: 'Hijo'}, {text: 'Conyuge', value: 'Conyuge'}, {text: 'Hermano/a', value: 'Hermano/a'}]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
             </Section>
+
+            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+                <nuxtLink to="/">
+                    <ButtonForm color="bg-gray-500"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Atras
+                    </ButtonForm>
+                </nuxtLink>
+                <nuxtLink :to="formComplete? '/Historias/Paso2' : ''">
+                <ButtonForm color="bg-blue-500" @click="validarform"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Registrar
+                </ButtonForm>
+                </nuxtLink>
+            </div>
 
         </FormularioWizard>
     </div>

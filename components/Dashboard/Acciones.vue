@@ -45,7 +45,7 @@ const actions = [
 
                 <button v-for="action in actions"
                     class="w-full p-4 rounded-lg text-white transition-colors duration-200" :class="action.color">
-                    <nuxt-link :to="action.url">
+                    <a :href="action.url">
                         <div class="flex items-center space-x-3">
                             <i class="fa-solid" :class="action.icon"></i>
                             <div class="text-left">
@@ -53,7 +53,7 @@ const actions = [
                                 <div class="text-sm opacity-90">{{ action.description }}</div>
                             </div>
                         </div>
-                    </nuxt-link>
+                    </a>
                 </button>
 
             </div>

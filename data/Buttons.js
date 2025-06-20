@@ -39,7 +39,7 @@ export const buttons = ref([
             }
         ],
         icon: "fa-building",
-        tamaño: 'max-h-[37vh] pt-6',
+        tamaño: 'max-h-[37vh] pt-8',
         active: false,
     },
     {

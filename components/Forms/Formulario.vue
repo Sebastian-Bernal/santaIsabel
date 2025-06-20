@@ -2,7 +2,6 @@
 import { onMounted, defineProps } from 'vue';
 import { useIndexedDBStore } from '../../stores/indexedDB.js'
 import { useFormPendiente } from '../../stores/formularioPendiente.js'
-import { useFormulario } from '~/composables/Formulario/useFormulario.js';
 const { $swal } = useNuxtApp();
 
 // DEfinicion de variables
@@ -16,24 +15,11 @@ const props = defineProps({
         default: "lg:w-3/5 md:w-4/5 w-[90%] h-3/4"
     },
 });
-const { formData, validarYEnviar } = useFormulario(props.datos.formStore);
+
+
+// Funcion para formulario pendiente --------------------
 const form = useFormPendiente();
 
-const alertValidacion = (ruta) => {
-    if (ruta === '') {
-        $swal.fire({
-            position: "top-end",
-            text: "Falta campos por llenar, por favor ingrese valores",
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#d33',
-            color: '#fff'
-        });
-    }
-};
-
-
-// Funcion para formulario pendiente 
 onMounted(() => {
     const isOnline = navigator.onLine
     if (isOnline) {
@@ -88,19 +74,18 @@ const enviarFormularioPendiente = () => {
             </div>
         </form>
         <!-- Botones Formulario -->
-        <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+        <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
             <nuxtLink v-for="boton in datos.botones" :to="boton.ruta">
                 <button :class="boton.color" @click="boton.submit ? validarYEnviar() : alertValidacion(boton.ruta)"
                     class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ boton.texto }}
                 </button>
             </nuxtLink>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <style scoped>
-/* Scroll */
 /* Scroll */
 
 .scrollForm::-webkit-scrollbar {

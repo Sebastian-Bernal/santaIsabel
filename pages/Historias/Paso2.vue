@@ -5,6 +5,7 @@ import Textarea from '~/components/Textareas/Textarea.vue';
 import Section from '~/components/Forms/Section.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
+import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
 import { ref, watch, onMounted } from 'vue';
 
@@ -16,12 +17,13 @@ const {
     traerDatos,
     guardarDatos,
     agregarItem,
-    eliminarItem
+    eliminarItem,
 } = historiaClinicaStore;
 
 const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
 const enfermedades = ref(['Gripe', 'Resfriado', 'Dolor de cabeza']);
 const formComplete = ref(false);
+const { $swal } = useNuxtApp();
 
 
 // Guardar los datos en localStorage
@@ -39,6 +41,19 @@ onMounted(() => {
     traerDatos();
 });
 
+// Funciones
+const validarform = () => {
+    if (!formComplete.value) {
+        $swal.fire({
+            position: "top-end",
+            text: "Falta campos por llenar, por favor ingrese valores",
+            showConfirmButton: false,
+            timer: 1500,
+            background: '#d33',
+            color: '#fff'
+        });
+    }
+};
 </script>
 
 <template>
@@ -46,10 +61,6 @@ onMounted(() => {
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Consulta Medica',
             tituloFormulario: 'Nueva Historia Clinica',
-            botones: [
-                { texto: 'Atras', ruta: '/Historias/Ingresar', color: 'bg-gray-500' },
-                { texto: 'Siguiente', ruta: formComplete ? '/Historias/Paso3' : '', color: 'bg-blue-500' }
-            ],
             secciones: [
                 { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
@@ -114,13 +125,28 @@ onMounted(() => {
                 </div>
                 <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md py-5">
                     <div class="flex items-center w-full justify-center">
-                        <p class="block text-sm font-medium text-gray-700">Antecedentes Familiares</p>
+                        <p class="block text-sm font-medium text-gray-700">Enfermedades Recientes</p>
                     </div>
                     <div class="flex flex-col items-center w-full">
-                        <p v-for="antecedente in antecedentesDatos" class="text-gray-500 text-sm">{{ antecedente }}</p>
+                        <p v-for="antecedente in enfermedades" class="text-gray-500 text-sm">{{ antecedente }}</p>
                     </div>
                 </div>
             </Section>
+
+            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+                <nuxtLink to="/Historias/Ingresar">
+                    <ButtonForm color="bg-gray-500"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Atras
+                    </ButtonForm>
+                </nuxtLink>
+                <nuxtLink :to="formComplete ? '/Historias/Paso3' : ''">
+                <ButtonForm color="bg-blue-500" @click="validarform"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Registrar
+                </ButtonForm>
+                </nuxtLink>
+            </div>
 
         </FormularioWizard>
         </div>

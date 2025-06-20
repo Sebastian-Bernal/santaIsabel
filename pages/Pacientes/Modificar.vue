@@ -4,19 +4,25 @@ import Label from '~/components/Labels/Label.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Section from '~/components/Forms/Section.vue';
 import Select from '~/components/Selects/Select.vue';
+import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { ubicacion } from '../../data/colombia.js'
 import { ref, computed, watch, onMounted } from 'vue'
 import { useModificacionPacienteStore } from '~/composables/Formulario/ModificarPaciente';
 import { pacientes } from '~/data/pacientes.js';
+import { useModificarPaciente } from '~/stores/Formularios/ModificarPaciente.js';
 
+const storeModificarPaciente = useModificarPaciente();
 const modificacionPacienteStore = useModificacionPacienteStore(); // Se instancia aquí
 
+// Administrar formulario en localStorage -----------------
 const {
     formData,
     traerDatos,
     guardarDatos,
+    limpiar,
 } = modificacionPacienteStore;
 
+const { $swal } = useNuxtApp();
 const formComplete = ref(false);
 const pacienteAModificar = computed(() => formData.Paciente.name ? formData.Paciente.name : 'Paciente')
 
@@ -34,6 +40,23 @@ onMounted(() => {
     traerDatos();
 });
 
+
+// Enviar formulario -------------------
+const enviarModificarPaciente = async (formData) => {
+    event.preventDefault()
+
+    await storeModificarPaciente.mandarFormulario(formData)
+
+    if (storeModificarPaciente.estado) {
+        await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
+        limpiar()
+        window.location.href = '/'
+    } else {
+        $swal.fire({ title: '¡A ocurrido un problema!', icon: 'error' })
+    }
+};
+
+// Funciones
 const ciudades = computed(() => {
     return ubicacion.filter(data => data.departamento === formData.Paciente.departamento)[0].ciudades
 }
@@ -64,6 +87,19 @@ const pacienteExistente = () => {
 
     }
 };
+
+const validarform = () => {
+    if (!formComplete.value) {
+        $swal.fire({
+            position: "top-end",
+            text: "Falta campos por llenar, por favor ingrese valores",
+            showConfirmButton: false,
+            timer: 1500,
+            background: '#d33',
+            color: '#fff'
+        });
+    }
+};
 </script>
 
 <template>
@@ -75,7 +111,7 @@ const pacienteExistente = () => {
                 { texto: 'Registrar', ruta: '', color: 'bg-blue-500', submit: formComplete ? true : false }
             ],
             formStore: 'NuevoPaciente'
-        }" tamaño="w-[90%] h-[100%]">
+        }" tamaño="w-[90%] h-[97%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -166,6 +202,19 @@ const pacienteExistente = () => {
                 <Input v-model="formData.Paciente.Tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
                     tamaño="md:w-1/4 w-full" />
             </Section>
+
+            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+                <nuxtLink to="/">
+                    <ButtonForm color="bg-gray-500"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Cancelar
+                    </ButtonForm>
+                </nuxtLink>
+                <ButtonForm color="bg-blue-500" @click="formComplete ? enviarModificarPaciente(formData) : validarform()"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Registrar
+                </ButtonForm>
+            </div>
 
         </Formulario>
     </div>
