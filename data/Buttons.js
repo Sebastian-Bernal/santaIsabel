@@ -75,6 +75,10 @@ export const buttons = ref([
             },
             {
                 titulo: "Evoluciones"
+            },
+            {
+                titulo: "Profesional",
+                subSecciones: ['Ingresar', 'Profesional/Buscar', 'Modificar']
             }
         ],
         icon: "fa-user",

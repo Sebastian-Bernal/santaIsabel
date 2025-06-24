@@ -30,7 +30,7 @@ const appointments = [
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">Citas de Hoy</h2>
             <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                Ver agenda
+                <nuxt-link to="/Agendas">Ver agenda</nuxt-link>
             </button>
         </div>
 

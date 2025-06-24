@@ -1,8 +1,9 @@
 <script setup>
 import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import ButtonAside from './ButtonAside.vue';
-import { buttons } from '../../data/Buttons.js';
+import { useButtonsAside } from '../../stores/ButtonActive';
 
+const storeAside = useButtonsAside();
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const cambiarEstadoFalse = () => {
     if (showNavbarBurguer.value) {
@@ -16,7 +17,7 @@ const cambiarEstadoFalse = () => {
         <div class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
 
             <div class="left" @click="cambiarEstadoFalse()">
-                <ButtonAside v-for="button in buttons" :data="button" />
+                <ButtonAside v-for="button in storeAside.buttons" :data="button" />
             </div>
 
         </div>

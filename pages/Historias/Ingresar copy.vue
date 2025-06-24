@@ -22,8 +22,6 @@ const {
 const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const formComplete = ref(false);
-const mostrarLista = ref(false);
-const pacientesFiltrados = ref([]);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
@@ -65,32 +63,6 @@ const pacienteExistente = () => {
         })
     }
 };
-
-// datalist -------------
-function filtrarPacientes() {
-    if (formData.Paciente.name.length === 0) {
-        pacientesFiltrados.value = [];
-        mostrarLista.value = false;
-        return;
-    }
-
-    pacientesFiltrados.value = pacientes.value.filter(p =>
-        p.nombre.toLowerCase().includes(formData.Paciente.name.toLowerCase())
-    );
-    mostrarLista.value = true;
-}
-
-function seleccionarPaciente(paciente) {
-    formData.Paciente.name = paciente.nombre;
-    formData.Paciente.type_doc = paciente.tipoDocumento;
-    formData.Paciente.No_document = paciente.documento;
-    formData.Paciente.id = paciente.id;
-    fechaModificacion.value = paciente.fechaModificacion;
-    mostrarLista.value = false;
-    // Aquí puedes también autocompletar el número de documento
-
-}
-
 
 const validarform = () => {
     if (!formComplete.value) {
@@ -134,17 +106,14 @@ const validarform = () => {
                     </a>
                 </div>
             </Section>
-            <Section styles="relative" @blur="pacienteExistente">
+            <Section>
                 <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
-                    @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full"/>
-                <ul v-show="mostrarLista && pacientesFiltrados.length"
-                    class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-                    <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" class=""
-                        @click="seleccionarPaciente(paciente)">
-                        <strong>{{ paciente.nombre }}</strong><br />
-                        <small>cédula: {{ paciente.documento }}</small>
-                    </li>
-                </ul>
+                    @blur="pacienteExistente" placeholder="Nombre del paciente" tamaño="w-full" />
+                <datalist id="nombreList" class="h-[300px]">
+                    <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.nombre">
+                        cedula: {{ paciente.documento }}
+                    </option>
+                </datalist>
             </Section>
 
 
@@ -171,7 +140,7 @@ const validarform = () => {
                 <Input v-model="formData.nombreAcompañante" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
                 <Select v-model="formData.parentesco" id="parentesco" name="parentesco"
-                    :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
+                    :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, {text: 'Hijo', value: 'Hijo'}, {text: 'Conyuge', value: 'Conyuge'}, {text: 'Hermano/a', value: 'Hermano/a'}]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
             </Section>
 
@@ -182,31 +151,14 @@ const validarform = () => {
                         Atras
                     </ButtonForm>
                 </nuxtLink>
-                <nuxtLink :to="formComplete ? '/Historias/Paso2' : ''">
-                    <ButtonForm color="bg-blue-500" @click="validarform"
+                <nuxtLink :to="formComplete? '/Historias/Paso2' : ''">
+                <ButtonForm color="bg-blue-500" @click="validarform"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        Siguiente
-                    </ButtonForm>
+                        Registrar
+                </ButtonForm>
                 </nuxtLink>
             </div>
 
         </FormularioWizard>
     </div>
 </template>
-
-<style scoped>
-.autocomplete-list li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #eee;
-}
-
-.autocomplete-list li:last-child {
-    border-bottom: none;
-}
-
-.autocomplete-list li:hover {
-    background-color: #e5f0ff;
-}
-</style>

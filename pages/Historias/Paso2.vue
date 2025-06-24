@@ -143,7 +143,7 @@ const validarform = () => {
                 <nuxtLink :to="formComplete ? '/Historias/Paso3' : ''">
                 <ButtonForm color="bg-blue-500" @click="validarform"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        Registrar
+                        Siguiente
                 </ButtonForm>
                 </nuxtLink>
             </div>

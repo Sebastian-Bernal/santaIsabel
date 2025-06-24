@@ -1,0 +1,42 @@
+export const citas = [
+    {
+        hora: '6:00 AM',
+        fecha: '25/06/2025',
+        Paciente: 'Juan Perez Perez',
+        Medico: 'Victor Gonzales',
+        servicio: 'Medicina general',
+        tipo: 'Control'
+    },
+    {
+        hora: '6:00 AM',
+        fecha: '25/06/2025',
+        Paciente: 'Juan Perez Perez',
+        Medico: 'Victor Gonzales',
+        servicio: 'Medicina general',
+        tipo: 'Control'
+    },
+    {
+        hora: '6:00 AM',
+        fecha: '25/06/2025',
+        Paciente: 'Juan Perez Perez',
+        Medico: 'Victor Gonzales',
+        servicio: 'Medicina general',
+        tipo: 'Control'
+    },
+    {
+        hora: '9:30 AM',
+        fecha: '26/06/2025',
+        Paciente: 'Ana Torres',
+        Medico: 'Laura Martínez',
+        servicio: 'Pediatría',
+        tipo: 'Primera vez'
+    },
+    {
+        hora: '4:00 PM',
+        fecha: '26/06/2025',
+        Paciente: 'Carlos Gómez',
+        Medico: 'Jorge Pérez',
+        servicio: 'Odontología',
+        tipo: 'Urgencias'
+    }
+]

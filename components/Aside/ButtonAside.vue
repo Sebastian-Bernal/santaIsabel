@@ -9,7 +9,6 @@ const titulo = defineProps(['data']);
 const footer = useSeccionFooter();
 
 onMounted(() => {
-    storeAside.getbuttons
     storeAside.sessionActive();
 });
 </script>

@@ -1,11 +1,13 @@
 import { ref } from 'vue';
 import { defineStore } from "pinia";
+// import { validarYEnviarNuevoPaciente } from '~/Core/NuevoPaciente';
 
 // Store para cada formulario con estructura inicial
 export const createFormStore = (storeId, estructuraInicial) => {
     return defineStore('FormData', () => {
         const { $swal } = useNuxtApp();
         const formData = ref(JSON.parse(JSON.stringify(estructuraInicial)));
+        // const estado = ref(false);
 
         const traerDatos = () => {
             const datosGuardados = localStorage.getItem(storeId);
@@ -54,6 +56,10 @@ export const createFormStore = (storeId, estructuraInicial) => {
         const limpiar = () => {
             localStorage.removeItem(storeId);
         };
+
+        // const mandarFormulario = async(data) => {
+        //     estado.value = await validarYEnviarNuevoPaciente(data)
+        // }
 
         return {
             formData,
