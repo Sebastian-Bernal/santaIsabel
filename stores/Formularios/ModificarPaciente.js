@@ -1,18 +1,25 @@
-import { defineStore } from "pinia";
-import { validarYEnviarModificarPaciente } from "~/Core/ModificarPaciente";
+import { createFormStore } from '../../stores/createFormStore';
+// Creacion del store para Nuevo Paciente
 
-export const useModificarPaciente = defineStore('ModificarPaciente', {
-    state: () => ({
-        estado: false,
-    }),
-
-    getters: {
-
-    },
-
-    actions: {
-        async mandarFormulario(datos) {
-            this.estado = await validarYEnviarModificarPaciente(datos)
-        },
+const estructuraModificacionPaciente = {
+    Paciente: {
+        name: '',
+        nacimiento: '',
+        type_doc: '',
+        No_document: '',
+        genero: '',
+        direccion: '',
+        departamento: '',
+        municipio: '',
+        zona: '',
+        barrio: '',
+        celular: '',
+        telefono: '',
+        Eps: '',
+        Regimen: '',
+        poblacionVulnerable: '',
+        Tipo: '',
     }
-})
+}
+
+export const useModificacionPacienteStore = createFormStore('ModificacionPaciente', estructuraModificacionPaciente);

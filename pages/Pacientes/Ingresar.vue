@@ -7,10 +7,8 @@ import Select from '~/components/Selects/Select.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { ubicacion } from '../../data/colombia.js'
 import { ref, computed, watch, onMounted } from 'vue'
-import { useNuevoPacienteStore } from '~/composables/Formulario/NuevoPaciente';
-import { useNuevoPaciente } from '~/stores/Formularios/NuevoPaciente.js';
+import { useNuevoPacienteStore } from '~/stores/formularios/NuevoPaciente.js';
 
-const storeNuevoPaciente = useNuevoPaciente();
 const nuevoPacienteStore = useNuevoPacienteStore(); // Se instancia aquí
 
 // Administrar formulario en localStorage -----------------
@@ -19,6 +17,8 @@ const {
     traerDatos,
     guardarDatos,
     limpiar,
+    estado,
+    mandarFormulario,
 } = nuevoPacienteStore;
 
 const formComplete = ref(false);
@@ -43,9 +43,9 @@ onMounted(() => {
 const enviarNuevoPaciente = async (formData) => {
     event.preventDefault()
 
-    await storeNuevoPaciente.mandarFormulario(formData)
-
-    if (storeNuevoPaciente.estado) {
+    await mandarFormulario(formData)
+    console.log(estado)
+    if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
         limpiar()
         window.location.href = '/'

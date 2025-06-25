@@ -5,7 +5,16 @@ import { defineStore } from "pinia";
 export const useSeccionFooter = defineStore('subSecciones', {
     state: () => ({
         secciones: null,
+        idActivo: ''
     }),
+    getters: {
+        idActivoDefault: (state) => {
+            if(state.idActivo === ''){
+                state.idActivo = state.secciones?.[0]
+            }
+        }
+    },
+
     actions: {
         cambiarSecciones (subSecciones) {
             this.secciones = subSecciones ? subSecciones : null;
@@ -16,6 +25,9 @@ export const useSeccionFooter = defineStore('subSecciones', {
                 if (secciones) {
                     this.cambiarSecciones(secciones);
                 }
+        },
+        cambiarIdActivo (pagina) {
+            this.idActivo = pagina
         }
     }
 })

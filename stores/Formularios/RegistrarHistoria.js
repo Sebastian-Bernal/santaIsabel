@@ -1,18 +1,55 @@
-import { defineStore } from "pinia";
-import { validarYEnviarRegistrarHistoria } from "~/Core/RegistrarHistoria";
+import { createFormStore } from '../../stores/createFormStore';
+// Creacion del store para historia clinica
 
-export const useRegistrarHistoria = defineStore('RegistrarHistoria', {
-    state: () => ({
-        estado: false,
-    }),
-
-    getters: {
-
+const estructuraRegistrarHistoria = {
+    Paciente: {
+        name: '',
+        type_doc: '',
+        No_document: '',
+        id: '',
     },
-
-    actions: {
-        async mandarFormulario(datos) {
-            this.estado = await validarYEnviarRegistrarHistoria(datos)
+    Diagnosticos: [{
+        id: '',
+        tipo: '',
+        CIE_10: '',
+        id_paciente: '',
+        rol_attention: '',
+    }],
+    Antecedentes: [{
+        id: '',
+        valor: '',
+        id_paciente: '',
+    }],
+    Enfermedad: {
+        valor: '',
+        fecha_diagnostico: '',
+        fecha_rehabilitacion: '',
+    },
+    HistoriaClinica: {
+        motivo: '',
+        signosVitales: {
+            ta: '',
+            fc: '',
+            fr: '',
+            t: '',
+            SATo2: '',
         },
-    }
-})
+        fecha_historia: '',
+        id_paciente: '',
+        id_profesional: ''
+    },
+    ExamenFisico: {
+        Peso: '',
+        altura: '',
+        otros: '',
+        id_RegistrarHistoria: '',
+    },
+    AnalisisTratamiento: {
+        analisis: '',
+        tratamiento: '',
+    },
+    Plan_manejo_medicamentos: [],
+    Plan_manejo_procedimientos: [],
+}
+
+export const useRegistrarHistoriaStore = createFormStore('RegistrarHistoria', estructuraRegistrarHistoria);

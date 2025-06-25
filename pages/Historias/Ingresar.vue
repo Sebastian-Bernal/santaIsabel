@@ -8,15 +8,15 @@ import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
 import { ref, onMounted } from "vue";
 import { pacientes } from '../data/pacientes.js';
-import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
+import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
 
-const historiaClinicaStore = useHistoriaClinicaStore();
+const RegistrarHistoriaStore = useRegistrarHistoriaStore();
 
 const {
     formData,
     traerDatos,
     guardarDatos,
-} = historiaClinicaStore;
+} = RegistrarHistoriaStore;
 
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();

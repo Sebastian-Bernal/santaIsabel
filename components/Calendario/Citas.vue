@@ -1,21 +1,52 @@
+<script setup>
+import { useCalendarioCitas } from '../../stores/Calendario.js'
+import { citas } from '../../data/Citas.js'
+import {computed} from 'vue';
+import { storeToRefs } from 'pinia';
 
+const calendarioCitasStore = useCalendarioCitas();
+const {
+    fecha,
+    dias,
+    meses
+} = storeToRefs(calendarioCitasStore);
+
+const citasFiltradas = computed(() => {
+    return citas.filter(cita => cita.fecha === fecha.value)
+});
+
+const mesesAño = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Dicimebre"]
+
+const mes = computed(() => {
+    return mesesAño[parseInt(meses.value) - 1]
+});
+
+</script>
 
 <template>
-    <div class="py-5 mx-8 flex flex-col gap-1 border border-gray-300 rounded-2xl h-fit bg-white">
-        <h2 class="text-xl font-semibold my-2 px-10">Martes 24, Junio</h2>
-        <div class="py-4 px-10 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 hover:bg-white" v-for="item in 5">
-            <div class="flex flex-col items-center">
-                <h2 class="text-blue-500">6:00 AM</h2>
-                <p class="text-xs text-gray-500">Hoy</p>
-            </div>
-            <div>
-                <p class="font-semibold">Juan Perez Perez</p>
-                <p class="text-sm text-gray-700">Medicina general</p>
+    <div class="py-5 flex flex-col gap-1 border border-gray-300 rounded-2xl h-110 overflow-y-auto  bg-white">
+        <h2 class="text-xl font-semibold my-2 px-10">{{ calendarioCitasStore.diaSemana }} {{ dias }}, {{ mes }}</h2>
+        <div class="py-4 lg:px-10 px-5 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 hover:bg-white"
+            v-for="cita in citasFiltradas">
+            <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
+                <div class="flex flex-col items-center">
+                    <h2 class="text-blue-500">{{ cita.hora }}</h2>
+                    <p class="text-xs text-gray-500">Hoy</p>
+                </div>
+                <div>
+                    <p class="font-semibold">{{ cita.Paciente }}</p>
+                    <p class="text-sm text-gray-700">{{ cita.servicio }}</p>
+                </div>
             </div>
             <div class="flex flex-col gap-2">
-                <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i> Victor Gonzales</h3>
-                <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> Control</h3>
+                <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i>
+                    {{ cita.Medico }}</h3>
+                <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.tipo }}</h3>
             </div>
+        </div>
+
+        <div v-if="citasFiltradas.length < 1" class="w-full py-8 flex justify-center">
+            <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
 </template>

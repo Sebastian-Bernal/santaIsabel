@@ -3,9 +3,35 @@ import DropdownNavbar from './DropdownNavbar.vue'
 import BreadCrumb from './Breadcrumb.vue';
 import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
+import { computed } from 'vue';
 
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
+function obtenerFechaFormateada() {
+    const fecha = new Date();
+
+    const diasSemana = [
+        'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'
+    ];
+    const meses = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+    ];
+
+    const diaSemana = diasSemana[fecha.getDay()];
+    const diaMes = fecha.getDate();
+    const mesNombre = meses[fecha.getMonth()];
+
+    // Capitalizar la primera letra
+    const capitalizar = (palabra) =>
+        palabra.charAt(0).toUpperCase() + palabra.slice(1);
+
+    return `${capitalizar(diaSemana)}, ${diaMes} ${capitalizar(mesNombre)}`;
+}
+
+const fechaActualFormateada = computed(() => {
+    return obtenerFechaFormateada();
+});
 </script>
 
 <template>
@@ -20,7 +46,8 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
             <ul class="navbar__content__list"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
-                    <nuxt-link to="/Agendas" class="flex gap-1 text-xs"><i class="fa-solid fa-calendar text-blue-500"></i>Miercoles, 18 Junio</nuxt-link>
+                    <a href="/Agendas" class="flex gap-1 text-xs"><i class="fa-solid fa-calendar text-blue-500"></i>{{
+                        fechaActualFormateada }}</a>
                 </li>
                 <li>
                     <BreadCrumb titulo="seccion" />

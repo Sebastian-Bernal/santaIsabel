@@ -1,18 +1,21 @@
-import { defineStore } from "pinia";
-import { validarYEnviarNuevoMedico } from "~/Core/NuevoMedico";
+import { createFormStore } from '../../stores/createFormStore';
+// Creacion del store para Nuevo Medico
 
-export const useNuevoMedico = defineStore('NuevoMedico', {
-    state: () => ({
-        estado: false,
-    }),
-
-    getters: {
-
-    },
-
-    actions: {
-        async mandarFormulario(datos) {
-            this.estado = await validarYEnviarNuevoMedico(datos)
-        },
+const estructuraNuevoMedico = {
+    Medico: {
+        name: '',
+        nacimiento: '',
+        type_doc: '',
+        No_document: '',
+        genero: '',
+        direccion: '',
+        departamento: '',
+        municipio: '',
+        zona: '',
+        barrio: '',
+        celular: '',
+        telefono: '',
     }
-})
+}
+
+export const useNuevoMedicoStore = createFormStore('NuevoMedico', estructuraNuevoMedico);

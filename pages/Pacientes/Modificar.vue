@@ -7,11 +7,9 @@ import Select from '~/components/Selects/Select.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { ubicacion } from '../../data/colombia.js'
 import { ref, computed, watch, onMounted } from 'vue'
-import { useModificacionPacienteStore } from '~/composables/Formulario/ModificarPaciente';
+import { useModificacionPacienteStore } from '~/stores/Formularios/ModificarPaciente.js';
 import { pacientes } from '~/data/pacientes.js';
-import { useModificarPaciente } from '~/stores/Formularios/ModificarPaciente.js';
 
-const storeModificarPaciente = useModificarPaciente();
 const modificacionPacienteStore = useModificacionPacienteStore(); // Se instancia aquí
 
 // Administrar formulario en localStorage -----------------
@@ -20,6 +18,8 @@ const {
     traerDatos,
     guardarDatos,
     limpiar,
+    estado,
+    mandarFormulario,
 } = modificacionPacienteStore;
 
 const { $swal } = useNuxtApp();
@@ -45,9 +45,9 @@ onMounted(() => {
 const enviarModificarPaciente = async (formData) => {
     event.preventDefault()
 
-    await storeModificarPaciente.mandarFormulario(formData)
+    await mandarFormulario(formData)
 
-    if (storeModificarPaciente.estado) {
+    if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
         limpiar()
         window.location.href = '/'

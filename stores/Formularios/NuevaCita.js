@@ -1,18 +1,22 @@
-import { defineStore } from "pinia";
-import { validarYEnviarNuevaCita } from "~/Core/NuevaCita";
+import { createFormStore } from '../createFormStore';
+// Creacion del store para nueva cita medica
 
-export const useNuevaCita = defineStore('NuevaCita', {
-    state: () => ({
-        estado: false,
-    }),
-
-    getters: {
-
+const estructuraNuevaCita = {
+    Paciente: {
+        name: '',
+        No_document: '',
+        id: '',
     },
-
-    actions: {
-        async mandarFormulario(datos) {
-            this.estado = await validarYEnviarNuevaCita(datos)
-        },
+    Medico: {
+        name: '',
+        profesion: '',
+        id: ''
+    },
+    cita: {
+        fecha: '',
+        servicio: '',
+        hora: ''
     }
-})
+}
+
+export const useNuevaCitaStore = createFormStore('NuevaCita', estructuraNuevaCita);

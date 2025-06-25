@@ -10,7 +10,18 @@ import Section from '~/components/Forms/Section.vue';
 import { ref, onMounted } from "vue";
 import { pacientes } from '../data/pacientes.js';
 import { medicos } from '../../data/medicos.js'
-import { useNuevaCitaStore } from '~/composables/Formulario/NuevaCita';
+import { useNuevaCitaStore } from '~/stores/Formularios/NuevaCita';
+import { citas } from '../../data/Citas.js'
+
+const calendarioCitasStore = useCalendarioCitas();
+
+const {
+    fecha, 
+    cambiarFecha,
+    dias,
+    meses,
+    años
+} = calendarioCitasStore;
 
 const NuevaCitaStore = useNuevaCitaStore();
 
@@ -18,6 +29,9 @@ const {
     formData,
     traerDatos,
     guardarDatos,
+    limpiar,
+    estado,
+    mandarFormulario
 } = NuevaCitaStore;
 
 // Delcaracionde variables y funciones
@@ -29,7 +43,7 @@ const pacientesFiltrados = ref([]);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "") {
+    if (formData.Paciente.name !== "") {
         formComplete.value = true
     } else {
         formComplete.value = false
@@ -39,7 +53,14 @@ watch(formData, (newValue) => {
 
 onMounted(() => {
     traerDatos();
+    formData.cita.fecha = fechaformatDate();
+
 });
+
+const fechaformatDate = () => {
+    const partes = fecha.split('/')
+    return partes.reverse().join('-')
+}
 
 
 // Funcion para autocompletar el paciente
@@ -49,7 +70,6 @@ const pacienteExistente = () => {
     )
 
     if (paciente) {
-        formData.Paciente.type_doc = paciente.tipoDocumento
         formData.Paciente.No_document = paciente.documento
         formData.Paciente.id = paciente.id
         fechaModificacion.value = paciente.fechaModificacion
@@ -84,7 +104,6 @@ function filtrarPacientes() {
 
 function seleccionarPaciente(paciente) {
     formData.Paciente.name = paciente.nombre;
-    formData.Paciente.type_doc = paciente.tipoDocumento;
     formData.Paciente.No_document = paciente.documento;
     formData.Paciente.id = paciente.id;
     fechaModificacion.value = paciente.fechaModificacion;
@@ -93,6 +112,20 @@ function seleccionarPaciente(paciente) {
 
 }
 
+// Enviar formulario -------------------
+const enviarNuevaCita = async (formData) => {
+    event.preventDefault()
+
+    const estado = await mandarFormulario(formData)
+
+    if (estado) {
+        await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
+        limpiar()
+        window.location.href = '/Agendas'
+    } else {
+        $swal.fire({ title: '¡A ocurrido un problema!', icon: 'error' })
+    }
+};
 
 const validarform = () => {
     if (!formComplete.value) {
@@ -109,12 +142,12 @@ const validarform = () => {
 </script>
 
 <template>
-    <Fondo class="w-full h-full flex flex-col items-center">
+    <Fondo >
         <FormularioWizard class="mt-3" :datos="{
-            titulo: '',
+            titulo: 'Datos de la cita',
             tituloFormulario: 'Nueva Cita Medica',
             formData: formData.value,
-        }" tamaño="w-[70%] h-[80%]">
+        }" tamaño="w-[60%] h-[80%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -143,10 +176,10 @@ const validarform = () => {
             </Section>
 
             <Section>
-                <Input v-model="formData.fecha" type="date" id="fecha" name="fecha"
+                <Input v-model="formData.cita.fecha" type="date" id="fecha" name="fecha"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
-                <Input v-model="formData.parentesco" type="time" id="parentesco" name="parentesco"
-                    placeholder="Seleccione el parentesco" tamaño="w-full"></Input>
+                <Input v-model="formData.cita.hora" type="time" id="hora" name="hora"
+                    placeholder="Seleccione la hora para la cita" tamaño="w-full"></Input>
             </Section>
 
             <Section>
@@ -160,15 +193,14 @@ const validarform = () => {
                 <Input v-model="formData.Medico.name" type="text" id="nombre" name="nombre" list="medicosList"
                     placeholder="Nombre del profesional" tamaño="w-full"/>
                 <datalist id="medicosList">
-                    <option v-for="medico in medicos" :value="medico.nombre"></option>
+                    <option v-for="medico in medicos" :value="medico.nombre">
+                        profesion: {{ medico.profesion }}
+                    </option>
                 </datalist>
-                <Select v-model="formData.Medico.servicio" id="profesion" name="profesion"
+                <Select v-model="formData.cita.servicio" id="profesion" name="profesion"
                     :options="[{ text: 'Medicina General', value: 'Medicina General' }, { text: 'Psicologia', value: 'Psicologia' }, { text: 'Odontologia', value: 'Odontologia' }]"
                     placeholder="Servicio" tamaño="w-full"></Select>
             </Section>
-
-
-
 
             <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
                 <nuxtLink to="/Agendas">
@@ -177,8 +209,8 @@ const validarform = () => {
                         Atras
                     </ButtonForm>
                 </nuxtLink>
-                <nuxtLink :to="formComplete ? '' : ''">
-                    <ButtonForm color="bg-blue-500" @click="validarform"
+                <nuxtLink>
+                    <ButtonForm color="bg-blue-500" @click="formComplete ? enviarNuevaCita(formData) : validarform()"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Registrar
                     </ButtonForm>

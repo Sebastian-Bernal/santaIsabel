@@ -6,15 +6,15 @@ import Section from '~/components/Forms/Section.vue';
 import Fondo from '~/components/Fondos/Fondo.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { ref } from 'vue';
-import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
+import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
 
-const historiaClinicaStore = useHistoriaClinicaStore(); // Se instancia aquí
+const RegistrarHistoriaStore = useRegistrarHistoriaStore(); // Se instancia aquí
 
 const {
     formData,
     traerDatos,
     guardarDatos,
-} = historiaClinicaStore;
+} = RegistrarHistoriaStore;
 
 const nuevoMedicamento = ref({
     medicamento: '',

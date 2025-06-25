@@ -1,13 +1,13 @@
 import { ref } from 'vue';
 import { defineStore } from "pinia";
-// import { validarYEnviarNuevoPaciente } from '~/Core/NuevoPaciente';
+import { accionesFormularios } from './Formularios/accionesFormulario';
 
 // Store para cada formulario con estructura inicial
 export const createFormStore = (storeId, estructuraInicial) => {
     return defineStore('FormData', () => {
         const { $swal } = useNuxtApp();
         const formData = ref(JSON.parse(JSON.stringify(estructuraInicial)));
-        // const estado = ref(false);
+        const estado = ref();
 
         const traerDatos = () => {
             const datosGuardados = localStorage.getItem(storeId);
@@ -57,17 +57,31 @@ export const createFormStore = (storeId, estructuraInicial) => {
             localStorage.removeItem(storeId);
         };
 
-        // const mandarFormulario = async(data) => {
-        //     estado.value = await validarYEnviarNuevoPaciente(data)
-        // }
-
+        const mandarFormulario = async (data) => {
+            const accion = accionesFormularios[storeId];
+            if (typeof accion === 'function') {
+                try {
+                    estado.value = await accion(data);
+                    return true
+                } catch (err) {
+                    estado.value = false;
+                    console.error(`Error enviando formulario '${storeId}':`, err);
+                }
+            } else {
+                console.warn(`No se encontró función de envío para '${storeId}'`);
+                estado.value = false;
+            }
+        };
+        
         return {
             formData,
+            estado,
             traerDatos,
             guardarDatos,
             agregarItem,
             limpiar,
-            eliminarItem
+            eliminarItem,
+            mandarFormulario
         }
     });
 }

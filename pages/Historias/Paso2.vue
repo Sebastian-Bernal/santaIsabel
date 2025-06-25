@@ -6,11 +6,11 @@ import Section from '~/components/Forms/Section.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
-import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
+import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
 import { ref, watch, onMounted } from 'vue';
 
 // Declaracion de variables
-const historiaClinicaStore = useHistoriaClinicaStore();
+const RegistrarHistoriaStore = useRegistrarHistoriaStore();
 
 const {
     formData,
@@ -18,7 +18,7 @@ const {
     guardarDatos,
     agregarItem,
     eliminarItem,
-} = historiaClinicaStore;
+} = RegistrarHistoriaStore;
 
 const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
 const enfermedades = ref(['Gripe', 'Resfriado', 'Dolor de cabeza']);
@@ -106,7 +106,7 @@ const validarform = () => {
                 </Button>
             </Section>
             <Section styles="flex-col gap-1 mb-2 w-full max-h-[100px] overflow-y-auto">
-                <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes" :key="id">
+                <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes" :key="i">
                     <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
                         placeholder="Antecedentes" tamaño="w-full" />
                     <i v-if="i > 0" class="fa-solid fa-close text-gray-500"

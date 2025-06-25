@@ -15,17 +15,19 @@ import Reloj from '~/components/Calendario/Reloj'
                 </div>
                 <nuxt-link to="/Agendas/Registrar">
                     <div class="flex gap-3 items-center">
-                        <div class="flex gap-2 items-center">
-                            <i class="fa-solid fa-plus text-blue-500"></i>
-                            Agregar
+
+                        <div class="flex gap-2 items-center bg-blue-500 p-3 rounded-2xl text-white font-semibold">
+                            <i class="fa-solid fa-plus"></i>
+                            Agregar Cita
                         </div>
+
                     </div>
                 </nuxt-link>
             </div>
 
-            <div class="grid md:grid-cols-[0.6fr_1fr] grid-cols-1 mx-20">
-                <Calendario></Calendario>
+            <div class="grid lg:grid-cols-[1fr_0.6fr] md:grid-cols-[1fr_1fr] grid-cols-1 mx-10 lg:gap-10 gap-3 justify-between">
                 <Citas />
+                <Calendario></Calendario>
             </div>
 
 

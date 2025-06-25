@@ -8,17 +8,17 @@ export const citas = [
         tipo: 'Control'
     },
     {
-        hora: '6:00 AM',
+        hora: '7:00 AM',
         fecha: '25/06/2025',
-        Paciente: 'Juan Perez Perez',
-        Medico: 'Victor Gonzales',
-        servicio: 'Medicina general',
+        Paciente: 'Ana Lopez Perez',
+        Medico: 'Javier Gonzales',
+        servicio: 'Odontologia',
         tipo: 'Control'
     },
     {
-        hora: '6:00 AM',
+        hora: '8:00 AM',
         fecha: '25/06/2025',
-        Paciente: 'Juan Perez Perez',
+        Paciente: 'Carlos Martinez Perez',
         Medico: 'Victor Gonzales',
         servicio: 'Medicina general',
         tipo: 'Control'
@@ -38,5 +38,13 @@ export const citas = [
         Medico: 'Jorge Pérez',
         servicio: 'Odontología',
         tipo: 'Urgencias'
+    },
+    {
+        hora: '7:00 PM',
+        fecha: '29/07/2025',
+        Paciente: 'Carlos Gómez',
+        Medico: 'Jorge Pérez',
+        servicio: 'Odontología',
+        tipo: 'Control'
     }
 ]

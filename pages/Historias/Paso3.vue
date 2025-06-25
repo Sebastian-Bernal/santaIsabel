@@ -8,12 +8,10 @@ import Textarea from '~/components/Textareas/Textarea.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { CIE10 } from '~/data/CIE10.js'
-import { useHistoriaClinicaStore } from '~/composables/Formulario/HistoriaClinica';
+import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
 import { ref, watch } from 'vue';
-import { useRegistrarHistoria } from '~/stores/Formularios/RegistrarHistoria.js';
 
-const storeRegistrarHistoria = useRegistrarHistoria();
-const historiaClinicaStore = useHistoriaClinicaStore();
+const RegistrarHistoriaStore = useRegistrarHistoriaStore();
 
 const {
     formData,
@@ -22,7 +20,9 @@ const {
     agregarItem,
     eliminarItem,
     limpiar,
-} = historiaClinicaStore;
+    estado,
+    mandarFormulario
+} = RegistrarHistoriaStore;
 
 const formComplete = ref(false);
 const { $swal } = useNuxtApp();
@@ -48,9 +48,9 @@ onMounted(() => {
 const enviarRegistrarHistoria = async (formData) => {
     event.preventDefault()
 
-    await storeRegistrarHistoria.mandarFormulario(formData)
+    await mandarFormulario(formData)
 
-    if (storeRegistrarHistoria.estado) {
+    if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
         limpiar()
         window.location.href = '/'
@@ -83,7 +83,7 @@ const validarform = () => {
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
             ],
-            formStore: 'HistoriaClinica'
+            formStore: 'RegistrarHistoria'
         }" tamaño="w-[90%] h-[97%]">
 
             <Section>
