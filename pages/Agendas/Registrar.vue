@@ -1,29 +1,28 @@
 <script setup>
+// Componentes
 import Fondo from '~/components/Fondos/Fondo'
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
-import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
-import { ref, onMounted } from "vue";
+// Data
 import { pacientes } from '../data/pacientes.js';
 import { medicos } from '../../data/medicos.js'
-import { useNuevaCitaStore } from '~/stores/Formularios/NuevaCita';
-import { citas } from '../../data/Citas.js'
+import { useCitasStore } from '~/stores/Formularios/citas/Cita';
+import { useCalendarioCitas} from '~/stores/Calendario'
+import { ref, onMounted } from "vue";
+
+const citasStore = useCitasStore();
+const NuevaCitaStore = citasStore.createForm('NuevaCita');
 
 const calendarioCitasStore = useCalendarioCitas();
 
+// Importar states y funciones del store
 const {
-    fecha, 
-    cambiarFecha,
-    dias,
-    meses,
-    años
+    fecha,
 } = calendarioCitasStore;
-
-const NuevaCitaStore = useNuevaCitaStore();
 
 const {
     formData,
@@ -34,12 +33,14 @@ const {
     mandarFormulario
 } = NuevaCitaStore;
 
+
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const formComplete = ref(false);
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
+
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
@@ -57,6 +58,8 @@ onMounted(() => {
 
 });
 
+
+// Formatear fecha dd/mm/aaaa - aaaa-mm-dd
 const fechaformatDate = () => {
     const partes = fecha.split('/')
     return partes.reverse().join('-')
@@ -88,7 +91,7 @@ const pacienteExistente = () => {
     }
 };
 
-// datalist -------------
+// datalist para Pacientes
 function filtrarPacientes() {
     if (formData.Paciente.name.length === 0) {
         pacientesFiltrados.value = [];
@@ -101,7 +104,7 @@ function filtrarPacientes() {
     );
     mostrarLista.value = true;
 }
-
+// Autocompletar campos del paciente al seleccionar datalist
 function seleccionarPaciente(paciente) {
     formData.Paciente.name = paciente.nombre;
     formData.Paciente.No_document = paciente.documento;
@@ -146,7 +149,6 @@ const validarform = () => {
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Datos de la cita',
             tituloFormulario: 'Nueva Cita Medica',
-            formData: formData.value,
         }" tamaño="w-[60%] h-[80%]">
 
             <Section>

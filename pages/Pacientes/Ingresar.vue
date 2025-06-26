@@ -1,17 +1,21 @@
 <script setup>
+// Componentes
 import Formulario from '~/components/Forms/Formulario.vue';
 import Label from '~/components/Labels/Label.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Section from '~/components/Forms/Section.vue';
 import Select from '~/components/Selects/Select.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+// Data
 import { ubicacion } from '../../data/colombia.js'
-import { ref, computed, watch, onMounted } from 'vue'
-import { useNuevoPacienteStore } from '~/stores/formularios/NuevoPaciente.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 
-const nuevoPacienteStore = useNuevoPacienteStore(); // Se instancia aquí
+import { ref, computed, watch, onMounted } from 'vue';
 
-// Administrar formulario en localStorage -----------------
+const storePaciente = usePacientesStore();
+const nuevoPacienteStore = storePaciente.createForm('NuevoPaciente')
+
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -21,12 +25,15 @@ const {
     mandarFormulario,
 } = nuevoPacienteStore;
 
+
 const formComplete = ref(false);
 const { $swal } = useNuxtApp();
 
+// Guardar Datos en el localStorage
 watch(formData, (newValue) => {
     guardarDatos(newValue);
 
+    // Validacion
     if (formData.Paciente.name !== '' && formData.Paciente.No_document !== '') {
         formComplete.value = true
     } else {
@@ -34,6 +41,7 @@ watch(formData, (newValue) => {
     }
 }, { deep: true });
 
+// Traer datos del localStorage
 onMounted(() => {
     traerDatos();
 });
@@ -41,10 +49,9 @@ onMounted(() => {
 
 // Enviar formulario -------------------
 const enviarNuevoPaciente = async (formData) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    await mandarFormulario(formData)
-    console.log(estado)
+    const estado = await mandarFormulario(formData)
     if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
         limpiar()
@@ -79,12 +86,6 @@ const validarform = () => {
     <div class="w-full h-full flex flex-col items-center">
         <Formulario class="mt-3" :datos="{
             titulo: 'Nuevo paciente',
-            botones: [
-                { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Registrar', ruta: '', color: 'bg-blue-500', submit: formComplete ? true : false }
-            ],
-            formStore: 'NuevoPaciente',
-            action: 'validarYEnviarNuevoPaciente'
         }" tamaño="w-[90%] h-[97%]">
 
             <Section>

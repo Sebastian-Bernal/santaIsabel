@@ -1,27 +1,33 @@
 <script setup>
+// Componentes
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import Fondo from '~/components/Fondos/Fondo.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
-import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
+// Data
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { ref } from 'vue';
 
-const RegistrarHistoriaStore = useRegistrarHistoriaStore(); // Se instancia aquí
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
     guardarDatos,
 } = RegistrarHistoriaStore;
 
+// estructura de servicio
 const nuevoServicio = ref({
     descripcion: '',
     cantidad: '',
     mes: ''
 });
 
+// funcion validar y agregar nuevo servicio
 const añadirServicio = () => {
     const servicio = nuevoServicio.value;
     if (!servicio.descripcion) {
@@ -38,7 +44,6 @@ const añadirServicio = () => {
 };
 
 // Guardar los datos en localStorage
-
 watch(formData, (newValue) => {
     guardarDatos(newValue)
 }, { deep: true });

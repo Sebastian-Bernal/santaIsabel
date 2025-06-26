@@ -5,11 +5,12 @@ import { validarYEnviarModificarPaciente } from '../../Core/ModificarPaciente';
 import { validarYEnviarNuevoMedico } from '../../Core/NuevoMedico';
 import { validarYEnviarRegistrarHistoria } from '../../Core/RegistrarHistoria';
 
+// Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
         // lógica de envío de Nueva Cita
         console.log("Mandando formulario NuevaCita:", data);
-        return true; // o false si falla
+        return true;
     },
     NuevoPaciente: async (data) => {
         await validarYEnviarNuevoPaciente(data);

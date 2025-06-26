@@ -1,3 +1,4 @@
+// Creacion de citas de ejemplo
 export const citas = [
     {
         hora: '6:00 AM',

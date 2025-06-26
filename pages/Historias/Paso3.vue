@@ -1,4 +1,5 @@
 <script setup>
+// Componentes
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -7,12 +8,15 @@ import Section from '~/components/Forms/Section.vue';
 import Textarea from '~/components/Textareas/Textarea.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+// Data
 import { CIE10 } from '~/data/CIE10.js'
-import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { ref, watch } from 'vue';
 
-const RegistrarHistoriaStore = useRegistrarHistoriaStore();
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -31,12 +35,14 @@ const { $swal } = useNuxtApp();
 watch(formData, (newValue) => {
     guardarDatos(newValue)
 
+    // Validaciones
     if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
         && formData.Diagnosticos.at(-1).tipo !== "" && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
         formComplete.value = true
     } else {
         formComplete.value = false
     }
+
 }, { deep: true });
 
 onMounted(() => {
@@ -44,11 +50,11 @@ onMounted(() => {
 });
 
 
-// Enviar formulario -------------------
+// Enviar formulario
 const enviarRegistrarHistoria = async (formData) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    await mandarFormulario(formData)
+    const estado = await mandarFormulario(formData)
 
     if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
@@ -83,7 +89,6 @@ const validarform = () => {
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
             ],
-            formStore: 'RegistrarHistoria'
         }" tamaño="w-[90%] h-[97%]">
 
             <Section>

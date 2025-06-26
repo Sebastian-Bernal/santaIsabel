@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 
+// Creacion de pacientes de ejemplo
 export const pacientes = ref([
   {
     id: 0,

@@ -1,18 +1,22 @@
 <script setup>
+// Componentes 
 import Formulario from '~/components/Forms/Formulario.vue';
 import Label from '~/components/Labels/Label.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Section from '~/components/Forms/Section.vue';
 import Select from '~/components/Selects/Select.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
-import { ubicacion } from '../../data/colombia.js'
-import { ref, computed, watch, onMounted } from 'vue'
-import { useModificacionPacienteStore } from '~/stores/Formularios/ModificarPaciente.js';
+// Data
 import { pacientes } from '~/data/pacientes.js';
+import { ubicacion } from '../../data/colombia.js'
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 
-const modificacionPacienteStore = useModificacionPacienteStore(); // Se instancia aquí
+import { ref, computed, watch, onMounted } from 'vue'
 
-// Administrar formulario en localStorage -----------------
+const storePaciente = usePacientesStore();
+const modificacionPacienteStore = storePaciente.createForm('ModificarPaciente');
+
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -22,10 +26,13 @@ const {
     mandarFormulario,
 } = modificacionPacienteStore;
 
-const { $swal } = useNuxtApp();
 const formComplete = ref(false);
+const { $swal } = useNuxtApp();
+
+// Titulo del formulario
 const pacienteAModificar = computed(() => formData.Paciente.name ? formData.Paciente.name : 'Paciente')
 
+// Guardar Datos en el localStorage
 watch(formData, (newValue) => {
     guardarDatos(newValue);
 
@@ -36,6 +43,7 @@ watch(formData, (newValue) => {
     }
 }, { deep: true });
 
+// Traer datos del localStorage
 onMounted(() => {
     traerDatos();
 });
@@ -45,7 +53,7 @@ onMounted(() => {
 const enviarModificarPaciente = async (formData) => {
     event.preventDefault()
 
-    await mandarFormulario(formData)
+    const estado = await mandarFormulario(formData)
 
     if (estado) {
         await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
@@ -56,12 +64,13 @@ const enviarModificarPaciente = async (formData) => {
     }
 };
 
-// Funciones
+// Cuidades filtradas por departamento
 const ciudades = computed(() => {
     return ubicacion.filter(data => data.departamento === formData.Paciente.departamento)[0].ciudades
 }
 );
 
+// Autorellenar formulario al seleccionar Paciente
 const pacienteExistente = () => {
     const paciente = pacientes.value.find(
         p => p.nombre.toLowerCase() === formData.Paciente.name.toLowerCase()
@@ -106,11 +115,6 @@ const validarform = () => {
     <div class="w-full h-full flex flex-col items-center">
         <Formulario class="mt-3" :datos="{
             titulo: 'Modificar informacion de ' + pacienteAModificar,
-            botones: [
-                { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Registrar', ruta: '', color: 'bg-blue-500', submit: formComplete ? true : false }
-            ],
-            formStore: 'NuevoPaciente'
         }" tamaño="w-[90%] h-[97%]">
 
             <Section>

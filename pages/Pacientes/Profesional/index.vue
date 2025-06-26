@@ -1,17 +1,21 @@
 <script setup>
+// Componentes
 import Formulario from '~/components/Forms/Formulario.vue';
 import Label from '~/components/Labels/Label.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Section from '~/components/Forms/Section.vue';
 import Select from '~/components/Selects/Select.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+// Data
 import { ubicacion } from '../../../data/colombia.js'
+import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+
 import { ref, computed, watch, onMounted } from 'vue'
-import { useNuevoMedicoStore } from '~/stores/Formularios/NuevoMedico.js';
 
-const nuevoMedicoStore = useNuevoMedicoStore(); // Se instancia aquí
+const medicoStore = useMedicosStore();
+const nuevoMedicoStore = medicoStore.createForm('NuevoMedico')
 
-// Administrar formulario en localStorage -----------------
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -24,6 +28,7 @@ const {
 const formComplete = ref(false);
 const { $swal } = useNuxtApp();
 
+// Guardar Datos en el localStorage
 watch(formData, (newValue) => {
     guardarDatos(newValue);
 
@@ -33,7 +38,7 @@ watch(formData, (newValue) => {
         formComplete.value = false
     }
 }, { deep: true });
-
+// Traer Datos del localStorage
 onMounted(() => {
     traerDatos();
 });
@@ -79,12 +84,6 @@ const validarform = () => {
     <div class="w-full h-full flex flex-col items-center">
         <Formulario class="mt-3" :datos="{
             titulo: 'Nuevo Profesional de Medicina',
-            botones: [
-                { texto: 'Salir', ruta: '/', color: 'bg-gray-500' },
-                { texto: 'Registrar', ruta: '', color: 'bg-blue-500', submit: formComplete ? true : false }
-            ],
-            formStore: 'NuevoMedico',
-            action: 'validarYEnviarNuevoMedico'
         }" tamaño="w-[90%] h-[97%]">
 
             <Section>
@@ -138,9 +137,6 @@ const validarform = () => {
                     :options="[{ text: 'Rural', value: 'rural' }, { text: 'Urbana', value: 'urbana' }]"
                     placeholder="Zona" tamaño="md:w-1/3 w-full"></Select>
             </Section>
-
-
-
 
 
             <Section>

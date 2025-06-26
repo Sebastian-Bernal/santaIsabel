@@ -1,8 +1,10 @@
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 
+// funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
     const { $swal } = useNuxtApp();
 
+    // Validacion si no se registran medicamentos
     if (datos.Plan_manejo_medicamentos?.length < 1) {
         const res = await $swal.fire({
             icon: 'warning',
@@ -15,6 +17,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
         if (res.isConfirmed) return;
     }
 
+    // Validacion si no se registran procedimientos
     if (datos.Plan_manejo_procedimientos?.length < 1) {
         const res = await $swal.fire({
             icon: 'warning',
@@ -30,6 +33,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     return await enviarFormulario(datos);
 };
 
+// Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const { $swal } = useNuxtApp();
     const online = navigator.onLine;

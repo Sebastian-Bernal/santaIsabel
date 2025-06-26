@@ -1,5 +1,6 @@
 import { ref } from "vue";
 
+// creacion de profesionales de ejemplo
 export const medicos = ref([
     {
         id: 0,

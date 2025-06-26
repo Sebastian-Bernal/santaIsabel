@@ -1,4 +1,5 @@
 <script setup>
+// Componentes
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Textarea from '~/components/Textareas/Textarea.vue';
@@ -6,12 +7,14 @@ import Section from '~/components/Forms/Section.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
-import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
+// Data
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { ref, watch, onMounted } from 'vue';
 
-// Declaracion de variables
-const RegistrarHistoriaStore = useRegistrarHistoriaStore();
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -20,8 +23,10 @@ const {
     eliminarItem,
 } = RegistrarHistoriaStore;
 
+// Datos de ejemplo
 const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
 const enfermedades = ref(['Gripe', 'Resfriado', 'Dolor de cabeza']);
+
 const formComplete = ref(false);
 const { $swal } = useNuxtApp();
 

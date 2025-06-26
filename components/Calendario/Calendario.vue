@@ -2,10 +2,12 @@
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { citas } from '../../data/Citas.js'
+import { diasSemana, mesesAño } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
 const calendarioCitasStore = useCalendarioCitas();
 
+// Importar states y funciones del store
 const {
     fecha,
     dias,
@@ -13,30 +15,13 @@ const {
     años
 } = storeToRefs(calendarioCitasStore);
 
-const diasSemana = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
-const mesesAño = [
-    { nombre: 'Enero', dias: 31, inicio: 3 },
-    { nombre: 'Febrero', dias: 28, inicio: 6 },
-    { nombre: 'Marzo', dias: 31, inicio: 6 },
-    { nombre: 'Abril', dias: 30, inicio: 2 },
-    { nombre: 'Mayo', dias: 31, inicio: 4 },
-    { nombre: 'Junio', dias: 30, inicio: 0 },
-    { nombre: 'Julio', dias: 31, inicio: 2 },
-    { nombre: 'Agosto', dias: 31, inicio: 5 },
-    { nombre: 'Septiembre', dias: 30, inicio: 1 },
-    { nombre: 'Octubre', dias: 31, inicio: 3 },
-    { nombre: 'Noviembre', dias: 30, inicio: 6 },
-    { nombre: 'Diciembre', dias: 31, inicio: 1 },
-];
-
 const mesActual = ref(parseInt(meses.value) - 1)
-
 const nombreMes = computed(() => mesesAño[mesActual.value].nombre + ' ' + años.value)
 
-
+// Propiedad para acomodar Dia en el calendario
 const diasDelMes = computed(() => {
     const mes = mesesAño[mesActual.value]; // { dias: 30, inicio: 6, etc. }
-    const año = new Date().getFullYear(); // O si usas una store para el año, mejor desde ahí
+    const año = años.value;
     const mesNumero = String(mesActual.value + 1).padStart(2, '0');
 
     // Espacios vacíos antes del primer día del mes
@@ -54,6 +39,7 @@ const diasDelMes = computed(() => {
     return [...espacios, ...dias];
 });
 
+// Propiedad devuelve array de fechas de todas las citas
 const diasConCitas = computed(() => {
     const arrayCitas = [];
     citas.map((cita) => {
@@ -61,6 +47,7 @@ const diasConCitas = computed(() => {
     })
     return arrayCitas
 })
+
 
 // Navegar entre meses
 const anteriorMes = () => {

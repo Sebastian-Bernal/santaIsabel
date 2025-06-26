@@ -2,6 +2,7 @@ import { getButtonsAside } from '../Core/getButtonsAside';
 import { defineStore } from "pinia";
 import { buttons } from '../data/Buttons'
 
+// Store para botones del Aside
 export const useButtonsAside = defineStore('ButtonsAside', {
     state: () => ({
         buttons: buttons,

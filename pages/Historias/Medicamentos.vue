@@ -1,21 +1,26 @@
 <script setup>
+// Componentes
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import Fondo from '~/components/Fondos/Fondo.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+// Data
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { ref } from 'vue';
-import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
 
-const RegistrarHistoriaStore = useRegistrarHistoriaStore(); // Se instancia aquí
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
     guardarDatos,
 } = RegistrarHistoriaStore;
 
+// Estructura de medicamento
 const nuevoMedicamento = ref({
     medicamento: '',
     presentacion: '',
@@ -24,6 +29,7 @@ const nuevoMedicamento = ref({
     dosis: ''
 });
 
+// funcion para validar y agregar medicemnto
 const añadirMedicamento = () => {
     const medicamento = nuevoMedicamento.value;
     if (!medicamento.medicamento) {

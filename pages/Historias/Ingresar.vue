@@ -1,4 +1,5 @@
 <script setup>
+// Componentes
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -6,12 +7,15 @@ import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
-import { ref, onMounted } from "vue";
+// Data
 import { pacientes } from '../data/pacientes.js';
-import { useRegistrarHistoriaStore } from '~/stores/Formularios/RegistrarHistoria';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { ref, onMounted } from "vue";
 
-const RegistrarHistoriaStore = useRegistrarHistoriaStore();
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 
+// Importar states y funciones del store
 const {
     formData,
     traerDatos,
@@ -66,7 +70,7 @@ const pacienteExistente = () => {
     }
 };
 
-// datalist -------------
+// datalist para Pacientes
 function filtrarPacientes() {
     if (formData.Paciente.name.length === 0) {
         pacientesFiltrados.value = [];
@@ -79,7 +83,7 @@ function filtrarPacientes() {
     );
     mostrarLista.value = true;
 }
-
+// Autocompletar campos al seleccionar paciente en datalist
 function seleccionarPaciente(paciente) {
     formData.Paciente.name = paciente.nombre;
     formData.Paciente.type_doc = paciente.tipoDocumento;
@@ -90,7 +94,6 @@ function seleccionarPaciente(paciente) {
     // Aquí puedes también autocompletar el número de documento
 
 }
-
 
 const validarform = () => {
     if (!formComplete.value) {
@@ -111,7 +114,6 @@ const validarform = () => {
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
-            formData: formData.value,
             secciones: [
                 { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-gray-300' },

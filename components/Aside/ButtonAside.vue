@@ -1,13 +1,15 @@
 <script setup>
-// import { activeButton, sessionActive } from '../../stores/ButtonActive';
 import { useButtonsAside } from '../../stores/ButtonActive';
 import { useSeccionFooter } from '../../stores/NavigationFooter';
 import { onMounted } from 'vue';
 
-const storeAside = useButtonsAside();
 const titulo = defineProps(['data']);
+
+// Stores ButtonAside y Footer
+const storeAside = useButtonsAside();
 const footer = useSeccionFooter();
 
+// Traer boton activo de sessionStorage
 onMounted(() => {
     storeAside.sessionActive();
 });

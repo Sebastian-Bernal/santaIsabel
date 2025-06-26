@@ -1,3 +1,4 @@
+// Creacion de listado de departamentos y municipios
 export const ubicacion = [  
     {  
         "id":0,

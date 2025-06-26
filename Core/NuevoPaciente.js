@@ -1,9 +1,11 @@
 import { pacientes } from '~/data/pacientes';
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 
+// funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarNuevoPaciente = async (datos) => {
     const { $swal } = useNuxtApp();
     
+    // Validacion si ya existe Paciente
     const paciente = pacientes.value.find(
         p => p.nombre.toLowerCase() === datos.Paciente.name.toLowerCase()
     )
@@ -14,15 +16,15 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
             title: 'Paciente ya esta registrado',
             html: '¿Deseas registrar <strong>otro</strong>?',
             showCancelButton: true,
-            confirmButtonText: 'si',
-            cancelButtonText: 'No, continuar',
+            cancelButtonText: 'Regresar',
         });
-        if (res.isConfirmed) return;
+        if (res) return;
     }
 
     return await enviarFormulario(datos);
 };
 
+// Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const { $swal } = useNuxtApp();
     const online = navigator.onLine;

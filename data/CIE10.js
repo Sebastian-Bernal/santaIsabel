@@ -1,3 +1,4 @@
+// Codigos CIE-10
 export const CIE10 = [
     { "level": 0, "code": "A00-B99", "description": "Ciertas enfermedades infecciosas y parasitarias" },
     { "level": 0, "code": "C00-D49", "description": "Tumores [neoplasias]" },

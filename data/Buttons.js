@@ -1,4 +1,5 @@
 import { ref } from "vue";
+// Creacion de botones Aside de ejemplo Icono, titulo, subsecciones
 
 export const buttons = ref([
     {
@@ -78,7 +79,19 @@ export const buttons = ref([
             },
             {
                 titulo: "Profesional",
-                subSecciones: ['Ingresar', 'Profesional/Buscar', 'Modificar']
+                subSecciones: [
+                    {
+                        titulo: 'Ingresar',
+                        ruta: '/Pacientes/Ingresar'
+                    },
+                    { 
+                        titulo: 'Buscar',
+                        ruta: '/Pacientes/Profesional/Buscar'
+                    },
+                    {
+                        titulo: 'Modificar',
+                    }
+                ]
             }
         ],
         icon: "fa-user",

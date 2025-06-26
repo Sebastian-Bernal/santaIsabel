@@ -1,7 +1,8 @@
-import { createFormStore } from '../../stores/createFormStore';
+import { createFormStore } from '../../createFormStore';
 // Creacion del store para historia clinica
 
-const estructuraRegistrarHistoria = {
+// Estructura de datos de Historias Clinicas
+const estructuraHistoria = {
     Paciente: {
         name: '',
         type_doc: '',
@@ -52,4 +53,17 @@ const estructuraRegistrarHistoria = {
     Plan_manejo_procedimientos: [],
 }
 
-export const useRegistrarHistoriaStore = createFormStore('RegistrarHistoria', estructuraRegistrarHistoria);
+// Pinia HistoriasClinicas
+export const useHistoriasStore = defineStore('HistoriaClinica', {
+    state: () => ({
+        Historia: JSON.parse(JSON.stringify(estructuraHistoria)) // estructura base compartida
+    }),
+
+    actions: {
+        // Acción para crear nuevas instancias de formulario
+        createForm(storeId, estructura = estructuraHistoria) {
+            const useDynamicForm = createFormStore(storeId, estructura)
+            return useDynamicForm() // devuelve instancia usable del formulario
+        }
+    }
+});

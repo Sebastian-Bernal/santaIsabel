@@ -2,6 +2,7 @@
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { citas } from '../../data/Citas.js'
 import {computed} from 'vue';
+import { mesesAño } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
 const calendarioCitasStore = useCalendarioCitas();
@@ -11,14 +12,14 @@ const {
     meses
 } = storeToRefs(calendarioCitasStore);
 
+// Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
     return citas.filter(cita => cita.fecha === fecha.value)
 });
 
-const mesesAño = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Dicimebre"]
-
+// Nombre del mes
 const mes = computed(() => {
-    return mesesAño[parseInt(meses.value) - 1]
+    return mesesAño[parseInt(meses.value) - 1].nombre
 });
 
 </script>

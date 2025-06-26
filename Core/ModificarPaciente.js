@@ -1,12 +1,14 @@
 import { pacientes } from '~/data/pacientes';
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 
+// funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarModificarPaciente = async (datos) => {
     const { $swal } = useNuxtApp();
 
     return await enviarFormulario(datos);
 };
 
+// Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const { $swal } = useNuxtApp();
     const online = navigator.onLine;

@@ -1,5 +1,6 @@
 import { buttons } from "~/data/Buttons"
 
+// Funcion para traer botones del menu Aside
 export const getButtonsAside = async() => {
     try{
         // const res = await fetch('https//nose');

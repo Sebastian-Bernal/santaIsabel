@@ -1,9 +1,11 @@
 <script setup>
-import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import ButtonAside from './ButtonAside.vue';
+import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import { useButtonsAside } from '../../stores/ButtonActive';
 
 const storeAside = useButtonsAside();
+
+// Funcion para Responsive, si aside esta activo se oculta navbar
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const cambiarEstadoFalse = () => {
     if (showNavbarBurguer.value) {

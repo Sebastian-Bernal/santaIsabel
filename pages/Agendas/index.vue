@@ -2,7 +2,6 @@
 import FondoBlanco from '../../components/Fondos/FondoBlanco'
 import Calendario from '~/components/Calendario/Calendario.vue'
 import Citas from '~/components/Calendario/Citas.vue'
-import Reloj from '~/components/Calendario/Reloj'
 </script>
 
 <template>
