@@ -13,15 +13,15 @@ const actions = [
         title: 'Buscar Historia',
         description: 'Buscar historia clínica',
         icon: 'fa-search',
-        color: 'bg-[#4aa759] hover:bg-green-700',
-        url: '/Pacientes/Buscar',
+        color: 'bg-[#4aa759] hover:bg-green-600',
+        url: '/Historias/Buscar',
         action: () => console.log('Buscar historia')
     },
     {
         title: 'Nueva Historia',
         description: 'Crear historia clínica',
         icon: 'fa-file',
-        color: 'bg-[#a74a98] hover:bg-purple-700',
+        color: 'bg-[#a74a98] hover:bg-purple-600',
         url: '/Historias/Ingresar',
         action: () => console.log('Nueva historia')
     },
@@ -29,7 +29,8 @@ const actions = [
         title: 'Exportar RIPS',
         description: 'Generar reporte RIPS',
         icon: 'fa-download',
-        color: 'bg-[#a7594a] hover:bg-orange-700',
+        color: 'bg-[#a7594a] hover:opacity-75',
+        url: '/Facturacion/rips',
         action: () => console.log('Exportar RIPS')
     }
 ];

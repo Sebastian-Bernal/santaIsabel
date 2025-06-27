@@ -32,6 +32,10 @@ function obtenerFechaFormateada() {
 const fechaActualFormateada = computed(() => {
     return obtenerFechaFormateada();
 });
+
+const removeStorage = () => {
+    sessionStorage.removeItem('seccionesGuardadas')
+};
 </script>
 
 <template>
@@ -43,7 +47,7 @@ const fechaActualFormateada = computed(() => {
                 <h2 class="text-white">T</h2>
             </div>
 
-            <ul class="navbar__content__list"
+            <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
                     <a href="/Agendas" class="flex gap-1 text-xs"><i class="fa-solid fa-calendar text-blue-500"></i>{{

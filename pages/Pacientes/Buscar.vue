@@ -12,7 +12,7 @@ import { pacientes } from '../../data/pacientes';
         { titulo: 'telefono', tamaño: 100},
         { titulo: 'eps', tamaño: 150}
     ]"
-    :headerTabla="{titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white'}"
+    :headerTabla="{titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', agregarRuta: '/Pacientes/Ingresar'}"
     :acciones="{ action: true}"
     :datos="{content: pacientes}"/>
     </div>

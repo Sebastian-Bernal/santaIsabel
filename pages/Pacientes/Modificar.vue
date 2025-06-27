@@ -10,11 +10,13 @@ import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { pacientes } from '~/data/pacientes.js';
 import { ubicacion } from '../../data/colombia.js'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 import { ref, computed, watch, onMounted } from 'vue'
 
 const storePaciente = usePacientesStore();
 const modificacionPacienteStore = storePaciente.createForm('ModificarPaciente');
+const notificacionesStore = useNotificacionesStore();
 
 // Importar states y funciones del store
 const {
@@ -25,6 +27,12 @@ const {
     estado,
     mandarFormulario,
 } = modificacionPacienteStore;
+
+const {
+    simple,
+    mensaje,
+    options
+} = notificacionesStore;
 
 const formComplete = ref(false);
 const { $swal } = useNuxtApp();
@@ -56,11 +64,19 @@ const enviarModificarPaciente = async (formData) => {
     const estado = await mandarFormulario(formData)
 
     if (estado) {
-        await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
+        options.icono = 'success';
+        options.titulo = '¡Se ha enviado correctamente!';
+        options.texto = 'Informacion del Paciente modificado';
+        options.tiempo = 2000
+        const res = await simple()
         limpiar()
         window.location.href = '/'
     } else {
-        $swal.fire({ title: '¡A ocurrido un problema!', icon: 'error' })
+        options.icono = 'error';
+        options.titulo = '¡A ocurrido un problema!';
+        options.texto = 'No se pudo Modificar Paciente';
+        options.tiempo = 2000
+        simple()
     }
 };
 
@@ -99,14 +115,10 @@ const pacienteExistente = () => {
 
 const validarform = () => {
     if (!formComplete.value) {
-        $swal.fire({
-            position: "top-end",
-            text: "Falta campos por llenar, por favor ingrese valores",
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#d33',
-            color: '#fff'
-        });
+        options.position = 'top-end'
+        options.texto = "Falta campos por llenar, por favor ingrese valores"
+        options.tiempo = 1500
+        mensaje()
     }
 };
 </script>

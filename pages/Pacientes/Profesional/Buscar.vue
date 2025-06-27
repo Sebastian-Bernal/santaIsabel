@@ -12,7 +12,7 @@ import { medicos } from '../../../data/medicos';
         { titulo: 'telefono', tamaño: 100},
         { titulo: 'municipio', tamaño: 150}
     ]"
-    :headerTabla="{titulo: 'Gestion de Medicos', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white'}"
+    :headerTabla="{titulo: 'Gestion de Medicos', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', agregarRuta: '/Pacientes/Profesional'}"
     :acciones="{ action: true}"
     :datos="{content: medicos}"/>
     </div>

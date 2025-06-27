@@ -9,10 +9,12 @@ import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref, watch, onMounted } from 'vue';
 
 const HistoriaStore = useHistoriasStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
+const notificacionesStore = useNotificacionesStore();
 
 // Importar states y funciones del store
 const {
@@ -23,13 +25,17 @@ const {
     eliminarItem,
 } = RegistrarHistoriaStore;
 
+const {
+    simple,
+    mensaje,
+    options
+} = notificacionesStore;
+
 // Datos de ejemplo
 const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
 const enfermedades = ref(['Gripe', 'Resfriado', 'Dolor de cabeza']);
 
 const formComplete = ref(false);
-const { $swal } = useNuxtApp();
-
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
@@ -49,14 +55,10 @@ onMounted(() => {
 // Funciones
 const validarform = () => {
     if (!formComplete.value) {
-        $swal.fire({
-            position: "top-end",
-            text: "Falta campos por llenar, por favor ingrese valores",
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#d33',
-            color: '#fff'
-        });
+        options.position = 'top-end';
+        options.texto = "Falta campos por llenar, por favor ingrese valores";
+        options.tiempo = 1500
+        mensaje()
     }
 };
 </script>

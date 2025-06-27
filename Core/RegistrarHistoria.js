@@ -1,8 +1,9 @@
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
-    const { $swal } = useNuxtApp();
+    const { $swal } = useNuxtApp()
 
     // Validacion si no se registran medicamentos
     if (datos.Plan_manejo_medicamentos?.length < 1) {
@@ -35,7 +36,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
-    const { $swal } = useNuxtApp();
+    const notificacionesStore = useNotificacionesStore();
     const online = navigator.onLine;
     if (online) {
         try {
@@ -47,7 +48,11 @@ const enviarFormulario = async (datos) => {
             await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
-        await $swal.fire({ title: 'Sin conexión', text: 'Se guardará localmente', icon: 'warning' });
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'Sin conexión';
+        notificacionesStore.options.texto = 'Se guardará localmente'
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
         await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }

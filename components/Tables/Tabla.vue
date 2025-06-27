@@ -107,7 +107,7 @@ const estiloColumnas = computed(() => {
             <div class="flex gap-3 md:w-[50%] justify-end">
                 <InputIcon placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
 
-                <nuxt-link to="/Pacientes/Ingresar" class="flex gap-1 items-center">
+                <nuxt-link :to="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </Button>

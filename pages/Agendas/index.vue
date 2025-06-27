@@ -7,10 +7,10 @@ import Citas from '~/components/Calendario/Citas.vue'
 <template>
     <FondoBlanco>
         <div>
-            <div class="py-5 px-10 flex items-center justify-between">
+            <div class="py-8 px-12 flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-semibold">Calendario de citas</h2>
-                    <p>Visualiza y administra la agenda de citas.</p>
+                    <p class="text-gray-600 mt-1">Visualiza y administra la agenda de citas.</p>
                 </div>
                 <nuxt-link to="/Agendas/Registrar">
                     <div class="flex gap-3 items-center">

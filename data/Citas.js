@@ -18,7 +18,7 @@ export const citas = [
     },
     {
         hora: '8:00 AM',
-        fecha: '25/06/2025',
+        fecha: '28/06/2025',
         Paciente: 'Carlos Martinez Perez',
         Medico: 'Victor Gonzales',
         servicio: 'Medicina general',
@@ -26,7 +26,7 @@ export const citas = [
     },
     {
         hora: '9:30 AM',
-        fecha: '26/06/2025',
+        fecha: '28/06/2025',
         Paciente: 'Ana Torres',
         Medico: 'Laura Martínez',
         servicio: 'Pediatría',
@@ -34,7 +34,7 @@ export const citas = [
     },
     {
         hora: '4:00 PM',
-        fecha: '26/06/2025',
+        fecha: '28/06/2025',
         Paciente: 'Carlos Gómez',
         Medico: 'Jorge Pérez',
         servicio: 'Odontología',

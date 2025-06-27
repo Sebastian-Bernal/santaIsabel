@@ -135,7 +135,7 @@ export const pacientes = ref([
     genero: 'Masculino',
     telefono: '6546546543',
     celular: '3156547890',
-    eps: '',
+    eps: 'Famisanar',
     tipoDocumento: 'cedula',
     documento: 123456789,
     fechaModificacion: '2023-10-01',

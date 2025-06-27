@@ -10,10 +10,12 @@ import Section from '~/components/Forms/Section.vue';
 // Data
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref, onMounted } from "vue";
 
 const HistoriaStore = useHistoriasStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
+const notificacionesStore = useNotificacionesStore();
 
 // Importar states y funciones del store
 const {
@@ -21,6 +23,12 @@ const {
     traerDatos,
     guardarDatos,
 } = RegistrarHistoriaStore;
+
+const {
+    simple,
+    mensaje,
+    options
+} = notificacionesStore;
 
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();
@@ -97,14 +105,10 @@ function seleccionarPaciente(paciente) {
 
 const validarform = () => {
     if (!formComplete.value) {
-        $swal.fire({
-            position: "top-end",
-            text: "Falta campos por llenar, por favor ingrese valores",
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#d33',
-            color: '#fff'
-        });
+        options.position = 'top-end';
+        options.texto = "Falta campos por llenar, por favor ingrese valores";
+        options.tiempo = 1500
+        mensaje()
     }
 };
 </script>
@@ -136,7 +140,7 @@ const validarform = () => {
                     </a>
                 </div>
             </Section>
-            <Section styles="relative" @blur="pacienteExistente">
+            <Section styles="relative">
                 <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
                     @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full"/>
                 <ul v-show="mostrarLista && pacientesFiltrados.length"
@@ -151,7 +155,7 @@ const validarform = () => {
 
 
             <Section styles="flex-col md:flex-row">
-                <Input v-model="formData.Paciente.No_document" type="number" id="documentoList" name="documento"
+                <Input v-model="formData.Paciente.No_document" type="number" id="documentoList" name="documento" @click="pacienteExistente"
                     placeholder="Número de documento" tamaño="w-full" />
                 <datalist id="documentoList">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>

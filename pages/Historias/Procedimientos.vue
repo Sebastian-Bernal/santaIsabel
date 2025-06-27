@@ -8,10 +8,12 @@ import Fondo from '~/components/Fondos/Fondo.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref } from 'vue';
 
 const HistoriaStore = useHistoriasStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
+const notificacionesStore = useNotificacionesStore();
 
 // Importar states y funciones del store
 const {
@@ -19,6 +21,12 @@ const {
     traerDatos,
     guardarDatos,
 } = RegistrarHistoriaStore;
+
+const {
+    simple,
+    mensaje,
+    options
+} = notificacionesStore;
 
 // estructura de servicio
 const nuevoServicio = ref({
@@ -31,7 +39,10 @@ const nuevoServicio = ref({
 const añadirServicio = () => {
     const servicio = nuevoServicio.value;
     if (!servicio.descripcion) {
-        console.log('Por favor, complete el servicio actual antes de añadir uno nuevo.');
+        options.position = 'top-end';
+        options.texto = 'Por favor, complete el servicio antes de añadir uno nuevo.';
+        options.tiempo = 1500
+        mensaje()
         return;
     }
     formData.Plan_manejo_procedimientos.push({ ...servicio });

@@ -8,6 +8,7 @@ import Label from '~/components/Labels/Label.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
 // Data
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { pacientes } from '../data/pacientes.js';
 import { medicos } from '../../data/medicos.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita';
@@ -18,11 +19,19 @@ const citasStore = useCitasStore();
 const NuevaCitaStore = citasStore.createForm('NuevaCita');
 
 const calendarioCitasStore = useCalendarioCitas();
+const notificacionesStore = useNotificacionesStore();
 
 // Importar states y funciones del store
 const {
     fecha,
 } = calendarioCitasStore;
+
+const {
+    simple,
+    mensaje,
+    alertRespuesta,
+    options
+} = notificacionesStore;
 
 const {
     formData,
@@ -35,7 +44,6 @@ const {
 
 
 // Delcaracionde variables y funciones
-const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const formComplete = ref(false);
 const mostrarLista = ref(false);
@@ -44,7 +52,7 @@ const pacientesFiltrados = ref([]);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    if (formData.Paciente.name !== "") {
+    if (formData.Paciente.name !== "" && formData.cita.fecha !== '' && formData.cita.servicio) {
         formComplete.value = true
     } else {
         formComplete.value = false
@@ -72,22 +80,14 @@ const pacienteExistente = () => {
         p => p.nombre.toLowerCase() === formData.Paciente.name.toLowerCase()
     )
 
-    if (paciente) {
-        formData.Paciente.No_document = paciente.documento
-        formData.Paciente.id = paciente.id
-        fechaModificacion.value = paciente.fechaModificacion
-
-    } else if (!paciente && formData.Paciente.name !== '') {
-        $swal.fire({
-            icon: 'warning',
-            title: 'Paciente no encontrado',
-            text: 'El paciente ingresado no está registrado.',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: '<a href="/Pacientes/Ingresar">Registrar</a>',
-            cancelButton: 'Cancelar',
-            cancelButtonColor: '#d33',
-            showCancelButton: true
-        })
+    if (!paciente && formData.Paciente.name !== '') {
+        options.icono = 'warning';
+        options.titulo = 'Paciente no encontrado';
+        options.texto = 'El paciente ingresado no está registrado.';
+        options.confirmtext = '<a href="/Pacientes/Ingresar">Registrar</a>'
+        options.canceltext = 'Cancelar'
+        options.tiempo = 2000
+        alertRespuesta()
     }
 };
 
@@ -122,24 +122,28 @@ const enviarNuevaCita = async (formData) => {
     const estado = await mandarFormulario(formData)
 
     if (estado) {
-        await $swal.fire({ title: '¡Se ha enviado correctamente!', icon: 'success' })
+        options.icono = 'success';
+        options.titulo = '¡Se ha enviado correctamente!';
+        options.texto = 'Nueva cita Registrada';
+        options.tiempo = 3000
+        const res = await simple()
         limpiar()
         window.location.href = '/Agendas'
     } else {
-        $swal.fire({ title: '¡A ocurrido un problema!', icon: 'error' })
+        options.icono = 'error';
+        options.titulo = '¡A ocurrido un problema!';
+        options.texto = 'No se pudo registrar Cita';
+        options.tiempo = 2000
+        simple()
     }
 };
 
 const validarform = () => {
     if (!formComplete.value) {
-        $swal.fire({
-            position: "top-end",
-            text: "Falta campos por llenar, por favor ingrese valores",
-            showConfirmButton: false,
-            timer: 1500,
-            background: '#d33',
-            color: '#fff'
-        });
+        options.position = 'top-end';
+        options.texto = "Falta campos por llenar, por favor ingrese valores";
+        options.tiempo = 1500
+        mensaje()
     }
 };
 </script>
@@ -157,7 +161,7 @@ const validarform = () => {
                     <Label forLabel="nombre" size="text-sm">Paciente</Label>
                 </div>
             </Section>
-            <Section styles="relative" @blur="pacienteExistente">
+            <Section styles="relative">
                 <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
                     @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full"/>
                 <ul v-show="mostrarLista && pacientesFiltrados.length"
@@ -168,6 +172,26 @@ const validarform = () => {
                         <small>cédula: {{ paciente.documento }}</small>
                     </li>
                 </ul>
+            </Section>
+
+            <Section>
+                <div class="flex gap-3 items-center">
+                    <i class="fa-solid fa-stethoscope text-blue-500"></i>
+                    <Label forLabel="nombre" size="text-sm">Detalles de la cita</Label>
+                </div>
+            </Section>
+
+            <Section styles="relative" @blur="pacienteExistente">
+                <Input v-model="formData.Medico.name" type="text" id="nombre" name="nombre" list="medicosList" @click="pacienteExistente"
+                    placeholder="Nombre del profesional" tamaño="w-full"/>
+                <datalist id="medicosList">
+                    <option v-for="medico in medicos" :value="medico.nombre">
+                        profesion: {{ medico.profesion }}
+                    </option>
+                </datalist>
+                <Select v-model="formData.cita.servicio" id="profesion" name="profesion"
+                    :options="[{ text: 'Medicina General', value: 'Medicina General' }, { text: 'Psicologia', value: 'Psicologia' }, { text: 'Odontologia', value: 'Odontologia' }]"
+                    placeholder="Servicio" tamaño="w-full"></Select>
             </Section>
 
             <Section styles="mt-3">
@@ -182,26 +206,6 @@ const validarform = () => {
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
                 <Input v-model="formData.cita.hora" type="time" id="hora" name="hora"
                     placeholder="Seleccione la hora para la cita" tamaño="w-full"></Input>
-            </Section>
-
-            <Section>
-                <div class="flex gap-3 items-center">
-                    <i class="fa-solid fa-stethoscope text-blue-500"></i>
-                    <Label forLabel="nombre" size="text-sm">Detalles de la cita</Label>
-                </div>
-            </Section>
-
-            <Section styles="relative" @blur="pacienteExistente">
-                <Input v-model="formData.Medico.name" type="text" id="nombre" name="nombre" list="medicosList"
-                    placeholder="Nombre del profesional" tamaño="w-full"/>
-                <datalist id="medicosList">
-                    <option v-for="medico in medicos" :value="medico.nombre">
-                        profesion: {{ medico.profesion }}
-                    </option>
-                </datalist>
-                <Select v-model="formData.cita.servicio" id="profesion" name="profesion"
-                    :options="[{ text: 'Medicina General', value: 'Medicina General' }, { text: 'Psicologia', value: 'Psicologia' }, { text: 'Odontologia', value: 'Odontologia' }]"
-                    placeholder="Servicio" tamaño="w-full"></Select>
             </Section>
 
             <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">

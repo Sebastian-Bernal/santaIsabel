@@ -8,39 +8,119 @@ export const buttons = ref([
         secciones: [
             {
                 titulo: 'Resoluciones',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Inventarios',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Negocios',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Usuarios',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Productos',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Formas de pago',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Impuestos',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             },
             {
                 titulo: 'Cajas',
-                subSecciones: ['Crear', 'Eliminar', 'Actualizar']
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                    { 
+                        titulo: 'Eliminar',
+                    },
+                    {
+                        titulo: 'Actualizar',
+                    }
+                ]
             }
         ],
         icon: "fa-building",
-        tamaño: 'max-h-[37vh] pt-8',
+        tamaño: 'max-h-[37vh] pt-10',
         active: false,
     },
     {

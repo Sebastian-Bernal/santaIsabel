@@ -14,10 +14,10 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
 
 <template>
     <FondoBlanco>
-        <div class="py-5 px-10 flex w-full items-center justify-between border border-gray-200">
+        <div class="py-8 px-12 flex w-full items-center justify-between border border-gray-200">
             <div>
                 <h2 class="text-2xl font-bold">Buscar Paciente</h2>
-                <p>Registre la evolucion del paciente segun Historia clinica</p>
+                <p class="text-gray-600 mt-1">Registre la evolucion del paciente segun Historia clinica</p>
             </div>
             <div class="w-2/5">
                 <InputIcon v-model="pacienteABuscar" placeholder="Buscar Paciente por nombre o cedula..."
@@ -32,8 +32,8 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
             <div class="grid grid-cols-2 justify-between">
                 <div>
                     <h2 class="text-xl font-bold">Paciente {{ pacienteABuscar }}</h2>
-                    <p>Cedula 111111111</p>
-                    <p>Ultima visita 12-04-2022</p>
+                    <p class="text-gray-600">Cedula 1099381</p>
+                    <p class="text-gray-600">Ultima visita 12-04-2022</p>
                 </div>
 
                 <Select tamaño="w-2/3 justify-self-end h-[40px]" id="historial" name="historial"
@@ -41,7 +41,7 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
                 </Select>
             </div>
 
-            <div class="py-6 px-10 mt-3 flex flex-col gap-3 border border-gray-300 rounded-2xl">
+            <div class="py-6 px-10 mt-5 flex flex-col gap-3 border border-gray-300 rounded-2xl bg-white">
                 <div class="flex gap-3 items-center justify-between mb-3">
                     <h3 class="text-2xl">Historia Clinica</h3>
                     <div class="flex flex-col">

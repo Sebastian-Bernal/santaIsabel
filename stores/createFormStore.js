@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { accionesFormularios } from './Formularios/accionesFormulario';
+import { useNotificacionesStore } from "./notificaciones";
 
 // Store para crear cada store de formulario con estructura inicial (/stores/Formularios)
 export const createFormStore = (storeId, estructuraInicial) => {
@@ -31,19 +32,15 @@ export const createFormStore = (storeId, estructuraInicial) => {
             },
 
             agregarItem(campo, plantilla, campoValidar) {
-                const $swal = useNuxtApp()
+                const notificaciones = useNotificacionesStore()
                 const lista = this.formData[campo];
                 const ultimoValor = lista.at(-1)?.[campoValidar];
 
                 if (!ultimoValor || ultimoValor === '') {
-                    $swal.fire({
-                        position: "top-end",
-                        text: `'${campo}' esta vacio, por favor ingrese un valor`,
-                        showConfirmButton: false,
-                        timer: 1500,
-                        background: '#d33',
-                        color: '#fff'
-                    });
+                    notificaciones.options.position = 'top-end'
+                    notificaciones.options.texto = `'${campo}' esta vacio, por favor ingrese un valor`
+                    notificaciones.options.tiempo = 1500
+                    notificaciones.mensaje()
                     return;
                 }
 
