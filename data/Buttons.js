@@ -143,30 +143,27 @@ export const buttons = ref([
     },
     {
         id: 3,
-        nombre: "Pacientes",
+        nombre: "Usuarios",
         secciones: [
             {
-                titulo: "Ingresar"
-            },
-            {
-                titulo: "Buscar"
-            },
-            {
-                titulo: "Modificar"
-            },
-            {
-                titulo: "Evoluciones"
+                titulo: "Pacientes",
+                subSecciones: [
+                    {
+                        titulo: 'Datos',
+                        ruta: '/Usuarios/Pacientes'
+                    },
+                    {
+                        titulo: 'Evoluciones',
+                        ruta: '/Usuarios/Pacientes/Evoluciones'
+                    }
+                ]
             },
             {
                 titulo: "Profesional",
                 subSecciones: [
                     {
-                        titulo: 'Ingresar',
-                        ruta: '/Pacientes/Ingresar'
-                    },
-                    { 
-                        titulo: 'Buscar',
-                        ruta: '/Pacientes/Profesional/Buscar'
+                        titulo: 'Datos',
+                        ruta: '/Usuarios/Profesional'
                     },
                     {
                         titulo: 'Modificar',

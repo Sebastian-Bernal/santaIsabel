@@ -1,0 +1,181 @@
+<script setup>
+// Componentes
+import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
+import Input from '../../components/Inputs/Input.vue';
+import Select from '~/components/Selects/Select.vue';
+import Label from '~/components/Labels/Label.vue';
+import Section from '~/components/Forms/Section.vue';
+import Textarea from '~/components/Textareas/Textarea.vue';
+import Button from '~/components/Buttons/Button.vue';
+import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+// Data
+import { CIE10 } from '~/data/CIE10.js'
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { ref, watch } from 'vue';
+
+const HistoriaStore = useHistoriasStore();
+const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
+const notificacionesStore = useNotificacionesStore();
+
+// Importar states y funciones del store
+const {
+    formData,
+    traerDatos,
+    guardarDatos,
+    agregarItem,
+    eliminarItem,
+    limpiar,
+    estado,
+    mandarFormulario
+} = RegistrarHistoriaStore;
+
+const {
+    simple,
+    mensaje,
+    options
+} = notificacionesStore;
+
+const formComplete = ref(false);
+
+// Guardar los datos en localStorage
+watch(formData, (newValue) => {
+    guardarDatos(newValue)
+
+    // Validaciones
+    if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
+        && formData.Diagnosticos.at(-1).tipo !== "" && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
+        formComplete.value = true
+    } else {
+        formComplete.value = false
+    }
+
+}, { deep: true });
+
+onMounted(() => {
+    traerDatos();
+});
+
+
+// Enviar formulario
+const enviarRegistrarHistoria = async (formData) => {
+    event.preventDefault();
+
+    const estado = await mandarFormulario(formData)
+    if (estado) {
+        options.icono = 'success';
+        options.titulo = '¡Se ha enviado correctamente!';
+        options.texto = 'Nueva cita Registrada';
+        options.tiempo = 2000
+        const res = await simple()
+        limpiar()
+        window.location.href = '/'
+    } else {
+        options.icono = 'error';
+        options.titulo = '¡A ocurrido un problema!';
+        options.texto = 'No se pudo registrar Cita';
+        options.tiempo = 2000
+        simple()
+    }
+};
+
+const validarform = () => {
+    if (!formComplete.value) {
+        options.position = 'top-end';
+        options.texto = "Falta campos por llenar, por favor ingrese valores";
+        options.tiempo = 1500
+        mensaje()
+    }
+};
+</script>
+
+<template>
+    <div class="w-full h-full flex flex-col items-center">
+        <FormularioWizard class="mt-3" :datos="{
+            titulo: 'Analisis',
+            tituloFormulario: 'Nueva Historia Clinica',
+            secciones: [
+                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
+            ],
+        }" tamaño="w-[90%] h-[97%]">
+
+            <Section styles="mt-3">
+                <div class="flex gap-3 items-center">
+                    <i class="fa-solid fa-file text-blue-500"></i>
+                    <Label forLabel="tipo" size="text-sm">Diagnoticos</Label>
+                </div>
+                <Button color="bg-blue-500"
+                    @click="agregarItem('Diagnosticos', { id: '', tipo: '', CIE_10: '', id_paciente: '', rol_attention: '', }, 'tipo' )">
+                    <i class="fa-solid fa-plus"></i>
+                </Button>
+            </Section>
+
+            <Section styles="flex-col max-h-[100px] overflow-y-auto">
+                <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
+                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
+                        tamaño="w-full" />
+                    <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10" list="cie10List"
+                        tamaño="w-full" />
+                    <datalist id="cie10List">
+                        <option v-for="enfermedad in CIE10" :value="enfermedad.description">codigo: {{ enfermedad.code }}</option>
+                    </datalist>
+                    <i v-if="i > 0" class="fa-solid fa-close text-gray-500"
+                        @click="eliminarItem('Diagnosticos', i)"></i>
+                </div>
+            </Section>
+
+
+            <Section class="md:flex-row flex-col">
+                <Textarea v-model="formData.AnalisisTratamiento.analisis" id="analisis" name="analisis"
+                    placeholder="Analisis"></Textarea>
+            </Section>
+
+            <Section class="mt-3">
+                
+                <div class="flex gap-3 items-center">
+                    <i class="fa-solid fa-notes-medical text-blue-500"></i>
+                    <Label forLabel="rehabilitacion">Tratamiento</Label>
+                </div>
+            </Section>
+            <Section class="md:flex-row flex-col mb-10">
+                <Select v-model="formData.AnalisisTratamiento.tratamiento" id="rehabilitacion" name="rehabilitacion"
+                    :options="[{ text: 'Total o Parcial', value: 'Total o Parcial' }, { text: 'Sin potencial de rehabilitacion', value: 'Sin potencial de rehabilitacion' }, { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }]"
+                    placeholder="Condicion de rehabilitacion" tamaño="md:w-3/5 w-full"></Select>
+
+                <div class="md:w-2/5 w-full flex items-center gap-1">
+                    <nuxt-link to="/Historias/Medicamentos" class="w-1/2">
+                        <button type="button"
+                            class="w-full h-[40px] flex justify-center items-center gap-2 bg-[var(--color-green)] text-white text-sm rounded hover:opacity-75">
+                            <i class="fa-solid fa-plus"></i>Medicina
+                        </button>
+                    </nuxt-link>
+                    <nuxt-link to="/Historias/Procedimientos" class="w-1/2">
+                        <button type="button"
+                            class="w-full h-[40px] flex justify-center items-center gap-2 bg-blue-400 text-white text-sm rounded hover:opacity-75">
+                            <i class="fa-solid fa-plus"></i>Servicios
+                        </button>
+                    </nuxt-link>
+                </div>
+            </Section>
+
+            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+                <nuxtLink to="/Historias/Paso3">
+                    <ButtonForm color="bg-gray-500"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Atras
+                    </ButtonForm>
+                </nuxtLink>
+                <nuxtLink>
+                <ButtonForm color="bg-blue-500" @click="formComplete ? enviarRegistrarHistoria(formData) : validarform()"
+                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                        Registrar
+                </ButtonForm>
+                </nuxtLink>
+            </div>
+
+        </FormularioWizard>
+    </div>
+</template>

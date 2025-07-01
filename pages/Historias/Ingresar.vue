@@ -7,6 +7,7 @@ import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
+import IngresarPaciente from '~/components/Forms/IngresarPaciente.vue';
 // Data
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -36,6 +37,7 @@ const fechaModificacion = ref('');
 const formComplete = ref(false);
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
+const nuevoPaciente = ref(false);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
@@ -70,7 +72,7 @@ const pacienteExistente = () => {
             title: 'Paciente no encontrado',
             text: 'El paciente ingresado no está registrado.',
             confirmButtonColor: '#3085d6',
-            confirmButtonText: '<a href="/Pacientes/Ingresar">Registrar</a>',
+            confirmButtonText: 'Registrar',
             cancelButton: 'Cancelar',
             cancelButtonColor: '#d33',
             showCancelButton: true
@@ -121,7 +123,8 @@ const validarform = () => {
             secciones: [
                 { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-gray-300' },
-                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
+                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' },
+                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-gray-300' }
             ]
         }" tamaño="w-[90%] h-[97%]">
 
@@ -135,7 +138,7 @@ const validarform = () => {
                     <a href="/Pacientes/Modificar" v-if="fechaModificacion">
                         <Button color="bg-[var(--color-green)]"><i class="fa-solid fa-pencil"></i></Button>
                     </a>
-                    <a href="/Pacientes/Ingresar">
+                    <a @click="nuevoPaciente = true">
                         <Button color="bg-blue-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
@@ -198,6 +201,7 @@ const validarform = () => {
 
         </FormularioWizard>
     </div>
+    <IngresarPaciente v-if="nuevoPaciente" @close="nuevoPaciente = false" />
 </template>
 
 <style scoped>

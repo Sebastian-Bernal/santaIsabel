@@ -15,17 +15,23 @@ export const useIndexedDBStore = defineStore("indexeddb", {
         async initialize() {
             return new Promise((resolve, reject) => {
                 const indexedDB = window.indexedDB || window.webkitIndexedDB;
-                const request = indexedDB.open('datos-santaIsabel', 1)
+                const request = indexedDB.open('db-thesalus', 1)
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result
                     const pacientes = db.createObjectStore('Paciente', { keyPath: 'No_document' });
                     pacientes.createIndex("buscapaciente", "id_paciente", { unique: false });
+
+                    const medicos = db.createObjectStore('Medico', { keyPath: 'No_document' });
+                    medicos.createIndex("buscapaciente", "id_medico", { unique: false });
 
                     const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'tipo' });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
 
                     const antecedentes = db.createObjectStore('Antecedentes', { keyPath: 'valor' });
                     antecedentes.createIndex("buscaantecedentes", "id_antecedente", { unique: false });
+
+                    const antecedentesFamiliares = db.createObjectStore('Antecedentes_familiares', { keyPath: 'valor' });
+                    antecedentesFamiliares.createIndex("buscaantecedentes", "id_antecedente", { unique: false });
 
                     const enfermedadActual = db.createObjectStore('Enfermedad', { keyPath: 'valor' });
                     enfermedadActual.createIndex("buscaenfermedadActual", "enfermedad", { unique: false });

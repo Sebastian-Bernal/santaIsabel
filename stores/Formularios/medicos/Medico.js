@@ -25,6 +25,15 @@ export const useMedicosStore = defineStore('Medicos', {
         Medico: JSON.parse(JSON.stringify(estructuraMedico)) // estructura base compartida
     }),
 
+    getters: {
+        async listMedicos() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Medico'
+            const medicos = await store.leerdatos()
+            return medicos
+        }
+    },
+
     actions: {
         // Acción para crear nuevas instancias de formulario
         createForm(storeId, estructura = estructuraMedico) {

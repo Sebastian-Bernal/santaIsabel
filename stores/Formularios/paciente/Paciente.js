@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
+import { useIndexedDBStore } from "../../indexedDB";
+import { pacientes } from "~/data/pacientes";
 // Creacion del store Paciente
 
 // Estructura de datos de Pacientes
@@ -9,6 +11,7 @@ const estructuraPaciente = {
         nacimiento: '',
         type_doc: '',
         No_document: '',
+        sexo: '',
         genero: '',
         direccion: '',
         departamento: '',
@@ -21,21 +24,50 @@ const estructuraPaciente = {
         Regimen: '',
         poblacionVulnerable: '',
         Tipo: '',
-    }
+    },
+    Diagnosticos: [{
+        id: '',
+        tipo: '',
+        CIE_10: '',
+        id_paciente: '',
+        rol_attention: '',
+    }],
+    Antecedentes: [{
+        id: '',
+        valor: '',
+        id_paciente: '',
+    }],
+    Antecedentes_familiares: [{
+        id: '',
+        valor: '',
+        id_paciente: '',
+    }],
 }
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
     state: () => ({
-        Paciente: JSON.parse(JSON.stringify(estructuraPaciente)) // estructura base compartida
+        Paciente: JSON.parse(JSON.stringify(estructuraPaciente)), // estructura base compartida
+        Pacientes: pacientes
     }),
+
+    getters: {
+        async listPacientes() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Paciente'
+            const pacientes = await store.leerdatos()
+            return pacientes
+        }
+    },
 
     actions: {
         // Acción para crear nuevas instancias de formulario
         createForm(storeId, estructura = estructuraPaciente) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
-        }
+        },
+
+
     }
 });
 

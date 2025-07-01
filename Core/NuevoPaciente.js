@@ -12,14 +12,12 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
     )
 
     if (paciente) {
-        const res = await $swal.fire({
-            icon: 'warning',
-            title: 'Paciente ya esta registrado',
-            html: '¿Deseas registrar <strong>otro</strong>?',
-            showCancelButton: true,
-            cancelButtonText: 'Regresar',
-        });
-        if (res) return;
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'Paciente ya existe';
+        notificacionesStore.options.texto = 'Desear registrar otro?';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple()
+        return;
     }
 
     return await enviarFormulario(datos);

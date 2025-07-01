@@ -1,13 +1,15 @@
 <script setup>
+import { ref } from 'vue'
+import IngresarPaciente from '~/components/Forms/IngresarPaciente.vue'
 
+const nuevoPaciente = ref(false)
 const actions = [
     {
         title: 'Nuevo Paciente',
         description: 'Registrar un nuevo paciente',
         icon: 'fa-plus',
         color: 'bg-blue-500 hover:bg-blue-600',
-        url: '/Pacientes/Ingresar',
-        action: () => console.log('Nuevo paciente')
+        action: () => nuevoPaciente.value = true,
     },
     {
         title: 'Buscar Historia',
@@ -44,7 +46,7 @@ const actions = [
             <div class="space-y-3">
 
 
-                <button v-for="action in actions"
+                <button v-for="action in actions" @click="action.action" :key="action.title"
                     class="w-full p-4 rounded-lg text-white transition-colors duration-200" :class="action.color">
                     <a :href="action.url">
                         <div class="flex items-center space-x-3">
@@ -87,4 +89,5 @@ const actions = [
             </div>
         </div>
     </div>
+        <IngresarPaciente v-if="nuevoPaciente" @close="nuevoPaciente = false"/>
 </template>

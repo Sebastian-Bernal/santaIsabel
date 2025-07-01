@@ -2,7 +2,7 @@
 import FondoBlanco from '../../components/Fondos/FondoBlanco.vue'
 import InputIcon from '~/components/Inputs/InputIcon.vue';
 import Select from '~/components/Selects/Select.vue';
-import { pacientes } from '../../data/pacientes';
+import { pacientes } from '../../../data/pacientes';
 import { ref, computed } from 'vue';
 
 const pacienteABuscar = ref('Juan Perez Perez');

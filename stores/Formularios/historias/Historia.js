@@ -51,6 +51,30 @@ const estructuraHistoria = {
     },
     Plan_manejo_medicamentos: [],
     Plan_manejo_procedimientos: [],
+    Plan_manejo_insumos: {
+        pos: [{
+            id: '',
+            nombre: '',
+            presentacion: '',
+            cantidad: 0,
+        },],
+        Nopos : [{
+            id: '',
+            nombre: '',
+            presentacion: '',
+            cantidad: 0,
+        },],
+    },
+    Plan_manejo_equipos: {
+        pos: [{
+            id: '',
+            nombre: '',
+        },],
+        Nopos : [{
+            id: '',
+            nombre: '',
+        },],
+    },
 }
 
 // Pinia HistoriasClinicas

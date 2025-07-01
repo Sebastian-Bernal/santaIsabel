@@ -107,14 +107,13 @@ const estiloColumnas = computed(() => {
             <div class="flex gap-3 md:w-[50%] justify-end">
                 <InputIcon placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
 
-                <nuxt-link :to="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
+                <nuxt-link @click="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </Button>
                     <h4>Agregar</h4>
                 </nuxt-link>
             </div>
-
         </div>
 
         <!-- Tabla -->
@@ -175,6 +174,11 @@ const estiloColumnas = computed(() => {
                             </h2>
                         </div>
                     </div>
+                </div>
+
+                <div>
+                    <p v-if="datosPaginados.length === 0"
+                        class="text-gray-500 text-center mt-10">No se encontraron resultados.</p>
                 </div>
 
             </div>

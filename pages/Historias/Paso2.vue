@@ -71,7 +71,8 @@ const validarform = () => {
             secciones: [
                 { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
                 { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' }
+                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' },
+                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-gray-300' }
             ]
         }" tamaño="w-[90%] h-[97%]">
 
@@ -94,12 +95,10 @@ const validarform = () => {
                 </div>
             </Section>
 
-            <Section styles="flex-col gap-1 mb-2 w-full max-h-[100px] overflow-y-auto">
-                <div class="w-full flex gap-3 items-center">
-                    <Input v-model="formData.Enfermedad.valor" type="text" id="enfermedad" name="enfermedad"
-                        placeholder="Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes..."
-                        tamaño="w-full" />
-                </div>
+            <Section>
+                <Textarea v-model="formData.Enfermedad.valor" type="text" id="enfermedad" name="enfermedad"
+                    placeholder="Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes..."
+                        tamaño="w-full" rows="3"></Textarea>
             </Section>
 
             <Section class="mt-3">
