@@ -125,10 +125,10 @@ export const buttons = ref([
     },
     {
         id: 2,
-        nombre: "Historias",
+        nombre: "Historial",
         secciones: [
             {
-                titulo: "Ingresar"
+                titulo: "Historias"
             },
             {
                 titulo: "Buscar"
@@ -164,6 +164,18 @@ export const buttons = ref([
                     {
                         titulo: 'Datos',
                         ruta: '/Usuarios/Profesional'
+                    },
+                    {
+                        titulo: 'Modificar',
+                    }
+                ]
+            },
+            {
+                titulo: "Administrativos",
+                subSecciones: [
+                    {
+                        titulo: 'Datos',
+                        ruta: '/Usuarios/Administrativos'
                     },
                     {
                         titulo: 'Modificar',

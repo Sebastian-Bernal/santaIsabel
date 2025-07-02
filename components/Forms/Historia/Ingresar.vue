@@ -1,5 +1,6 @@
 <script setup>
 // Componentes
+import Fondo from '../../Fondos/Fondo.vue'
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -7,13 +8,14 @@ import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
-import IngresarPaciente from '~/components/Forms/IngresarPaciente.vue';
+import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue';
 // Data
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineEmits } from "vue";
 
+const emit = defineEmits(['close']);
 const HistoriaStore = useHistoriasStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
@@ -23,6 +25,8 @@ const {
     formData,
     traerDatos,
     guardarDatos,
+    agregarItem,
+    eliminarItem,
 } = RegistrarHistoriaStore;
 
 const {
@@ -113,20 +117,24 @@ const validarform = () => {
         mensaje()
     }
 };
+
+function cerrarModal() {
+    emit('close')
+}
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col items-center">
+    <Fondo>
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
             secciones: [
-                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-gray-300' },
-                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-gray-300' },
-                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-gray-300' }
+                { numPagina: 1, ruta: '/Historial/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historial/Paso2', color: 'bg-gray-300' },
+                { numPagina: 3, ruta: '/Historial/Paso3', color: 'bg-gray-300' },
+                { numPagina: 4, ruta: '/Historial/Paso4', color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[90%] h-[97%]">
+        }" tamaño="w-[80%] h-[85%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -136,7 +144,7 @@ const validarform = () => {
                 <div class="flex gap-2 items-center">
                     <p class="text-xs">{{ fechaModificacion }}</p>
                     <a href="/Pacientes/Modificar" v-if="fechaModificacion">
-                        <Button color="bg-[var(--color-green)]"><i class="fa-solid fa-pencil"></i></Button>
+                        <Button color="bg-[var(--color-warning)]"><i class="fa-solid fa-pencil"></i></Button>
                     </a>
                     <a @click="nuevoPaciente = true">
                         <Button color="bg-blue-500"><i class="fa-solid fa-plus"></i></Button>
@@ -171,27 +179,32 @@ const validarform = () => {
 
             <Section styles="mt-3">
                 <div class="flex gap-3 items-center">
-                    <i class="fa-solid fa-users text-blue-500"></i>
+                    <i class="fa-solid fa-users text-purple-500"></i>
                     <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
+                </div>
+                <div class="flex gap-2 items-center">
+                    <a @click="agregarItem('Pacientes', { nombre: '', parentesco: ''}, 'nombre')">
+                        <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
+                    </a>
                 </div>
             </Section>
 
-            <Section>
-                <Input v-model="formData.nombreAcompañante" type="text" id="nombreAcompañante" name="nombreAcompañante"
+            <Section v-for="(item, index) in formData.Paciente.acompañante" :key="index" styles="flex-col md:flex-row">
+                <Input v-model="formData.Paciente.acompañante.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
-                <Select v-model="formData.parentesco" id="parentesco" name="parentesco"
+                <Select v-model="formData.Paciente.acompañante.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
             </Section>
 
             <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink to="/">
+                <nuxtLink @click="cerrarModal">
                     <ButtonForm color="bg-gray-500"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Atras
                     </ButtonForm>
                 </nuxtLink>
-                <nuxtLink :to="formComplete ? '/Historias/Paso2' : ''">
+                <nuxtLink :to="formComplete ? '/Historial/Paso2' : ''">
                     <ButtonForm color="bg-blue-500" @click="validarform"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Siguiente
@@ -200,7 +213,7 @@ const validarform = () => {
             </div>
 
         </FormularioWizard>
-    </div>
+    </Fondo>
     <IngresarPaciente v-if="nuevoPaciente" @close="nuevoPaciente = false" />
 </template>
 

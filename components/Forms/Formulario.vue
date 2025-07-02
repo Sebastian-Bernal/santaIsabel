@@ -64,7 +64,7 @@ const enviarFormularioPendiente = () => {
 
 <template>
     <div
-        class="bg-[#f3f3f3] rounded-lg shadow-lg p-6 py-7 relative z-1 flex flex-col items-center" :class="tamaño">
+        class="z-1 flex flex-col items-center h-[90%] bg-gray-50">
         <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
@@ -73,15 +73,6 @@ const enviarFormularioPendiente = () => {
                 <slot></slot>
             </div>
         </form>
-        <!-- Botones Formulario -->
-        <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-            <nuxtLink v-for="boton in datos.botones" :to="boton.ruta">
-                <button :class="boton.color" @click="boton.submit ? validarYEnviar() : alertValidacion(boton.ruta)"
-                    class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                    {{ boton.texto }}
-                </button>
-            </nuxtLink>
-        </div> -->
     </div>
 </template>
 

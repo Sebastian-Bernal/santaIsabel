@@ -13,11 +13,13 @@ import { CIE10 } from "~/data/CIE10.js";
 import { ubicacion } from "../../data/colombia.js";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
+import { useVarView } from "../../stores/varview.js";
 
 import { ref, computed, watch, onMounted, defineEmits } from "vue";
 
 const emit = defineEmits(['close']);
 
+const varView = useVarView();
 const storePaciente = usePacientesStore();
 const nuevoPacienteStore = storePaciente.createForm("NuevoPaciente");
 const notificacionesStore = useNotificacionesStore();
@@ -84,8 +86,8 @@ const enviarNuevoPaciente = async (formData) => {
 const ciudades = computed(() => {
     return ubicacion.filter(
         (data) => data.departamento === formData.Paciente.departamento
-    )[0].ciudades ;
-    
+    )[0].ciudades;
+
 });
 
 const validarform = () => {
@@ -98,7 +100,8 @@ const validarform = () => {
 };
 
 function cerrarModal() {
-    emit('close')
+    varView.showNuevoPaciente = false;
+    limpiar();
 }
 </script>
 
@@ -166,9 +169,9 @@ function cerrarModal() {
                     <option v-for="(data, id) in ciudades" :key="id" :value="data"></option>
                 </datalist>
                 <Select v-model="formData.Paciente.zona" id="zona" name="zona" :options="[
-                    { text: 'Rural', value: 'rural' },
-                    { text: 'Urbana', value: 'urbana' },
-                ]" placeholder="Zona" tamaño="md:w-1/3 w-full" :showInfoSelect="true"></Select>
+                    { text: 'Rural', value: 'Rural' },
+                    { text: 'Urbana', value: 'Urbana' },
+                ]" placeholder="Zona" tamaño="md:w-1/3 w-full"></Select>
             </Section>
 
             <Section>
@@ -226,8 +229,8 @@ function cerrarModal() {
 
             <Section styles="flex-col max-h-[150px] overflow-y-auto">
                 <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
-                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo de Diagnostico"
-                        tamaño="w-full" />
+                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo"
+                        placeholder="Tipo de Diagnostico" tamaño="w-full" />
                     <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
                         list="cie10List" tamaño="w-full" />
                     <datalist id="cie10List">
@@ -240,61 +243,44 @@ function cerrarModal() {
                 </div>
             </Section>
 
-            <Section class="flex justify-between gap-5 mt-3">
-                <div class="w-full flex flex-col items-center">
-                    <div class="w-full flex justify-between mt-3">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-folder text-blue-500"></i>
-                            <Label forLabel="antecedentes">Antecedentes</Label>
-                        </div>
-                        <Button color="bg-blue-500" @click="
+            <Section class="flex justify-between gap-5 mt-5">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-folder text-blue-500"></i>
+                    <Label forLabel="antecedentes">Antecedentes</Label>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <a class="flex items-center gap-1" @click="
                             agregarItem(
                                 'Antecedentes',
-                                { id: '', valor: '', id_paciente: '' },
+                                { id: '', valor: '', id_paciente: '', tipo: 'personal' },
                                 'valor'
                             )
-                            ">
+                            " >
+                        <Button color="bg-blue-500">
                             <i class="fa-solid fa-plus"></i>
                         </Button>
-                    </div>
-
-                    <div class="flex flex-col gap-1 my-2 w-full max-h-[150px] overflow-y-auto">
-                        <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes"
-                            :key="i">
-                            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
-                                placeholder="Antecedentes Personales" tamaño="w-full" />
-                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500"
-                                @click="eliminarItem('Antecedentes', i)"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="w-full flex flex-col items-center">
-                    <div class="w-full flex justify-between mt-3">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-users text-blue-500"></i>
-                            <Label forLabel="antecedentes">Antecedentes Familiares</Label>
-                        </div>
-                        <Button color="bg-blue-500" @click="
+                        Personal
+                    </a>
+                    <a class="flex items-center gap-1" @click="
                             agregarItem(
-                                'Antecedentes_familiares',
-                                { id: '', valor: '', id_paciente: '' },
+                                'Antecedentes',
+                                { id: '', valor: '', id_paciente: '', tipo: 'familiar' },
                                 'valor'
                             )
-                            ">
+                            " >
+                        <Button color="bg-purple-500">
                             <i class="fa-solid fa-plus"></i>
                         </Button>
-                    </div>
-
-                    <div class="flex flex-col gap-1 mb-2 w-full max-h-[150px] overflow-y-auto">
-                        <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes_familiares"
-                            :key="i">
-                            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
-                                placeholder="Antecedentes Familiares" tamaño="w-full" />
-                            <i v-if="i > 0" class="fa-solid fa-close text-gray-500"
-                                @click="eliminarItem('Antecedentes_familiares', i)"></i>
-                        </div>
-                    </div>
+                        Familiar
+                    </a>
+                </div>
+            </Section>
+            <Section styles="flex-col gap-1 mb-2 w-full max-h-[150px] overflow-y-auto">
+                <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes" :key="i">
+                    <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
+                        :placeholder="antecedente.tipo === 'personal'? 'Antecedentes Personales': antecedente.tipo === 'familiar' ? 'Antecedentes Familiares': 'Antecedentes'" tamaño="w-full" />
+                    <i v-if="i > 0" class="fa-solid fa-close text-gray-500"
+                        @click="eliminarItem('Antecedentes', i)"></i>
                 </div>
             </Section>
 

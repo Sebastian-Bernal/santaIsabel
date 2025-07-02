@@ -1,11 +1,14 @@
 import { pacientes } from '~/data/pacientes';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarNuevoPaciente = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    
+    // const pacientes = usePacientesStore();
+    // const { Pacientes } = pacientes;
+    // console.log(Pacientes)
     // Validacion si ya existe Paciente
     const paciente = pacientes.value.find(
         p => p.nombre.toLowerCase() === datos.Paciente.name.toLowerCase()

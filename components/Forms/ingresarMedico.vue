@@ -102,7 +102,7 @@ function cerrarModal() {
     <Fondo>
         <Formulario class="mt-3" :datos="{
             titulo: 'Nuevo Profesional de Medicina',
-        }" tamaño="w-[70%] h-[85%]">
+        }" tamaño="w-[70%] h-[70%]">
 
             <Section>
                 <div class="flex gap-3 items-center">

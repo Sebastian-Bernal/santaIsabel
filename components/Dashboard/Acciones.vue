@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import IngresarPaciente from '~/components/Forms/IngresarPaciente.vue'
+import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
 
 const nuevoPaciente = ref(false)
 const actions = [
@@ -16,7 +16,7 @@ const actions = [
         description: 'Buscar historia clínica',
         icon: 'fa-search',
         color: 'bg-[#4aa759] hover:bg-green-600',
-        url: '/Historias/Buscar',
+        url: '/Historial/Buscar',
         action: () => console.log('Buscar historia')
     },
     {
@@ -24,7 +24,7 @@ const actions = [
         description: 'Crear historia clínica',
         icon: 'fa-file',
         color: 'bg-[#a74a98] hover:bg-purple-600',
-        url: '/Historias/Ingresar',
+        url: '/Historial/Ingresar',
         action: () => console.log('Nueva historia')
     },
     {

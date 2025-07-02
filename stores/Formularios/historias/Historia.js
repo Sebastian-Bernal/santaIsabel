@@ -1,4 +1,5 @@
 import { createFormStore } from '../../createFormStore';
+import {historias} from "~/data/historias";
 // Creacion del store para historia clinica
 
 // Estructura de datos de Historias Clinicas
@@ -8,6 +9,7 @@ const estructuraHistoria = {
         type_doc: '',
         No_document: '',
         id: '',
+        acompañante: [{nombre: '', parentesco: ''}],
     },
     Diagnosticos: [{
         id: '',
@@ -20,6 +22,7 @@ const estructuraHistoria = {
         id: '',
         valor: '',
         id_paciente: '',
+        tipo: 'personal',
     }],
     Enfermedad: {
         valor: '',
@@ -80,8 +83,19 @@ const estructuraHistoria = {
 // Pinia HistoriasClinicas
 export const useHistoriasStore = defineStore('HistoriaClinica', {
     state: () => ({
-        Historia: JSON.parse(JSON.stringify(estructuraHistoria)) // estructura base compartida
+        Historia: JSON.parse(JSON.stringify(estructuraHistoria)), // estructura base compartida
+        Historias: historias, // Aquí se pueden cargar historias preexistentes si es necesario
     }),
+
+    getters: {
+        async listPacientes() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Paciente'
+            const pacientes = await store.leerdatos()
+            return pacientes
+        }
+    },
+
 
     actions: {
         // Acción para crear nuevas instancias de formulario

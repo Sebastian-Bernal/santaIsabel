@@ -1,5 +1,6 @@
 <script setup>
 // Componentes
+import Fondo from '../../components/Fondos/Fondo.vue'
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -90,17 +91,17 @@ const validarform = () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col items-center">
+    <Fondo>
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Analisis',
             tituloFormulario: 'Nueva Historia Clinica',
             secciones: [
-                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
+                { numPagina: 1, ruta: '/Historial/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historial/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 3, ruta: '/Historial/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 4, ruta: '/Historial/Paso4', color: 'bg-[rgba(0,0,0,0.5)] text-white' }
             ],
-        }" tamaño="w-[90%] h-[97%]">
+        }" tamaño="w-[80%] h-[85%]">
 
             <Section styles="mt-3">
                 <div class="flex gap-3 items-center">
@@ -146,13 +147,13 @@ const validarform = () => {
                     placeholder="Condicion de rehabilitacion" tamaño="md:w-3/5 w-full"></Select>
 
                 <div class="md:w-2/5 w-full flex items-center gap-1">
-                    <nuxt-link to="/Historias/Medicamentos" class="w-1/2">
+                    <nuxt-link to="/Historial/Medicamentos" class="w-1/2">
                         <button type="button"
                             class="w-full h-[40px] flex justify-center items-center gap-2 bg-[var(--color-green)] text-white text-sm rounded hover:opacity-75">
                             <i class="fa-solid fa-plus"></i>Medicina
                         </button>
                     </nuxt-link>
-                    <nuxt-link to="/Historias/Procedimientos" class="w-1/2">
+                    <nuxt-link to="/Historial/Procedimientos" class="w-1/2">
                         <button type="button"
                             class="w-full h-[40px] flex justify-center items-center gap-2 bg-blue-400 text-white text-sm rounded hover:opacity-75">
                             <i class="fa-solid fa-plus"></i>Servicios
@@ -162,7 +163,7 @@ const validarform = () => {
             </Section>
 
             <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink to="/Historias/Paso3">
+                <nuxtLink to="/Historial/Paso3">
                     <ButtonForm color="bg-gray-500"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Atras
@@ -177,5 +178,5 @@ const validarform = () => {
             </div>
 
         </FormularioWizard>
-    </div>
+    </Fondo>
 </template>

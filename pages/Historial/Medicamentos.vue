@@ -73,9 +73,6 @@ onMounted(() => {
     <Fondo>
         <Formulario :datos="{
             titulo: 'Medicamentos',
-            botones: [
-                { texto: 'Atras', ruta: '/Historias/Paso3', color: 'bg-gray-500' },
-            ],
         }" tamaño="w-[60%] h-[60%]">
 
             <Label forLabel="medicamento">Plan de manejo</Label>
@@ -126,7 +123,7 @@ onMounted(() => {
             </div>
 
             <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink to="/Historias/Paso4">
+                <nuxtLink to="/Historial/Paso4">
                     <ButtonForm color="bg-gray-500"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Atras

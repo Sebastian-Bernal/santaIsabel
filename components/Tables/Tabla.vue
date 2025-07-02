@@ -146,7 +146,7 @@ const estiloColumnas = computed(() => {
                     <div v-if="acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action" />
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action.icon" @click="action.action(fila)" />
 
                         <button @click="activarCollapse(id)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">

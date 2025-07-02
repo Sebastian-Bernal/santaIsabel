@@ -1,5 +1,5 @@
 <template>
-    <button class="border-none text-white text-center rounded-full w-[24px] h-[24px] text-xs hover:opacity-80" :class="botonClase" @click="$emit('accion', tipo)">
+    <button class="border-none text-white text-center rounded-full w-[24px] h-[24px] text-xs hover:opacity-80" :class="botonClase">
         <i :class="iconoClase"></i>
     </button>
 </template>
@@ -27,7 +27,7 @@ const botonClase = computed(() => {
         case 'ver':
             return 'bg-sky-600';
         case 'actualizar':
-            return 'bg-[var(--color-naranja)]';
+            return 'bg-[var(--color-warning)]';
         case 'borrar':
             return 'bg-red-600';
         default:

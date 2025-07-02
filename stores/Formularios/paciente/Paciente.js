@@ -36,11 +36,7 @@ const estructuraPaciente = {
         id: '',
         valor: '',
         id_paciente: '',
-    }],
-    Antecedentes_familiares: [{
-        id: '',
-        valor: '',
-        id_paciente: '',
+        tipo: 'personal',
     }],
 }
 
@@ -52,10 +48,11 @@ export const usePacientesStore = defineStore('Pacientes', {
     }),
 
     getters: {
-        async listPacientes() {
+        async listPacientes(state) {
             const store = useIndexedDBStore()
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
+            state.Pacientes = pacientes // Actualiza la lista de pacientes en el estado
             return pacientes
         }
     },

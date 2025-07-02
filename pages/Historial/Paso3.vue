@@ -1,5 +1,6 @@
 <script setup>
 // Componentes
+import Fondo from '../../components/Fondos/Fondo.vue'
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -63,17 +64,17 @@ const validarform = () => {
 </script>
 
 <template>
-    <div class="w-full h-full flex flex-col items-center">
+    <Fondo>
         <FormularioWizard class="mt-3" :datos="{
             titulo: 'Examen fisico',
             tituloFormulario: 'Nueva Historia Clinica',
             secciones: [
-                { numPagina: 1, ruta: '/Historias/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/Historias/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 3, ruta: '/Historias/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 4, ruta: '/Historias/Paso4', color: 'bg-gray-300' }
+                { numPagina: 1, ruta: '/Historial/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, ruta: '/Historial/Paso2', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 3, ruta: '/Historial/Paso3', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 4, ruta: '/Historial/Paso4', color: 'bg-gray-300' }
             ],
-        }" tamaño="w-[90%] h-[97%]">
+        }" tamaño="w-[80%] h-[85%]">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -118,7 +119,7 @@ const validarform = () => {
                     </ButtonForm>
                 </nuxtLink>
 
-                <nuxtLink :to="formComplete ? '/Historias/Paso4' : ''">
+                <nuxtLink :to="formComplete ? '/Historial/Paso4' : ''">
                 <ButtonForm color="bg-blue-500" @click="validarform()"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Registrar
@@ -127,5 +128,5 @@ const validarform = () => {
             </div>
 
         </FormularioWizard>
-    </div>
+    </Fondo>
 </template>
