@@ -130,12 +130,6 @@ export const buttons = ref([
             {
                 titulo: "Historias"
             },
-            {
-                titulo: "Buscar"
-            },
-            {
-                titulo: "Modificar"
-            }
         ],
         icon: "fa-file",
         tamaño: 'max-h-[25vh]',
@@ -177,14 +171,11 @@ export const buttons = ref([
                         titulo: 'Datos',
                         ruta: '/Usuarios/Administrativos'
                     },
-                    {
-                        titulo: 'Modificar',
-                    }
                 ]
             }
         ],
         icon: "fa-user",
-        tamaño: 'max-h-[25vh]',
+        tamaño: 'max-h-[25vh] pb-0',
         showUp: true,
         active: false,
     },

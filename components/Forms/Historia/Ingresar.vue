@@ -13,9 +13,10 @@ import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { ref, onMounted, defineEmits } from "vue";
+import { ref, onMounted } from "vue";
+import { useVarView } from "../../stores/varview.js";
 
-const emit = defineEmits(['close']);
+const varView = useVarView();
 const HistoriaStore = useHistoriasStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
@@ -27,6 +28,7 @@ const {
     guardarDatos,
     agregarItem,
     eliminarItem,
+    limpiar,
 } = RegistrarHistoriaStore;
 
 const {
@@ -119,7 +121,8 @@ const validarform = () => {
 };
 
 function cerrarModal() {
-    emit('close')
+    limpiar()
+    varView.showNuevaHistoria = false
 }
 </script>
 

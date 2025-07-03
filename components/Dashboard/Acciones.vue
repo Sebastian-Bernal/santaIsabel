@@ -1,22 +1,23 @@
 <script setup>
-import { ref } from 'vue'
 import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
+import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
+import { useVarView } from "../../stores/varview.js";
 
-const nuevoPaciente = ref(false)
+const varView = useVarView();
 const actions = [
     {
         title: 'Nuevo Paciente',
         description: 'Registrar un nuevo paciente',
         icon: 'fa-plus',
         color: 'bg-blue-500 hover:bg-blue-600',
-        action: () => nuevoPaciente.value = true,
+        action: () => varView.showNuevoPaciente = true,
     },
     {
         title: 'Buscar Historia',
         description: 'Buscar historia clínica',
         icon: 'fa-search',
         color: 'bg-[#4aa759] hover:bg-green-600',
-        url: '/Historial/Buscar',
+        url: '/Historial/Historias',
         action: () => console.log('Buscar historia')
     },
     {
@@ -24,8 +25,7 @@ const actions = [
         description: 'Crear historia clínica',
         icon: 'fa-file',
         color: 'bg-[#a74a98] hover:bg-purple-600',
-        url: '/Historial/Ingresar',
-        action: () => console.log('Nueva historia')
+        action: () => varView.showNuevaHistoria = true
     },
     {
         title: 'Exportar RIPS',
@@ -89,5 +89,6 @@ const actions = [
             </div>
         </div>
     </div>
-        <IngresarPaciente v-if="nuevoPaciente" @close="nuevoPaciente = false"/>
+        <IngresarPaciente v-if="varView.showNuevoPaciente"/>
+        <Ingresar v-if="varView.showNuevaHistoria"/>
 </template>

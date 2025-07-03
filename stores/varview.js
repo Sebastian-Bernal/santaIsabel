@@ -6,7 +6,10 @@ export const useVarView = defineStore('varView', {
         showInfoSelect: false,
         showNuevoPaciente: false,
         showModificarPaciente: false,
-        showMedico: false,
+        showNuevoProfesional: false,
+        showModificarProfesional: false,
+        showNuevaHistoria: false,
+        showNuevaCita: false,
         formComplete: false,
     })
 })

@@ -5,18 +5,12 @@ import Input from "~/components/Inputs/Input.vue";
 import Section from "~/components/Forms/Section.vue";
 import Select from "~/components/Selects/Select.vue";
 import Button from "~/components/Buttons/Button.vue";
-import ButtonForm from "~/components/Buttons/ButtonForm.vue";
 // Data
 import { CIE10 } from "~/data/CIE10.js";
 import { ubicacion } from "../../data/colombia.js";
-import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
-import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";
+import { computed, watch, onMounted } from "vue";
 
-import { ref, computed, watch, onMounted } from "vue";
-
-const notificacionesStore = useNotificacionesStore();
-const storePaciente = usePacientesStore();
 const varView = useVarView();
 
 const props = defineProps([
@@ -25,15 +19,13 @@ const props = defineProps([
     'guardarDatos',
     'agregarItem',
     'eliminarItem',
+    'noCambiar'
 ]);
-
-const { simple, mensaje, options } = notificacionesStore;
 
 // Guardar Datos en el localStorage
 watch(
     props.formData,
     (newValue) => {
-        console.log(props.formData)
         props.guardarDatos(newValue);
 
         // Validacion
@@ -83,7 +75,7 @@ const ciudades = computed(() => {
             { text: 'RC', value: 'RC' },
         ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
         <Input v-model="props.formData.Paciente.No_document" type="number" id="documento" name="documento"
-            placeholder="Número de documento" tamaño="w-full" />
+            placeholder="Número de documento" tamaño="w-full" :disabled="props.noCambiar" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
@@ -181,8 +173,6 @@ const ciudades = computed(() => {
 
     <Section styles="flex-col max-h-[150px] overflow-y-auto">
         <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in props.formData.Diagnosticos">
-            <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo de Diagnostico"
-                tamaño="w-full" />
             <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
                 list="cie10List" tamaño="w-full" />
             <datalist id="cie10List">
@@ -190,14 +180,16 @@ const ciudades = computed(() => {
                     codigo: {{ enfermedad.code }}
                 </option>
             </datalist>
-            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarItem('Diagnosticos', i)"></i>
+            <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo de Diagnostico"
+                tamaño="w-full" />
+            <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
         </div>
     </Section>
 
     <Section class="flex justify-between gap-5 mt-5">
         <div class="flex items-center gap-3">
             <i class="fa-solid fa-folder text-blue-500"></i>
-            <Label forLabel="antecedentes">Antecedentes</Label>
+            <Label forLabel="antecedentes">Antecedentes (opcional)</Label>
         </div>
         <div class="flex gap-5 items-center">
             <a class="flex items-center gap-1" @click="
@@ -231,7 +223,7 @@ const ciudades = computed(() => {
             <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
                 :placeholder="antecedente.tipo === 'personal' ? 'Antecedentes Personales' : antecedente.tipo === 'familiar' ? 'Antecedentes Familiares' : 'Antecedentes'"
                 tamaño="w-full" />
-            <i v-if="i > 0" class="fa-solid fa-close text-gray-500" @click="eliminarItem('Antecedentes', i)"></i>
+            <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Antecedentes', i)"></i>
         </div>
     </Section>
 </template>

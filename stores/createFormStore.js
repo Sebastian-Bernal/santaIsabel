@@ -29,6 +29,7 @@ export const createFormStore = (storeId, estructuraInicial) => {
 
             limpiar() {
                 localStorage.removeItem(storeId);
+                this.formData = JSON.parse(JSON.stringify(estructuraInicial));
             },
 
             agregarItem(campo, plantilla, campoValidar) {

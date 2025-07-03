@@ -1,20 +1,30 @@
 <script setup>
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { citas } from '../../data/Citas.js'
-import {computed} from 'vue';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';0
+import { computed, onMounted, ref } from 'vue';
 import { mesesAño } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
+const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
+const Citas = ref([]);
+
 const {
     fecha,
     dias,
     meses
 } = storeToRefs(calendarioCitasStore);
 
+onMounted(async () => {
+    // Cargar citas desde el store
+    Citas.value = await citasStore.listCitas;
+    console.log(Citas.value);
+});
+
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return citas.filter(cita => cita.fecha === fecha.value)
+    return Citas.value.filter(cita => cita.fecha.split('-').reverse().join('/') === fecha.value)
 });
 
 // Nombre del mes

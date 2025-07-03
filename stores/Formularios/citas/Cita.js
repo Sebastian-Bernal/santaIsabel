@@ -11,20 +11,33 @@ const estructuraCita = {
     Medico: {
         name: '',
         profesion: '',
-        id: ''
+        id: '',
+        No_document: '',
     },
-    cita: {
+    Cita: {
         fecha: '',
         servicio: '',
-        hora: ''
-    }
+        hora: '',
+        id_paciente: '',
+    },
 }
 
 // Pinia Citas
 export const useCitasStore = defineStore('Citas', {
     state: () => ({
-        Cita: JSON.parse(JSON.stringify(estructuraCita)) // estructura base compartida
+        Cita: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
+        Citas: []
     }),
+
+    getters: {
+        async listCitas(state) {
+            const store = useIndexedDBStore()
+            store.almacen = 'Cita'
+            const citas = await store.leerdatos()
+            state.Citas = citas
+            return citas
+        }
+    },
 
     actions: {
 

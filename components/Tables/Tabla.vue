@@ -139,7 +139,7 @@ const estiloColumnas = computed(() => {
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-black">{{ fila[col.titulo] }}</p>
+                        <p class="text-black truncate">{{ fila[col.titulo] }}</p>
                     </div>
 
                     <!-- Acciones -->

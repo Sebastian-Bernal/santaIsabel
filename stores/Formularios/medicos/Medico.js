@@ -22,14 +22,16 @@ const estructuraMedico = {
 // Pinia Medicos
 export const useMedicosStore = defineStore('Medicos', {
     state: () => ({
-        Medico: JSON.parse(JSON.stringify(estructuraMedico)) // estructura base compartida
+        Medico: JSON.parse(JSON.stringify(estructuraMedico)), // estructura base compartida
+        Medicos: [] // Lista de medicos
     }),
 
     getters: {
-        async listMedicos() {
+        async listMedicos(state) {
             const store = useIndexedDBStore()
             store.almacen = 'Medico'
             const medicos = await store.leerdatos()
+            state.Medicos = medicos
             return medicos
         }
     },

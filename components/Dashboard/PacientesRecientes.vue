@@ -32,7 +32,7 @@ const recentPatients = [
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold text-gray-900">Pacientes Recientes</h2>
             <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                <nuxt-link to="/Pacientes/Buscar">Ver todos</nuxt-link>
+                <nuxt-link to="/Usuarios/Pacientes">Ver todos</nuxt-link>
             </button>
         </div>
 

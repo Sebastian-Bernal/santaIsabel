@@ -1,15 +1,15 @@
 // acciones validar y enviar fomularios
-import { validarYEnviarNuevaCita } from "~/Core/NuevaCita";
+import { validarYEnviarNuevaCita } from '../../Core/NuevaCita';
 import { validarYEnviarNuevoPaciente } from "~/Core/NuevoPaciente";
 import { validarYEnviarModificarPaciente } from '../../Core/ModificarPaciente';
 import { validarYEnviarNuevoMedico } from '../../Core/NuevoMedico';
 import { validarYEnviarRegistrarHistoria } from '../../Core/RegistrarHistoria';
+import { validarYEnviarModificarMedico } from '~/Core/ModificarMedico';
 
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
-        // lógica de envío de Nueva Cita
-        console.log("Mandando formulario NuevaCita:", data);
+        await validarYEnviarNuevaCita(data);
         return true;
     },
     NuevoPaciente: async (data) => {
@@ -22,6 +22,10 @@ export const accionesFormularios = {
     },
     NuevoMedico: async (data) => {
         await validarYEnviarNuevoMedico(data)
+        return true;
+    },
+    ModificarMedico: async (data) => {
+        await validarYEnviarModificarMedico(data)
         return true;
     },
     RegistrarHistoria: async (data) => {

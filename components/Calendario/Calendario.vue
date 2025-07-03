@@ -2,10 +2,14 @@
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { citas } from '../../data/Citas.js'
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';0
+
 import { diasSemana, mesesAño } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
+const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
+const Citas = ref([]);
 
 // Importar states y funciones del store
 const {
@@ -14,6 +18,12 @@ const {
     meses,
     años
 } = storeToRefs(calendarioCitasStore);
+
+onMounted(async () => {
+    // Cargar citas desde el store
+    Citas.value = await citasStore.listCitas;
+    console.log(Citas.value);
+});
 
 const mesActual = ref(parseInt(meses.value) - 1)
 const nombreMes = computed(() => mesesAño[mesActual.value].nombre + ' ' + años.value)
@@ -42,8 +52,8 @@ const diasDelMes = computed(() => {
 // Propiedad devuelve array de fechas de todas las citas
 const diasConCitas = computed(() => {
     const arrayCitas = [];
-    citas.map((cita) => {
-        arrayCitas.push(cita.fecha)
+    Citas.value.map((cita) => {
+        arrayCitas.push(cita.fecha.split('-').reverse().join('/'))
     })
     return arrayCitas
 })

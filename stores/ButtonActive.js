@@ -1,4 +1,3 @@
-import { getButtonsAside } from '../Core/getButtonsAside';
 import { defineStore } from "pinia";
 import { buttons } from '../data/Buttons'
 

@@ -1,9 +1,8 @@
-import { pacientes } from '~/data/pacientes';
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Modificar Paciente
-export const validarYEnviarModificarPaciente = async (datos) => {
+export const validarYEnviarModificarMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
 
