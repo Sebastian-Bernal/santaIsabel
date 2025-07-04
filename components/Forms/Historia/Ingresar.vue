@@ -1,14 +1,14 @@
 <script setup>
 // Componentes
-import Fondo from '../../Fondos/Fondo.vue'
+import ModalLG from '~/components/Modales/ModalLG.vue';
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
-import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import Section from '~/components/Forms/Section.vue';
 import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue';
+import ModificarPaciente from '~/components/Forms/Pacientes/ModificarPaciente.vue';
 // Data
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -40,17 +40,15 @@ const {
 // Delcaracionde variables y funciones
 const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
-const formComplete = ref(false);
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
-const nuevoPaciente = ref(false);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
     if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "") {
-        formComplete.value = true
+        varView.formComplete = true
     } else {
-        formComplete.value = false
+        varView.formComplete = false
     }
     guardarDatos(newValue);
 }, { deep: true });
@@ -112,7 +110,7 @@ function seleccionarPaciente(paciente) {
 }
 
 const validarform = () => {
-    if (!formComplete.value) {
+    if (!varView.formComplete) {
         options.position = 'top-end';
         options.texto = "Falta campos por llenar, por favor ingrese valores";
         options.tiempo = 1500
@@ -120,24 +118,54 @@ const validarform = () => {
     }
 };
 
-function cerrarModal() {
+const agregarPaciente = () => {
+    varView.showNuevoPaciente = true;
+}
+
+const modificarPaciente = () => {
+    varView.showModificarPaciente = true;
+    varView.showNuevaHistoria = false;
+}
+
+const cerrar = () => {
     limpiar()
+    varView.showNuevaHistoria = false;
+    varView.showPaso2 = false;
+    varView.showPaso3 = false;
+    varView.showPaso4 = false;
+}
+
+function cerrarModal() {
+    limpiar();
+    varView.formComplete = false;
     varView.showNuevaHistoria = false
+}
+
+function enviarPrimerPaso(){
+    event.preventDefault();
+    if (varView.formComplete) {
+        varView.showNuevaHistoria = false;
+        varView.showPaso2 = true;
+    } else {
+        validarform();
+    }
 }
 </script>
 
 <template>
-    <Fondo>
-        <FormularioWizard class="mt-3" :datos="{
+    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarPrimerPaso"
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+        <FormularioWizard :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
+            cerrar: cerrar,
             secciones: [
-                { numPagina: 1, ruta: '/Historial/Ingresar', color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, ruta: '/Historial/Paso2', color: 'bg-gray-300' },
-                { numPagina: 3, ruta: '/Historial/Paso3', color: 'bg-gray-300' },
-                { numPagina: 4, ruta: '/Historial/Paso4', color: 'bg-gray-300' }
+                { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, color: 'bg-gray-300' },
+                { numPagina: 3, color: 'bg-gray-300' },
+                { numPagina: 4, color: 'bg-gray-300' }
             ]
-        }" tamaño="w-[80%] h-[85%]">
+        }">
 
             <Section>
                 <div class="flex gap-3 items-center">
@@ -146,10 +174,10 @@ function cerrarModal() {
                 </div>
                 <div class="flex gap-2 items-center">
                     <p class="text-xs">{{ fechaModificacion }}</p>
-                    <a href="/Pacientes/Modificar" v-if="fechaModificacion">
+                    <a @click="modificarPaciente(formData.Paciente)" v-if="fechaModificacion">
                         <Button color="bg-[var(--color-warning)]"><i class="fa-solid fa-pencil"></i></Button>
                     </a>
-                    <a @click="nuevoPaciente = true">
+                    <a @click="agregarPaciente">
                         <Button color="bg-blue-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
@@ -200,24 +228,25 @@ function cerrarModal() {
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
             </Section>
 
-            <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
+            <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
                 <nuxtLink @click="cerrarModal">
                     <ButtonForm color="bg-gray-500"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Atras
                     </ButtonForm>
                 </nuxtLink>
-                <nuxtLink :to="formComplete ? '/Historial/Paso2' : ''">
+                <nuxtLink :to="varView.formComplete ? '/Historial/Paso2' : ''">
                     <ButtonForm color="bg-blue-500" @click="validarform"
                         class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                         Siguiente
                     </ButtonForm>
                 </nuxtLink>
-            </div>
+            </div> -->
 
         </FormularioWizard>
-    </Fondo>
-    <IngresarPaciente v-if="nuevoPaciente" @close="nuevoPaciente = false" />
+    </ModalLG>
+    <IngresarPaciente v-if="varView.showNuevoPaciente" />
+    <ModificarPaciente v-if="varView.showModificarPaciente" :pacienteId="formData.Paciente.id" />
 </template>
 
 <style scoped>

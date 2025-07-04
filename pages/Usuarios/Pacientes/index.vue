@@ -33,11 +33,11 @@ const modificarPaciente = (paciente) => {
 </script>
 
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg p-6 py-7">
+    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :columnas="[
-            { titulo: 'name', tamaño: 200, ordenar: true },
+            { titulo: 'name', tamaño: 150, ordenar: true },
             { titulo: 'No_document', tamaño: 100, ordenar: true },
-            { titulo: 'municipio', tamaño: 50 },
+            { titulo: 'municipio', tamaño: 150 },
             { titulo: 'genero', tamaño: 100 },
             { titulo: 'celular', tamaño: 100 },
             { titulo: 'Eps', tamaño: 150, ordenar: true }

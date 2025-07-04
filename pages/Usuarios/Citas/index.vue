@@ -1,5 +1,5 @@
 <script setup>
-import FondoBlanco from '../../components/Fondos/FondoBlanco'
+import FondoBlanco from '~/components/Fondos/FondoBlanco'
 import Calendario from '~/components/Calendario/Calendario.vue'
 import Citas from '~/components/Calendario/Citas.vue'
 import IngresarNuevaCita from '~/components/Forms/Citas/IngresarNuevaCita.vue'

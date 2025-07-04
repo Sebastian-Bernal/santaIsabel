@@ -48,7 +48,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const planManejoProcedimientos = db.createObjectStore('Plan_manejo_procedimientos', { keyPath: 'descripcion' });
                     planManejoProcedimientos.createIndex("buscaProcedimientos", "descripcion", { unique: false });
 
-                    const citas = db.createObjectStore('Cita', { keyPath: 'servicio' });
+                    const citas = db.createObjectStore('Cita', { keyPath: 'id_paciente' });
                     citas.createIndex("buscaCita", "id_cita", { unique: false });
                 }
 

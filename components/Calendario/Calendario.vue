@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '../../stores/Calendario.js'
-import { citas } from '../../data/Citas.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';0
 
 import { diasSemana, mesesAño } from '../../data/Fechas.js'
@@ -22,7 +21,6 @@ const {
 onMounted(async () => {
     // Cargar citas desde el store
     Citas.value = await citasStore.listCitas;
-    console.log(Citas.value);
 });
 
 const mesActual = ref(parseInt(meses.value) - 1)

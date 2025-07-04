@@ -48,7 +48,7 @@ const medicosList = ref([]);
 
 // Guardar los datos en localStorage
 watch(props.formData, (newValue) => {
-    if (props.formData.Paciente.name !== "" && props.formData.Cita.fecha !== '' && props.formData.Cita.servicio) {
+    if (props.formData.Cita.name_paciente !== "" && props.formData.Cita.fecha !== '' && props.formData.Cita.servicio) {
         varView.formComplete = true
     } else {
         varView.formComplete = false
@@ -73,10 +73,10 @@ const fechaformatDate = () => {
 // Funcion para autocompletar el paciente
 const pacienteExistente = () => {
     const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === props.formData.Paciente.name.toLowerCase()
+        p => p.nombre.toLowerCase() === props.formData.Cita.name_paciente.toLowerCase()
     )
 
-    if (!paciente && props.formData.Paciente.name !== '') {
+    if (!paciente && props.formData.Cita.name_paciente !== '') {
         options.icono = 'warning';
         options.titulo = 'Paciente no encontrado';
         options.texto = 'El paciente ingresado no está registrado.';
@@ -89,22 +89,20 @@ const pacienteExistente = () => {
 
 // datalist para Pacientes
 function filtrarPacientes() {
-    if (props.formData.Paciente.name.length === 0) {
+    if (props.formData.Cita.name_paciente.length === 0) {
         pacientesFiltrados.value = [];
         mostrarLista.value = false;
         return;
     }
 
     pacientesFiltrados.value = pacientes.value.filter(p =>
-        p.nombre.toLowerCase().includes(props.formData.Paciente.name.toLowerCase())
+        p.nombre.toLowerCase().includes(props.formData.Cita.name_paciente.toLowerCase())
     );
     mostrarLista.value = true;
 }
 // Autocompletar campos del paciente al seleccionar datalist
 function seleccionarPaciente(paciente) {
-    props.formData.Paciente.name = paciente.nombre;
-    props.formData.Paciente.No_document = paciente.documento;
-    props.formData.Paciente.id = paciente.id;
+    props.formData.Cita.name_paciente = paciente.nombre;
     props.formData.Cita.id_paciente = paciente.id;
     fechaModificacion.value = paciente.fechaModificacion;
     mostrarLista.value = false;
@@ -113,9 +111,8 @@ function seleccionarPaciente(paciente) {
 function seleccionarMedico(medico) {
     const medicoSeleccionado = medicosList.value.find(m => m.name.toLowerCase() === medico.toLowerCase());
     if (medicoSeleccionado) {
-        props.formData.Medico.profesion = medicoSeleccionado.profesion;
-        props.formData.Medico.id = medicoSeleccionado.id;
-        props.formData.Medico.No_document = medicoSeleccionado.No_document;
+        props.formData.Cita.name_medico = medicoSeleccionado.name;
+        props.formData.Cita.id_medico = medicoSeleccionado.id;
     } else {
         options.icono = 'warning';
         options.titulo = 'Médico no encontrado';
@@ -136,7 +133,7 @@ function seleccionarMedico(medico) {
         </div>
     </Section>
     <Section styles="relative">
-        <Input v-model="props.formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
+        <Input v-model="props.formData.Cita.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
             @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
         <ul v-show="mostrarLista && pacientesFiltrados.length"
             class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
@@ -156,8 +153,8 @@ function seleccionarMedico(medico) {
     </Section>
 
     <Section styles="relative" @blur="pacienteExistente">
-        <Input v-model="props.formData.Medico.name" type="text" id="nombre" name="nombre" list="medicosList"
-            @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Medico.name)" placeholder="Nombre del profesional" tamaño="w-full" />
+        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList"
+            @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)" placeholder="Nombre del profesional" tamaño="w-full" />
         <datalist id="medicosList">
             <option v-for="medico in medicosList" :value="medico.name">
                 profesion: {{ medico.profesion }}
@@ -166,6 +163,9 @@ function seleccionarMedico(medico) {
         <Select v-model="props.formData.Cita.servicio" id="profesion" name="profesion"
             :options="[{ text: 'Medicina General', value: 'Medicina General' }, { text: 'Psicologia', value: 'Psicologia' }, { text: 'Odontologia', value: 'Odontologia' }]"
             placeholder="Servicio" tamaño="w-full"></Select>
+        <Select v-model="props.formData.Cita.motivo" id="motivo" name="motivo"
+            :options="[{ text: 'Control', value: 'Control' }, { text: 'Primera vez', value: 'Primera vez' }, { text: 'Urgencias', value: 'Urgencias' }]"
+            placeholder="Motivo" tamaño="w-full"></Select>
     </Section>
 
     <Section styles="mt-3">

@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalXS from '~/components/Modales/ModalXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
 import DatosCitas from './DatosCitas.vue'
 // Data
@@ -44,7 +44,7 @@ const enviarNuevaCita = async (formData) => {
         options.tiempo = 3000
         const res = await simple()
         limpiar()
-        window.location.href = '/Agendas'
+        window.location.href = '/Usuarios/Citas'
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';
@@ -70,15 +70,15 @@ function cerrarModal() {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevaCita"
+    <ModalXS :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevaCita"
         :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
-        <Formulario class="mt-3" :datos="{
+        <Formulario :datos="{
             titulo: 'Nueva Cita Medica',
         }">
             <DatosCitas :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"/>
 
         </Formulario>
-    </ModalLG>
+    </ModalXS>
 </template>
 
 <style scoped>

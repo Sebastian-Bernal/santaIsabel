@@ -1,6 +1,9 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
+import Paso2 from '~/components/Forms/Historia/Paso2.vue';
+import Paso3 from '~/components/Forms/Historia/Paso3.vue';
+import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -27,7 +30,7 @@ const actulizarHistoria = () => {
 </script>
 
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg p-6 py-7">
+    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :columnas="[
             { titulo: 'paciente', tamaño: 150, ordenar: true },
             { titulo: 'fecha', tamaño: 100, ordenar: true },
@@ -36,7 +39,10 @@ const actulizarHistoria = () => {
             { titulo: 'diagnstico', tamaño: 150 },
             { titulo: 'estado', tamaño: 150 }
         ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarHistoria }"
-            :acciones="{ action: true, icons: [{icon: 'actualizar', action: actulizarHistoria}], botones: true }" :datos="{ content: historiasList }" />
+            :acciones="{ action: true, icons: [{icon: 'ver', action: actulizarHistoria}], botones: true }" :datos="{ content: historiasList }" />
     </div>
     <Ingresar v-if="varView.showNuevaHistoria" />
+    <Paso2 v-if="varView.showPaso2" />
+    <Paso3 v-if="varView.showPaso3" />
+    <Paso4 v-if="varView.showPaso4" />
 </template>

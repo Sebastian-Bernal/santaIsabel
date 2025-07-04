@@ -1,7 +1,7 @@
 <script setup>
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { citas } from '../../data/Citas.js'
-import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';0
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { computed, onMounted, ref } from 'vue';
 import { mesesAño } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
@@ -11,6 +11,7 @@ const calendarioCitasStore = useCalendarioCitas();
 const Citas = ref([]);
 
 const {
+    fechaActual,
     fecha,
     dias,
     meses
@@ -19,7 +20,6 @@ const {
 onMounted(async () => {
     // Cargar citas desde el store
     Citas.value = await citasStore.listCitas;
-    console.log(Citas.value);
 });
 
 // Citas filtradas segun dia seleccionado
@@ -32,6 +32,15 @@ const mes = computed(() => {
     return mesesAño[parseInt(meses.value) - 1].nombre
 });
 
+// Fecha de la cita Hoy
+const fechaCita = computed(() => {
+    if(fechaActual.value === fecha.value){
+        return 'Hoy'
+    } else {
+        return `${fecha.value.split('-')[0]}`
+    }
+});
+
 </script>
 
 <template>
@@ -42,17 +51,17 @@ const mes = computed(() => {
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500">{{ cita.hora }}</h2>
-                    <p class="text-xs text-gray-500">Hoy</p>
+                    <p class="text-xs text-gray-500">{{ fechaCita }}</p>
                 </div>
                 <div>
-                    <p class="font-semibold">{{ cita.Paciente }}</p>
+                    <p class="font-semibold">{{ cita.name_paciente }}</p>
                     <p class="text-sm text-gray-700">{{ cita.servicio }}</p>
                 </div>
             </div>
             <div class="flex flex-col gap-2">
                 <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i>
-                    {{ cita.Medico }}</h3>
-                <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.tipo }}</h3>
+                    {{ cita.name_medico }}</h3>
+                <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
             </div>
         </div>
 

@@ -97,7 +97,7 @@ const estiloColumnas = computed(() => {
 <template>
     <div class="h-[90%]">
         <!-- Header -->
-        <div class="flex w-[100%] justify-between items-center px-10 mt-5 md:flex-row flex-col gap-3">
+        <div class="flex w-[100%] justify-between items-center md:flex-row flex-col gap-3">
             <div>
                 <h1 class="font-bold text-2xl tituloTabla text-gray-800">
                     {{ props.headerTabla.titulo }}
@@ -117,7 +117,7 @@ const estiloColumnas = computed(() => {
         </div>
 
         <!-- Tabla -->
-        <div class="m-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
+        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
             <div class="w-full">
 
                 <!-- Header titulos de props Columnas -->

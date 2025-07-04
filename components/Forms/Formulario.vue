@@ -64,7 +64,7 @@ const enviarFormularioPendiente = () => {
 
 <template>
     <div
-        class="z-1 flex flex-col items-center h-[90%] bg-gray-50">
+        class="px-6 pt-7 z-1 flex flex-col items-center h-[90%] bg-gray-50">
         <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">

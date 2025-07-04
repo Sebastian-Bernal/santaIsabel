@@ -3,22 +3,15 @@ import { createFormStore } from '../../createFormStore';
 
 // Estructura de datos de Citas
 const estructuraCita = {
-    Paciente: {
-        name: '',
-        No_document: '',
-        id: '',
-    },
-    Medico: {
-        name: '',
-        profesion: '',
-        id: '',
-        No_document: '',
-    },
     Cita: {
         fecha: '',
         servicio: '',
+        motivo: '',
         hora: '',
         id_paciente: '',
+        name_paciente: '',
+        id_medico: '',
+        name_medico: '',
     },
 }
 

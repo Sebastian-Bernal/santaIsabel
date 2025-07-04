@@ -159,9 +159,6 @@ export const buttons = ref([
                         titulo: 'Datos',
                         ruta: '/Usuarios/Profesional'
                     },
-                    {
-                        titulo: 'Modificar',
-                    }
                 ]
             },
             {
@@ -172,6 +169,9 @@ export const buttons = ref([
                         ruta: '/Usuarios/Administrativos'
                     },
                 ]
+            },
+            {
+                titulo: "Citas",
             }
         ],
         icon: "fa-user",

@@ -27,7 +27,14 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
     },
 
     getters: {
-        fechaActual: (state) => state.fecha,
+        fechaActual: (state) => {
+            const fechaActual = new Date() // Retorna la fecha actual como objeto Date
+            // Formatea la fecha actual como 'dd/mm/yyyy'
+            const dia = String(fechaActual.getDate()).padStart(2, '0');
+            const mes = String(fechaActual.getMonth() + 1).padStart(2, '0'); // +1 porque enero es 0
+            const año = fechaActual.getFullYear();
+            return `${dia}/${mes}/${año}`;
+        },
 
         // Obtiene el dia de la semana por la fecha
         diaSemana: (state) => {

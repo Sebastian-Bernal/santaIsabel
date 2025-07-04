@@ -15,6 +15,10 @@ const props = defineProps({
         type: String,
         default: "lg:w-3/5 md:w-4/5 w-[90%] h-3/4"
     },
+    cerrar: {
+        type: Function,
+        default: () => {}
+    }
 });
 
 const form = useFormPendiente();
@@ -63,27 +67,17 @@ const enviarFormularioPendiente = () => {
 </script>
 
 <template>
-    <div class="bg-white rounded-3xl shadow-lg relative flex flex-col items-center" :class="tamaño">
-        <Wizard :secciones="props.datos.secciones" :titulo="props.datos.tituloFormulario" />
-        <div class="scrollForm p-10 flex flex-col items-center w-full max-h-[75%] overflow-y-auto">
-            <h1 class="text-3xl text-gray-800 font-bold mb-3 text-center">{{ datos.titulo }}</h1>
-            <!-- Formulario -->
-            <form action="" class="w-full h-full flex justify-center">
-                <div class="w-full flex flex-col items-center py-3 gap-[15px]">
-                    <!-- Contenido del formulario -->
-                    <slot></slot>
-                </div>
-            </form>
-            <!-- Botones Formulario -->
-            <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink v-for="boton in datos.botones" :to="boton.ruta">
-                    <button :class="boton.color" @click="boton.submit ? validarYEnviar() : alertValidacion(boton.ruta)"
-                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        {{ boton.texto }}
-                    </button>
-                </nuxtLink>
-            </div> -->
-        </div>
+    <div
+        class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl">
+            <Wizard :secciones="datos.secciones" :titulo="datos.tituloFormulario" :cerrar="props.cerrar"/>
+        <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center pt-5">{{ datos.titulo }}</h1>
+        <!-- Formulario -->
+        <form action="" class="w-full h-full flex justify-center">
+            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[50vh] overflow-y-auto">
+                <!-- Contenido del formulario -->
+                <slot></slot>
+            </div>
+        </form>
     </div>
 </template>
 

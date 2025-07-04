@@ -9,7 +9,22 @@ export const useVarView = defineStore('varView', {
         showNuevoProfesional: false,
         showModificarProfesional: false,
         showNuevaHistoria: false,
+        showPaso2: false,
+        showPaso3: false,
+        showPaso4: false,
+        showMedicinas: false,
+        showProcedimientos: false,
         showNuevaCita: false,
         formComplete: false,
-    })
+    }),
+
+    getters: {
+        isOnline: () => {
+            if( typeof navigator === 'undefined' || !navigator.onLine) {
+                return false;
+            } else if (navigator.onLine) {
+                return true;
+            }
+        },
+    }
 })
