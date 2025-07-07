@@ -117,7 +117,7 @@ const estiloColumnas = computed(() => {
         </div>
 
         <!-- Tabla -->
-        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow ">
+        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow bg-white rounded-b-xl">
             <div class="w-full">
 
                 <!-- Header titulos de props Columnas -->
@@ -137,9 +137,10 @@ const estiloColumnas = computed(() => {
                 <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center"
                     :style="estiloColumnas">
 
-                    <div v-for="(col, key) in columnasVisibles" :key="key"
+                    <div v-for="(col, key) in columnasVisibles" :key="key" class="relative"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-black truncate">{{ fila[col.titulo] }}</p>
+                        <!-- <div class="w-[10px] h-[10px] rounded-full absolute left-0 top-2" :class="{'bg-red-500' : fila[col.titulo] === 'Cambios criticos', 'bg-orange-200': fila[col.titulo] === 'Recomendaciones Adicionales'}"></div> -->
+                        <p class="text-black truncate rounded-2xl">{{ fila[col.titulo] }}</p>
                     </div>
 
                     <!-- Acciones -->

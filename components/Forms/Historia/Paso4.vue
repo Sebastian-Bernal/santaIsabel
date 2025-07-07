@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -99,8 +99,8 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarRegistrarHistoria"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarRegistrarHistoria"
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Atras', enviar: 'Registrar'}">
         <FormularioWizard :datos="{
             titulo: 'Analisis',
             tituloFormulario: 'Nueva Historia Clinica',
@@ -127,16 +127,24 @@ const cerrarModal = () => {
             <Section styles="flex-col max-h-[150px] overflow-y-auto">
                 <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
                     <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10" list="cie10List"
-                    tamaño="w-full" />
+                    tamaño="w-full md:w-2/3" />
                     <datalist id="cie10List">
                         <option v-for="enfermedad in CIE10" :value="enfermedad.description">codigo: {{ enfermedad.code }}</option>
                     </datalist>
                     <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
-                        tamaño="w-full" />
+                        tamaño="w-full md:w-1/3" />
                     <i v-if="i > 0" class="fa-solid fa-close text-red-400"
                         @click="eliminarItem('Diagnosticos', i)"></i>
                 </div>
             </Section>
+            <Section>
+                <Select v-model="formData.HistoriaClinica.tipoAnalisis" id="rehabilitacion" name="rehabilitacion"
+                    :options="[{ text: 'Estado clinico sin cambios', value: 'Estado clinico sin cambios' }, { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' }, { text: 'Cambios criticos', value: 'Cambios criticos' }]"
+                    placeholder="Tipo de Analisis" tamaño="w-full"></Select>
+                <Input v-model="formData.HistoriaClinica.analisis" type="text" id="analisist" name="analisist" placeholder="Observacion"
+                    tamaño="w-full" />
+            </Section>
+
 
 
             <Section class="md:flex-row flex-col">
@@ -198,7 +206,7 @@ const cerrarModal = () => {
                 </div>
             </Section>
         </FormularioWizard>
-    </ModalLG>
+    </ModalFormLG>
     <Medicinas v-if="varView.showMedicinas" />
     <Procedimientos v-if="varView.showProcedimientos" />
 </template>

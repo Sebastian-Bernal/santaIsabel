@@ -5,7 +5,7 @@ import Select from '~/components/Selects/Select.vue';
 import { pacientes } from '../../../data/pacientes';
 import { ref, computed } from 'vue';
 
-const pacienteABuscar = ref('Juan Perez Perez');
+const pacienteABuscar = ref('');
 
 const datos = computed(() => pacientes.filter((paciente, id) => {
     paciente.nombre === pacienteABuscar.value;
@@ -28,7 +28,7 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
                 </datalist>
             </div>
         </div>
-        <div class="py-5 px-15">
+        <div class="py-5 px-15" v-if="pacienteABuscar !== ''">
             <div class="grid grid-cols-2 justify-between">
                 <div>
                     <h2 class="text-xl font-bold">Paciente {{ pacienteABuscar }}</h2>
@@ -37,7 +37,7 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
                 </div>
 
                 <Select tamaño="w-2/3 justify-self-end h-[40px]" id="historial" name="historial"
-                    placeholder="Ultima Historia Clinica" :options="[{ text: 'Historia Clinica 23-12-2025' }]">
+                    placeholder="Ultima Historia Clinica" :options="[{ text: 'Historia Clinica 23-12-2025' }, { text: 'Historia Clinica 17-06-2025' }, { text: 'Historia Clinica 01-01-2025' }]">
                 </Select>
             </div>
 
@@ -116,6 +116,9 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
                     </p>
                 </div>
 
+            </div>
+            <div v-if="pacienteABuscar === ''" class="w-full flex flex-col items-center justify-center gap-3 mt-10">
+                <p>Busca un paciente para conocer su historia clinica.</p>
             </div>
             <div class="w-full flex justify-end px-5 mt-2 gap-3">
                 <h3>Anterior</h3>

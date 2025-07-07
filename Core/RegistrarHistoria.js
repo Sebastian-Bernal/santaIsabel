@@ -1,9 +1,11 @@
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { useVarView } from '~/stores/varview.js';
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
     const { $swal } = useNuxtApp()
+    const varView = useVarView();
 
     // Validacion si no se registran medicamentos
     if (datos.Plan_manejo_medicamentos?.length < 1) {
@@ -12,10 +14,13 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             title: 'Historia sin plan de medicamentos',
             html: '¿Deseas registrar <strong>medicamentos</strong>?',
             showCancelButton: true,
-            confirmButtonText: '<a href="/Historias/Medicamentos">Sí</a>',
+            confirmButtonText: 'Sí',
             cancelButtonText: 'No, continuar',
         });
-        if (res.isConfirmed) return;
+        if (res.isConfirmed) {
+            varView.showMedicinas = true;
+            return
+        };
     }
 
     // Validacion si no se registran procedimientos
@@ -25,10 +30,13 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             title: 'Historia sin procedimientos',
             html: '¿Deseas registrar <strong>procedimientos</strong>?',
             showCancelButton: true,
-            confirmButtonText: '<a href="/Historias/Procedimientos">Sí</a>',
+            confirmButtonText: 'Sí',
             cancelButtonText: 'No, continuar',
         });
-        if (res.isConfirmed) return;
+        if (res.isConfirmed) {
+            varView.showProcedimientos = true;
+            return
+        };
     }
 
     return await enviarFormulario(datos);

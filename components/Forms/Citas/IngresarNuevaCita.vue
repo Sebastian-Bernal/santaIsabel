@@ -71,7 +71,7 @@ function cerrarModal() {
 
 <template>
     <ModalXS :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevaCita"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Cancelar', enviar: 'Registrar'}">
         <Formulario :datos="{
             titulo: 'Nueva Cita Medica',
         }">

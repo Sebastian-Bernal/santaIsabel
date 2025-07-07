@@ -1,4 +1,7 @@
 <script setup>
+import { useVarView } from '~/stores/varview.js';
+const varView = useVarView();
+
 const props = defineProps({
     secciones: {
         type: [Array]
@@ -9,6 +12,13 @@ const props = defineProps({
         default: () => {}
     }
 });
+
+const cerrar = () => {
+    varView.showNuevaHistoria = false;
+    varView.showPaso2 = false;
+    varView.showPaso3 = false;
+    varView.showPaso4 = false;
+};
 </script>
 
 <template>
@@ -23,7 +33,7 @@ const props = defineProps({
                 <div v-if="seccion.numPagina !== props.secciones.length" class="md:w-[30px] h-[5px] rounded-lg"
                     :class="seccion.color"></div>
             </nuxtLink>
-            <div class="cursor-pointer" @click="props.cerrar">
+            <div class="cursor-pointer" @click="cerrar">
                 <i class="fa-solid fa-close text-white position absolute top-7 right-3"></i>
             </div>
         </div>

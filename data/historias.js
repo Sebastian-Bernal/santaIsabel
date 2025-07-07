@@ -9,7 +9,7 @@ export const historias = [
         examen_fisico: 'Temperatura normal, tos leve',
         doctor: 'Dr. Smith',
         consulta: 'Mejoría progresiva',
-        estado: 'Activo',
+        tipoAnalisis: 'Cambios criticos'
     },
     {
         id: 2,
@@ -21,7 +21,7 @@ export const historias = [
         examen_fisico: 'Ruidos respiratorios anormales',
         doctor: 'Dra. Ramírez',
         consulta: 'Síntomas persistentes',
-        estado: 'Activo',
+        tipoAnalisis: 'Cambios criticos'
     },
     {
         id: 3,
@@ -33,7 +33,7 @@ export const historias = [
         examen_fisico: 'Presión elevada',
         doctor: 'Dr. Herrera',
         consulta: 'Inicio de tratamiento',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 4,
@@ -45,7 +45,7 @@ export const historias = [
         examen_fisico: 'Congestión nasal, ojos llorosos',
         doctor: 'Dra. Pineda',
         consulta: 'Consulta rutinaria',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 5,
@@ -57,7 +57,7 @@ export const historias = [
         examen_fisico: 'IMC elevado',
         doctor: 'Dr. López',
         consulta: 'Control trimestral',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 6,
@@ -69,7 +69,7 @@ export const historias = [
         examen_fisico: 'Dolor localizado, movilidad reducida',
         doctor: 'Dra. Vega',
         consulta: 'Seguimiento post-trauma',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 7,
@@ -81,7 +81,7 @@ export const historias = [
         examen_fisico: 'Dolor epigástrico',
         doctor: 'Dr. Ríos',
         consulta: 'Mejora tras medicación',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 8,
@@ -93,7 +93,7 @@ export const historias = [
         examen_fisico: 'Sensibilidad a la luz',
         doctor: 'Dra. Nieto',
         consulta: 'Dolor persistente',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     },
     {
         id: 9,
@@ -105,7 +105,7 @@ export const historias = [
         examen_fisico: 'Fiebre y fatiga',
         doctor: 'Dr. Valdez',
         consulta: 'Seguimiento telefónico',
-        estado: 'Activo',
+        tipoAnalisis: 'Recomendaciones Adicionales'
     },
     {
         id: 10,
@@ -117,6 +117,6 @@ export const historias = [
         examen_fisico: 'Palidez, fatiga',
         doctor: 'Dra. Cortés',
         consulta: 'Inicio de tratamiento',
-        estado: 'Activo',
+        tipoAnalisis: 'Sin cambios'
     }
 ];

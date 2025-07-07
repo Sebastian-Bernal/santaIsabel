@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Textarea from '~/components/Textareas/Textarea.vue';
@@ -84,8 +84,8 @@ const enviarSegundoPaso = () => {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarSegundoPaso"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarSegundoPaso"
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Atras', enviar: 'Siguiente'}">
         <FormularioWizard :datos="{
             titulo: 'Consulta Medica',
             tituloFormulario: 'Nueva Historia Clinica',
@@ -184,5 +184,5 @@ const enviarSegundoPaso = () => {
             </Section>
 
         </FormularioWizard>
-        </ModalLG>
+        </ModalFormLG>
 </template>

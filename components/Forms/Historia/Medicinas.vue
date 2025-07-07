@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
@@ -76,7 +76,7 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :formData="formData" :botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :formData="formData" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Medicamentos',
         }">
@@ -138,5 +138,5 @@ const cerrarModal = () => {
             </div> -->
 
         </Formulario>
-    </ModalLG>
+    </ModalFormLG>
 </template>

@@ -78,7 +78,7 @@ const appointments = [
                     </span>
                 </div>
             </div>
-            <div v-if="citasFiltradas.length === 0" class="text-center text-gray-500">
+            <div v-if="citasFiltradas.length === 0" class="text-center text-gray-500 pt-5">
                 No hay citas programadas para hoy.
             </div>
         </div>

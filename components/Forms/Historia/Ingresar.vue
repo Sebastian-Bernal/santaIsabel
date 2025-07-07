@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -153,8 +153,8 @@ function enviarPrimerPaso(){
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarPrimerPaso"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarPrimerPaso"
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Cancelar', enviar: 'Siguiente'}">
         <FormularioWizard :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
@@ -244,7 +244,7 @@ function enviarPrimerPaso(){
             </div> -->
 
         </FormularioWizard>
-    </ModalLG>
+    </ModalFormLG>
     <IngresarPaciente v-if="varView.showNuevoPaciente" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :pacienteId="formData.Paciente.id" />
 </template>

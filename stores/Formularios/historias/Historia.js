@@ -40,7 +40,9 @@ const estructuraHistoria = {
         },
         fecha_historia: '',
         id_paciente: '',
-        id_profesional: ''
+        id_profesional: '',
+        analisis: '',
+        tipoAnalisis: ''
     },
     ExamenFisico: {
         Peso: '',

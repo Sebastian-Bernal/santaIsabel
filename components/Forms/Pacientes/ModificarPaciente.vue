@@ -1,6 +1,6 @@
 <script setup>
 // Componentes 
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 // Data
@@ -89,8 +89,8 @@ function cerrarModal() {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente"
+        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Cancelar', enviar: 'Modificar'}">
         <Formulario class="mt-3" :datos="{
             titulo: 'Modificar a ' + pacienteAModificar,
         }">
@@ -98,5 +98,5 @@ function cerrarModal() {
                 :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true" />
 
         </Formulario>
-    </ModalLG>
+    </ModalFormLG>
 </template>

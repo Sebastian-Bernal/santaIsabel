@@ -4,7 +4,7 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
-import ModalLG from '~/components/Modales/ModalLG.vue';
+import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -71,7 +71,7 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <ModalLG :cerrarModal="cerrarModal" :enviarFormulario="[]" botones="[]">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Datos del procedimiento',
         }">
@@ -112,5 +112,5 @@ const cerrarModal = () => {
             </div>
 
         </Formulario>
-    </ModalLG>
+    </ModalFormLG>
 </template>
