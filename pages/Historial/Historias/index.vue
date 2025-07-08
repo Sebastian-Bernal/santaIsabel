@@ -12,13 +12,14 @@ import { useVarView } from "~/stores/varview.js";
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
-const { Historias } = historiasStore;
+
 const historiasList = ref([]);
 const historia = ref([]);
 
 // Cargar los pacientes desde el store
-onMounted(() => {
-    historiasList.value = Historias
+onMounted(async() => {
+    const datos = await historiasStore.datosHistoria
+    historiasList.value = datos
 });
 
 // funcion para controlar la visibilidad del formulario de nueva historia clinica
@@ -39,8 +40,8 @@ const verHistoria = (his) => {
 <template>
     <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :columnas="[
-            { titulo: 'paciente', tamaño: 150, ordenar: true },
             { titulo: 'cedula', tamaño: 100, ordenar: true },
+            { titulo: 'paciente', tamaño: 150, ordenar: true },
             { titulo: 'estado', tamaño: 150 },
         ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarHistoria }"
             :acciones="{ action: true, icons: [{icon: 'ver', action: verHistoria}], botones: true }" :datos="{ content: historiasList }" />
@@ -49,5 +50,5 @@ const verHistoria = (his) => {
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
     <Paso4 v-if="varView.showPaso4" />
-    <VerHistoria v-if="varView.showVerHistoria" :historia="historia" />
+    <VerHistoria v-if="varView.showVerHistoria" :historia="historia" :actions="actions" />
 </template>

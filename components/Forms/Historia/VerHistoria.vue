@@ -1,6 +1,14 @@
 <script setup>
 import ModalLG from '~/components/Modales/ModalLG.vue';
+import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
 import { useVarView } from '~/stores/varview.js';
+import VerAnalisis from './VerAnalisis.vue';
+import VerConsultas from './VerConsultas.vue'
+import VerEvoluciones from './VerEvoluciones.vue'
+import VerNotas from './VerNotas.vue'
+import VerTratamientos from './VerTratamientos.vue'
+import VerMedicacion from './VerMedicacion.vue'
+
 
 const props = defineProps({
     historia: {
@@ -18,49 +26,74 @@ const cerrarModal = () => {
 const actions = [
     {
         title: 'Consultas',
-        description: 'Registrar un nuevo paciente',
-        icon: 'fa-plus',
-        color: 'bg-blue-500 hover:bg-blue-600',
-        // action: () => varView.showNuevoPaciente = true,
+        description: 'Registro de consultas',
+        icon: 'fa-hospital',
+        color: 'bg-[var(--color-default-200)] hover:opacity-75',
+        action: () => {}
     },
     {
-        title: 'Analisis',
-        description: 'Buscar historia clínica',
-        icon: 'fa-search',
-        color: 'bg-[#4aa759] hover:bg-green-600',
-        url: '/Historial/Historias',
-        // action: () => console.log('Buscar historia')
+        title: 'Análisis',
+        description: 'Análisis del paciente',
+        icon: 'fa-stethoscope',
+        color: "bg-[var(--color-default-300)] hover:opacity-75",
+        action: () => {}
     },
     {
         title: 'Evoluciones',
-        description: 'Crear historia clínica',
+        description: 'Evoluciones de Historias',
         icon: 'fa-file',
-        color: 'bg-[#a74a98] hover:bg-purple-600',
-        // action: () => varView.showNuevaHistoria = true
+        color: 'bg-[var(--color-default-400)] hover:opacity-75',
+        action: () => {}
     },
     {
         title: 'Notas',
-        description: 'Generar reporte RIPS',
-        icon: 'fa-download',
-        color: 'bg-[#a7594a] hover:opacity-75',
-        url: '/Facturacion/rips',
-        // action: () => console.log('Exportar RIPS')
+        description: 'Registros de Notas',
+        icon: 'fa-notes-medical',
+        color: 'bg-[var(--color-default-500)] hover:opacity-75',
+        action: () => {}
     },
     {
         title: 'Tratamientos',
-        description: 'Crear historia clínica',
-        icon: 'fa-file',
-        color: 'bg-[#a74a98] hover:bg-purple-600',
-        // action: () => varView.showNuevaHistoria = true
-    },,
+        description: 'Tratamientos del paciente',
+        icon: 'fa-kit-medical',
+        color: 'bg-[var(--color-default-600)] hover:opacity-75',
+        action: () => {}
+    },
     {
         title: 'Medicacion',
-        description: 'Crear historia clínica',
-        icon: 'fa-file',
-        color: 'bg-[#a74a98] hover:bg-purple-600',
-        // action: () => varView.showNuevaHistoria = true
+        description: 'Medicacion del paciente',
+        icon: 'fa-prescription-bottle-medical',
+        color: 'bg-[var(--color-default-700)] hover:opacity-75',
+        action: () => {}
     },
 ];
+
+function Botones (titulo) {
+    varView.showMenuHistorias = !varView.showMenuHistorias;
+    if(titulo === 'Consultas'){
+        varView.showVerConsultas = !varView.showVerConsultas
+    } else if(titulo === 'Análisis'){
+        varView.showVerAnalisis = !varView.showVerAnalisis
+    } else if(titulo === 'Evoluciones'){
+        varView.showVerEvoluciones = !varView.showVerEvoluciones
+    } else if(titulo === 'Notas'){
+        varView.showVerNotas = !varView.showVerNotas
+    } else if(titulo === 'Tratamientos'){
+        varView.showVerTratamientos = !varView.showVerTratamientos
+    } else if(titulo === 'Medicacion'){
+        varView.showVerMedicacion = !varView.showVerMedicacion
+    }
+};
+
+function showBotones () {
+    varView.showMenuHistorias = true;
+    varView.showVerConsultas = false
+    varView.showVerAnalisis = false
+    varView.showVerEvoluciones = false
+    varView.showVerNotas = false
+    varView.showVerTratamientos = false
+    varView.showVerMedicacion = false
+};
 </script>
 
 <template>
@@ -76,146 +109,42 @@ const actions = [
                         </p>
                         <p class=""><span class="text-sm text-gray-300">CC:</span> {{ 111029381 }}
                         </p>
-                        <p class=""><span class="text-sm text-gray-300">Ultima Fecha:</span> {{ props.historia.fecha }}
-                        </p>
                     </div>
 
                 </div>
-                <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                <div v-if="varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
                     <i class="fa-solid fa-print hover:text-white"></i>
                     <i class="fa-solid fa-download hover:text-white"></i>
                     <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
                 </div>
+                <div v-if="!varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                    <i @click="showBotones" class="fa-solid fa-rotate-left hover:text-white"></i>    
+                </div>
             </div>
 
             <!-- Body -->
-            <div class="w-full h-full flex justify-center">
+            <div class="w-full h-full flex justify-center items-center" v-if="varView.showMenuHistorias">
                 <div
                     class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[90%] overflow-y-auto p-7">
 
-        <div class="medical-card p-6 w-full">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Paciente</h2>
-            <div class="space-y-3 grid grid-cols-2 w-full gap-3">
-
-
-                <button v-for="action in actions"
-                    class="w-full p-4 rounded-lg text-white transition-colors duration-200" :class="action.color">
-                    <a :href="action.url">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid" :class="action.icon"></i>
-                            <div class="text-left">
-                                <div class="font-medium">{{ action.title }}</div>
-                                <div class="text-sm opacity-90">{{ action.description }}</div>
-                            </div>
-                        </div>
-                    </a>
-                </button>
-
-            </div>
-        </div>
-                    <!-- <div class="w-full flex justify-center items-center gap-3">
-                        <div class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 rounded-full">
-                            <i class="fa-solid fa-angle-left "></i>
-                        </div>
-                        <span class="text-[var(--color-default)] font-bold text-lg">Historia Clinica</span>
-                        <div class="w-10 h-10 flex items-center justify-center hover:bg-gray-200 rounded-full">
-                            <i class="fa-solid fa-angle-right "></i>
+                    <div class="medical-card p-6 w-full">
+                        <h2 class="text-lg font-semibold text-gray-900">Registros</h2>
+                        <p class="text-gray-700 mb-4">Consulta por los diferentes Registros del paciente</p>
+                        <div class="space-y-3 grid grid-cols-2 w-full gap-3">
+                            <ButtonDashboard v-for="action in actions" :color="action.color" :title="action.title"
+                                :description="action.description" :icon="action.icon" @click="Botones(action.title)" />
                         </div>
                     </div>
-
-                    <div class="w-full flex gap-3">
-                        <div class="w-full flex flex-col gap-1">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Motivo de la Consulta</h3>
-                            <p class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">Descripción de la
-                                consulta y
-                                otros detalles relevantes.</p>
-                        </div>
-                        <div class="w-full flex flex-col gap-1">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Profesional</h3>
-                            <p class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">Juan Perez Perez</p>
-                        </div>
-                    </div>
-                    <div class="w-full flex flex-col gap-3">
-                        <h3 class="text-[var(--color-default)] font-bold text-lg">Diagnóstico</h3>
-                        <p class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                            Descripción del diagnóstico realizado.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 w-full">
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Signos vitales</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <p>Presión arterial: 120/80 mmHg</p>
-                                <p>Frecuencia cardíaca: 72 lpm</p>
-                                <p>Frecuencia respiratoria: 16 rpm</p>
-                                <p>Temperatura: 36.5 °C</p>
-                                <p> Saturación de oxígeno: 98%</p>
-                            </div>
-                        </div>
-
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Medidas Antropometricas</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <p>Peso: 76K</p>
-                                <p>Estatura: 178 CM</p>
-                                <p>Otros: </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="w-full flex flex-col gap-3">
-                        <h3 class="text-[var(--color-default)] font-bold text-lg">Diagnóstico</h3>
-                        <p class="text-gray-600 p-5 border border-gray-200 rounded-lg">Descripción del diagnóstico
-                            realizado.</p>
-                    </div>
-
-                    <div class="w-full flex flex-col gap-3">
-                        <h3 class="text-[var(--color-default)] font-bold text-lg">Tratamiento</h3>
-                        <p class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">Descripción del
-                            tratamiento
-                            recomendado.</p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 w-full">
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Medicina</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <div>
-                                    <p class="mb-2">Acetaminofen - 20grm</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Servicios</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <div>
-                                    <p class="mb-2">Terapia</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3 w-full">
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Inventario</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <div>
-                                    <p class="mb-2">inventario</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full flex flex-col gap-3">
-                            <h3 class="text-[var(--color-default)] font-bold text-lg">Equipos</h3>
-                            <div class="text-gray-600 p-5 border border-gray-200 rounded-lg bg-white">
-                                <div>
-                                    <p class="mb-2">equipo</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
 
                 </div>
+            </div>
+            <div class="w-full h-full" v-if="!varView.showMenuHistorias">
+                <VerConsultas v-if="varView.showVerConsultas"/>
+                <VerAnalisis v-if="varView.showVerAnalisis"/>
+                <VerEvoluciones v-if="varView.showVerEvoluciones"/>
+                <VerNotas v-if="varView.showVerNotas"/>
+                <VerTratamientos v-if="varView.showVerTratamientos"/>
+                <VerMedicacion v-if="varView.showVerMedicacion"/>
             </div>
         </div>
     </ModalLG>

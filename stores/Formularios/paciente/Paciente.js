@@ -24,6 +24,7 @@ const estructuraPaciente = {
         Regimen: '',
         poblacionVulnerable: '',
         Tipo: '',
+        historias: false,
     },
     Diagnosticos: [{
         id: '',
@@ -38,6 +39,7 @@ const estructuraPaciente = {
         id_paciente: '',
         tipo: 'personal',
     }],
+
 }
 
 // Pinia Pacientes

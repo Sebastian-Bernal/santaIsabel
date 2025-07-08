@@ -12,12 +12,14 @@ import ModificarPaciente from '~/components/Forms/Pacientes/ModificarPaciente.vu
 // Data
 import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref, onMounted } from "vue";
 import { useVarView } from "../../stores/varview.js";
 
 const varView = useVarView();
 const HistoriaStore = useHistoriasStore();
+const PacientesStore = usePacientesStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
 
@@ -42,10 +44,11 @@ const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
+const PacientesList = ref([]);
 
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
-    if (formData.Paciente.name !== "" && formData.Paciente.type_doc !== "" && formData.Paciente.No_document !== "") {
+    if (formData.HistoriaClinica.name_paciente !== "" && formData.HistoriaClinica.type_doc_paciente !== "" && formData.HistoriaClinica.No_document_paciente !== "") {
         varView.formComplete = true
     } else {
         varView.formComplete = false
@@ -53,7 +56,10 @@ watch(formData, (newValue) => {
     guardarDatos(newValue);
 }, { deep: true });
 
-onMounted(() => {
+onMounted(async() => {
+    await PacientesStore.listPacientes
+    PacientesList.value = PacientesStore.Pacientes;
+    console.log(PacientesList.value)
     traerDatos();
 });
 
@@ -61,16 +67,16 @@ onMounted(() => {
 // Funcion para autocompletar el paciente
 const pacienteExistente = () => {
     const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === formData.Paciente.name.toLowerCase()
+        p => p.nombre.toLowerCase() === formData.HistoriaClinica.name_paciente.toLowerCase()
     )
 
     if (paciente) {
-        formData.Paciente.type_doc = paciente.tipoDocumento
-        formData.Paciente.No_document = paciente.documento
-        formData.Paciente.id = paciente.id
+        formData.HistoriaClinica.type_doc_paciente = paciente.tipoDocumento
+        formData.HistoriaClinica.No_document_paciente = paciente.documento
+        formData.HistoriaClinica.id_paciente = paciente.id
         fechaModificacion.value = paciente.fechaModificacion
 
-    } else if (!paciente && formData.Paciente.name !== '') {
+    } else if (!paciente && formData.HistoriaClinica.name_paciente !== '') {
         $swal.fire({
             icon: 'warning',
             title: 'Paciente no encontrado',
@@ -86,23 +92,23 @@ const pacienteExistente = () => {
 
 // datalist para Pacientes
 function filtrarPacientes() {
-    if (formData.Paciente.name.length === 0) {
+    if (formData.HistoriaClinica.name_paciente.length === 0) {
         pacientesFiltrados.value = [];
         mostrarLista.value = false;
         return;
     }
 
-    pacientesFiltrados.value = pacientes.value.filter(p =>
-        p.nombre.toLowerCase().includes(formData.Paciente.name.toLowerCase())
+    pacientesFiltrados.value = PacientesList.value.filter(p =>
+        p.name.toLowerCase().includes(formData.HistoriaClinica.name_paciente.toLowerCase())
     );
     mostrarLista.value = true;
 }
 // Autocompletar campos al seleccionar paciente en datalist
 function seleccionarPaciente(paciente) {
-    formData.Paciente.name = paciente.nombre;
-    formData.Paciente.type_doc = paciente.tipoDocumento;
-    formData.Paciente.No_document = paciente.documento;
-    formData.Paciente.id = paciente.id;
+    formData.HistoriaClinica.name_paciente = paciente.name;
+    formData.HistoriaClinica.type_doc_paciente = paciente.type_doc;
+    formData.HistoriaClinica.No_document_paciente = paciente.No_document;
+    formData.HistoriaClinica.id_paciente = paciente.id;
     fechaModificacion.value = paciente.fechaModificacion;
     mostrarLista.value = false;
     // Aquí puedes también autocompletar el número de documento
@@ -183,26 +189,26 @@ function enviarPrimerPaso(){
                 </div>
             </Section>
             <Section styles="relative">
-                <Input v-model="formData.Paciente.name" type="text" id="nombre" name="nombre" list="nombreList"
+                <Input v-model="formData.HistoriaClinica.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
                     @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full"/>
                 <ul v-show="mostrarLista && pacientesFiltrados.length"
                     class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
                     <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" class=""
                         @click="seleccionarPaciente(paciente)">
-                        <strong>{{ paciente.nombre }}</strong><br />
-                        <small>cédula: {{ paciente.documento }}</small>
+                        <strong>{{ paciente.name }}</strong><br />
+                        <small>cédula: {{ paciente.No_document }}</small>
                     </li>
                 </ul>
             </Section>
 
 
             <Section styles="flex-col md:flex-row">
-                <Input v-model="formData.Paciente.No_document" type="number" id="documentoList" name="documento" @click="pacienteExistente"
+                <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList" name="documento" @click="pacienteExistente"
                     placeholder="Número de documento" tamaño="w-full" />
                 <datalist id="documentoList">
                     <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>
                 </datalist>
-                <Select v-model="formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento"
+                <Select v-model="formData.HistoriaClinica.type_doc_paciente" id="tipoDocumento" name="tipoDocumento"
                     :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }]"
                     placeholder="Tipo de documento" tamaño="w-full"></Select>
             </Section>
@@ -214,16 +220,16 @@ function enviarPrimerPaso(){
                     <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <a @click="agregarItem('Pacientes', { nombre: '', parentesco: ''}, 'nombre')">
+                    <a @click="agregarItem('HistoriaClinica', { nombre: '', parentesco: ''}, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
             </Section>
 
-            <Section v-for="(item, index) in formData.Paciente.acompañante" :key="index" styles="flex-col md:flex-row">
-                <Input v-model="formData.Paciente.acompañante.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
+            <Section v-for="(item, index) in formData.HistoriaClinica.acompañante" :key="index" styles="flex-col md:flex-row">
+                <Input v-model="formData.HistoriaClinica.acompañante.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
-                <Select v-model="formData.Paciente.acompañante.parentesco" id="parentesco" name="parentesco"
+                <Select v-model="formData.HistoriaClinica.acompañante.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
             </Section>
@@ -246,7 +252,7 @@ function enviarPrimerPaso(){
         </FormularioWizard>
     </ModalFormLG>
     <IngresarPaciente v-if="varView.showNuevoPaciente" />
-    <ModificarPaciente v-if="varView.showModificarPaciente" :pacienteId="formData.Paciente.id" />
+    <ModificarPaciente v-if="varView.showModificarPaciente" :pacienteId="formData.HistoriaClinica.id_paciente" />
 </template>
 
 <style scoped>
