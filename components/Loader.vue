@@ -1,7 +1,7 @@
 <template>
     <div class="cargando">
         <div class="w-full h-full flex items-center justify-center flex-col relative">
-            <p></p>
+            <i class="fa-solid fa-spinner text-3xl text-white logo"></i>
         </div>
     </div>
 </template>
@@ -18,26 +18,23 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.cargando img {
-    width: 20%;
-    height: 20%;
-    object-fit: contain;
-}
-
-.logo, .lanza {
+/* .logo, .lanza {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: 0;
-}
+} */
 
 .lanza {
     animation: lanzarYdesaparecer 3s infinite;
 }
 
 .logo {
-    animation: aparecerLogo 3s infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    animation: aparecerLogo 2s infinite;
 }
 
 @keyframes lanzarYdesaparecer {
@@ -56,19 +53,16 @@
 
 @keyframes aparecerLogo {
     0%, 49% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1);
+        transform: rotate(0deg);
     }
     50% {
-        opacity: 0;
+        transform: rotate(120deg);
     }
     75% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: rotate(180deg);
     }
     100% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(1);
+        transform: rotate(360deg);
     }
 }
 </style>

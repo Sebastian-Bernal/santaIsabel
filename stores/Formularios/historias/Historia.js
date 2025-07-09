@@ -9,6 +9,7 @@ const estructuraHistoria = {
         id: '',
         tipo: '',
         CIE_10: '',
+        codigoCIE_10: '',
         id_paciente: '',
         rol_attention: '',
         id_historia: ''
@@ -58,30 +59,8 @@ const estructuraHistoria = {
     },
     Plan_manejo_medicamentos: [],
     Plan_manejo_procedimientos: [],
-    // Plan_manejo_insumos: {
-    //     pos: [{
-    //         id: '',
-    //         nombre: '',
-    //         presentacion: '',
-    //         cantidad: 0,
-    //     },],
-    //     Nopos : [{
-    //         id: '',
-    //         nombre: '',
-    //         presentacion: '',
-    //         cantidad: 0,
-    //     },],
-    // },
-    // Plan_manejo_equipos: {
-    //     pos: [{
-    //         id: '',
-    //         nombre: '',
-    //     },],
-    //     Nopos : [{
-    //         id: '',
-    //         nombre: '',
-    //     },],
-    // },
+    Plan_manejo_insumos: [],
+    Plan_manejo_equipos: [],
 }
 
 // Pinia HistoriasClinicas

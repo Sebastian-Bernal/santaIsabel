@@ -5,6 +5,6 @@ export const submenuNotificaciones = [
 ];
 
 export const submenuSesion = [
-    { id: 1, nombre: 'Iniciar Sesión', icon: 'fa-user', link: '/login/Ingreso' },
+    { id: 1, nombre: 'Iniciar Sesión', icon: 'fa-user', link: '/Login' },
     { id: 2, nombre: 'Cerrar Sesión', icon: 'fa-right-from-bracket', link: '#' },
 ]

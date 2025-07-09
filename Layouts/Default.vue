@@ -1,6 +1,6 @@
 <template>
     <div class="containerMain">
-        <Loader v-if="estado.cargando"></Loader>
+        <Loader v-if="varView.cargando"></Loader>
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
@@ -13,8 +13,8 @@
 </template>
 
 <script setup>
-import { useApiRest } from '../stores/apiRest';
-const estado = useApiRest();
+import { useVarView } from '~/stores/varview';
+const varView = useVarView();
 </script>
 
 <style scoped>

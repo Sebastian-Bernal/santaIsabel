@@ -59,7 +59,6 @@ watch(formData, (newValue) => {
 onMounted(async() => {
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
-    console.log(PacientesList.value)
     traerDatos();
 });
 

@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 // Store para loader
 export const useVarView = defineStore('varView', {
     state: () => ({
+        cargando: false,
         showInfoSelect: false,
         showNuevoPaciente: false,
         showModificarPaciente: false,
@@ -14,6 +15,8 @@ export const useVarView = defineStore('varView', {
         showPaso4: false,
         showMedicinas: false,
         showProcedimientos: false,
+        showInsumos: false,
+        showEquipos: false,
         showVerAnalisis : false,
         showAnalisisInfo: false,
         showVerConsultas : false,

@@ -18,8 +18,10 @@ const historia = ref([]);
 
 // Cargar los pacientes desde el store
 onMounted(async() => {
+    varView.cargando = true
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
+    varView.cargando = false
 });
 
 // funcion para controlar la visibilidad del formulario de nueva historia clinica

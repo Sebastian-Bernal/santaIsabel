@@ -1,6 +1,7 @@
 <script setup>
 // Componentes
-import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
+import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
+import Fondo from '~/components/Fondos/Fondo.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
@@ -76,7 +77,8 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :formData="formData" :botones="{cancelar: 'Atras'}">
+    <Fondo>
+    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :formData="formData" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Medicamentos',
         }">
@@ -138,5 +140,6 @@ const cerrarModal = () => {
             </div> -->
 
         </Formulario>
-    </ModalFormLG>
+    </ModalFormXS>
+    </Fondo>
 </template>
