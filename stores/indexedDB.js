@@ -18,7 +18,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                 const request = indexedDB.open('db-thesalus', 1)
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result
-                    const pacientes = db.createObjectStore('Paciente', { keyPath: 'No_document' });
+                    const pacientes = db.createObjectStore('Paciente', { keyPath: 'id', autoIncrement: true });
                     pacientes.createIndex("buscapaciente", "id_paciente", { unique: false });
 
                     const medicos = db.createObjectStore('Medico', { keyPath: 'No_document' });

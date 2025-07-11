@@ -3,6 +3,8 @@
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
 import DatosCitas from './DatosCitas.vue'
+import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
+import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue';
 // Data
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita';
@@ -79,6 +81,8 @@ function cerrarModal() {
 
         </Formulario>
     </ModalFormXS>
+    <IngresarProfesional  v-if="varView.showNuevoProfesional"/>
+    <IngresarPaciente  v-if="varView.showNuevoPaciente"/>
 </template>
 
 <style scoped>

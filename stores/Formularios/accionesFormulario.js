@@ -29,7 +29,7 @@ export const accionesFormularios = {
         return true;
     },
     RegistrarHistoria: async (data) => {
-        await validarYEnviarRegistrarHistoria(data)
-        return true;
+        const respuesta = await validarYEnviarRegistrarHistoria(data)
+        return respuesta;
     },
 };

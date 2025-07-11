@@ -4,10 +4,10 @@ import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
+import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
 // Data
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { pacientes } from '../data/pacientes.js';
-import { medicos } from '../../data/medicos.js'
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico';
 import { useCalendarioCitas } from '~/stores/Calendario'
 import { ref, onMounted } from "vue";
@@ -15,6 +15,7 @@ import { useVarView } from "../../stores/varview.js";
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
+const PacientesStore = usePacientesStore();
 const notificacionesStore = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 
@@ -44,6 +45,7 @@ const fechaModificacion = ref('');
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
 const medicosList = ref([]);
+const PacientesList = ref([]);
 
 
 // Guardar los datos en localStorage
@@ -59,6 +61,8 @@ watch(props.formData, (newValue) => {
 onMounted(async() => {
     await medicosStore.listMedicos
     medicosList.value = medicosStore.Medicos;
+    await PacientesStore.listPacientes
+    PacientesList.value = PacientesStore.Pacientes;
     props.traerDatos();
     props.formData.Cita.fecha = fechaformatDate();
 
@@ -71,9 +75,9 @@ const fechaformatDate = () => {
 }
 
 // Funcion para autocompletar el paciente
-const pacienteExistente = () => {
-    const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === props.formData.Cita.name_paciente.toLowerCase()
+const pacienteExistente = async() => {
+    const paciente = PacientesList.value.find(
+        p => p.name.toLowerCase() === props.formData.Cita.name_paciente.toLowerCase()
     )
 
     if (!paciente && props.formData.Cita.name_paciente !== '') {
@@ -83,7 +87,10 @@ const pacienteExistente = () => {
         options.confirmtext = '<a href="/Pacientes/Ingresar">Registrar</a>'
         options.canceltext = 'Cancelar'
         options.tiempo = 2000
-        alertRespuesta()
+        const respuesta = await alertRespuesta();
+        if(respuesta === 'confirmado'){
+            varView.showNuevoPaciente = true
+        }
     }
 };
 
@@ -95,32 +102,35 @@ function filtrarPacientes() {
         return;
     }
 
-    pacientesFiltrados.value = pacientes.value.filter(p =>
-        p.nombre.toLowerCase().includes(props.formData.Cita.name_paciente.toLowerCase())
+    pacientesFiltrados.value = PacientesList.value.filter(p =>
+        p.name.toLowerCase().includes(props.formData.Cita.name_paciente.toLowerCase())
     );
     mostrarLista.value = true;
 }
 // Autocompletar campos del paciente al seleccionar datalist
 function seleccionarPaciente(paciente) {
-    props.formData.Cita.name_paciente = paciente.nombre;
+    props.formData.Cita.name_paciente = paciente.name;
     props.formData.Cita.id_paciente = paciente.id;
     fechaModificacion.value = paciente.fechaModificacion;
     mostrarLista.value = false;
 }
 
-function seleccionarMedico(medico) {
+async function seleccionarMedico(medico) {
     const medicoSeleccionado = medicosList.value.find(m => m.name.toLowerCase() === medico.toLowerCase());
     if (medicoSeleccionado) {
         props.formData.Cita.name_medico = medicoSeleccionado.name;
         props.formData.Cita.id_medico = medicoSeleccionado.id;
-    } else {
+    } else if(!medicoSeleccionado && props.formData.Cita.name_medico !== '') {
         options.icono = 'warning';
         options.titulo = 'Médico no encontrado';
         options.texto = 'El médico ingresado no está registrado.';
-        options.confirmtext = '<a href="/Medicos/Ingresar">Registrar</a>'
+        options.confirmtext = 'Registrar'
         options.canceltext = 'Cancelar'
         options.tiempo = 2000
-        alertRespuesta()
+        const respuesta = await alertRespuesta();
+        if(respuesta === 'confirmado'){
+            varView.showNuevoProfesional = true
+        }
     }
 }
 </script>
@@ -134,13 +144,13 @@ function seleccionarMedico(medico) {
     </Section>
     <Section styles="relative">
         <Input v-model="props.formData.Cita.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
-            @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
+            @blur="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
         <ul v-show="mostrarLista && pacientesFiltrados.length"
             class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
             <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" class=""
                 @click="seleccionarPaciente(paciente)">
-                <strong>{{ paciente.nombre }}</strong><br />
-                <small>cédula: {{ paciente.documento }}</small>
+                <strong>{{ paciente.name }}</strong><br />
+                <small>cédula: {{ paciente.No_document }}</small>
             </li>
         </ul>
     </Section>

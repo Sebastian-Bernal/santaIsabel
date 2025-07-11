@@ -52,5 +52,5 @@ const verHistoria = (his) => {
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
     <Paso4 v-if="varView.showPaso4" />
-    <VerHistoria v-if="varView.showVerHistoria" :historia="historia" :actions="actions" />
+    <VerHistoria v-if="varView.showVerHistoria" :historia="historia" />
 </template>

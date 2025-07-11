@@ -5,21 +5,8 @@ import { historias } from "~/data/historias";
 
 // Estructura de datos de Historias Clinicas
 const estructuraHistoria = {
-    Diagnosticos: [{
-        id: '',
-        tipo: '',
-        CIE_10: '',
-        codigoCIE_10: '',
-        id_paciente: '',
-        rol_attention: '',
-        id_historia: ''
-    }],
-    Antecedentes: [{
-        id: '',
-        valor: '',
-        id_paciente: '',
-        tipo: 'personal',
-    }],
+    Diagnosticos: [],
+    Antecedentes: [],
     Enfermedad: {
         valor: '',
         fecha_diagnostico: '',

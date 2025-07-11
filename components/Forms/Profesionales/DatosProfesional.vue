@@ -15,7 +15,8 @@ const props = defineProps([
     'formData',
     'traerDatos',
     'guardarDatos',
-    'noCambiar'
+    'noCambiar',
+    'verMedico'
 ]);
 
 // Guardar Datos en el localStorage
@@ -57,21 +58,21 @@ const ciudades = computed(() => {
     </Section>
 
     <Section class="md:flex-row flex-col">
-        <Input v-model="formData.Medico.name" type="text" id="nombre" name="nombre" placeholder="Nombres y Apellidos"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.name" type="text" id="nombre" name="nombre" placeholder="Nombres y Apellidos"
             tamaño="md:w-4/5 w-full" />
-        <Input v-model="formData.Medico.nacimiento" type="date" id="nacimiento" name="nacimiento"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.nacimiento" type="date" id="nacimiento" name="nacimiento"
             placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
 
 
 
     <Section class="md:flex-row flex-col">
-        <Select v-model="formData.Medico.type_doc" id="tipoDocumento" name="tipoDocumento"
+        <Select :disabled="props.verMedico" v-model="formData.Medico.type_doc" id="tipoDocumento" name="tipoDocumento"
             :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Tarjeta de identidad', value: 'ti' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'RC', value: 'RC' }]"
             placeholder="Tipo de documento" tamaño="w-full"></Select>
-        <Input v-model="formData.Medico.No_document" type="number" id="documento" name="documento" :disabled="noCambiar"
+        <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.No_document" type="number" id="documento" name="documento"
             placeholder="Número de documento" tamaño="w-full" />
-        <Select v-model="formData.Medico.profesion" id="genero" name="genero"
+        <Select :disabled="props.verMedico" v-model="formData.Medico.profesion" id="genero" name="genero"
             :options="[{ text: 'Medico', value: 'Medico' }, { text: 'Psicologo/a', value: 'Psicologo/a' }, { text: 'Otro', value: 'otro' }]"
             placeholder="Profesion" tamaño="w-full"></Select>
     </Section>
@@ -83,29 +84,29 @@ const ciudades = computed(() => {
         </div>
     </Section>
     <Section>
-        <Input v-model="formData.Medico.departamento" type="text" id="departamento" name="departamento"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.departamento" type="text" id="departamento" name="departamento"
             placeholder="Departamento" tamaño="md:w-1/3 w-full" list="listDepartamento" />
         <datalist id="listDepartamento" class="bg-white text-black">
             <option v-for="(data, id) in ubicacion" :key="id" :value="data.departamento">
                 codigo: {{ 0 }}
             </option>
         </datalist>
-        <Input v-model="formData.Medico.municipio" type="text" id="municipio" name="municipio" placeholder="Municipio"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.municipio" type="text" id="municipio" name="municipio" placeholder="Municipio"
             tamaño="md:w-1/3 w-full" list="listMunicipio" />
         <datalist id="listMunicipio" v-if="formData.Medico.departamento">
             <option v-for="(data, id) in ciudades" :key="id" :value="data">
             </option>
         </datalist>
-        <Select v-model="formData.Medico.zona" id="zona" name="zona"
+        <Select :disabled="props.verMedico" v-model="formData.Medico.zona" id="zona" name="zona"
             :options="[{ text: 'Rural', value: 'rural' }, { text: 'Urbana', value: 'urbana' }]" placeholder="Zona"
             tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
 
     <Section>
-        <Input v-model="formData.Medico.celular" type="number" id="celular" name="celular" placeholder="Celular"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.celular" type="number" id="celular" name="celular" placeholder="Celular"
             tamaño="w-1/2" />
-        <Input v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
             tamaño="w-1/2" />
     </Section>
 </template>

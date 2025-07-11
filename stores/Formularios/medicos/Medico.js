@@ -16,6 +16,7 @@ const estructuraMedico = {
         barrio: '',
         celular: '',
         telefono: '',
+        estado: '',
     }
 }
 
@@ -31,8 +32,11 @@ export const useMedicosStore = defineStore('Medicos', {
             const store = useIndexedDBStore()
             store.almacen = 'Medico'
             const medicos = await store.leerdatos()
-            state.Medicos = medicos
-            return medicos
+            const medicosActivos = medicos.filter((medico) => {
+                return medico.estado === 'activo'
+            })
+            state.Medicos = medicosActivos
+            return medicosActivos
         }
     },
 

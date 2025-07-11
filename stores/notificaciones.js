@@ -25,7 +25,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
             const { $swal } = useNuxtApp()
             this.swal = $swal
         },
-
+        // Alerta simple
         simple() {
             this.inicia()
             this.swal.fire({
@@ -35,6 +35,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 timer: this.options.tiempo
             });
         },
+        // Alerta con posicion de mensaje o notificacion
         mensaje() {
             this.inicia()
             this.swal.fire({
@@ -46,22 +47,24 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 color: '#fff'
             });
         },
-        alertRespuesta() {
+        // Alerta con Respuesta
+        async alertRespuesta() {
             this.inicia()
-            this.swal.fire({
+            const result = await this.swal.fire({
                 icon: this.options.icono,
                 title: this.options.titulo,
                 html: this.options.html,
                 showCancelButton: true,
                 confirmButtonText: this.options.confirmtext,
                 cancelButtonText: this.options.canceltext,
-            }).then((result) => {
-                if(result.isConfirmed){
-                    this.estado = true
-                } else{
-                    this.estado = false
-                }
             })
+            if (result.isConfirmed) {
+                return 'confirmado'
+            } else if (result.isDenied) {
+                return 'denegado'
+            } else {
+                return 'cancelado'
+            }
         }
     }
 })

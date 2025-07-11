@@ -139,7 +139,7 @@ const estiloColumnas = computed(() => {
 
                     <div v-for="(col, key) in columnasVisibles" :key="key" class="relative"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="w-[10px] h-[10px] rounded-full absolute left-0 top-2" :class="{'bg-red-500' : fila[col.titulo] === 'Cambios criticos', 'bg-orange-500': fila[col.titulo] === 'Recomendaciones Adicionales', 'bg-green-500': fila[col.titulo] === 'Sin cambios'}"></div>
+                        <div class="w-[10px] h-[10px] rounded-full absolute left-[-10px] top-2" :class="{'bg-red-500' : fila[col.titulo] === 'Cambios criticos', 'bg-orange-500': fila[col.titulo] === 'Recomendaciones Adicionales', 'bg-green-500': fila[col.titulo] === 'Estado clinico sin cambios'}"></div>
                         <p class="text-black truncate rounded-2xl">{{ fila[col.titulo] }}</p>
                     </div>
 

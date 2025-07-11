@@ -41,7 +41,7 @@ const enfermedades = ref([ 'Gripe', 'Infección respiratoria', 'Dolor de cabeza'
 watch(formData, (newValue) => {
     guardarDatos(newValue)
 
-    if (formData.HistoriaClinica.motivo !== "" && formData.Enfermedad.valor !== "" && formData.Antecedentes.at(-1).valor !== "") {
+    if (formData.HistoriaClinica.motivo !== "" && formData.Enfermedad.valor !== "" && formData.Antecedentes.at(-1)?.valor !== "") {
         varView.formComplete = true
     } else {
         varView.formComplete = false
@@ -132,7 +132,7 @@ const enviarSegundoPaso = () => {
                     <a class="flex items-center gap-1" @click="
                             agregarItem(
                                 'Antecedentes',
-                                { id: '', valor: '', id_paciente: '', tipo: 'personal' },
+                                { id: '', valor: '', id_paciente: formData.HistoriaClinica.id_paciente, tipo: 'personal' },
                                 'valor'
                             )
                             " >
@@ -144,7 +144,7 @@ const enviarSegundoPaso = () => {
                     <a class="flex items-center gap-1" @click="
                             agregarItem(
                                 'Antecedentes',
-                                { id: '', valor: '', id_paciente: '', tipo: 'familiar' },
+                                { id: '', valor: '', id_paciente: formData.HistoriaClinica.id_paciente, tipo: 'familiar' },
                                 'valor'
                             )
                             " >

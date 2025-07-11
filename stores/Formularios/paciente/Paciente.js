@@ -24,7 +24,7 @@ const estructuraPaciente = {
         Regimen: '',
         poblacionVulnerable: '',
         Tipo: '',
-        historias: false,
+        estado: 'activo',
     },
     Diagnosticos: [{
         id: '',
@@ -54,8 +54,11 @@ export const usePacientesStore = defineStore('Pacientes', {
             const store = useIndexedDBStore()
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
-            state.Pacientes = pacientes // Actualiza la lista de pacientes en el estado
-            return pacientes
+            const pacientesActivos = pacientes.filter((paciente) => {
+                return paciente.estado === 'activo'
+            })
+            state.Pacientes = pacientesActivos // Actualiza la lista de pacientes en el estado
+            return pacientesActivos
         },
     },
 
@@ -66,17 +69,15 @@ export const usePacientesStore = defineStore('Pacientes', {
             return useDynamicForm() // devuelve instancia usable del formulario
         },
 
-        async listDiagnosticos(id) {
+        async listDatos(id, Tabla) {
             // Traer pacientes
             const store = useIndexedDBStore()
-            store.almacen = 'Diagnosticos'
-            const diagnosticos = await store.leerdatos()
+            store.almacen = Tabla
+            const datosTabla = await store.leerdatos()
 
-            const pacientes = await this.listPacientes
-
-            // Array que devuelve diagnosticos del paciente
-            const datos = diagnosticos.filter((diagnostico) => {
-                return parseInt(diagnostico.id_paciente) === parseInt(id)
+            // Array que devuelve los datos de la tabla del paciente
+            const datos = datosTabla.filter((dato) => {
+                return parseInt(dato.id_paciente) === parseInt(id)
             })
 
             return datos

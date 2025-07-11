@@ -40,7 +40,7 @@ const modificarMedico = (medico) => {
         { titulo: 'municipio', tamaño: 150}
     ]"
     :headerTabla="{titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarMedico}"
-    :acciones="{ action: true, icons: [{icon: 'actualizar', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
+    :acciones="{ action: true, icons: [{icon: 'ver', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
     </div>
     <IngresarProfesional v-if="varView.showNuevoProfesional" />
     <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />

@@ -5,26 +5,21 @@ import ButtonForm from "~/components/Buttons/ButtonForm.vue";
 const props = defineProps({
     formData: {
         type: Object,
-        required: true
     },
     botones: {
         type: Object,
     },
     validarform: {
         type: Function,
-        required: true
     },
     cerrarModal: {
         type: Function,
-        required: true
     },
     formComplete: {
         type: Boolean,
-        required: true
     },
     enviarFormulario: {
         type: Function,
-        required: true
     }
 });
 </script>

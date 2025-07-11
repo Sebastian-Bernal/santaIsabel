@@ -3,6 +3,7 @@
 import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 // Data
+import { validarYEnviarEliminarPaciente } from '~/Core/EliminarPaciente';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js';
 import { useVarView } from '../../stores/varview.js';
@@ -32,6 +33,7 @@ const {
 } = modificacionPacienteStore;
 
 const {
+    alertRespuesta,
     simple,
     mensaje,
     options
@@ -46,7 +48,8 @@ onMounted(async() => {
     // Si se pasa un paciente por props, se asigna al formData
     if (props.paciente) {
         formData.Paciente = props.paciente;
-        formData.Diagnosticos = await storePaciente.listDiagnosticos(props.paciente.id)
+        formData.Diagnosticos = await storePaciente.listDatos(props.paciente.id, 'Diagnosticos');
+        formData.Antecedentes = await storePaciente.listDatos(props.paciente.id, 'Antecedentes');
     }
 });
 
@@ -96,12 +99,28 @@ function cerrarModal() {
 function actualizarPaciente() {
     modificarPaciente.value = !modificarPaciente.value
 };
+
+async function eliminarPaciente() {
+    options.icono = 'warning';
+    options.titulo = 'Deseas eliminar este Paciente?';
+    options.html = `Se desactivara el paciente: <span>${pacienteAModificar.value}</span>`;
+    options.confirmtext = 'Si, eliminar'
+    options.canceltext = 'Cancelar'
+    const respuestaAlert = await alertRespuesta()
+    if(respuestaAlert === 'confirmado') {
+        const res = validarYEnviarEliminarPaciente(formData)
+        if(res){
+            limpiar()
+            window.location.href = '/Usuarios/Pacientes'
+        }
+    }
+};
 </script>
 
 <template>
     <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente" :formData="formData"
         :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
-        <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl">
             <!-- Header -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
@@ -114,6 +133,7 @@ function actualizarPaciente() {
 
                 </div>
                 <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                    <i class="fa-solid fa-trash hover:text-white" @click="eliminarPaciente"></i>
                     <i class="fa-solid fa-pencil hover:text-white" @click="actualizarPaciente"></i>
                     <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
                 </div>

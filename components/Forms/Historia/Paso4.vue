@@ -51,7 +51,7 @@ watch(formData, (newValue) => {
 
     // Validaciones
     if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
-        && formData.Diagnosticos.at(-1).tipo !== "" && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
+        && formData.Diagnosticos.at(-1)?.tipo !== "" && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
         varView.formComplete = true
     } else {
         varView.formComplete = false
@@ -82,17 +82,11 @@ const enviarRegistrarHistoria = async (formData) => {
     if (estado) {
         options.icono = 'success';
         options.titulo = '¡Se ha enviado correctamente!';
-        options.texto = 'Nueva cita Registrada';
+        options.texto = 'Nueva Historia Registrada';
         options.tiempo = 2000
         const res = await simple()
         limpiar()
-        window.location.href = '/'
-    } else {
-        options.icono = 'error';
-        options.titulo = '¡A ocurrido un problema!';
-        options.texto = 'No se pudo registrar Cita';
-        options.tiempo = 2000
-        simple()
+        window.location.href = '/Historial/Historias'
     }
 };
 
@@ -134,7 +128,7 @@ const cerrarModal = () => {
                     <Label forLabel="tipo" size="text-sm">Diagnoticos</Label>
                 </div>
                 <Button color="bg-blue-500"
-                    @click="agregarItem('Diagnosticos', { id: '', tipo: '', CIE_10: '', id_paciente: '', rol_attention: '', }, 'tipo')">
+                    @click="agregarItem('Diagnosticos', { id: '', tipo: '', CIE_10: '', id_paciente: formData.HistoriaClinica.id_paciente, rol_attention: '', }, 'tipo')">
                     <i class="fa-solid fa-plus"></i>
                 </Button>
             </Section>
@@ -150,6 +144,9 @@ const cerrarModal = () => {
                     <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
                         tamaño="w-full md:w-1/3" />
                     <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
+                </div>
+                <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">
+                    <p class="text-gray-500">No hay datos, Haz click en agregar Diagnosticos.</p>
                 </div>
             </Section>
             <Section>
@@ -216,7 +213,7 @@ const cerrarModal = () => {
                 </div>
                 <div class="w-full flex flex-col justify-center items-start text-blue-400">
                     <span class="text-sm font-semibold">Enfermedad Actual : {{ formData.Enfermedad.valor }}</span>
-                    <span class="text-sm font-semibold">Diagnostico Principal : {{ formData.Diagnosticos[0].CIE_10
+                    <span class="text-sm font-semibold">Diagnostico Principal : {{ formData.Diagnosticos[0]?.CIE_10
                         }}</span>
                     <span class="text-sm font-semibold">Medicamentos : {{ formData.Plan_manejo_medicamentos.length
                         }}</span>

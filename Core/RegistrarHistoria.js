@@ -1,44 +1,41 @@
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { useCalendarioCitas } from '~/stores/Calendario.js';
 import { useVarView } from '~/stores/varview.js';
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
-    const { $swal } = useNuxtApp()
+    const notificacionesStore = useNotificacionesStore();
+    const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
-
+    datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
     // Validacion si no se registran medicamentos
     if (datos.Plan_manejo_medicamentos?.length < 1) {
-        const res = await $swal.fire({
-            icon: 'warning',
-            title: 'Historia sin plan de medicamentos',
-            html: '¿Deseas registrar <strong>medicamentos</strong>?',
-            showCancelButton: true,
-            confirmButtonText: 'Sí',
-            cancelButtonText: 'No, continuar',
-        });
-        if (res.isConfirmed) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.title = 'Historia sin plan de medicamentos'
+        notificacionesStore.options.html = '¿Deseas registrar <strong>medicamentos</strong>?'
+        notificacionesStore.options.confirmtext = 'Si'
+        notificacionesStore.options.canceltext = 'No, continuar'
+        let res = await notificacionesStore.alertRespuesta();
+        if (res === 'confirmado') {
             varView.showMedicinas = true;
-            return
+            return false
         };
     }
 
     // Validacion si no se registran procedimientos
     if (datos.Plan_manejo_procedimientos?.length < 1) {
-        const res = await $swal.fire({
-            icon: 'warning',
-            title: 'Historia sin procedimientos',
-            html: '¿Deseas registrar <strong>procedimientos</strong>?',
-            showCancelButton: true,
-            confirmButtonText: 'Sí',
-            cancelButtonText: 'No, continuar',
-        });
-        if (res.isConfirmed) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.title = 'Historia sin plan de procedimientos'
+        notificacionesStore.options.html = '¿Deseas registrar <strong>Procedimiento</strong>?'
+        notificacionesStore.options.confirmtext = 'Si'
+        notificacionesStore.options.canceltext = 'No, continuar'
+        let resp = await notificacionesStore.alertRespuesta();
+        if (resp === 'confirmado') {
             varView.showProcedimientos = true;
-            return
-        };
+            return false
+        }
     }
-
     return await enviarFormulario(datos);
 };
 

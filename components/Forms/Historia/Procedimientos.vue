@@ -6,7 +6,6 @@ import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
-import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
@@ -35,7 +34,8 @@ const {
 const nuevoServicio = ref({
     descripcion: '',
     cantidad: '',
-    mes: ''
+    mes: '',
+    id_paciente: formData.HistoriaClinica.id_paciente,
 });
 
 // funcion validar y agregar nuevo servicio
@@ -53,7 +53,8 @@ const añadirServicio = () => {
     nuevoServicio.value = {
         descripcion: '',
         cantidad: '',
-        mes: ''
+        mes: '',
+        id_paciente: formData.HistoriaClinica.id_paciente,
     };
 };
 

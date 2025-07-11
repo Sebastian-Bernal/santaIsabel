@@ -1,14 +1,15 @@
 <script setup>
 import ModalLG from '~/components/Modales/ModalLG.vue';
 import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
-import { useVarView } from '~/stores/varview.js';
 import VerAnalisis from './VerAnalisis.vue';
 import VerConsultas from './VerConsultas.vue'
 import VerEvoluciones from './VerEvoluciones.vue'
 import VerNotas from './VerNotas.vue'
 import VerTratamientos from './VerTratamientos.vue'
 import VerMedicacion from './VerMedicacion.vue'
-
+import { useVarView } from '~/stores/varview.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { ref } from 'vue';
 
 const props = defineProps({
     historia: {
@@ -18,6 +19,9 @@ const props = defineProps({
 });
 
 const varView = useVarView();
+const pacienteStore = usePacientesStore();
+const medicinas = ref([]);
+const consultas = ref([]);
 
 const cerrarModal = () => {
     varView.showVerHistoria = false;
@@ -68,9 +72,10 @@ const actions = [
     },
 ];
 
-function Botones (titulo) {
+async function Botones (titulo) {
     varView.showMenuHistorias = !varView.showMenuHistorias;
     if(titulo === 'Consultas'){
+        consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
         varView.showVerConsultas = !varView.showVerConsultas
     } else if(titulo === 'Análisis'){
         varView.showVerAnalisis = !varView.showVerAnalisis
@@ -81,6 +86,7 @@ function Botones (titulo) {
     } else if(titulo === 'Tratamientos'){
         varView.showVerTratamientos = !varView.showVerTratamientos
     } else if(titulo === 'Medicacion'){
+        medicinas.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_medicamentos')
         varView.showVerMedicacion = !varView.showVerMedicacion
     }
 };
@@ -139,12 +145,12 @@ function showBotones () {
                 </div>
             </div>
             <div class="w-full h-full" v-if="!varView.showMenuHistorias">
-                <VerConsultas v-if="varView.showVerConsultas"/>
+                <VerConsultas v-if="varView.showVerConsultas" :consultas="consultas"/>
                 <VerAnalisis v-if="varView.showVerAnalisis"/>
                 <VerEvoluciones v-if="varView.showVerEvoluciones"/>
                 <VerNotas v-if="varView.showVerNotas"/>
                 <VerTratamientos v-if="varView.showVerTratamientos"/>
-                <VerMedicacion v-if="varView.showVerMedicacion"/>
+                <VerMedicacion v-if="varView.showVerMedicacion" :medicinas="medicinas" />
             </div>
         </div>
     </ModalLG>

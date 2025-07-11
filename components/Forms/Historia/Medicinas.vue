@@ -6,7 +6,6 @@ import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
-import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
@@ -37,7 +36,8 @@ const nuevoMedicamento = ref({
     presentacion: '',
     concentracion: '',
     cantidad: '',
-    dosis: ''
+    dosis: '',
+    id_paciente: formData.HistoriaClinica.id_paciente,
 });
 
 // funcion para validar y agregar medicemnto
@@ -56,7 +56,8 @@ const añadirMedicamento = () => {
         presentacion: '',
         concentracion: '',
         cantidad: '',
-        dosis: ''
+        dosis: '',
+        id_paciente: formData.HistoriaClinica.id_paciente,
     };
 };
 

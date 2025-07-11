@@ -35,6 +35,10 @@ export const createFormStore = (storeId, estructuraInicial) => {
             agregarItem(campo, plantilla, campoValidar) {
                 const notificaciones = useNotificacionesStore()
                 const lista = this.formData[campo];
+                if (lista.length < 1) {
+                    lista.push({ ...plantilla });
+                    return
+                }
                 const ultimoValor = lista.at(-1)?.[campoValidar];
 
                 if (!ultimoValor || ultimoValor === '') {
@@ -61,8 +65,9 @@ export const createFormStore = (storeId, estructuraInicial) => {
                 const accion = accionesFormularios[storeId];
                 if (typeof accion === 'function') {
                     try {
-                        this.estado = await accion(data);
-                        return true
+                        const res = await accion(data);
+                        this.estado = res
+                        return res
                     } catch (err) {
                         this.estado = false;
                         console.error(`Error enviando formulario '${storeId}':`, err);
