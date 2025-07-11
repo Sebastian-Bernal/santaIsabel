@@ -1,13 +1,12 @@
 <script setup>
 // Componentes 
 import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
-import Formulario from '~/components/Forms/Formulario.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 // Data
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
-import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { useNotificacionesStore } from '../../stores/notificaciones.js';
 import { useVarView } from '../../stores/varview.js';
-import { computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue';
 
 const varView = useVarView();
 const storePaciente = usePacientesStore();
@@ -40,15 +39,22 @@ const {
 
 // Titulo del formulario
 const pacienteAModificar = computed(() => formData.Paciente.name ? formData.Paciente.name : 'Paciente')
+const modificarPaciente = ref(false)
 
 // Traer datos del localStorage
-onMounted(() => {
+onMounted(async() => {
     // Si se pasa un paciente por props, se asigna al formData
     if (props.paciente) {
         formData.Paciente = props.paciente;
+        formData.Diagnosticos = await storePaciente.listDiagnosticos(props.paciente.id)
     }
 });
 
+// Cambiar botones al Actualizar o Ver
+const botones = computed(() => ({
+    cancelar: 'Cancelar',
+    ...(modificarPaciente.value ? { enviar: 'Modificar' } : {})
+}));
 
 // Enviar formulario -------------------
 const enviarModificarPaciente = async (formData) => {
@@ -86,17 +92,73 @@ function cerrarModal() {
     limpiar()
     varView.showModificarPaciente = false;
 }
+
+function actualizarPaciente() {
+    modificarPaciente.value = !modificarPaciente.value
+};
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Cancelar', enviar: 'Modificar'}">
-        <Formulario class="mt-3" :datos="{
-            titulo: 'Modificar a ' + pacienteAModificar,
-        }">
-            <DatosPacientes :formData="formData" :agregarItem="agregarItem"
-                :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true" />
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente" :formData="formData"
+        :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl">
+            <!-- Header -->
+            <div
+                class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
+                <div>
+                    <h2 class="text-white font-bold text-2xl">Informacion del paciente</h2>
+                    <div class="flex gap-8 text-gray-200 font-semibold">
+                        <p class=""><span class="text-sm text-gray-300">Paciente:</span> {{ pacienteAModificar }}
+                        </p>
+                    </div>
 
-        </Formulario>
+                </div>
+                <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                    <i class="fa-solid fa-pencil hover:text-white" @click="actualizarPaciente"></i>
+                    <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
+                </div>
+            </div>
+
+            <div class="py-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+                <DatosPacientes :formData="formData" :agregarItem="agregarItem" :eliminarItem="eliminarItem"
+                    :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
+                    :verPaciente="!modificarPaciente" />
+            </div>
+        </div>
     </ModalFormLG>
 </template>
+
+<style scoped>
+/* Scroll */
+
+.scrollForm::-webkit-scrollbar {
+    height: 7px;
+    width: 7px;
+}
+
+.scrollForm::-webkit-scrollbar-track {
+    border-radius: 2px;
+    background-color: #DFE9EB;
+}
+
+.scrollForm::-webkit-scrollbar-track:hover {
+    background-color: #B8C0C2;
+}
+
+.scrollForm::-webkit-scrollbar-track:active {
+    background-color: #B8C0C2;
+}
+
+.scrollForm::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: #326872;
+}
+
+.scrollForm::-webkit-scrollbar-thumb:hover {
+    background-color: #576A72;
+}
+
+.scrollForm::-webkit-scrollbar-thumb:active {
+    background-color: #107072;
+}
+</style>

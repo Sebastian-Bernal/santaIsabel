@@ -19,7 +19,8 @@ const props = defineProps([
     'guardarDatos',
     'agregarItem',
     'eliminarItem',
-    'noCambiar'
+    'noCambiar',
+    'verPaciente'
 ]);
 
 // Guardar Datos en el localStorage
@@ -61,29 +62,29 @@ const ciudades = computed(() => {
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Input v-model="props.formData.Paciente.name" type="text" id="nombre" name="nombre" placeholder="Nombres y Apellidos"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.name" type="text" id="nombre" name="nombre" placeholder="Nombres y Apellidos"
             tamaño="md:w-4/5 w-full" />
-        <Input v-model="props.formData.Paciente.nacimiento" type="date" id="nacimiento" name="nacimiento"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.nacimiento" type="date" id="nacimiento" name="nacimiento"
             placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Select v-model="props.formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento" :options="[
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.type_doc" id="tipoDocumento" name="tipoDocumento" :options="[
             { text: 'Cedula de ciudadania', value: 'cedula' },
             { text: 'Tarjeta de identidad', value: 'ti' },
             { text: 'Cedula Extranjera', value: 'extranjera' },
             { text: 'RC', value: 'RC' },
         ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
-        <Input v-model="props.formData.Paciente.No_document" type="number" id="documento" name="documento"
-            placeholder="Número de documento" tamaño="w-full" :disabled="props.noCambiar" />
+        <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="props.formData.Paciente.No_document" type="number" id="documento" name="documento"
+            placeholder="Número de documento" tamaño="w-full" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Select v-model="props.formData.Paciente.sexo" id="Sexo" name="Sexo" :options="[
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.sexo" id="Sexo" name="Sexo" :options="[
             { text: 'Masculino', value: 'masculino' },
             { text: 'Femenino', value: 'femenino' },
         ]" placeholder="Sexo al nacer" tamaño="w-full"></Select>
-        <Select v-model="props.formData.Paciente.genero" id="genero" name="genero" :options="[
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.genero" id="genero" name="genero" :options="[
             { text: 'Masculino', value: 'masculino' },
             { text: 'Femenino', value: 'femenino' },
             { text: 'Neutro', value: 'neutro' },
@@ -100,35 +101,35 @@ const ciudades = computed(() => {
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Input v-model="props.formData.Paciente.departamento" type="text" id="departamento" name="departamento"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.departamento" type="text" id="departamento" name="departamento"
             placeholder="Departamento" tamaño="md:w-1/3 w-full" list="listDepartamento" />
         <datalist id="listDepartamento" class="bg-white text-black">
             <option v-for="(data, id) in ubicacion" :key="id" :value="data.departamento">
                 codigo: {{ 0 }}
             </option>
         </datalist>
-        <Input v-model="props.formData.Paciente.municipio" type="text" id="municipio" name="municipio" placeholder="Municipio"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.municipio" type="text" id="municipio" name="municipio" placeholder="Municipio"
             tamaño="md:w-1/3 w-full" list="listMunicipio" />
         <datalist id="listMunicipio" v-if="props.formData.Paciente.departamento">
             <option v-for="(data, id) in ciudades" :key="id" :value="data"></option>
         </datalist>
-        <Select v-model="props.formData.Paciente.zona" id="zona" name="zona" :options="[
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.zona" id="zona" name="zona" :options="[
             { text: 'Rural', value: 'Rural' },
             { text: 'Urbana', value: 'Urbana' },
         ]" placeholder="Zona" tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Input v-model="props.formData.Paciente.barrio" type="text" id="barrio" name="barrio" placeholder="Barrio"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.barrio" type="text" id="barrio" name="barrio" placeholder="Barrio"
             tamaño="md:w-1/2 w-full" />
-        <Input v-model="props.formData.Paciente.direccion" type="text" id="direccion" name="direccion" placeholder="Direccion"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.direccion" type="text" id="direccion" name="direccion" placeholder="Direccion"
             tamaño="md:w-1/2 w-full" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Input v-model="props.formData.Paciente.celular" type="number" id="celular" name="celular" placeholder="Celular"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.celular" type="number" id="celular" name="celular" placeholder="Celular"
             tamaño="md:w-1/2 w-full" />
-        <Input v-model="props.formData.Paciente.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
             tamaño="md:w-1/2 w-full" />
     </Section>
 
@@ -139,13 +140,13 @@ const ciudades = computed(() => {
         </div>
     </Section>
     <Section styles="md:flex items-center gap-3 grid grid-cols-2 mb-3">
-        <Input v-model="props.formData.Paciente.Eps" type="text" id="eps" name="eps" placeholder="Eps"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" type="text" id="eps" name="eps" placeholder="Eps"
             tamaño="md:w-1/4 w-full" />
-        <Input v-model="props.formData.Paciente.Regimen" type="text" id="regimen" name="regimen" placeholder="Regimen"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" type="text" id="regimen" name="regimen" placeholder="Regimen"
             tamaño="md:w-1/4 w-full" />
-        <Input v-model="props.formData.Paciente.poblacionVulnerable" type="text" id="poblacion" name="poblacion"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.poblacionVulnerable" type="text" id="poblacion" name="poblacion"
             placeholder="Poblacion vulnerable" tamaño="md:w-1/4 w-full" />
-        <Input v-model="props.formData.Paciente.Tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
+        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
             tamaño="md:w-1/4 w-full" />
     </Section>
 
@@ -161,7 +162,7 @@ const ciudades = computed(() => {
                     id: '',
                     tipo: '',
                     CIE_10: '',
-                    id_paciente: '',
+                    id_paciente: 1,
                     rol_attention: '',
                 },
                 'tipo'
@@ -173,14 +174,14 @@ const ciudades = computed(() => {
 
     <Section styles="flex-col max-h-[150px] overflow-y-auto">
         <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in props.formData.Diagnosticos">
-            <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
+            <Input :disabled="props.verPaciente" v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
                 list="cie10List" tamaño="w-full" />
             <datalist id="cie10List">
                 <option v-for="enfermedad in CIE10" :value="enfermedad.description">
                     codigo: {{ enfermedad.code }}
                 </option>
             </datalist>
-            <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo de Diagnostico"
+            <Input :disabled="props.verPaciente" v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo de Diagnostico"
                 tamaño="w-full" />
             <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
         </div>
@@ -220,7 +221,7 @@ const ciudades = computed(() => {
     </Section>
     <Section styles="flex-col gap-1 mb-2 w-full max-h-[150px] overflow-y-auto">
         <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in props.formData.Antecedentes" :key="i">
-            <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
+            <Input :disabled="props.verPaciente" v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
                 :placeholder="antecedente.tipo === 'personal' ? 'Antecedentes Personales' : antecedente.tipo === 'familiar' ? 'Antecedentes Familiares' : 'Antecedentes'"
                 tamaño="w-full" />
             <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Antecedentes', i)"></i>

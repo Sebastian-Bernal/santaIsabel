@@ -33,7 +33,7 @@ const props = defineProps({
         <div class="md:w-[65%] md:h-[70%] w-[90%] h-[90%] bg-gray-50 rounded-2xl shadow-lg p-4 py-5">
             <slot></slot>
             <!-- Botones -->
-            <div class="mt-2 w-full flex justify-center items-center gap-3">
+            <div class="w-full flex justify-center items-center gap-3">
                 <ButtonForm v-if="props.botones.cancelar" color="bg-gray-500 " @click="props.cerrarModal"
                     class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.botones ? props.botones.cancelar : 'Cancelar' }}

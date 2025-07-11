@@ -78,6 +78,21 @@ const enviarFormularioPendiente = () => {
 
 <style scoped>
 /* Scroll */
+.scrollForm {
+    position: relative;
+}
+
+.scrollForm::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 20px;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.8));
+    z-index: 10;
+}
 
 .scrollForm::-webkit-scrollbar {
     height: 7px;

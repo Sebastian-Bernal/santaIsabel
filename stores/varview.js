@@ -27,6 +27,8 @@ export const useVarView = defineStore('varView', {
         showMenuHistorias: true,       
         showVerHistoria: false,
         showNuevaCita: false,
+        showRecuperarContraseña: false,
+        showCambiarContraseña: false,
         formComplete: false,
     }),
 

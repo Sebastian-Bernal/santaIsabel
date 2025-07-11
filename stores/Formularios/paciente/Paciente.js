@@ -56,7 +56,7 @@ export const usePacientesStore = defineStore('Pacientes', {
             const pacientes = await store.leerdatos()
             state.Pacientes = pacientes // Actualiza la lista de pacientes en el estado
             return pacientes
-        }
+        },
     },
 
     actions: {
@@ -64,6 +64,22 @@ export const usePacientesStore = defineStore('Pacientes', {
         createForm(storeId, estructura = estructuraPaciente) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
+        },
+
+        async listDiagnosticos(id) {
+            // Traer pacientes
+            const store = useIndexedDBStore()
+            store.almacen = 'Diagnosticos'
+            const diagnosticos = await store.leerdatos()
+
+            const pacientes = await this.listPacientes
+
+            // Array que devuelve diagnosticos del paciente
+            const datos = diagnosticos.filter((diagnostico) => {
+                return parseInt(diagnostico.id_paciente) === parseInt(id)
+            })
+
+            return datos
         },
 
 

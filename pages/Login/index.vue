@@ -1,6 +1,9 @@
 <script setup>
-import { ref } from 'vue';
 import ModalXS from '~/components/Modales/ModalXS.vue';
+import RecuperarContraseña from '~/components/Forms/Login/RecuperarContraseña.vue';
+import CambiarContraseña from '~/components/Forms/Login/CambiarContraseña.vue';
+import { ref } from 'vue';
+import { useVarView } from '~/stores/varview';
 
 definePageMeta({
     layout: 'authentication'
@@ -9,6 +12,7 @@ definePageMeta({
 const contraseña = ref('');
 const correo = ref('');
 const mostrarContraseña = ref(false);
+const varView = useVarView();
 
 const cambiarMostrarContraseña = () => {
     mostrarContraseña.value = !mostrarContraseña.value;
@@ -23,17 +27,21 @@ const cambiarMostrarContraseña = () => {
 function ingresar() {
     window.location.href = '/'
 }
+
+function recuperarContraseña() {
+    varView.showRecuperarContraseña = true
+}
 </script>
 
 <template>
 
-    <ModalXS color="bg-inherit">
+    <ModalXS color="bg-inherit" v-if="!varView.showRecuperarContraseña">
         <div class="flex flex-col w-full h-full justify-center items-center">
             <div class="flex flex-col justify-center items-center gap-1 pb-10">
                 <img src="assets/img/cross.png" alt="" class="w-3/4 logo mb-5 select-none">
                 <h3 class="text-white text-3xl font-bold">Thesalus</h3>
             </div>
-            <div class="mb-5 md:w-1/3 w-full">
+            <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
                     <input v-model="correo" type="email" id="text" name="email" required
                         placeholder="Correo Electronico"
@@ -41,7 +49,7 @@ function ingresar() {
                     <i class="fa-solid fa-user absolute text-white right-[3%] top-[27%] text-lg"></i>
                 </div>
             </div>
-            <div class="mb-5 md:w-1/3 w-full">
+            <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
                     <input v-model="contraseña" type="password" id="password" name="password" required
                         placeholder="Contraseña" autocomplete="false"
@@ -63,10 +71,12 @@ function ingresar() {
 
             <p class="text-sm my-3 text-gray-100">
                 Olvidaste tu contraseña?
-                <nuxtLink to="/" class="underline font-semibold cursor-pointer">Recuperar</nuxtLink>
+                <span @click="recuperarContraseña" class="underline font-semibold cursor-pointer">Recuperar</span>
             </p>
         </div>
     </ModalXS>
+    <RecuperarContraseña v-if="varView.showRecuperarContraseña"/>
+    <CambiarContraseña v-if="varView.showCambiarContraseña"/>
 </template>
 
 <style scoped>

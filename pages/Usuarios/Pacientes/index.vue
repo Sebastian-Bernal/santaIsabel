@@ -25,7 +25,7 @@ const agregarPaciente = () => {
     varView.showNuevoPaciente = true;
 };
 
-const modificarPaciente = (paciente) => {
+const verPaciente = (paciente) => {
     varView.showModificarPaciente = true;
     pacienteDatos.value = paciente;
 };
@@ -42,7 +42,7 @@ const modificarPaciente = (paciente) => {
             { titulo: 'celular', tamaño: 100 },
             { titulo: 'Eps', tamaño: 150, ordenar: true }
         ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarPaciente }"
-            :acciones="{ action: true, icons: [{icon: 'actualizar', action: modificarPaciente}], botones: true }" :datos="{ content: pacientes }" />
+            :acciones="{ action: true, icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
     </div>
     <IngresarPaciente v-if="varView.showNuevoPaciente" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />
