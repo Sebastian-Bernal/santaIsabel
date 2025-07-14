@@ -6,15 +6,22 @@ import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProf
 import { ref, onMounted } from 'vue';
 import { useMedicosStore } from '../../../stores/Formularios/medicos/Medico.js';
 import {useVarView} from '../../stores/varview.js';
+import { storeToRefs } from 'pinia';
 
 const varView = useVarView();
 const medicosStore = useMedicosStore();
-const { listMedicos } = medicosStore;
+const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
+let refresh = 1
+
+watch(()=> varView.showNuevoProfesional, async()=>{
+    medicos.value= await listMedicos.value;
+    refresh++
+})
 
 // Cargar los Medicos desde el store
 onMounted(async () => {
-    medicos.value = await listMedicos
+    medicos.value = await listMedicos.value
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
@@ -31,7 +38,7 @@ const modificarMedico = (medico) => {
 </script>
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
-        <Tabla :columnas="[
+        <Tabla :key="refresh" :columnas="[
         { titulo: 'name', tamaño: 200},
         { titulo: 'No_document', tamaño: 100},
         { titulo: 'edad', tamaño: 50},

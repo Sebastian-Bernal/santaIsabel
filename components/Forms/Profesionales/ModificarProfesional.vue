@@ -62,9 +62,12 @@ const enviarModificarMedico = async (formData) => {
         options.titulo = '¡Se ha enviado correctamente!';
         options.texto = 'Medico Modificado';
         options.tiempo = 2000
-        const res = await simple()
-        limpiar()
-        window.location.href = '/Usuarios/Profesional'
+        const respuesta = await simple()
+        if (respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar()
+            varView.showModificarProfesional = false;
+            medicoStore.listMedicos
+        }
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';
@@ -99,20 +102,21 @@ async function eliminarMedico() {
     options.confirmtext = 'Si, eliminar'
     options.canceltext = 'Cancelar'
     const respuestaAlert = await alertRespuesta()
-    if(respuestaAlert === 'confirmado'){
+    if (respuestaAlert === 'confirmado') {
         const res = validarYEnviarEliminarMedico(formData)
-        if(res){
+        if (res) {
             limpiar()
-            window.location.href = '/Usuarios/Profesional'
+            varView.showModificarProfesional = false;
+            medicoStore.listMedicos
         }
     }
 };
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarMedico"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
-            <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarMedico" :formData="formData"
+        :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl">
             <!-- Header -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
@@ -132,8 +136,8 @@ async function eliminarMedico() {
             </div>
 
             <div class="py-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
-                <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
-                    :verMedico="!modificarMedico" />
+                <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"
+                    :noCambiar="true" :verMedico="!modificarMedico" />
             </div>
         </div>
     </ModalFormLG>

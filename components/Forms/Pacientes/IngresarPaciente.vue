@@ -37,9 +37,13 @@ const enviarNuevoPaciente = async (formData) => {
         options.titulo = "¡Se ha enviado correctamente!";
         options.texto = "Nuevo Paciente Registrado";
         options.tiempo = 3000;
-        const res = await simple();
-        limpiar();
-        window.location.href = "/Usuarios/Pacientes";
+        const respuesta = await simple();
+        console.log(respuesta)
+        if(respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar();
+            varView.showNuevoPaciente = false;
+            storePaciente.listPacientes
+        }
     } else {
         options.icono = "error";
         options.titulo = "¡A ocurrido un problema!";

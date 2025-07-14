@@ -28,12 +28,13 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
         // Alerta simple
         simple() {
             this.inicia()
-            this.swal.fire({
+            const result = this.swal.fire({
                 title: this.options.titulo,
                 text: this.options.texto,
                 icon: this.options.icono,
                 timer: this.options.tiempo
             });
+            return result
         },
         // Alerta con posicion de mensaje o notificacion
         mensaje() {

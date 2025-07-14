@@ -16,7 +16,7 @@ const estructuraMedico = {
         barrio: '',
         celular: '',
         telefono: '',
-        estado: '',
+        estado: 'activo',
     }
 }
 

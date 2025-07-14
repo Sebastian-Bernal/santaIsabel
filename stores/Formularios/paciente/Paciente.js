@@ -26,19 +26,8 @@ const estructuraPaciente = {
         Tipo: '',
         estado: 'activo',
     },
-    Diagnosticos: [{
-        id: '',
-        tipo: '',
-        CIE_10: '',
-        id_paciente: '',
-        rol_attention: '',
-    }],
-    Antecedentes: [{
-        id: '',
-        valor: '',
-        id_paciente: '',
-        tipo: 'personal',
-    }],
+    Diagnosticos: [],
+    Antecedentes: [],
 
 }
 
@@ -46,7 +35,7 @@ const estructuraPaciente = {
 export const usePacientesStore = defineStore('Pacientes', {
     state: () => ({
         Paciente: JSON.parse(JSON.stringify(estructuraPaciente)), // estructura base compartida
-        Pacientes: pacientes
+        Pacientes: []
     }),
 
     getters: {
@@ -70,19 +59,18 @@ export const usePacientesStore = defineStore('Pacientes', {
         },
 
         async listDatos(id, Tabla) {
-            // Traer pacientes
+            // Traer datos de indexedDB
             const store = useIndexedDBStore()
             store.almacen = Tabla
             const datosTabla = await store.leerdatos()
 
-            // Array que devuelve los datos de la tabla del paciente
+            // Array que devuelve los datos filtrados por paciente
             const datos = datosTabla.filter((dato) => {
                 return parseInt(dato.id_paciente) === parseInt(id)
             })
 
             return datos
         },
-
 
     }
 });

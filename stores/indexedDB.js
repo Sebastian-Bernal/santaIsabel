@@ -98,6 +98,20 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             STabre.add(aguardar);
         },
 
+        async guardardatosID(aguardar) {
+            const tx = this.bd.transaction(this.almacen, 'readwrite');
+            const store = tx.objectStore(this.almacen);
+
+            const result = await new Promise((resolve, reject) => {
+                const request = store.add(aguardar);
+                request.onsuccess = () => resolve(request.result); // El ID generado
+                request.onerror = () => reject(request.error);
+            });
+
+            await tx.done;
+            return result;
+        },
+
         async leerpordato(key) {
             if (!this.bd) {
                 await this.initialize()
@@ -187,10 +201,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             })
         },
 
-        async buscar_no_enviados(){
+        async buscar_no_enviados() {
             this.almacen = 'HistoriaClinica'
             let datos = await this.leerdatos()
-            return datos.map( dato => dato.id === null )
+            return datos.map(dato => dato.id === null)
         }
 
     }

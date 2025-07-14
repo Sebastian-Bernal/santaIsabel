@@ -121,7 +121,7 @@ const estiloColumnas = computed(() => {
             <div class="w-full">
 
                 <!-- Header titulos de props Columnas -->
-                <div class="sticky top-0 z-[0] grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
+                <div class="sticky top-0 z-1 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
                     :class="headerTabla.color" :style="estiloColumnas">
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">

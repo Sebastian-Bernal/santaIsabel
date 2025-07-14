@@ -47,8 +47,8 @@ onMounted(() => {
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
     return ubicacion.filter(
-        (data) => data.departamento === props.formData.Paciente.departamento
-    )[0].ciudades;
+        (data) => data.departamento.toLowerCase() === props.formData.Paciente.departamento.toLowerCase()
+    )[0]?.ciudades;
 
 });
 </script>

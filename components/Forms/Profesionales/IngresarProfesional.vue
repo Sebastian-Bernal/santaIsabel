@@ -36,9 +36,12 @@ const enviarNuevoMedico = async (formData) => {
         options.titulo = '¡Se ha enviado correctamente!';
         options.texto = 'Nueva Medico Registrado';
         options.tiempo = 2000
-        const res = await simple()
-        limpiar()
-        window.location.href = '/Usuarios/Profesional'
+        const respuesta = await simple()
+        if (respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar()
+            varView.showNuevoProfesional = false;
+            medicoStore.listMedicos
+        }
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';

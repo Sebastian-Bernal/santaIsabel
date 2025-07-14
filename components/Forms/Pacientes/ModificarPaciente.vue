@@ -70,9 +70,12 @@ const enviarModificarPaciente = async (formData) => {
         options.titulo = '¡Se ha enviado correctamente!';
         options.texto = 'Informacion del Paciente modificado';
         options.tiempo = 2000
-        const res = await simple()
-        limpiar()
-        window.location.href = '/Usuarios/Pacientes';
+        const respuesta = await simple()
+        if(respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar();
+            varView.showModificarPaciente = false;
+            storePaciente.listDatos
+        }
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';
@@ -111,7 +114,8 @@ async function eliminarPaciente() {
         const res = validarYEnviarEliminarPaciente(formData)
         if(res){
             limpiar()
-            window.location.href = '/Usuarios/Pacientes'
+            varView.showModificarPaciente = false
+            storePaciente.listPacientes;
         }
     }
 };
@@ -133,9 +137,9 @@ async function eliminarPaciente() {
 
                 </div>
                 <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i class="fa-solid fa-trash hover:text-white" @click="eliminarPaciente"></i>
-                    <i class="fa-solid fa-pencil hover:text-white" @click="actualizarPaciente"></i>
-                    <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
+                    <i class="fa-solid fa-trash hover:text-white cursor-pointer *:" @click="eliminarPaciente"></i>
+                    <i class="fa-solid fa-pencil hover:text-white cursor-pointer" @click="actualizarPaciente"></i>
+                    <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>
             </div>
 

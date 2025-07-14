@@ -3,18 +3,31 @@ import Tabla from '../../components/Tables/Tabla.vue';
 import IngresarPaciente from '../../components/Forms/Pacientes/IngresarPaciente.vue';
 import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { usePacientesStore } from '../../stores/Formularios/paciente/Paciente.js';
-import {useVarView} from '../../stores/varview.js';
+import { useVarView } from '../../stores/varview.js';
+import { storeToRefs } from 'pinia';
 
 const varView = useVarView();
 const pacientesStore = usePacientesStore();
-const { listPacientes } = pacientesStore;
+const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
+let refresh = 1
+
+async function llamadatos(){
+    pacientes.value= await listPacientes.value;
+}
+
+watch(()=> varView.showNuevoPaciente, varView.showModificarPaciente, ()=>{
+    llamadatos()
+    refresh++
+})
 
 // Cargar los pacientes desde el store
-onMounted(async () => {
-    pacientes.value = await listPacientes
+onMounted( () => {
+    varView.cargando = true
+    llamadatos()
+    varView.cargando = false
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de paciente
@@ -34,7 +47,7 @@ const verPaciente = (paciente) => {
 
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
-        <Tabla :columnas="[
+        <Tabla :key="refresh" :columnas="[
             { titulo: 'name', tamaño: 150, ordenar: true },
             { titulo: 'No_document', tamaño: 100, ordenar: true },
             { titulo: 'municipio', tamaño: 150 },
