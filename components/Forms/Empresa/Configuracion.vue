@@ -1,54 +1,12 @@
 <script setup>
 import Input from '~/components/Inputs/Input.vue';
-import InputIcon from '~/components/Inputs/InputIcon.vue';
 import InputContenido from '~/components/Inputs/InputContenido.vue';
+import DatosEmpresa from './DatosEmpresa.vue';
 </script>
 
 <template>
     <div class="flex flex-col gap-6">
-        <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
-            <div>
-                <h3 class="text-xl font-semibold">Datos de la Empresa</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <Input placeholder="Nombre Comercial" name="nombre"></Input>
-                <Input placeholder="Logo" type="file" name="logo"></Input>
-                <Input placeholder="Logo login" name="logoLogin"></Input>
-                <Input placeholder="JPG firmas facturas" name="firmas"></Input>
-            </div>
-        </div>
-
-        <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
-            <div>
-                <h3 class="text-xl font-semibold">Configuracion de la Empresa</h3>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <Input placeholder="Numero de identificacion" name="IdEmpresa"></Input>
-                <Input placeholder="DV" name="DV"></Input>
-                <Input placeholder="Registro Mercantil" name="regitroMercantil"></Input>
-                <Input placeholder="Direccion" name="direccion"></Input>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Input placeholder="Telefono" name="telefono"></Input>
-                <Input placeholder="Lenguaje" name="lenguaje"></Input>
-                <Input placeholder="Impuesto" name="impuesto"></Input>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Input placeholder="Pais" name="pais"></Input>
-                <Input placeholder="Tipo de Documento" name="tipodocuemnto"></Input>
-                <Input placeholder="Tipo de Operacion" name="tipoOperacion"></Input>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Input placeholder="Tipo Entorno" name="tipoEntorno"></Input>
-                <Input placeholder="Tipo Moneda" name="tipoMoneda"></Input>
-                <Input placeholder="Tipo de Organizacion" name="tipoOrganizacion"></Input>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Input placeholder="Municipio" tipo="municipio" name="municipio"></Input>
-                <Input placeholder="Tipo de Responsabilidad" name="tipoResponsabilidad"></Input>
-                <Input placeholder="Tipo de Regimen" name="tipoRegimen"></Input>
-            </div>
-        </div>
+        <DatosEmpresa />
 
         <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
             <div>
@@ -107,10 +65,11 @@ import InputContenido from '~/components/Inputs/InputContenido.vue';
                 <h3 class="text-xl font-semibold text-start">Certificado Digital</h3>
             </div>
             <div class="flex flex-col items-center gap-3">
-            <div class="bg-gray-100 md:w-1/2 w-full flex flex-col items-center p-4 py-6">
+            <label for="certificado" class="bg-gray-100 md:w-1/2 w-full flex flex-col items-center p-4 py-6">
                 <i class="fa-solid fa-cloud-arrow-up text-6xl text-gray-500"></i>
                 <p>Sulta tu archivo aqui o <span class="text-blue-400">haz clic para cargar</span></p>
-            </div>
+            </label>
+            <input type="file" id="certificado" name="certificado" class="hidden"/>
             <Input placeholder="Password Certificado" name="certificado" tamaño="md:w-1/2 w-full"></Input>
             </div>
             <div class="w-full flex justify-end">

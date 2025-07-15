@@ -1,14 +1,15 @@
 <script setup>
 import ModalLG from '~/components/Modales/ModalLG.vue';
 import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
-import VerAnalisis from './VerAnalisis.vue';
-import VerConsultas from './VerConsultas.vue'
+import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
+import VerConsultas from './Consultas/VerConsultas.vue'
 import VerEvoluciones from './VerEvoluciones.vue'
 import VerNotas from './VerNotas.vue'
 import VerTratamientos from './VerTratamientos.vue'
 import VerMedicacion from './VerMedicacion.vue'
 import { useVarView } from '~/stores/varview.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -20,8 +21,10 @@ const props = defineProps({
 
 const varView = useVarView();
 const pacienteStore = usePacientesStore();
+const historiasStore = useHistoriasStore();
 const medicinas = ref([]);
 const consultas = ref([]);
+const analisis = ref([]);
 
 const cerrarModal = () => {
     varView.showVerHistoria = false;
@@ -78,6 +81,7 @@ async function Botones (titulo) {
         consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
         varView.showVerConsultas = !varView.showVerConsultas
     } else if(titulo === 'Análisis'){
+        analisis.value = await historiasStore.listDatos(1, 'AnalisisTratamiento')
         varView.showVerAnalisis = !varView.showVerAnalisis
     } else if(titulo === 'Evoluciones'){
         varView.showVerEvoluciones = !varView.showVerEvoluciones
@@ -146,7 +150,7 @@ function showBotones () {
             </div>
             <div class="w-full h-full" v-if="!varView.showMenuHistorias">
                 <VerConsultas v-if="varView.showVerConsultas" :consultas="consultas"/>
-                <VerAnalisis v-if="varView.showVerAnalisis"/>
+                <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis"/>
                 <VerEvoluciones v-if="varView.showVerEvoluciones"/>
                 <VerNotas v-if="varView.showVerNotas"/>
                 <VerTratamientos v-if="varView.showVerTratamientos"/>

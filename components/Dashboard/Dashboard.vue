@@ -3,6 +3,21 @@ import StatsCards from './StatsCards';
 import PacientesRecientes from './PacientesRecientes';
 import Upcoming from './Upcoming';
 import Acciones from './Acciones';
+import { onMounted, ref } from 'vue';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
+
+const citasStore = useCitasStore();
+const historiaStore = useHistoriasStore();
+
+const Citas = ref([]);
+const ultimosPacientes = ref();
+
+onMounted(async () => {
+    // Cargar citas y pacientes desde el store
+    Citas.value = await citasStore.listCitas;
+    ultimosPacientes.value = await historiaStore.ultimasHistorias()
+});
 
 const stats = [
     {
@@ -57,8 +72,8 @@ const stats = [
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="lg:col-span-2 space-y-6">
-                <PacientesRecientes />
-                <Upcoming />
+                <PacientesRecientes :ultimosPacientes="ultimosPacientes"/>
+                <Upcoming :Citas="Citas"/>
             </div>
             <div>
                 <Acciones />

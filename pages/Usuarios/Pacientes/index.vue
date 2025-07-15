@@ -12,21 +12,25 @@ const varView = useVarView();
 const pacientesStore = usePacientesStore();
 const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
-let refresh = 1
+const refresh = ref(1)
 
 async function llamadatos(){
     pacientes.value= await listPacientes.value;
 }
 
-watch(()=> varView.showNuevoPaciente, varView.showModificarPaciente, ()=>{
-    llamadatos()
-    refresh++
+watch(() => varView.showNuevoPaciente, async()=>{
+    await llamadatos()
+    refresh.value++
 })
 
+watch(() => varView.showModificarPaciente, async()=>{
+    await llamadatos()
+    refresh.value++
+})
 // Cargar los pacientes desde el store
-onMounted( () => {
+onMounted(async() => {
     varView.cargando = true
-    llamadatos()
+    await llamadatos()
     varView.cargando = false
 });
 

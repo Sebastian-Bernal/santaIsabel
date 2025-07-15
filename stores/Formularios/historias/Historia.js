@@ -30,7 +30,7 @@ const estructuraHistoria = {
         id_profesional: '',
         name_profesional: '',
         analisis: '',
-        tipoAnalisis: ''
+        tipoAnalisis: '',
     },
     ExamenFisico: {
         Peso: '',
@@ -54,7 +54,7 @@ const estructuraHistoria = {
 export const useHistoriasStore = defineStore('HistoriaClinica', {
     state: () => ({
         Historia: JSON.parse(JSON.stringify(estructuraHistoria)), // estructura base compartida
-        Historias: historias,
+        Historias: [],
 
     }),
 
@@ -93,11 +93,40 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
         },
     },
 
-        actions: {
-            // Acción para crear nuevas instancias de formulario
-            createForm(storeId, estructura = estructuraHistoria) {
-                const useDynamicForm = createFormStore(storeId, estructura)
-                return useDynamicForm() // devuelve instancia usable del formulario
-            }
-        }
-    });
+    actions: {
+        // Acción para crear nuevas instancias de formulario
+        createForm(storeId, estructura = estructuraHistoria) {
+            const useDynamicForm = createFormStore(storeId, estructura)
+            return useDynamicForm() // devuelve instancia usable del formulario
+        },
+
+        async cargarHistorias() {
+            const store = useIndexedDBStore();
+            store.almacen = 'HistoriaClinica';
+            this.Historias = await store.leerdatos();
+        },
+
+        async ultimasHistorias() {
+            const historias = await this.listHistorias
+            return historias.sort(
+                (a, b) =>
+                    new Date(b.fecha_historia) -
+                    new Date(a.fecha_historia))
+                .slice(0, 3);
+        },
+
+        async listDatos(id, Tabla) {
+            // Traer datos de indexedDB
+            const store = useIndexedDBStore()
+            store.almacen = Tabla
+            const datosTabla = await store.leerdatos()
+
+            // Array que devuelve los datos filtrados por paciente
+            const datos = datosTabla.filter((dato) => {
+                return parseInt(dato.id_temporal) === parseInt(id)
+            })
+
+            return datos
+        },
+    }
+});

@@ -1,14 +1,16 @@
-import { medicos } from '~/data/medicos';
+import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Medico
 export const validarYEnviarNuevoMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const storeMedicos = useMedicosStore();
+    const medicos = await storeMedicos.listMedicos
 
     // Validar si ya existe el medico registrado
-    const medico = medicos.value.find(
-        p => p.nombre.toLowerCase() === datos.Medico.name.toLowerCase()
+    const medico = await medicos.find(
+        p => parseInt(p.No_document) === parseInt(datos.Medico.No_document)
     )
 
     if (medico) {

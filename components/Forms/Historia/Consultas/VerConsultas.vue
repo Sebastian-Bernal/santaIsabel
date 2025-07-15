@@ -1,5 +1,8 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
+import ConsultaInfo from './ConsultaInfo.vue';
+import { useVarView } from '~/stores/varview';
+import { ref } from 'vue';
 
 const props = defineProps({
     consultas: {
@@ -7,10 +10,13 @@ const props = defineProps({
         default: [],
     }
 });
+const consultaAVer = ref([]);
+const varView = useVarView();
 
-function verConsulta () {
-
-}
+function verConsulta (consulta) {
+    consultaAVer.value = consulta
+    varView.showConsultaInfo = true
+};
 </script>
 
 <template>
@@ -27,4 +33,5 @@ function verConsulta () {
             :acciones="{ action: true, icons: [{ icon: 'ver', action: verConsulta }], botones: true }"
             :datos="{ content: props.consultas }" />
     </div>
+    <ConsultaInfo v-if="varView.showConsultaInfo" :consulta="consultaAVer"/>
 </template>

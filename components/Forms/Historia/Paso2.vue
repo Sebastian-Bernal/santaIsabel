@@ -9,12 +9,14 @@ import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref, watch, onMounted } from 'vue';
 import { useVarView } from "../../stores/varview.js";
 
 const varView = useVarView();
 const HistoriaStore = useHistoriasStore();
+const pacientesStore = usePacientesStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
 
@@ -34,7 +36,7 @@ const {
 } = notificacionesStore;
 
 // Datos de ejemplo
-const antecedentesDatos = ref(['Hipertensión', 'Diabetes', 'Enfermedad cardíaca']);
+const antecedentesDatos = ref([]);
 const enfermedades = ref([ 'Gripe', 'Infección respiratoria', 'Dolor de cabeza']);
 
 // Guardar los datos en localStorage
@@ -48,8 +50,9 @@ watch(formData, (newValue) => {
     }
 }, { deep: true });
 
-onMounted(() => {
+onMounted(async() => {
     traerDatos();
+    antecedentesDatos.value = await pacientesStore.listDatos(formData.HistoriaClinica.id_paciente, 'Antecedentes')
 });
 
 // Funciones
@@ -165,20 +168,14 @@ const enviarSegundoPaso = () => {
             </Section>
             <!-- Registro de antecedentes -->
             <Section>
-                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md py-5">
-                    <div class="flex items-center w-full justify-center">
-                        <p class="block text-sm font-medium text-gray-700">Antecedentes Personales</p>
+                <div class="w-full flex flex-col gap-3 border border-gray-300 bg-blue-50 rounded-md py-5 px-10">
+                    <div class="grid md:grid-cols-[1fr_0.5fr] justify-center w-full">
+                        <p class="text-blue-500 text-sm">Antecedentes</p>
+                        <p class="text-blue-500 text-sm">Tipo</p>
                     </div>
-                    <div class="flex flex-col items-center w-full">
-                        <p v-for="antecedente in antecedentesDatos" class="text-gray-500 text-sm">{{ antecedente }}</p>
-                    </div>
-                </div>
-                <div class="w-full md:w-4/5 flex flex-col gap-3 border border-gray-300 rounded-md py-5">
-                    <div class="flex items-center w-full justify-center">
-                        <p class="block text-sm font-medium text-gray-700">Antecedentes Familiares</p>
-                    </div>
-                    <div class="flex flex-col items-center w-full">
-                        <p v-for="antecedente in enfermedades" class="text-gray-500 text-sm">{{ antecedente }}</p>
+                    <div v-for="(antecedente, id) in antecedentesDatos" class="grid md:grid-cols-[1fr_0.5fr] justify-center w-full">
+                        <p class="text-gray-500 text-sm font-bold">{{ antecedente.valor }}</p>
+                        <p class="text-gray-500 text-sm font-bold">{{ antecedente.tipo }}</p>
                     </div>
                 </div>
             </Section>

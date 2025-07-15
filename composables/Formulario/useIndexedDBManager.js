@@ -50,6 +50,35 @@ export async function guardarPacienteEnIndexedDB(data) {
     }
 }
 
+export async function guardarHistoriaEnIndexedDB(data) {
+    const store = useIndexedDBStore();
+    await store.initialize();
+
+    let id_temporal = null;
+    for (const [almacen, contenido] of Object.entries(data)) {
+        store.almacen = almacen;
+        // Guardar Historia y obtener ID generado
+        if (almacen === 'HistoriaClinica') {
+            const idGenerado = await store.guardardatosID({ ...contenido });
+            id_temporal = idGenerado; // Guardamos el ID para usar en otros almacenes
+        }
+        // Guardar otros datos relacionados (como diagnóstico, antecedentes, etc.)
+        else if (Array.isArray(contenido)) {
+            for (const item of contenido) {
+                await store.guardardatos({
+                    ...item,
+                    id_temporal: id_temporal,
+                });
+            }
+        } else if (typeof contenido === 'object' && contenido !== null) {
+            await store.guardardatos({
+                ...contenido,
+                id_temporal: id_temporal,
+            });
+        }
+    }
+}
+
 // Función para actualizar datos en IndexedDB
 export async function actualizarEnIndexedDB(data) {
     const store = useIndexedDBStore();

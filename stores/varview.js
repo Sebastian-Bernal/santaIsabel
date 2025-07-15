@@ -4,11 +4,15 @@ import { defineStore } from "pinia";
 export const useVarView = defineStore('varView', {
     state: () => ({
         cargando: false,
-        showInfoSelect: false,
+        // Formularios Paciente
         showNuevoPaciente: false,
         showModificarPaciente: false,
+        // Formularios Profesional
         showNuevoProfesional: false,
         showModificarProfesional: false,
+        // Formularios Citas
+        showNuevaCita: false,
+        // Formularios Historia
         showNuevaHistoria: false,
         showPaso2: false,
         showPaso3: false,
@@ -17,18 +21,21 @@ export const useVarView = defineStore('varView', {
         showProcedimientos: false,
         showInsumos: false,
         showEquipos: false,
+        // Modales ver Historia
         showVerAnalisis : false,
         showAnalisisInfo: false,
         showVerConsultas : false,
+        showConsultaInfo : false,
         showVerEvoluciones : false,
         showVerNotas : false,
         showVerTratamientos : false,
         showVerMedicacion : false,
         showMenuHistorias: true,       
         showVerHistoria: false,
-        showNuevaCita: false,
+        // Modales Login
         showRecuperarContraseña: false,
         showCambiarContraseña: false,
+        // validacion de formularios
         formComplete: false,
     }),
 

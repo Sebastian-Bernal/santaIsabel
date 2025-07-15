@@ -3,7 +3,7 @@
 import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 // Data
-import { validarYEnviarEliminarPaciente } from '~/Core/EliminarPaciente';
+import { validarYEnviarEliminarPaciente } from '~/Core/Paciente/EliminarPaciente';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js';
 import { useVarView } from '../../stores/varview.js';
@@ -86,7 +86,7 @@ const enviarModificarPaciente = async (formData) => {
 };
 
 const validarform = () => {
-    if (varView.formComplete) {
+    if (!varView.formComplete) {
         options.position = 'top-end'
         options.texto = "Falta campos por llenar, por favor ingrese valores"
         options.tiempo = 1500

@@ -3,7 +3,7 @@
 import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
 import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
 // Data
-import { validarYEnviarEliminarMedico } from "~/Core/EliminarMedico.js";
+import { validarYEnviarEliminarMedico } from "~/Core/Profesional/EliminarMedico.js";
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";

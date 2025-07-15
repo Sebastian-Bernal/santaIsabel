@@ -1,51 +1,20 @@
 <script setup>
 import { useCalendarioCitas } from '~/stores/Calendario.js'
-import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 
-const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
-const Citas = ref([]);
+// const Citas = ref([]);
+const props = defineProps(['Citas']);
 
 const {
     fechaActual,
 } = storeToRefs(calendarioCitasStore);
 
-onMounted(async () => {
-    // Cargar citas desde el store
-    Citas.value = await citasStore.listCitas;
-});
-
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return Citas.value.filter(cita => cita.fecha.split('-').reverse().join('/') === fechaActual.value)
+    return props.Citas.filter(cita => cita.fecha.split('-').reverse().join('/') === fechaActual.value)
 });
-
-
-const appointments = [
-    {
-        id: '1',
-        patient: 'Juan Carlos Mendoza',
-        time: '09:00',
-        service: 'Medicina General',
-        type: 'Control'
-    },
-    {
-        id: '2',
-        patient: 'Lucia Fernández',
-        time: '10:30',
-        service: 'Odontología',
-        type: 'Primera vez'
-    },
-    {
-        id: '3',
-        patient: 'Roberto Silva',
-        time: '14:00',
-        service: 'Psicología',
-        type: 'Seguimiento'
-    }
-];
 
 </script>
 

@@ -23,18 +23,21 @@ const props = defineProps([
     'verPaciente'
 ]);
 
+const camposRequeridos = [
+    'name', 'nacimiento', 'type_doc', 'No_document', 'sexo', 'genero',
+    'direccion', 'departamento', 'municipio', 'zona', 'barrio',
+    'celular', 'Eps', 'Regimen', 'poblacionVulnerable', 'Tipo'
+];
+
 // Guardar Datos en el localStorage
 watch(
     props.formData,
     (newValue) => {
         props.guardarDatos(newValue);
-
+        const paciente = newValue.Paciente;
         // Validacion
-        if (props.formData.Paciente.name !== "" && props.formData.Paciente.No_document !== "") {
-            varView.formComplete = true;
-        } else {
-            varView.formComplete = false;
-        }
+        const camposValidos = camposRequeridos.every((campo) => paciente[campo] !== '');
+        varView.formComplete = camposValidos;
     },
     { deep: true }
 );
@@ -189,7 +192,7 @@ const ciudades = computed(() => {
             <i v-if="i > 0 && !props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
         </div>
         <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">
-            <p class="text-gray-500">No hay antecedentes registrados.</p>
+            <p class="text-gray-500">No hay Diagnosticos registrados.</p>
         </div>
     </Section>
 

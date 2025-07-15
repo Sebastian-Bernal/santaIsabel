@@ -1,11 +1,11 @@
 // acciones validar y enviar fomularios
-import { validarYEnviarNuevaCita } from '../../Core/NuevaCita';
-import { validarYEnviarNuevoPaciente } from "~/Core/NuevoPaciente";
-import { validarYEnviarModificarPaciente } from '../../Core/ModificarPaciente';
-import { validarYEnviarNuevoMedico } from '../../Core/NuevoMedico';
-import { validarYEnviarRegistrarHistoria } from '../../Core/RegistrarHistoria';
-import { validarYEnviarModificarMedico } from '~/Core/ModificarMedico';
-
+import { validarYEnviarNuevaCita } from '~/Core/NuevaCita';
+import { validarYEnviarNuevoPaciente } from "~/Core/Paciente/NuevoPaciente";
+import { validarYEnviarModificarPaciente } from '~/Core/Paciente/ModificarPaciente';
+import { validarYEnviarNuevoMedico } from '~/Core/Profesional/NuevoMedico';
+import { validarYEnviarRegistrarHistoria } from '~/Core/RegistrarHistoria';
+import { validarYEnviarModificarMedico } from '~/Core/Profesional/ModificarMedico';
+import { validarYEnviarDatosEmpresa } from '~/Core/DatosEmpresa';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
@@ -32,4 +32,8 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarRegistrarHistoria(data)
         return respuesta;
     },
+    DatosEmpresa: async (data) => {
+        const respuesta = await validarYEnviarDatosEmpresa(data)
+        return respuesta
+    }
 };

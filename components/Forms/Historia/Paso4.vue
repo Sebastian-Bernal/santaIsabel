@@ -84,9 +84,12 @@ const enviarRegistrarHistoria = async (formData) => {
         options.titulo = '¡Se ha enviado correctamente!';
         options.texto = 'Nueva Historia Registrada';
         options.tiempo = 2000
-        const res = await simple()
-        limpiar()
-        window.location.href = '/Historial/Historias'
+        const respuesta = await simple()
+        if(respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar();
+            varView.showPaso4 = false;
+            HistoriaStore.listHistorias
+        }
     }
 };
 

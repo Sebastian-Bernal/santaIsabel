@@ -15,12 +15,22 @@ const historiasStore = useHistoriasStore();
 
 const historiasList = ref([]);
 const historia = ref([]);
+const refresh = ref(1);
+
+async function llamadatos(){
+    const datos = await historiasStore.datosHistoria
+    historiasList.value = datos
+}
+
+watch(() => varView.showPaso4, async()=>{
+    await llamadatos()
+    refresh.value++
+})
 
 // Cargar los pacientes desde el store
 onMounted(async() => {
     varView.cargando = true
-    const datos = await historiasStore.datosHistoria
-    historiasList.value = datos
+    await llamadatos()
     varView.cargando = false
 });
 
@@ -41,7 +51,7 @@ const verHistoria = (his) => {
 
 <template>
     <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
-        <Tabla :columnas="[
+        <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', tamaño: 150, ordenar: true },
             { titulo: 'estado', tamaño: 150 },

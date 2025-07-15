@@ -38,7 +38,6 @@ const enviarNuevoPaciente = async (formData) => {
         options.texto = "Nuevo Paciente Registrado";
         options.tiempo = 3000;
         const respuesta = await simple();
-        console.log(respuesta)
         if(respuesta.isConfirmed || respuesta.dismiss) {
             limpiar();
             varView.showNuevoPaciente = false;
@@ -54,7 +53,7 @@ const enviarNuevoPaciente = async (formData) => {
 };
 
 const validarform = () => {
-    if (!varView.formComplete.value) {
+    if (!varView.formComplete) {
         options.position = "top-end";
         options.texto = "Falta campos por llenar, por favor ingrese valores";
         options.tiempo = 1500;

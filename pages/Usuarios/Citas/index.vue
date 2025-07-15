@@ -4,9 +4,19 @@ import Calendario from '~/components/Calendario/Calendario.vue'
 import Citas from '~/components/Calendario/Citas.vue'
 import IngresarNuevaCita from '~/components/Forms/Citas/IngresarNuevaCita.vue'
 import { useVarView } from '~/stores/varview.js'
+import { useCitasStore } from '~/stores/Formularios/citas/Cita'
+import { storeToRefs } from '#imports'
+import { ref, watch } from 'vue'
 
+const citasStore = useCitasStore();
+const { listCitas } = storeToRefs(citasStore);
 const varView = useVarView();
+const refresh = ref(1);
 
+watch(()=> varView.showNuevaCita, ()=>{
+    listCitas.value
+    refresh.value++
+})
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
     varView.showNuevaCita = true;
@@ -33,7 +43,7 @@ const agregarCita = () => {
 
             </div>
 
-            <div
+            <div :key="refresh"
                 class="grid lg:grid-cols-[1fr_0.6fr] md:grid-cols-[1fr_1fr] grid-cols-1 mx-10 lg:gap-10 gap-3 justify-between">
                 <Citas />
                 <Calendario></Calendario>

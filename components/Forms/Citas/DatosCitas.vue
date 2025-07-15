@@ -63,6 +63,7 @@ onMounted(async() => {
     medicosList.value = medicosStore.Medicos;
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
+    console.log(PacientesList.value)
     props.traerDatos();
     props.formData.Cita.fecha = fechaformatDate();
 
@@ -144,10 +145,10 @@ async function seleccionarMedico(medico) {
     </Section>
     <Section styles="relative">
         <Input v-model="props.formData.Cita.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
-            @blur="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
+            @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
         <ul v-show="mostrarLista && pacientesFiltrados.length"
             class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-            <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" class=""
+            <li v-for="paciente in pacientesFiltrados" :key="paciente.documento"
                 @click="seleccionarPaciente(paciente)">
                 <strong>{{ paciente.name }}</strong><br />
                 <small>cédula: {{ paciente.No_document }}</small>

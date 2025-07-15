@@ -68,7 +68,7 @@ const siguienteMes = () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-5 border border-gray-300 rounded-2xl p-5 h-110 bg-white">
+    <div class="flex flex-col gap-5 border border-gray-300 rounded-2xl p-5 h-110 overflow-y-auto scrollForm bg-white">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">{{ nombreMes }}</h2>
             <div class="flex items-center gap-3">

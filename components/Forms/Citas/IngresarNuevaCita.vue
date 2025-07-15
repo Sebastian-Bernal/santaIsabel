@@ -44,9 +44,11 @@ const enviarNuevaCita = async (formData) => {
         options.titulo = '¡Se ha enviado correctamente!';
         options.texto = 'Nueva cita Registrada';
         options.tiempo = 3000
-        const res = await simple()
-        limpiar()
-        window.location.href = '/Usuarios/Citas'
+        const respuesta = await simple()
+        if(respuesta.isConfirmed || respuesta.dismiss) {
+            limpiar();
+            window.location.href = '/Usuarios/Citas'
+        }
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';

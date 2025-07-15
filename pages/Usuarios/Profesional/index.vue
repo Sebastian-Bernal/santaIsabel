@@ -12,16 +12,27 @@ const varView = useVarView();
 const medicosStore = useMedicosStore();
 const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
-let refresh = 1
+const refresh = ref(1);
+
+async function llamadatos () {
+    medicos.value= await listMedicos.value;
+}
 
 watch(()=> varView.showNuevoProfesional, async()=>{
-    medicos.value= await listMedicos.value;
-    refresh++
+    llamadatos()
+    refresh.value++
+})
+
+watch(()=> varView.showModificarProfesional, async()=>{
+    llamadatos()
+    refresh.value++
 })
 
 // Cargar los Medicos desde el store
 onMounted(async () => {
-    medicos.value = await listMedicos.value
+    varView.cargando = true
+    await llamadatos()
+    varView.cargando = false
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
