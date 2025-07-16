@@ -1,27 +1,16 @@
 <script setup>
-import Input from '~/components/Inputs/Input.vue';
-import InputContenido from '~/components/Inputs/InputContenido.vue';
+import Input from "~/components/Inputs/Input.vue";
+import InputContenido from "~/components/Inputs/InputContenido.vue";
 // Data
-import { useSoftwareStore } from '~/stores/Formularios/empresa/Software.js';
+import { useEmpresaStore } from "~/stores/Formularios/empresa/Empresa.js";
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";
 
-const props = defineProps(['tabla', 'datos'])
-
-
-const storeSoftware = useSoftwareStore();
-const estructura = {
-    Software: {
-        [props.tabla]: {
-            id: '',
-            pin: '',
-            testID: '',
-        }
-    },
-}
-const SoftwareStore = storeSoftware.createForm("DatosSoftware");
+const storeEmpresa = useEmpresaStore();
+const EmpresaStore = storeEmpresa.createForm("DatosEmpresa");
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
+const camposVacios = ref(false);
 
 // Importar states y funciones del store
 const {
@@ -31,14 +20,31 @@ const {
     limpiar,
     estado,
     mandarFormulario,
-} = SoftwareStore;
+} = EmpresaStore;
 
 const { simple, mensaje, options } = notificacionesStore;
 
 const camposRequeridos = [
-    'id',
-    'pin',
-    'testID',
+    "nombre",
+    "logo",
+    "logoLogin",
+    "JPG",
+    "no_identificacion",
+    "DV",
+    "registroMercantil",
+    "direccion",
+    "telefono",
+    "lenguaje",
+    "impuesto",
+    "pais",
+    "tipoDocumento",
+    "tipoOperacion",
+    "tipoEntorno",
+    "tipoMoneda",
+    "tipoOrganizacion",
+    "municipio",
+    "tipoResponsabilidad",
+    "tipoRegimen",
 ];
 
 // Guardar Datos en el localStorage
@@ -46,9 +52,11 @@ watch(
     formData,
     (newValue) => {
         guardarDatos(newValue);
-        const empresa = newValue.Software;
+        const empresa = newValue.Empresa;
         // Validacion
-        const camposValidos = camposRequeridos.every((campo) => empresa[campo] !== '');
+        const camposValidos = camposRequeridos.every(
+            (campo) => empresa[campo] !== ""
+        );
         varView.formComplete = camposValidos;
     },
     { deep: true }
@@ -71,7 +79,8 @@ const enviar = async (formData) => {
         options.tiempo = 3000;
         const respuesta = await simple();
         if (respuesta.isConfirmed || respuesta.dismiss) {
-            limpiar()
+            limpiar();
+            formData = storeEmpresa.Empresa;
         }
     } else {
         options.icono = "error";
@@ -89,25 +98,28 @@ const validarform = () => {
         options.tiempo = 1500;
         mensaje();
     }
+    camposVacios.value = true;
 };
 </script>
 
 <template>
     <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
-        <div>
-            <h3 class="text-xl font-semibold">{{ props.datos.titulo }}</h3>
+        <div class="justify-self-start">
+            <h3 class="text-xl font-semibold text-start">Certificado Digital</h3>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Input v-model="formData.Software[props.tabla].id" :placeholder="props.datos.inputID" name="idDIAN"></Input>
-            <InputContenido v-model="formData.Software[props.tabla].pin" :placeholder="props.datos.inputPin" name="pinSoftware" maxlength="5">
-                <div class="flex text-gray-500">
-                    <p>{{ formData.Software[props.tabla].pin.length }}</p>/<p>5</p>
-                </div>
-            </InputContenido>
-            <Input v-model="formData.Software[props.tabla].testID" :placeholder="props.datos.inputTestID" name="set"></Input>
+        <div class="flex flex-col items-center gap-3">
+            <label for="certificado" class="bg-gray-100 md:w-1/2 w-full flex flex-col items-center p-4 py-6">
+                <i class="fa-solid fa-cloud-arrow-up text-6xl text-gray-500"></i>
+                <p>
+                    Sulta tu archivo aqui o
+                    <span class="text-blue-400">haz clic para cargar</span>
+                </p>
+            </label>
+            <input type="file" id="certificado" name="certificado" class="hidden" />
+            <Input placeholder="Password Certificado" type="password" name="certificado" tamaño="md:w-1/2 w-full"></Input>
         </div>
         <div class="w-full flex justify-end">
-            <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
+            <button class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
                 <i class="fa-solid fa-download"></i>Guardar
             </button>
         </div>

@@ -7,7 +7,7 @@ export async function guardarEnIndexedDB(data) {
 
     for (const [almacen, contenido] of Object.entries(data)) {
         store.almacen = almacen;
-
+        console.log(almacen,contenido)
         if(almacen === 'HistoriaClinica'){
             // Si el almacen es Historia Clinica se guarda con id Null
             await store.guardardatos({ ...contenido, id: null })

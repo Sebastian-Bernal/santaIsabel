@@ -5,7 +5,9 @@ import { validarYEnviarModificarPaciente } from '~/Core/Paciente/ModificarPacien
 import { validarYEnviarNuevoMedico } from '~/Core/Profesional/NuevoMedico';
 import { validarYEnviarRegistrarHistoria } from '~/Core/RegistrarHistoria';
 import { validarYEnviarModificarMedico } from '~/Core/Profesional/ModificarMedico';
-import { validarYEnviarDatosEmpresa } from '~/Core/DatosEmpresa';
+import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/DatosEmpresa';
+import { validarYEnviarDatosSoftware } from '~/Core/Empresa/DatosSoftware';
+import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/DatosFacturacion';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
@@ -34,6 +36,14 @@ export const accionesFormularios = {
     },
     DatosEmpresa: async (data) => {
         const respuesta = await validarYEnviarDatosEmpresa(data)
+        return respuesta
+    },
+    DatosSoftware: async (data) => {
+        const respuesta = await validarYEnviarDatosSoftware(data)
+        return respuesta
+    },
+    DatosFacturacion: async (data) => {
+        const respuesta = await validarYEnviarDatosFacturacion(data)
         return respuesta
     }
 };

@@ -1,7 +1,6 @@
 <script setup>
 import FondoBlanco from '~/components/Fondos/FondoBlanco.vue';
-import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
-
+import Resoluciones from '~/components/Forms/Empresa/Resoluciones.vue'
 </script>
 
 <template>
@@ -9,7 +8,7 @@ import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
         <div class="py-8 px-12">
             <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-700">Configuracion de la Empresa</h2>
+                    <h2 class="text-2xl font-bold text-gray-700">Configuracion de Resolucion</h2>
                     <p class="text-gray-600 mt-2">Registra y configura segun los datos de tu Empresa.</p>
                 </div>
                 <div class="flex gap-4">
@@ -24,7 +23,7 @@ import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
                 </div>
             </div>
 
-            <Configuracion/>
+            <Resoluciones/>
         </div>
     </FondoBlanco>
 </template>

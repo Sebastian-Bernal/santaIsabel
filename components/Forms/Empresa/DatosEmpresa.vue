@@ -10,6 +10,7 @@ const storeEmpresa = useEmpresaStore();
 const EmpresaStore = storeEmpresa.createForm("DatosEmpresa");
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
+const camposVacios = ref(false);
 
 // Importar states y funciones del store
 const {
@@ -95,6 +96,7 @@ const validarform = () => {
         options.tiempo = 1500;
         mensaje();
     }
+    camposVacios.value = true
 };
 </script>
 
@@ -104,10 +106,10 @@ const validarform = () => {
             <h3 class="text-xl font-semibold">Datos de la Empresa</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <Input v-model="formData.Empresa.nombre" placeholder="Nombre Comercial" name="nombre"></Input>
-            <Input v-model="formData.Empresa.logo" placeholder="Logo" type="file" name="logo"></Input>
+            <Input v-model="formData.Empresa.nombre" placeholder="Nombre Comercial" name="nombre" :tamaño="{'incompleto' : camposVacios && formData.Empresa.nombre === ''}"></Input>
+            <Input v-model="formData.Empresa.logo" placeholder="Logo" type="file" name="logo" :tamaño="{'incompleto' : camposVacios && formData.Empresa.logo === ''}"></Input>
             <Input v-model="formData.Empresa.logoLogin" placeholder="Logo login" type="file" name="logoLogin"></Input>
-            <Input v-model="formData.Empresa.JPG" placeholder="JPG firmas facturas" type="file" name="firmas"></Input>
+            <Input v-model="formData.Empresa.JPG" placeholder="JPG firmas facturas" type="file" name="firmas" :tamaño="{'incompleto' : camposVacios && formData.Empresa.JPG === ''}"></Input>
         </div>
     </div>
 
@@ -116,10 +118,10 @@ const validarform = () => {
             <h3 class="text-xl font-semibold">Configuracion de la Empresa</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <Input v-model="formData.Empresa.no_identificacion" placeholder="Numero de identificacion" name="IdEmpresa"></Input>
-            <Input v-model="formData.Empresa.DV" placeholder="DV" name="DV"></Input>
-            <Input v-model="formData.Empresa.registroMercantil" placeholder="Registro Mercantil" name="regitroMercantil"></Input>
-            <Input v-model="formData.Empresa.direccion" placeholder="Direccion" name="direccion"></Input>
+            <Input v-model="formData.Empresa.no_identificacion" placeholder="Numero de identificacion" name="IdEmpresa" :tamaño="{'incompleto' : camposVacios && formData.Empresa.no_identificacion === ''}"></Input>
+            <Input v-model="formData.Empresa.DV" placeholder="DV" name="DV" :tamaño="{'incompleto' : camposVacios && formData.Empresa.DV === ''}"></Input>
+            <Input v-model="formData.Empresa.registroMercantil" placeholder="Registro Mercantil" name="regitroMercantil" :tamaño="{'incompleto' : camposVacios && formData.Empresa.registroMercantil === ''}"></Input>
+            <Input v-model="formData.Empresa.direccion" placeholder="Direccion" name="direccion" :tamaño="{'incompleto' : camposVacios && formData.Empresa.direccion === ''}"></Input>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Input v-model="formData.Empresa.telefono" placeholder="Telefono" name="telefono"></Input>
@@ -127,19 +129,19 @@ const validarform = () => {
             <Input v-model="formData.Empresa.impuesto" placeholder="Impuesto" name="impuesto"></Input>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Input v-model="formData.Empresa.pais" placeholder="Pais" name="pais"></Input>
-            <Input v-model="formData.Empresa.tipoDocumento" placeholder="Tipo de Documento" name="tipodocuemnto"></Input>
-            <Input v-model="formData.Empresa.tipoOperacion" placeholder="Tipo de Operacion" name="tipoOperacion"></Input>
+            <Input v-model="formData.Empresa.pais" placeholder="Pais" name="pais" :tamaño="{'incompleto' : camposVacios && formData.Empresa.pais === ''}"></Input>
+            <Input v-model="formData.Empresa.tipoDocumento" placeholder="Tipo de Documento" name="tipodocuemnto" :tamaño="{'incompleto' : camposVacios && formData.Empresa.tipoDocuemnto === ''}"></Input>
+            <Input v-model="formData.Empresa.tipoOperacion" placeholder="Tipo de Operacion" name="tipoOperacion" :tamaño="{'incompleto' : camposVacios && formData.Empresa.tipoOperacion === ''}"></Input>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Input v-model="formData.Empresa.tipoEntorno" placeholder="Tipo Entorno" name="tipoEntorno"></Input>
-            <Input v-model="formData.Empresa.tipoMoneda" placeholder="Tipo Moneda" name="tipoMoneda"></Input>
+            <Input v-model="formData.Empresa.tipoMoneda" placeholder="Tipo Moneda" name="tipoMoneda" :tamaño="{'incompleto' : camposVacios && formData.Empresa.tipoMoneda === ''}"></Input>
             <Input v-model="formData.Empresa.tipoOrganizacion" placeholder="Tipo de Organizacion" name="tipoOrganizacion"></Input>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Input v-model="formData.Empresa.municipio" placeholder="Municipio" tipo="municipio" name="municipio"></Input>
             <Input v-model="formData.Empresa.tipoResponsabilidad" placeholder="Tipo de Responsabilidad" name="tipoResponsabilidad"></Input>
-            <Input v-model="formData.Empresa.tipoRegimen" placeholder="Tipo de Regimen" name="tipoRegimen"></Input>
+            <Input v-model="formData.Empresa.tipoRegimen" placeholder="Tipo de Regimen" name="tipoRegimen" :tamaño="{'incompleto' : camposVacios && formData.Empresa.tipoRegimen === ''}"></Input>
         </div>
         <div class="w-full flex justify-end">
             <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
