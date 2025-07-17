@@ -42,7 +42,7 @@ function cerrar () {
                 <div>
                     <h3>Estado</h3>
                     <p class="p-3 border border-gray-200 rounded-2xl" 
-                    :class="{'bg-red-100' : props.consulta.tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.consulta.tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-100': props.consulta.tipoAnalisis === 'Estado clinico sin cambios'}">
+                    :class="{'bg-red-100' : props.consulta.tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.consulta.tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-300': props.consulta.tipoAnalisis === 'Estado clinico sin cambios'}">
                         {{ props.consulta.tipoAnalisis }}
                     </p>
                 </div>

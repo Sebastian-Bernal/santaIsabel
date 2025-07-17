@@ -25,26 +25,8 @@ const {
 const { simple, mensaje, options } = notificacionesStore;
 
 const camposRequeridos = [
-    "nombre",
-    "logo",
-    "logoLogin",
-    "JPG",
-    "no_identificacion",
-    "DV",
-    "registroMercantil",
-    "direccion",
-    "telefono",
-    "lenguaje",
-    "impuesto",
-    "pais",
-    "tipoDocumento",
-    "tipoOperacion",
-    "tipoEntorno",
-    "tipoMoneda",
-    "tipoOrganizacion",
-    "municipio",
-    "tipoResponsabilidad",
-    "tipoRegimen",
+    "password",
+    "certificado",
 ];
 
 // Guardar Datos en el localStorage

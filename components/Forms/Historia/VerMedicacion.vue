@@ -1,6 +1,5 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
-const Medicacion = [];
 
 const props = defineProps({
     medicinas: {
@@ -24,11 +23,9 @@ function verMedicamento () {
             { titulo: 'medicamento', tamaño: 100, ordenar: true },
             { titulo: 'presentacion', tamaño: 100, ordenar: true },
             { titulo: 'concentracion', tamaño: 100 },
-            { titulo: 'concentracion', tamaño: 100 },
             { titulo: 'cantidad', tamaño: 100 },
             { titulo: 'dosis', tamaño: 100 },
         ]" :headerTabla="{ titulo: 'Medicacion', color: 'bg-[var(--color-default)] text-white', agregarRuta: verMedicamento }"
-            :acciones="{ action: true, icons: [{ icon: 'ver', action: verMedicamento }], botones: true }"
             :datos="{ content: props.medicinas }" />
     </div>
 </template>

@@ -59,7 +59,7 @@ const enviarNuevaCita = async (formData) => {
 };
 
 const validarform = () => {
-    if (varView.formComplete.value) {
+    if (!varView.formComplete) {
         options.position = 'top-end';
         options.texto = "Falta campos por llenar, por favor ingrese valores";
         options.tiempo = 1500

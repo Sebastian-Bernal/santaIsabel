@@ -35,6 +35,7 @@ const {
 
 const {
     simple,
+    alertRespuesta,
     mensaje,
     options
 } = notificacionesStore;
@@ -62,9 +63,12 @@ onMounted(async() => {
     traerDatos();
 });
 
+watch(PacientesStore.listPacientes, (newvalue) => {
+    PacientesList.value = newvalue
+})
 
 // Funcion para autocompletar el paciente
-const pacienteExistente = () => {
+const pacienteExistente = async() => {
     const paciente = pacientes.value.find(
         p => p.nombre.toLowerCase() === formData.HistoriaClinica.name_paciente.toLowerCase()
     )
@@ -76,16 +80,16 @@ const pacienteExistente = () => {
         fechaModificacion.value = paciente.fechaModificacion
 
     } else if (!paciente && formData.HistoriaClinica.name_paciente !== '') {
-        $swal.fire({
-            icon: 'warning',
-            title: 'Paciente no encontrado',
-            text: 'El paciente ingresado no está registrado.',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Registrar',
-            cancelButton: 'Cancelar',
-            cancelButtonColor: '#d33',
-            showCancelButton: true
-        })
+        options.icono = 'warning';
+        options.titulo = 'Paciente no encontrado';
+        options.texto = 'El paciente ingresado no está registrado.';
+        options.confirmtext = 'Registrar'
+        options.canceltext = 'Cancelar'
+        options.tiempo = 2000
+        const respuesta = await alertRespuesta();
+        if(respuesta === 'confirmado'){
+            varView.showNuevoPaciente = true
+        }
     }
 };
 

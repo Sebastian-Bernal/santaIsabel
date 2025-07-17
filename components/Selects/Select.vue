@@ -5,7 +5,6 @@ const props = defineProps({
     },
     id: {
         type: String,
-        required: true
     },
     name: {
         type: String,
@@ -16,7 +15,7 @@ const props = defineProps({
         default: ''
     },
     tamaño: {
-        type: String,
+        type: [String, Object, Array],
         default: 'w-full'
     },
     modelValue: {
@@ -34,3 +33,9 @@ const emit = defineEmits(['update:modelValue']);
         <option v-for="option in options" :value="option.value">{{ option.text }}</option>
     </select>
 </template>
+
+<style scoped>
+.incompleto {
+    border: 1px solid var(--color-red-500);
+}
+</style>

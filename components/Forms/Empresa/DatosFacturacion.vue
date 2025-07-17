@@ -1,5 +1,6 @@
 <script setup>
 import Input from '~/components/Inputs/Input.vue';
+import Select from '~/components/Selects/Select.vue';
 import InputContenido from '~/components/Inputs/InputContenido.vue';
 // Data
 import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion.js';
@@ -95,14 +96,32 @@ const validarform = () => {
             <h3 class="text-xl font-semibold">Resolucion de Facturacion</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Input v-model="formData.Facturacion.tipoDocumento" placeholder="Tipo de Documento" name="tipoDocumento" :tamaño="{'incompleto' : camposVacios && formData.Facturacion.tipoDocuemnto === ''}"></Input>
+            <Select v-model="formData.Facturacion.tipoDocumento" placeholder="Tipo de Documento" 
+            :options="[
+                {text: 'Factura de Venta Nacional', value: 'Factura de Venta Naciona'},
+                {text: 'Nota Crédito', value: 'Nota Crédito'},
+                {text: 'Nota Débito', value: 'Nota Débito'},
+                {text: 'Zip', value: 'Zip'},
+                {text: 'Nomina Individual', value: 'Nomina Individual'},
+                {text: 'Nomina Individual de Ajuste', value: 'Nomina Individual de Ajuste'},
+                {text: 'Documento Soporte Electronico', value: 'Documento Soporte Electronico'},
+                {text: 'Nota de Ajuste al Documento Soporte Electronico', value: 'Nota de Ajuste al Documento Soporte Electronico'},
+                {text: 'Nota de crédito al Documento Equivalente', value: 'Nota de crédito al Documento Equivalente'},
+                {text: 'Nota de crédito al Documento Equivalente POS', value: 'Nota de crédito al Documento Equivalente POS'},
+                ]" name="tipoDocumento" :tamaño="{'incompleto' : camposVacios && formData.Facturacion.tipoDocuemnto === ''}"></Select>
             <Input v-model="formData.Facturacion.prefijo" placeholder="Prefijo de la resolucion" name="prefijo" :tamaño="{'incompleto' : camposVacios && formData.Facturacion.prefijo === ''}"></Input>
             <Input v-model="formData.Facturacion.no_resolucion" placeholder="numero de resolucion" name="no_resolucion" :tamaño="{'incompleto' : camposVacios && formData.Facturacion.no_resolucion === ''}"></Input>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <Input v-model="formData.Facturacion.fechaResolucion" type="date" placeholder="Fecha de Resolucion" name="fechaResolucion"></Input>
-            <Input v-model="formData.Facturacion.fechaInicial" type="date" placeholder="Fecha Inicial" name="fechaInicial"></Input>
-            <Input v-model="formData.Facturacion.fechaHasta" type="date" placeholder="Fecha Hasta" name="fechaHasta"></Input>
+            <InputContenido v-model="formData.Facturacion.fechaResolucion" type="text" placeholder="Fecha de Resolucion: 'AAAA-MM-DD'" name="fechaResolucion">
+                <input type="date" v-model="formData.Facturacion.fechaResolucion" class="w-[20px]">
+            </InputContenido>
+            <InputContenido v-model="formData.Facturacion.fechaInicial" type="text" placeholder="Fecha Inicial: 'AAAA-MM-DD'" name="fechaInicial">
+                <input type="date" v-model="formData.Facturacion.fechaInicial" class="w-[20px]">
+            </InputContenido>
+            <InputContenido v-model="formData.Facturacion.fechaHasta" type="text" placeholder="Fecha Hasta: 'AAAA-MM-DD'" name="fechaDesde">
+                <input type="date" v-model="formData.Facturacion.fechaHasta" class="w-[20px]">
+            </InputContenido>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <Input v-model="formData.Facturacion.numeroInicial" placeholder="Numero Inicial" name="numeroInicial" :tamaño="{'incompleto' : camposVacios && formData.Facturacion.numeroInicial === ''}"></Input>

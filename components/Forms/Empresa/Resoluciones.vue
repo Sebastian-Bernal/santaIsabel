@@ -12,8 +12,8 @@ onMounted(async() => {
     Resoluciones.value = await listResoluciones.value
 });
 
-watch((listResoluciones) => {
-    Resoluciones.value = listResoluciones
+watch(listResoluciones, (newValue) => {
+    Resoluciones.value = newValue
 });
 </script>
 
@@ -35,7 +35,7 @@ watch((listResoluciones) => {
                     <p>Hasta</p>
                     <p>Seleccionar</p>
                 </div>
-                <div class="grid grid-cols-8 gap-3 text-center font-semibold" v-for="resolucion in Resoluciones">
+                <div class="grid grid-cols-8 gap-3 text-center text-sm font-semibold" v-for="resolucion in Resoluciones">
                     <p>{{ resolucion.tipoDocumento }}</p>
                     <p>{{ resolucion.prefijo }}</p>
                     <p>{{ resolucion.no_resolucion }}</p>

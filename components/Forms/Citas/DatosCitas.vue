@@ -12,12 +12,15 @@ import { useMedicosStore } from '~/stores/Formularios/medicos/Medico';
 import { useCalendarioCitas } from '~/stores/Calendario'
 import { ref, onMounted } from "vue";
 import { useVarView } from "../../stores/varview.js";
+import { storeToRefs } from 'pinia';
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const PacientesStore = usePacientesStore();
 const notificacionesStore = useNotificacionesStore();
 const medicosStore = useMedicosStore();
+
+const { listPacientes } = storeToRefs(PacientesStore)
 
 const props = defineProps([
     'formData',
@@ -30,6 +33,7 @@ const props = defineProps([
 // Importar states y funciones del store
 const {
     fecha,
+    fechaActual
 } = calendarioCitasStore;
 
 const {
@@ -46,24 +50,41 @@ const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
 const medicosList = ref([]);
 const PacientesList = ref([]);
+const camposVacios = ref(false);
 
+const camposRequeridos = [
+    'name_paciente', 'servicio', 'hora', 'fecha', 'name_medico', 'motivo',
+];
 
 // Guardar los datos en localStorage
 watch(props.formData, (newValue) => {
-    if (props.formData.Cita.name_paciente !== "" && props.formData.Cita.fecha !== '' && props.formData.Cita.servicio) {
-        varView.formComplete = true
-    } else {
-        varView.formComplete = false
-    }
     props.guardarDatos(newValue);
+
+    const cita = newValue.Cita;
+    // Validacion
+    const camposValidos = camposRequeridos.every((campo) => cita[campo] !== '');
+    const fechaHoy = new Date();
+    const fechaCita = new Date(cita.fecha);
+
+    // Normalizar ambas fechas para comparar solo año/mes/día
+    fechaHoy.setHours(0, 0, 0, 0);
+    fechaCita.setHours(0, 0, 0, 0);
+
+    const fechaValida = fechaCita >= fechaHoy;
+
+    varView.formComplete = camposValidos && fechaValida;
+    camposVacios.value = !varView.formComplete
 }, { deep: true });
 
-onMounted(async() => {
+watch(listPacientes, (newvalue) => {
+    PacientesList.value = newvalue.value
+})
+
+onMounted(async () => {
     await medicosStore.listMedicos
     medicosList.value = medicosStore.Medicos;
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
-    console.log(PacientesList.value)
     props.traerDatos();
     props.formData.Cita.fecha = fechaformatDate();
 
@@ -76,7 +97,7 @@ const fechaformatDate = () => {
 }
 
 // Funcion para autocompletar el paciente
-const pacienteExistente = async() => {
+const pacienteExistente = async () => {
     const paciente = PacientesList.value.find(
         p => p.name.toLowerCase() === props.formData.Cita.name_paciente.toLowerCase()
     )
@@ -85,11 +106,11 @@ const pacienteExistente = async() => {
         options.icono = 'warning';
         options.titulo = 'Paciente no encontrado';
         options.texto = 'El paciente ingresado no está registrado.';
-        options.confirmtext = '<a href="/Pacientes/Ingresar">Registrar</a>'
+        options.confirmtext = 'Registrar'
         options.canceltext = 'Cancelar'
         options.tiempo = 2000
         const respuesta = await alertRespuesta();
-        if(respuesta === 'confirmado'){
+        if (respuesta === 'confirmado') {
             varView.showNuevoPaciente = true
         }
     }
@@ -121,7 +142,7 @@ async function seleccionarMedico(medico) {
     if (medicoSeleccionado) {
         props.formData.Cita.name_medico = medicoSeleccionado.name;
         props.formData.Cita.id_medico = medicoSeleccionado.id;
-    } else if(!medicoSeleccionado && props.formData.Cita.name_medico !== '') {
+    } else if (!medicoSeleccionado && props.formData.Cita.name_medico !== '') {
         options.icono = 'warning';
         options.titulo = 'Médico no encontrado';
         options.texto = 'El médico ingresado no está registrado.';
@@ -129,7 +150,7 @@ async function seleccionarMedico(medico) {
         options.canceltext = 'Cancelar'
         options.tiempo = 2000
         const respuesta = await alertRespuesta();
-        if(respuesta === 'confirmado'){
+        if (respuesta === 'confirmado') {
             varView.showNuevoProfesional = true
         }
     }
@@ -148,8 +169,7 @@ async function seleccionarMedico(medico) {
             @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
         <ul v-show="mostrarLista && pacientesFiltrados.length"
             class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-            <li v-for="paciente in pacientesFiltrados" :key="paciente.documento"
-                @click="seleccionarPaciente(paciente)">
+            <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" @click="seleccionarPaciente(paciente)">
                 <strong>{{ paciente.name }}</strong><br />
                 <small>cédula: {{ paciente.No_document }}</small>
             </li>
@@ -165,7 +185,8 @@ async function seleccionarMedico(medico) {
 
     <Section styles="relative" @blur="pacienteExistente">
         <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList"
-            @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)" placeholder="Nombre del profesional" tamaño="w-full" />
+            @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
+            placeholder="Nombre del profesional" tamaño="w-full" />
         <datalist id="medicosList">
             <option v-for="medico in medicosList" :value="medico.name">
                 profesion: {{ medico.profesion }}

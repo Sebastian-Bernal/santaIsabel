@@ -72,6 +72,9 @@ const enviar = async (formData) => {
         const respuesta = await simple();
         if (respuesta.isConfirmed || respuesta.dismiss) {
             limpiar()
+            formData.Software[props.tabla].id = ''
+            formData.Software[props.tabla].pin = ''
+            formData.Software[props.tabla].testID = ''
         }
     } else {
         options.icono = "error";

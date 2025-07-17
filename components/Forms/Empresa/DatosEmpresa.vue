@@ -98,6 +98,11 @@ const validarform = () => {
     }
     camposVacios.value = true
 };
+
+const logoFile = (obj, key, event) => {
+    const file = event.target.files[0]
+    obj[key] = file.name
+};
 </script>
 
 <template>
@@ -107,9 +112,18 @@ const validarform = () => {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <Input v-model="formData.Empresa.nombre" placeholder="Nombre Comercial" name="nombre" :tamaño="{'incompleto' : camposVacios && formData.Empresa.nombre === ''}"></Input>
-            <Input v-model="formData.Empresa.logo" placeholder="Logo" type="file" name="logo" :tamaño="{'incompleto' : camposVacios && formData.Empresa.logo === ''}"></Input>
-            <Input v-model="formData.Empresa.logoLogin" placeholder="Logo login" type="file" name="logoLogin"></Input>
-            <Input v-model="formData.Empresa.JPG" placeholder="JPG firmas facturas" type="file" name="firmas" :tamaño="{'incompleto' : camposVacios && formData.Empresa.JPG === ''}"></Input>
+            <InputContenido v-model="formData.Empresa.logo" placeholder="Logo" type="text" name="logo" :tamaño="{'incompleto' : camposVacios && formData.Empresa.logo === ''}">
+                <label for="logoFile" ><i class="fa-solid fa-image text-blue-500"></i></label>
+                <input type="file" @change="event => logoFile(formData.Empresa, 'logo', event)" name="logoFile" id="logoFile" class="hidden">
+            </InputContenido>
+            <InputContenido v-model="formData.Empresa.logoLogin" placeholder="Logo Login" type="text" name="logo" :tamaño="{'incompleto' : camposVacios && formData.Empresa.logo === ''}">
+                <label for="logoLoginFile" ><i class="fa-solid fa-image text-blue-500"></i></label>
+                <input type="file" @change="event => logoFile(formData.Empresa, 'logoLogin', event)" name="logoLoginFile" id="logoLoginFile" class="hidden">
+            </InputContenido>
+            <InputContenido v-model="formData.Empresa.JPG" placeholder="JPG firmas facturas" type="text" name="firmas" :tamaño="{'incompleto' : camposVacios && formData.Empresa.JPG === ''}">
+                <label for="JPGfirmas" ><i class="fa-solid fa-image text-blue-500"></i></label>
+                <input type="file" @change="event => logoFile(formData.Empresa, 'JPG', event)" name="JPGfirmas" id="JPGfirmas" class="hidden">
+            </InputContenido>
         </div>
     </div>
 

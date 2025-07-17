@@ -1,6 +1,5 @@
 import { createFormStore } from '../../createFormStore';
 import { useIndexedDBStore } from '~/stores/indexedDB';
-import { historias } from "~/data/historias";
 // Creacion del store para historia clinica
 
 // Estructura de datos de Historias Clinicas

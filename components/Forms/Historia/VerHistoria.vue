@@ -5,7 +5,7 @@ import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
 import VerConsultas from './Consultas/VerConsultas.vue'
 import VerEvoluciones from './VerEvoluciones.vue'
 import VerNotas from './VerNotas.vue'
-import VerTratamientos from './VerTratamientos.vue'
+import VerTratamientos from './Tratamientos/VerTratamientos.vue'
 import VerMedicacion from './VerMedicacion.vue'
 import { useVarView } from '~/stores/varview.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
@@ -25,6 +25,7 @@ const historiasStore = useHistoriasStore();
 const medicinas = ref([]);
 const consultas = ref([]);
 const analisis = ref([]);
+const tratamientos = ref([]);
 
 const cerrarModal = () => {
     varView.showVerHistoria = false;
@@ -81,19 +82,33 @@ async function Botones (titulo) {
         consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
         varView.showVerConsultas = !varView.showVerConsultas
     } else if(titulo === 'Análisis'){
-        analisis.value = await historiasStore.listDatos(1, 'AnalisisTratamiento')
+        await historias()
         varView.showVerAnalisis = !varView.showVerAnalisis
     } else if(titulo === 'Evoluciones'){
         varView.showVerEvoluciones = !varView.showVerEvoluciones
     } else if(titulo === 'Notas'){
         varView.showVerNotas = !varView.showVerNotas
     } else if(titulo === 'Tratamientos'){
+        tratamientos.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_procedimientos')
         varView.showVerTratamientos = !varView.showVerTratamientos
     } else if(titulo === 'Medicacion'){
         medicinas.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_medicamentos')
         varView.showVerMedicacion = !varView.showVerMedicacion
     }
 };
+
+async function historias () {
+    const historias = []
+        consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
+        consultas.value.map((consulta) => {
+            historias.push(consulta.id_temporal)
+        })
+
+        for(const historia of historias ){
+            const valor = await historiasStore.listDatos(historia, 'AnalisisTratamiento')
+            analisis.value.push(valor[0])
+        }
+}
 
 function showBotones () {
     varView.showMenuHistorias = true;
@@ -137,7 +152,7 @@ function showBotones () {
                 <div
                     class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[90%] overflow-y-auto p-7">
 
-                    <div class="medical-card p-6 w-full">
+                    <div class="medical-card px-6 w-full">
                         <h2 class="text-lg font-semibold text-gray-900">Registros</h2>
                         <p class="text-gray-700 mb-4">Consulta por los diferentes Registros del paciente</p>
                         <div class="space-y-3 grid grid-cols-2 w-full gap-3">
@@ -153,7 +168,7 @@ function showBotones () {
                 <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis"/>
                 <VerEvoluciones v-if="varView.showVerEvoluciones"/>
                 <VerNotas v-if="varView.showVerNotas"/>
-                <VerTratamientos v-if="varView.showVerTratamientos"/>
+                <VerTratamientos v-if="varView.showVerTratamientos" :tratamientos="tratamientos"/>
                 <VerMedicacion v-if="varView.showVerMedicacion" :medicinas="medicinas" />
             </div>
         </div>
