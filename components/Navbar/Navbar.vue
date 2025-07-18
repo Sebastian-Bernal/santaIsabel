@@ -54,7 +54,7 @@ const removeStorage = () => {
                         fechaActualFormateada }}</a>
                 </li>
                 <li>
-                    <BreadCrumb titulo="seccion" />
+                    <BreadCrumb />
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />

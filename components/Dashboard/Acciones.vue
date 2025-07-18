@@ -12,14 +12,14 @@ const actions = [
         title: 'Nuevo Paciente',
         description: 'Registrar un nuevo paciente',
         icon: 'fa-plus',
-        color: 'bg-blue-500 hover:bg-blue-600',
+        color: 'bg-[var(--color-default-200)] hover:opacity-75',
         action: () => varView.showNuevoPaciente = true,
     },
     {
         title: 'Buscar Historia',
         description: 'Buscar historia clínica',
         icon: 'fa-search',
-        color: 'bg-[#4aa759] hover:bg-green-600',
+        color: 'bg-[var(--color-default-400)] hover:opacity-75',
         url: '/Historial/Historias',
         action: () => console.log('Buscar historia')
     },
@@ -27,14 +27,14 @@ const actions = [
         title: 'Nueva Historia',
         description: 'Crear historia clínica',
         icon: 'fa-file',
-        color: 'bg-[#a74a98] hover:bg-purple-600',
+        color: 'bg-[var(--color-default-600)] hover:opacity-75',
         action: () => varView.showNuevaHistoria = true
     },
     {
         title: 'Exportar RIPS',
         description: 'Generar reporte RIPS',
         icon: 'fa-download',
-        color: 'bg-[#a7594a] hover:opacity-75',
+        color: 'bg-[var(--color-default-700)] hover:opacity-75',
         url: '/Facturacion/rips',
         action: () => console.log('Exportar RIPS')
     }

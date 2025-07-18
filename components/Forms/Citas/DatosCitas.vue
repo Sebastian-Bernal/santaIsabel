@@ -4,7 +4,6 @@ import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
-import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
 // Data
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
@@ -20,7 +19,7 @@ const PacientesStore = usePacientesStore();
 const notificacionesStore = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 
-const { listPacientes } = storeToRefs(PacientesStore)
+const { listPacientes } = storeToRefs(PacientesStore);
 
 const props = defineProps([
     'formData',
@@ -64,13 +63,15 @@ watch(props.formData, (newValue) => {
     // Validacion
     const camposValidos = camposRequeridos.every((campo) => cita[campo] !== '');
     const fechaHoy = new Date();
-    const fechaCita = new Date(cita.fecha);
+    // Fecha cita del formulario
+    const [year, month, day] = cita.fecha.split('-').map(Number);
+    const fechaCita = new Date(year, month - 1, day); // mes base 0
 
     // Normalizar ambas fechas para comparar solo año/mes/día
     fechaHoy.setHours(0, 0, 0, 0);
     fechaCita.setHours(0, 0, 0, 0);
-
     const fechaValida = fechaCita >= fechaHoy;
+    console.log(fechaValida, fechaCita, fechaHoy)
 
     varView.formComplete = camposValidos && fechaValida;
     camposVacios.value = !varView.formComplete

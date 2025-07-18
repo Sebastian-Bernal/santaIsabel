@@ -32,13 +32,13 @@ const breadCrumbs = computed(() => {
                     <a href="/"
                         class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                         <i class="fa-solid fa-house me-2 text-xs"></i>
-                        Thesalus
+                        Inicio
                     </a>
                 </li>
                 <li v-for="(crumb, index) in breadCrumbs">
                     <div class="flex items-center">
                         <i class="fa-solid fa-angle-right text-gray-500"></i>
-                        <nuxt-link :to="crumb.to"
+                        <nuxt-link :to="crumb.to !== '/Usuarios' && crumb.to !== '/Empresas' && crumb.to !== '/Historial' && crumb.to !== '/Facturacion' ? crumb.to : ''" 
                             class="text-sm ms-1 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
                             {{ crumb.name }}
                         </nuxt-link>

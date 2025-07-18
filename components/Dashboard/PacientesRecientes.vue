@@ -32,7 +32,7 @@ const props = defineProps(['ultimosPacientes']);
                 </div>
 
                 <div class="flex items-center space-x-2">
-                    <span class="px-2 py-1 text-xs font-medium rounded-full" :class="patient.status === 'Completado' ? 'bg-green-600 text-white' : 'bg-amber-300'"  >
+                    <span class="px-2 py-1 text-xs font-medium rounded-full" :class="patient.status === 'Completado' ? 'bg-amber-300' : 'bg-green-600 text-white'"  >
                         Completado
                     </span>
                 </div>

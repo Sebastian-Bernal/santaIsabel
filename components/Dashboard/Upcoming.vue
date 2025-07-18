@@ -13,9 +13,8 @@ const {
 
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return props.Citas.filter(cita => cita.fecha.split('-').reverse().join('/') === fechaActual.value)
+    return props.Citas.filter(cita => cita.fecha.split('-').reverse().join('/') === fechaActual.value).slice(0,3)
 });
-
 </script>
 
 <template>

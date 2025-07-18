@@ -2,14 +2,22 @@
 import FondoBlanco from '../../components/Fondos/FondoBlanco.vue'
 import InputIcon from '~/components/Inputs/InputIcon.vue';
 import Select from '~/components/Selects/Select.vue';
+import IngresarNota from '~/components/Forms/Historia/Notas/IngresarNota.vue';
 import { pacientes } from '../../../data/pacientes';
 import { ref, computed } from 'vue';
+import { useVarView } from '~/stores/varview';
 
+const varView = useVarView()
 const pacienteABuscar = ref('');
 
 const datos = computed(() => pacientes.filter((paciente, id) => {
     paciente.nombre === pacienteABuscar.value;
 }));
+
+function nuevaNota () {
+    console.log('hola')
+    varView.showNuevaNota = true;
+};
 </script>
 
 <template>
@@ -19,13 +27,14 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
                 <h2 class="text-2xl font-bold">Buscar Paciente</h2>
                 <p class="text-gray-600 mt-1">Registre la evolucion del paciente segun Historia clinica</p>
             </div>
-            <div class="w-2/5">
+            <div class="w-2/5 flex items-center">
                 <InputIcon v-model="pacienteABuscar" placeholder="Buscar Paciente por nombre o cedula..."
                     icon="fa-search" list="listpacientes">
                 </InputIcon>
                 <datalist id="listpacientes">
                     <option v-for="(paciente, id) in pacientes" :key="paciente.id" :value="paciente.nombre"></option>
                 </datalist>
+                <button @click="nuevaNota()">Nota</button>
             </div>
         </div>
         <div class="py-5 px-15" v-if="pacienteABuscar !== ''">
@@ -126,4 +135,5 @@ const datos = computed(() => pacientes.filter((paciente, id) => {
             </div>
         </div>
     </FondoBlanco>
+    <IngresarNota  v-if="varView.showNuevaNota"/>
 </template>

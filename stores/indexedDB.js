@@ -54,8 +54,8 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const planManejoEquipos = db.createObjectStore('Plan_manejo_equipos', { keyPath: 'descripcion' });
                     planManejoEquipos.createIndex("buscaequipos", "descripcion", { unique: false });
 
-                    const citas = db.createObjectStore('Cita', { keyPath: 'id_paciente' });
-                    citas.createIndex("buscaCita", "id_cita", { unique: false });
+                    const citas = db.createObjectStore('Cita', { keyPath: 'id', autoIncrement: true });
+                    citas.createIndex("buscaCita", "id", { unique: false });
 
                     const empresa = db.createObjectStore('Empresa', { keyPath: 'no_identificacion'});
                     empresa.createIndex("buscaEmpresa", "no_identificacion", { unique: false });
@@ -65,6 +65,9 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
                     const facturacion = db.createObjectStore('Facturacion', { keyPath: 'id', autoIncrement: true});
                     facturacion.createIndex("buscaFacturacion", "id", { unique: false });
+
+                    const nota = db.createObjectStore('Nota', { keyPath: 'id', autoIncrement: true});
+                    nota.createIndex("buscaNota", "id", { unique: false });
                 }
 
                 request.onerror = (event) => {

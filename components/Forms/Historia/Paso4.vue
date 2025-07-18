@@ -17,7 +17,7 @@ import Equipos from './Equipos.vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useCodigos } from '~/stores/CIE10';;
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useVarView } from "../../stores/varview.js";
 
 const varView = useVarView();

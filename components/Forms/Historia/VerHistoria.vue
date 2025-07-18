@@ -4,7 +4,7 @@ import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
 import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
 import VerConsultas from './Consultas/VerConsultas.vue'
 import VerEvoluciones from './VerEvoluciones.vue'
-import VerNotas from './VerNotas.vue'
+import VerNotas from './Notas/VerNotas.vue'
 import VerTratamientos from './Tratamientos/VerTratamientos.vue'
 import VerMedicacion from './VerMedicacion.vue'
 import { useVarView } from '~/stores/varview.js';
@@ -26,6 +26,7 @@ const medicinas = ref([]);
 const consultas = ref([]);
 const analisis = ref([]);
 const tratamientos = ref([]);
+const notas = ref([]);
 
 const cerrarModal = () => {
     varView.showVerHistoria = false;
@@ -87,6 +88,7 @@ async function Botones (titulo) {
     } else if(titulo === 'Evoluciones'){
         varView.showVerEvoluciones = !varView.showVerEvoluciones
     } else if(titulo === 'Notas'){
+        notas.value = await pacienteStore.listDatos(props.historia.id, 'Nota')
         varView.showVerNotas = !varView.showVerNotas
     } else if(titulo === 'Tratamientos'){
         tratamientos.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_procedimientos')
@@ -167,7 +169,7 @@ function showBotones () {
                 <VerConsultas v-if="varView.showVerConsultas" :consultas="consultas"/>
                 <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis"/>
                 <VerEvoluciones v-if="varView.showVerEvoluciones"/>
-                <VerNotas v-if="varView.showVerNotas"/>
+                <VerNotas v-if="varView.showVerNotas" :notas="notas"/>
                 <VerTratamientos v-if="varView.showVerTratamientos" :tratamientos="tratamientos"/>
                 <VerMedicacion v-if="varView.showVerMedicacion" :medicinas="medicinas" />
             </div>

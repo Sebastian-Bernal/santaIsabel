@@ -9,14 +9,17 @@ import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 
 const citasStore = useCitasStore();
 const historiaStore = useHistoriasStore();
+const varView = useVarView()
 
 const Citas = ref([]);
 const ultimosPacientes = ref();
 
 onMounted(async () => {
+    varView.cargando = true
     // Cargar citas y pacientes desde el store
     Citas.value = await citasStore.listCitas;
     ultimosPacientes.value = await historiaStore.ultimasHistorias()
+    varView.cargando = false
 });
 
 const stats = [
