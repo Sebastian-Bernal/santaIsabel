@@ -58,7 +58,7 @@ li:hover .dropdown {
     display: none;
     position: absolute;
     top: 50px;
-    margin-left: -60px;
+    margin-left: -35px;
     background-color: var(--color-default-oscuro);
     border-radius: 5px;
     padding: 10px;

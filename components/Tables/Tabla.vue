@@ -34,7 +34,6 @@ const props = defineProps({
 });
 
 
-
 // tamaño de pantalla
 const {
     columnasVisibles,
@@ -104,8 +103,16 @@ const estiloColumnas = computed(() => {
                 </h1>
                 <p>{{ props.headerTabla.descripcion }}</p>
             </div>
-            <div class="flex gap-3 md:w-[50%] justify-end">
-                <InputIcon placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
+            <div class="flex gap-3 md:w-[45%] justify-end">
+                <InputIcon class="w-3/4" placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
+
+                <download-excel class="flex gap-1 items-center" 
+                    :data="props.datos.content" :name="props.headerTabla.titulo" type="xls" >
+                    <Button color="bg-green-500">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </Button>
+                    <h4>Exportar</h4>
+                </download-excel>
 
                 <nuxt-link @click="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
