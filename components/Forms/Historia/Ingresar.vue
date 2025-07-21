@@ -10,7 +10,6 @@ import Section from '~/components/Forms/Section.vue';
 import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue';
 import ModificarPaciente from '~/components/Forms/Pacientes/ModificarPaciente.vue';
 // Data
-import { pacientes } from '../data/pacientes.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'

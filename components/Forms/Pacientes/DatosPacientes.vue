@@ -8,6 +8,7 @@ import Button from "~/components/Buttons/Button.vue";
 // Data
 import { CIE10 } from "~/data/CIE10.js";
 import { ubicacion } from "../../data/colombia.js";
+import { municipios } from '~/data/municipios.js'
 import { useVarView } from "../../stores/varview.js";
 import { computed, watch, onMounted } from "vue";
 
@@ -49,11 +50,12 @@ onMounted(() => {
 
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
-    return ubicacion.filter(
-        (data) => data.departamento.toLowerCase() === props.formData.Paciente.departamento.toLowerCase()
-    )[0]?.ciudades;
+    return municipios.departamentos.filter(
+        (data) => data.nombre.toLowerCase() === props.formData.Paciente.departamento.toLowerCase()
+    )[0]?.municipios;
 
 });
+console.log(ciudades)
 </script>
 
 <template>
@@ -110,14 +112,13 @@ const ciudades = computed(() => {
             id="departamento" name="departamento" placeholder="Departamento" tamaño="md:w-1/3 w-full"
             list="listDepartamento" />
         <datalist id="listDepartamento" class="bg-white text-black">
-            <option v-for="(data, id) in ubicacion" :key="id" :value="data.departamento">
-                codigo: {{ 0 }}
+            <option v-for="(data, id) in municipios.departamentos" :key="id" :value="data.nombre">
             </option>
         </datalist>
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.municipio" type="text" id="municipio"
             name="municipio" placeholder="Municipio" tamaño="md:w-1/3 w-full" list="listMunicipio" />
         <datalist id="listMunicipio" v-if="props.formData.Paciente.departamento">
-            <option v-for="(data, id) in ciudades" :key="id" :value="data"></option>
+            <option v-for="(data, id) in ciudades" :key="id" :value="data.nombre">{{ data.id }}</option>
         </datalist>
         <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.zona" id="zona" name="zona" :options="[
             { text: 'Rural', value: 'Rural' },

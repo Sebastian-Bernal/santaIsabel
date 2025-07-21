@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
-import { pacientes } from "~/data/pacientes";
 // Creacion del store Paciente
 
 // Estructura de datos de Pacientes

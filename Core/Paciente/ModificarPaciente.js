@@ -1,4 +1,3 @@
-import { pacientes } from '~/data/pacientes';
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 

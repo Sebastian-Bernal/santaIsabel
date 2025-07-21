@@ -2,8 +2,12 @@
 import Tabla from '~/components/Tables/Tabla.vue';
 import AnalisisInfo from '~/components/Forms/Historia/Analisis.vue/AnalisisInfo.vue'
 import { useVarView } from '~/stores/varview';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { ref } from 'vue';
 
 const varView = useVarView();
+const historiasStore = useHistoriasStore();
+const historiaAnalisis = ref([]);
 
 const props = defineProps({
     analisis: {
@@ -12,7 +16,8 @@ const props = defineProps({
     }
 });
 
-function verAnalisis() {
+async function verAnalisis() {
+    historiaAnalisis.value = await historiasStore.listDatos(props.analisis[0].id_temporal, 'HistoriaClinica')
     varView.showAnalisisInfo = true
 };
 
@@ -32,6 +37,6 @@ function agregar() {
         ]" :headerTabla="{ titulo: 'Analisis', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregar }"
             :acciones="{ action: true, icons: [{ icon: 'ver', action: verAnalisis }], botones: true }"
             :datos="{ content: props.analisis }" />
-        <AnalisisInfo v-if="varView.showAnalisisInfo" />
+        <AnalisisInfo v-if="varView.showAnalisisInfo" :historiaAnalisis="historiaAnalisis"/>
     </div>
 </template>

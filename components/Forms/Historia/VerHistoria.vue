@@ -121,6 +121,7 @@ function showBotones () {
     varView.showVerTratamientos = false
     varView.showVerMedicacion = false
 };
+
 </script>
 
 <template>
@@ -134,7 +135,7 @@ function showBotones () {
                     <div class="flex gap-8 text-gray-200 font-semibold">
                         <p class=""><span class="text-sm text-gray-300">Paciente:</span> {{ props.historia.paciente }}
                         </p>
-                        <p class=""><span class="text-sm text-gray-300">CC:</span> {{ 111029381 }}
+                        <p class=""><span class="text-sm text-gray-300">CC:</span> {{ props.historia.cedula }}
                         </p>
                     </div>
 

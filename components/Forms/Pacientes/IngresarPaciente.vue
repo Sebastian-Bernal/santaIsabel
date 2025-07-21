@@ -59,6 +59,7 @@ const validarform = () => {
         options.tiempo = 1500;
         mensaje();
     }
+    varView.camposVacios = true
 };
 
 function cerrarModal() {

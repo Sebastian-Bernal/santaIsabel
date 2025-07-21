@@ -2,10 +2,16 @@
 import ModalXS from '~/components/Modales/ModalXS.vue';
 
 const varView = useVarView();
+const props = defineProps({
+    historiaAnalisis: {
+        type: [Object],
+    }
+});
 
 function cerrar () {
     varView.showAnalisisInfo = false
 }
+console.log(props.historiaAnalisis)
 </script>
 
 <template>
@@ -22,7 +28,7 @@ function cerrar () {
                 <div class="flex flex-col">
                     <h3>Fecha</h3>
                     <p class="p-3 border border-gray-200 rounded-2xl bg-white ">
-                        12/06/2025
+                        {{props.historiaAnalisis[0].fecha_historia}}
                     </p>
                 </div>
             </div>
@@ -35,8 +41,9 @@ function cerrar () {
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
                     <h3>Estado</h3>
-                    <p class="p-3 border border-gray-200 rounded-2xl bg-red-100">
-                        Cambios criticos
+                    <p class="p-3 border border-gray-200 rounded-2xl bg-red-100"
+                    :class="{'bg-red-100' : props.historiaAnalisis[0].tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.historiaAnalisis[0].tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-300': props.historiaAnalisis[0].tipoAnalisis === 'Estado clinico sin cambios'}">
+                        {{props.historiaAnalisis[0].tipoAnalisis}}
                     </p>
                 </div>
                 <div class="flex flex-col">
