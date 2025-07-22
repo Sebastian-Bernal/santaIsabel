@@ -10,7 +10,6 @@ export const validarYEnviarNuevoAdministrativo = async (datos) => {
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
-    const pacientesStore = usePacientesStore();
     const notificacionesStore = useNotificacionesStore();
 
     const online = navigator.onLine;
@@ -32,6 +31,4 @@ const enviarFormulario = async (datos) => {
         await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
-
-    await pacientesStore.setPacientes()
 };

@@ -55,5 +55,9 @@ export const accionesFormularios = {
     NuevoAdministrativo: async (data) => {
         const respuesta = await validarYEnviarNuevoAdministrativo(data)
         return respuesta
-    }
+    },
+    EPS: async (data) => {
+        const respuesta = await validarYEnviarDatosEmpresa(data)
+        return respuesta
+    },
 };

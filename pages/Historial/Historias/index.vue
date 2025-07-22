@@ -45,12 +45,16 @@ const actulizarHistoria = () => {
 
 const verHistoria = (his) => {
     historia.value = his;
+    if(his.estado === 'Nueva'){
+        varView.showNuevaHistoria = true
+        return
+    }
     varView.showVerHistoria = true
 };
 </script>
 
 <template>
-    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
+    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', tamaño: 150, ordenar: true },

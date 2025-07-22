@@ -13,6 +13,7 @@ import { useVarView } from "../../stores/varview.js";
 import { computed, watch, onMounted } from "vue";
 
 const varView = useVarView();
+const ingresarPaciente = ref(null)
 
 const props = defineProps([
     'formData',
@@ -27,7 +28,7 @@ const props = defineProps([
 const camposRequeridos = [
     'name', 'nacimiento', 'type_doc', 'No_document', 'sexo', 'genero',
     'direccion', 'departamento', 'municipio', 'zona', 'barrio',
-    'celular', 'Eps', 'Regimen', 'poblacionVulnerable', 'Tipo'
+    'celular', 'Eps', 'Regimen', 'poblacionVulnerable'
 ];
 
 // Guardar Datos en el localStorage
@@ -38,7 +39,10 @@ watch(
         const paciente = newValue.Paciente;
         // Validacion
         const camposValidos = camposRequeridos.every((campo) => paciente[campo] !== '');
-        varView.formComplete = camposValidos;
+
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
     },
     { deep: true }
 );
@@ -55,7 +59,7 @@ const ciudades = computed(() => {
     )[0]?.municipios;
 
 });
-console.log(ciudades)
+
 </script>
 
 <template>
@@ -68,7 +72,7 @@ console.log(ciudades)
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.name" type="text" id="nombre"
-            name="nombre" placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" />
+            name="nombre" placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" minlength="5" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.nacimiento" type="date" id="nacimiento"
             name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
@@ -82,7 +86,7 @@ console.log(ciudades)
                 { text: 'RC', value: 'RC' },
             ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
         <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="props.formData.Paciente.No_document"
-            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" />
+            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" max="10000000000" min="1000000" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
@@ -128,16 +132,16 @@ console.log(ciudades)
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.barrio" type="text" id="barrio"
-            name="barrio" placeholder="Barrio" tamaño="md:w-1/2 w-full" />
+            name="barrio" placeholder="Barrio" tamaño="md:w-1/2 w-full" minlength="5" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.direccion" type="text" id="direccion"
-            name="direccion" placeholder="Direccion" tamaño="md:w-1/2 w-full" />
+            name="direccion" placeholder="Direccion" tamaño="md:w-1/2 w-full" minlength="5" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.celular" type="number" id="celular"
-            name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" />
+            name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000" min="1000000000" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.telefono" type="number" id="telefono"
-            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" />
+            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000" min="100000"/>
     </Section>
 
     <Section styles="mt-3">
@@ -147,32 +151,46 @@ console.log(ciudades)
         </div>
     </Section>
     <Section styles="md:flex items-center gap-3 grid grid-cols-2 mb-3">
-        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" type="text" id="eps" name="eps"
-            placeholder="Eps" tamaño="md:w-1/4 w-full" />
-        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" type="text" id="regimen"
-            name="regimen" placeholder="Regimen" tamaño="md:w-1/4 w-full" />
-        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.poblacionVulnerable" type="text"
-            id="poblacion" name="poblacion" placeholder="Poblacion vulnerable" tamaño="md:w-1/4 w-full" />
-        <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.Tipo" type="text" id="tipo" name="tipo"
-            placeholder="Tipo" tamaño="md:w-1/4 w-full" />
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" id="eps" name="eps" :options="[
+            { text: 'EPS', value: 'EPS' },
+        ]" placeholder="EPS" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" id="regimen" name="regimen" :options="[
+            { text: 'Contributivo', value: 'Contributivo' },
+            { text: 'Subsidiado', value: 'Subsidiado' },
+            { text: 'Especial/Excepcion', value: 'Especial/Excepcion' },
+        ]" placeholder="Regimen" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.poblacionVulnerable" id="poblacionVulnerable" name="poblacionVulnerable" :options="[
+            { text: 'Ninguno', value: 'Ninguno' },
+            { text: 'Adultos Mayores', value: 'Adultos Mayores' },
+            { text: 'Discapacidad', value: 'Discapacidad' },
+            { text: 'Victimas Conflicto Armado', value: 'Victimas Conflicto Armado' },
+            { text: 'Habitantes de calle', value: 'Habitantes de calle' },
+            { text: 'Poblacion LGBTIQ+', value: 'Poblacion LGBTIQ+' },
+            { text: 'Grupos étnicos', value: 'Grupos étnicos' },
+            { text: 'Personas privadas de la libertad', value: 'Personas privadas de la libertad' },
+            { text: 'Desmovilizados', value: 'Desmovilizados' },
+            { text: 'Migrantes colombianos repatriados', value: 'Migrantes colombianos repatriados' },
+            { text: 'Madres comunitarias o sustitutas', value: 'Madres comunitarias o sustitutas' },
+            { text: 'Voluntarios activos', value: 'Voluntarios activos' },
+            { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
+        ]" placeholder="Pblacion Vulnerable" tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
     <Section styles="mt-3">
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-file text-blue-500"></i>
-            <Label forLabel="tipo" size="text-sm">Diagnoticos</Label>
+            <Label forLabel="tipo" size="text-sm">Diagnoticos (opcional)</Label>
         </div>
         <Button v-if="!props.verPaciente" color="bg-blue-500" @click="
             agregarItem(
                 'Diagnosticos',
                 {
                     id: '',
-                    tipo: '',
                     CIE_10: '',
                     id_paciente: !props.verPaciente ? formData.Paciente.id : null,
                     rol_attention: '',
                 },
-                'tipo'
+                'CIE_10'
             )
             ">
             <i class="fa-solid fa-plus"></i>
@@ -182,15 +200,13 @@ console.log(ciudades)
     <Section styles="flex-col max-h-[150px] overflow-y-auto">
         <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in props.formData.Diagnosticos">
             <Input :disabled="props.verPaciente" v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10"
-                placeholder="CIE-10" list="cie10List" tamaño="w-full md:w-2/3" />
+                placeholder="CIE-10" list="cie10List" tamaño="w-full" />
             <datalist id="cie10List">
                 <option v-for="enfermedad in CIE10" :value="enfermedad.description">
                     codigo: {{ enfermedad.code }}
                 </option>
             </datalist>
-            <Input :disabled="props.verPaciente" v-model="diagnostico.tipo" type="text" id="tipo" name="tipo"
-                placeholder="Tipo de Diagnostico" tamaño="w-full md:w-1/3" />
-            <i v-if="i > 0 && !props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
+            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
         </div>
         <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">
             <p class="text-gray-500">No hay Diagnosticos registrados.</p>
@@ -235,7 +251,7 @@ console.log(ciudades)
                 name="antecedentes"
                 :placeholder="antecedente.tipo === 'personal' ? 'Antecedentes Personales' : antecedente.tipo === 'familiar' ? 'Antecedentes Familiares' : 'Antecedentes'"
                 tamaño="w-full" />
-            <i v-if="i > 0 && !props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Antecedentes', i)"></i>
+            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Antecedentes', i)"></i>
         </div>
         <div v-if="formData.Antecedentes.length < 1" class="w-full flex justify-center items-center py-3">
             <p class="text-gray-500">No hay antecedentes registrados.</p>

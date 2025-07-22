@@ -54,11 +54,7 @@ export const createFormStore = (storeId, estructuraInicial) => {
 
             eliminarItem(campo, index) {
                 const lista = this.formData[campo];
-                if (lista.length > 1) {
-                    lista.splice(index, 1);
-                } else {
-                    console.log(`Debe haber al menos un elemento en '${campo}'.`);
-                }
+                lista.splice(index, 1);
             },
 
             async mandarFormulario(data) {

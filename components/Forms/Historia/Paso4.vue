@@ -51,7 +51,7 @@ watch(formData, (newValue) => {
 
     // Validaciones
     if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
-        && formData.Diagnosticos.at(-1)?.tipo !== "" && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
+        && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
         varView.formComplete = true
     } else {
         varView.formComplete = false
@@ -131,7 +131,7 @@ const cerrarModal = () => {
                     <Label forLabel="tipo" size="text-sm">Diagnoticos</Label>
                 </div>
                 <Button color="bg-blue-500"
-                    @click="agregarItem('Diagnosticos', { id: '', tipo: '', CIE_10: '', id_paciente: formData.HistoriaClinica.id_paciente, rol_attention: '', }, 'tipo')">
+                    @click="agregarItem('Diagnosticos', { id: '', CIE_10: '', id_paciente: formData.HistoriaClinica.id_paciente, rol_attention: '', }, 'CIE_10')">
                     <i class="fa-solid fa-plus"></i>
                 </Button>
             </Section>
@@ -139,14 +139,12 @@ const cerrarModal = () => {
             <Section styles="flex-col max-h-[150px] overflow-y-auto">
                 <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
                     <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
-                        list="cie10List" tamaño="w-full md:w-2/3" @change="autocompletarCodigo(i)" />
+                        list="cie10List" tamaño="w-full" @change="autocompletarCodigo(i)" />
                     <datalist id="cie10List">
                         <option v-for="enfermedad in CIE10" :value="enfermedad.description">codigo: {{ enfermedad.code
                             }}</option>
                     </datalist>
-                    <Input v-model="diagnostico.tipo" type="text" id="tipo" name="tipo" placeholder="Tipo"
-                        tamaño="w-full md:w-1/3" />
-                    <i v-if="i > 0" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
+                    <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
                 </div>
                 <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">
                     <p class="text-gray-500">No hay datos, Haz click en agregar Diagnosticos.</p>

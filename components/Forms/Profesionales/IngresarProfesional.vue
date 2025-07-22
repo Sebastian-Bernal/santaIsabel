@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
+import ModalFormXS from "~/components/Modales/ModalFormXS.vue";
 import Formulario from "~/components/Forms/Formulario.vue";
 import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
 // Data
@@ -52,7 +52,7 @@ const enviarNuevoMedico = async (formData) => {
 };
 
 const validarform = () => {
-    if (!formComplete.value) {
+    if (!varView.formComplete) {
         options.position = "top-end";
         options.texto = "Falta campos por llenar, por favor ingrese valores";
         options.tiempo = 1500;
@@ -67,12 +67,12 @@ function cerrarModal() {
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoMedico"
+    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoMedico"
         :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Atras', enviar: 'Registrar'}">
         <Formulario class="mt-3" :datos="{
             titulo: 'Nuevo Profesional de Medicina'
         }">
             <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"/>
         </Formulario>
-    </ModalFormLG>
+    </ModalFormXS>
 </template>

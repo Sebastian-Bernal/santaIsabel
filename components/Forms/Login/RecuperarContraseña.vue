@@ -2,15 +2,15 @@
 // Componentes
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
+import CambiarContraseña from './CambiarContraseña.vue';
 // Data
-import { validarYEnviarRecuperarContraseña } from '../../../Core/RecuperarContraseña';
+import { validarYEnviarRecuperarContraseña } from '../../../Core/Login/RecuperarContraseña';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useVarView } from "../../stores/varview.js";
 import { reactive } from 'vue';
 
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
-
 
 const {
     simple,
@@ -36,12 +36,6 @@ const enviarRecuperarContraseña = async (formData) => {
         options.tiempo = 3000
         const res = await simple()
         varView.showCambiarContraseña = true;
-    } else {
-        options.icono = 'error';
-        options.titulo = '¡A ocurrido un problema!';
-        options.texto = 'Intenta en otro momento';
-        options.tiempo = 2000
-        simple()
     }
 };
 
@@ -70,7 +64,7 @@ watch(formData, (newValue) => {
 </script>
 
 <template>
-    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="enviarRecuperarContraseña" :formData="formData"
+    <ModalFormXS v-if="!varView.showCambiarContraseña" :cerrarModal="cerrarModal" :enviarFormulario="enviarRecuperarContraseña" :formData="formData"
         :formComplete="varView.formComplete" :validarform="validarform"
         :botones="{ cancelar: 'Cancelar', enviar: 'Restablecer' }">
         <Formulario :datos="{
@@ -88,6 +82,7 @@ watch(formData, (newValue) => {
 
         </Formulario>
     </ModalFormXS>
+    <CambiarContraseña v-if="varView.showCambiarContraseña" :correo="formData.correo"/>
 </template>
 
 <style scoped>

@@ -86,4 +86,11 @@ onMounted(() => {
             name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" />
     </Section>
 
+    <Section styles="md:flex-row flex-col">
+        <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.correo" type="correo" id="correo"
+            name="correo" placeholder="Correo Electronico" tamaño="md:w-1/2 w-full" />
+        <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.contraseña" type="password" id="contraseña"
+            name="contraseña" placeholder="Genera una contraseña" tamaño="md:w-1/2 w-full" />
+    </Section>
+
 </template>

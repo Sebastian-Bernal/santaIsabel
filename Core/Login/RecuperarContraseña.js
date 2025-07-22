@@ -1,22 +1,25 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
 import emailjs from '@emailjs/browser';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarRecuperarContraseña = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const administrativosStore = useAdministrativosStore();
+    const administradores = await administrativosStore.listAdministrativos
 
-    // const usuario = usuarios.value.find(
-    //     p => p.correo.toLowerCase() === datos.correo.toLowerCase()
-    // )
+    const correo = administradores.find(
+        p => p.correo.toLowerCase() === datos.correo.toLowerCase()
+    )
 
-    // if (usuario) {
-    //     notificacionesStore.options.icono = 'warning'
-    //     notificacionesStore.options.titulo = 'El correo ingresado no esta enlazado a ningun usuario';
-    //     notificacionesStore.options.texto = 'Desear registrar otro?';
-    //     notificacionesStore.options.tiempo = 5000;
-    //     await notificacionesStore.simple()
-    //     return;
-    // }
+    if (!correo) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'El correo ingresado no esta enlazado a ningun usuario';
+        notificacionesStore.options.texto = '';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple()
+        return;
+    }
 
     return await enviarFormulario(datos);
 };

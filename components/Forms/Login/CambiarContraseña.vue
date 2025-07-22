@@ -3,13 +3,14 @@
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
 // Data
-import { validarYEnviarCambiarContraseña } from '../../../Core/CambiarContraseña';
+import { validarYEnviarCambiarContraseña } from '../../../Core/Login/CambiarContraseña';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useVarView } from "../../stores/varview.js";
 import { ref } from 'vue';
 
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
+const props = defineProps(['correo']);
 
 const {
     simple,
@@ -30,7 +31,7 @@ const codigoGenerado = ref('');
 // Enviar formulario -------------------
 const enviarRecuperarContraseña = async (formData) => {
     event.preventDefault()
-    const estado = await validarYEnviarCambiarContraseña(formData)
+    const estado = await validarYEnviarCambiarContraseña(formData, props.correo)
 
     if (estado) {
         options.icono = 'success';

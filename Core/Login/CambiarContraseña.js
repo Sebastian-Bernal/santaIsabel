@@ -1,10 +1,22 @@
+import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
-export const validarYEnviarCambiarContraseña = async (datos) => {
+export const validarYEnviarCambiarContraseña = async (datos, correo) => {
     const notificacionesStore = useNotificacionesStore();
-    
-    return await enviarFormulario(datos);
+    console.log(datos, correo)
+    const administrativosStore = useAdministrativosStore();
+    const administradores = await administrativosStore.listAdministrativos
+
+    const admin = administradores.find(
+        p => p.correo.toLowerCase() === correo.toLowerCase()
+    )
+
+    const datosEnviar = { Administrativo: admin };
+    datosEnviar.Administrativo.contraseña = datos.nuevacontraseña;
+
+    return await enviarFormulario(datosEnviar);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
@@ -14,7 +26,7 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            console.log(datos)
+            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
@@ -26,6 +38,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Recuperar contraseña cuando halla internet'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
+        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

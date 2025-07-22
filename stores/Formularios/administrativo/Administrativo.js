@@ -11,6 +11,8 @@ const estructuraAdministrativo = {
         celular: '',
         telefono: '',
         Tipo: '',
+        correo: '',
+        contraseña: '',
         estado: 'activo',
     },
 

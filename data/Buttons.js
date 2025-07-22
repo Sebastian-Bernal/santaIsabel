@@ -117,6 +117,9 @@ export const buttons = ref([
                         titulo: 'Actualizar',
                     }
                 ]
+            },
+            {
+                titulo: 'Datos',
             }
         ],
         icon: "fa-building",

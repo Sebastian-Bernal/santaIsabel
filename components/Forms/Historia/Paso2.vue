@@ -162,7 +162,7 @@ const enviarSegundoPaso = () => {
                 <div class="w-full flex gap-3 items-center" v-for="(antecedente, i) in formData.Antecedentes" :key="i">
                     <Input v-model="antecedente.valor" type="text" id="antecedentes" name="antecedentes"
                         :placeholder="antecedente.tipo === 'personal'? 'Antecedentes Personales': antecedente.tipo === 'familiar' ? 'Antecedentes Familiares': 'Antecedentes'" tamaño="w-full" />
-                    <i v-if="i > 0" class="fa-solid fa-close text-red-400"
+                    <i class="fa-solid fa-close text-red-400"
                         @click="eliminarItem('Antecedentes', i)"></i>
                 </div>
             </Section>

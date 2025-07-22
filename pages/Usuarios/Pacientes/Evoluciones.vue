@@ -3,19 +3,28 @@ import FondoBlanco from '../../components/Fondos/FondoBlanco.vue'
 import InputIcon from '~/components/Inputs/InputIcon.vue';
 import Select from '~/components/Selects/Select.vue';
 import IngresarNota from '~/components/Forms/Historia/Notas/IngresarNota.vue';
-import { pacientes } from '../../../data/pacientes';
 import { ref, computed } from 'vue';
 import { useVarView } from '~/stores/varview';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
+import { storeToRefs } from 'pinia';
 
 const varView = useVarView()
 const pacienteABuscar = ref('');
+const pacientesStore = usePacientesStore();
+const { listPacientes } = storeToRefs(pacientesStore);
+const pacientes = ref([]);
+
+onMounted(async() => {
+    varView.cargando = true
+    pacientes.value= await listPacientes.value;
+    varView.cargando = false
+});
 
 const datos = computed(() => pacientes.filter((paciente, id) => {
-    paciente.nombre === pacienteABuscar.value;
+    paciente.name === pacienteABuscar.value;
 }));
 
 function nuevaNota () {
-    console.log('hola')
     varView.showNuevaNota = true;
 };
 </script>
@@ -27,14 +36,14 @@ function nuevaNota () {
                 <h2 class="text-2xl font-bold">Buscar Paciente</h2>
                 <p class="text-gray-600 mt-1">Registre la evolucion del paciente segun Historia clinica</p>
             </div>
-            <div class="w-2/5 flex items-center">
+            <div class="w-2/5 flex items-center gap-3">
                 <InputIcon v-model="pacienteABuscar" placeholder="Buscar Paciente por nombre o cedula..."
                     icon="fa-search" list="listpacientes">
                 </InputIcon>
                 <datalist id="listpacientes">
-                    <option v-for="(paciente, id) in pacientes" :key="paciente.id" :value="paciente.nombre"></option>
+                    <option v-for="(paciente, id) in listPacientes" :key="paciente.id" :value="paciente.nombre"></option>
                 </datalist>
-                <button @click="nuevaNota()">Nota</button>
+                <button @click="nuevaNota()" class="bg-blue-500 px-5 py-2 rounded-2xl text-white">Nota</button>
             </div>
         </div>
         <div class="py-5 px-15" v-if="pacienteABuscar !== ''">

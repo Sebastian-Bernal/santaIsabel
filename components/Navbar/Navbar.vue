@@ -1,11 +1,15 @@
 <script setup>
 import DropdownNavbar from './DropdownNavbar.vue'
 import BreadCrumb from './Breadcrumb.vue';
-import { useShowNavbar } from '../../stores/navbarResponsive.js';
+import { useShowNavbar } from '~/stores/navbarResponsive.js';
+import { useUsuariosStore } from '~/stores/Formularios/login/Login';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
 import { computed } from 'vue';
 
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
+const usuarioStore = useUsuariosStore();
+
+const usuario = usuarioStore.getUsuario
 
 function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -62,7 +66,7 @@ const removeStorage = () => {
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
                 </li>
-                <li class="text-xs ml-1">Usuario por defecto</li>
+                <li class="text-xs ml-1">{{ usuario }}</li>
             </ul>
 
         </div>

@@ -4,7 +4,7 @@ import IngresarPaciente from '../../components/Forms/Pacientes/IngresarPaciente.
 import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
 
 import { ref, onMounted, watch } from 'vue';
-import { usePacientesStore } from '../../stores/Formularios/paciente/Paciente.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useVarView } from '../../stores/varview.js';
 import { storeToRefs } from 'pinia';
 

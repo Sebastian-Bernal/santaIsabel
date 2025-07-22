@@ -19,18 +19,22 @@ const props = defineProps([
     'verMedico'
 ]);
 
+const camposRequeridos = [
+    'name', 'nacimiento', 'type_doc', 'No_document', 'profesion',
+    'departamento', 'municipio', 'zona', 'celular',
+]
+
 // Guardar Datos en el localStorage
 watch(
     props.formData,
     (newValue) => {
         props.guardarDatos(newValue);
-
+        const medico = newValue.Medico
         // Validacion
-        if (props.formData.Medico.name !== "" && props.formData.Medico.No_document !== "") {
-            varView.formComplete = true;
-        } else {
-            varView.formComplete = false;
-        }
+        const camposValidos = camposRequeridos.every((campo) => medico[campo] !== '');
+        // Detectar inputs inválidos sin usar ref
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
     },
     { deep: true }
 );
@@ -59,7 +63,7 @@ const ciudades = computed(() => {
 
     <Section class="md:flex-row flex-col">
         <Input :disabled="props.verMedico" v-model="formData.Medico.name" type="text" id="nombre" name="nombre" placeholder="Nombres y Apellidos"
-            tamaño="md:w-4/5 w-full" />
+            tamaño="md:w-4/5 w-full" minlength="5"/>
         <Input :disabled="props.verMedico" v-model="formData.Medico.nacimiento" type="date" id="nacimiento" name="nacimiento"
             placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
@@ -68,10 +72,10 @@ const ciudades = computed(() => {
 
     <Section class="md:flex-row flex-col">
         <Select :disabled="props.verMedico" v-model="formData.Medico.type_doc" id="tipoDocumento" name="tipoDocumento"
-            :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Tarjeta de identidad', value: 'ti' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'RC', value: 'RC' }]"
+            :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'RC', value: 'RC' }]"
             placeholder="Tipo de documento" tamaño="w-full"></Select>
         <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.No_document" type="number" id="documento" name="documento"
-            placeholder="Número de documento" tamaño="w-full" />
+            placeholder="Número de documento" tamaño="w-full" min="10000000" />
         <Select :disabled="props.verMedico" v-model="formData.Medico.profesion" id="genero" name="genero"
             :options="[{ text: 'Medico', value: 'Medico' }, { text: 'Psicologo/a', value: 'Psicologo/a' }, { text: 'Otro', value: 'otro' }]"
             placeholder="Profesion" tamaño="w-full"></Select>
@@ -105,8 +109,8 @@ const ciudades = computed(() => {
 
     <Section>
         <Input :disabled="props.verMedico" v-model="formData.Medico.celular" type="number" id="celular" name="celular" placeholder="Celular"
-            tamaño="w-1/2" />
+            tamaño="w-1/2" max="1000000000000" min="1000000000"/>
         <Input :disabled="props.verMedico" v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
-            tamaño="w-1/2" />
+            tamaño="w-1/2" max="100000000" min="100000"/>
     </Section>
 </template>
