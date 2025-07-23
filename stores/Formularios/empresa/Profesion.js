@@ -2,15 +2,15 @@ import { createFormStore } from '../../createFormStore';
 // Creacion del store para nueva cita medica
 
 // Estructura de datos de Citas
-const estructuraDatosEmpresa = {
-    EPS: []
+const estructuraDatosProfesion = {
+    Profesion: []
 }
 
-// Pinia Empresa
-export const useDatosEmpresaStore = defineStore('DatosEmpresa', {
+// Pinia Profesion
+export const useDatosProfesionStore = defineStore('DatosProfesion', {
     state: () => ({
-        Datos: JSON.parse(JSON.stringify(estructuraDatosEmpresa)), // estructura base compartida
-        DatosEmpresa: []
+        Datos: JSON.parse(JSON.stringify(estructuraDatosProfesion)), // estructura base compartida
+        DatosProfesion: []
     }),
 
     getters: {
@@ -20,7 +20,7 @@ export const useDatosEmpresaStore = defineStore('DatosEmpresa', {
     actions: {
 
         // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraDatosEmpresa) {
+        createForm(storeId, estructura = estructuraDatosProfesion) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
         }

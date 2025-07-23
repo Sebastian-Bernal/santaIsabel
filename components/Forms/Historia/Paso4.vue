@@ -48,11 +48,12 @@ const {
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
     guardarDatos(newValue)
-
+    // Detectar inputs inválidos
+    const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0 || document.querySelectorAll('textarea:invalid').length > 0;
     // Validaciones
     if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
         && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
-        varView.formComplete = true
+        varView.formComplete = !hayCamposInvalidos
     } else {
         varView.formComplete = false
     }
@@ -155,14 +156,14 @@ const cerrarModal = () => {
                     :options="[{ text: 'Estado clinico sin cambios', value: 'Estado clinico sin cambios' }, { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' }, { text: 'Cambios criticos', value: 'Cambios criticos' }]"
                     placeholder="Tipo de Analisis" tamaño="w-full"></Select>
                 <Input v-model="formData.HistoriaClinica.analisis" type="text" id="analisist" name="analisist"
-                    placeholder="Observacion" tamaño="w-full" />
+                    placeholder="Observacion" tamaño="w-full" minlength="5" />
             </Section>
 
 
 
             <Section class="md:flex-row flex-col">
                 <Textarea v-model="formData.AnalisisTratamiento.analisis" id="analisis" name="analisis"
-                    placeholder="Analisis"></Textarea>
+                    placeholder="Analisis" minlength="10"></Textarea>
             </Section>
 
             <Section class="mt-3">

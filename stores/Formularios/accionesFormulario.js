@@ -10,6 +10,9 @@ import { validarYEnviarDatosSoftware } from '~/Core/Empresa/DatosSoftware';
 import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/DatosFacturacion';
 import { validarYEnviarNuevaNota } from '~/Core/Notas/NuevaNota';
 import { validarYEnviarNuevoAdministrativo } from '~/Core/Administrativo/NuevoAdministrativo';
+import { validarYEnviarModificarAdministrativo } from '~/Core/Administrativo/ModificarAdminstrativo';
+import { validarYEnviarDatosEPS } from '~/Core/Empresa/DatosEPS';
+import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
@@ -56,8 +59,16 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarNuevoAdministrativo(data)
         return respuesta
     },
+    ModificarAdministrativo: async (data) => {
+        const respuesta = await validarYEnviarModificarAdministrativo(data)
+        return respuesta
+    },
     EPS: async (data) => {
-        const respuesta = await validarYEnviarDatosEmpresa(data)
+        const respuesta = await validarYEnviarDatosEPS(data)
+        return respuesta
+    },
+    Profesion: async (data) => {
+        const respuesta = await validarYEnviarDatosProfesion(data)
         return respuesta
     },
 };

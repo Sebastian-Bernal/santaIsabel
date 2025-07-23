@@ -15,7 +15,6 @@ const estructuraAdministrativo = {
         contraseña: '',
         estado: 'activo',
     },
-
 }
 
 // Pinia Administrativos

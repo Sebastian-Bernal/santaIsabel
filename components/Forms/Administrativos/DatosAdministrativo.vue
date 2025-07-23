@@ -24,7 +24,6 @@ const camposRequeridos = [
         'name',
         'No_document',
         'celular',
-        'telefono',
         'Tipo',
 ];
 
@@ -36,7 +35,9 @@ watch(
         const Administrativo = newValue.Administrativo;
         // Validacion
         const camposValidos = camposRequeridos.every((campo) => Administrativo[campo] !== '');
-        varView.formComplete = camposValidos;
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
     },
     { deep: true }
 );
@@ -57,7 +58,7 @@ onMounted(() => {
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.name" type="text" id="nombre"
-            name="nombre" placeholder="Nombres y Apellidos" tamaño="w-full" />
+            name="nombre" placeholder="Nombres y Apellidos" tamaño="w-full" minlength="5" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
@@ -68,7 +69,7 @@ onMounted(() => {
                 { text: 'Gerente', value: 'Gerente' },
             ]" placeholder="Tipo" tamaño="w-full"></Select>
         <Input v-if="!props.noCambiar" :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.No_document"
-            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" />
+            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" max="10000000000" min="1000000" />
     </Section>
 
     <Section styles="mt-3">
@@ -81,16 +82,16 @@ onMounted(() => {
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.celular" type="number" id="celular"
-            name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" />
+            name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000" min="1000000000"/>
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.telefono" type="number" id="telefono"
-            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" />
+            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000" min="100000" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.correo" type="correo" id="correo"
-            name="correo" placeholder="Correo Electronico" tamaño="md:w-1/2 w-full" />
+            name="correo" placeholder="Correo Electronico" tamaño="md:w-1/2 w-full" minlength="5"/>
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.contraseña" type="password" id="contraseña"
-            name="contraseña" placeholder="Genera una contraseña" tamaño="md:w-1/2 w-full" />
+            name="contraseña" placeholder="Genera una contraseña" tamaño="md:w-1/2 w-full" minlength="5" />
     </Section>
 
 </template>

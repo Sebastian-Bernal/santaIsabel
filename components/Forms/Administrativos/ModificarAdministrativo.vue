@@ -1,9 +1,9 @@
 <script setup>
 // Componentes 
 import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
-import DatosAdministrativos from "../../Forms/Administrativos/DatosAdministrativos.vue"
+import DatosAdministrativos from "~/components/Forms/Administrativos/DatosAdministrativo.vue"
 // Data
-import { validarYEnviarEliminarAdministrativo } from '~/Core/Administrativo/EliminarAdministrativo';
+// import { validarYEnviarEliminarAdministrativo } from '~/Core/Administrativo/EliminarAdministrativo';
 import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo';
 import { useNotificacionesStore } from '../../stores/notificaciones.js';
 import { useVarView } from '../../stores/varview.js';
@@ -48,8 +48,6 @@ onMounted(async() => {
     // Si se pasa un Administrativo por props, se asigna al formData
     if (props.Administrativo) {
         formData.Administrativo = props.Administrativo;
-        formData.Diagnosticos = await storeAdministrativo.listDatos(props.Administrativo.id, 'Diagnosticos');
-        formData.Antecedentes = await storeAdministrativo.listDatos(props.Administrativo.id, 'Antecedentes');
     }
 });
 
@@ -74,7 +72,7 @@ const enviarModificarAdministrativo = async (formData) => {
         if(respuesta.isConfirmed || respuesta.dismiss) {
             limpiar();
             varView.showModificarAdministrativo = false;
-            storeAdministrativo.listDatos
+            storeAdministrativo.listAdministrativos
         }
     } else {
         options.icono = 'error';

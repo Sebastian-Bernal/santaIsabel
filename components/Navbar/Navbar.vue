@@ -65,8 +65,8 @@ const removeStorage = () => {
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
+                    <p class="text-xs ml-2">{{ usuario }}</p>
                 </li>
-                <li class="text-xs ml-1">{{ usuario }}</li>
             </ul>
 
         </div>

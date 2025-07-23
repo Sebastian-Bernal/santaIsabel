@@ -62,20 +62,56 @@ watch(props.formData, (newValue) => {
     const cita = newValue.Cita;
     // Validacion
     const camposValidos = camposRequeridos.every((campo) => cita[campo] !== '');
-    const fechaHoy = new Date();
-    // Fecha cita del formulario
-    const [year, month, day] = cita.fecha.split('-').map(Number);
-    const fechaCita = new Date(year, month - 1, day); // mes base 0
-
-    // Normalizar ambas fechas para comparar solo año/mes/día
-    fechaHoy.setHours(0, 0, 0, 0);
-    fechaCita.setHours(0, 0, 0, 0);
-    const fechaValida = fechaCita >= fechaHoy;
-    console.log(fechaValida, fechaCita, fechaHoy)
-
-    varView.formComplete = camposValidos && fechaValida;
+    // Detectar inputs inválidos
+    const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+    varView.formComplete = camposValidos && !hayCamposInvalidos;
     camposVacios.value = !varView.formComplete
 }, { deep: true });
+
+watch(
+    () => props.formData.Cita.fecha, (newFecha) => {
+        const fechaHoy = new Date();
+        const fecha = newFecha
+        // Fecha cita del formulario
+        const [year, month, day] = fecha.split('-').map(Number);
+        const fechaCita = new Date(year, month - 1, day); // mes base 0
+
+        // Normalizar ambas fechas para comparar solo año/mes/día
+        fechaHoy.setHours(0, 0, 0, 0);
+        fechaCita.setHours(0, 0, 0, 0);
+        const fechaValida = fechaCita >= fechaHoy;
+
+        if (!fechaValida) {
+            props.formData.Cita.fecha = ''; // Formato YYYY-MM-DD
+            options.position = "top-end";
+            options.texto = "La fecha de la cita no puede ser anterior a hoy.";
+            options.tiempo = 1500;
+            mensaje();
+
+        }
+    });
+
+watch(() => props.formData.Cita.hora, (newHora) => {
+    if (!newHora) return;
+
+    const [horaStr, minutoStr] = newHora.split(':');
+    const hora = parseInt(horaStr, 10);
+    const minuto = parseInt(minutoStr, 10);
+
+    // Convertimos la hora a minutos desde medianoche para comparación
+    const horaEnMinutos = hora * 60 + minuto;
+    const minPermitido = 6 * 60;     // 6:00 AM
+    const maxPermitido = 22 * 60;    // 10:00 PM
+
+    if (horaEnMinutos < minPermitido || horaEnMinutos > maxPermitido) {
+        props.formData.Cita.hora = ''; // Invalidamos la hora seleccionada
+        options.position = "top-end";
+        options.texto = "La hora debe estar entre las 6:00 AM y 10:00 PM.";
+        options.tiempo = 1500;
+        mensaje();
+    }
+});
+
 
 watch(listPacientes, (newvalue) => {
     PacientesList.value = newvalue.value
@@ -167,7 +203,7 @@ async function seleccionarMedico(medico) {
     </Section>
     <Section styles="relative">
         <Input v-model="props.formData.Cita.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
-            @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" />
+            @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" minlength="5" />
         <ul v-show="mostrarLista && pacientesFiltrados.length"
             class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
             <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" @click="seleccionarPaciente(paciente)">
@@ -185,7 +221,7 @@ async function seleccionarMedico(medico) {
     </Section>
 
     <Section styles="relative" @blur="pacienteExistente">
-        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList"
+        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList" minlength="5"
             @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
             placeholder="Nombre del profesional" tamaño="w-full" />
         <datalist id="medicosList">

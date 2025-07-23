@@ -23,11 +23,11 @@ export const useUsuariosStore = defineStore('Usuario', {
         getUsuario(state) {
             if (typeof window === 'undefined') {
                 console.warn('No estás en el navegador.');
-                return 'Usuario por defecto';
+                return 'Usuario';
             }
 
             const Usuario = sessionStorage.getItem('Usuario');
-            if (!Usuario) return 'Usuario por defecto';
+            if (!Usuario) return 'Usuario';
 
             state.Usuarios = Usuario;
             return Usuario;

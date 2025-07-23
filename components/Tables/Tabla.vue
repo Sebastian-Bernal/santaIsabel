@@ -106,13 +106,15 @@ const estiloColumnas = computed(() => {
             <div class="flex gap-3 md:w-[45%] justify-end">
                 <InputIcon class="w-3/4" placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
 
-                <download-excel class="flex gap-1 items-center" 
-                    :data="props.datos.content" :name="props.headerTabla.titulo" type="xls" >
-                    <Button color="bg-green-500">
-                        <i class="fa-solid fa-file-excel"></i>
-                    </Button>
-                    <h4>Exportar</h4>
-                </download-excel>
+                <client-only>
+                    <download-excel class="flex gap-1 items-center" :data="props.datos.content"
+                        :name="props.headerTabla.titulo" type="xls">
+                        <Button color="bg-green-500">
+                            <i class="fa-solid fa-file-excel"></i>
+                        </Button>
+                        <h4>Exportar</h4>
+                    </download-excel>
+                </client-only>
 
                 <nuxt-link @click="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
@@ -146,7 +148,9 @@ const estiloColumnas = computed(() => {
 
                     <div v-for="(col, key) in columnasVisibles" :key="key" class="relative"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="w-[10px] h-[10px] rounded-full absolute left-[-10px] top-2" :class="{'bg-red-500' : fila[col.titulo] === 'Cambios criticos', 'bg-orange-500': fila[col.titulo] === 'Recomendaciones Adicionales', 'bg-green-500': fila[col.titulo] === 'Estado clinico sin cambios'}"></div>
+                        <div class="w-[10px] h-[10px] rounded-full absolute left-[-10px] top-2"
+                            :class="{ 'bg-red-500': fila[col.titulo] === 'Cambios criticos', 'bg-orange-500': fila[col.titulo] === 'Recomendaciones Adicionales', 'bg-green-500': fila[col.titulo] === 'Estado clinico sin cambios' }">
+                        </div>
                         <p class="text-black truncate rounded-2xl">{{ fila[col.titulo] }}</p>
                     </div>
 
@@ -154,7 +158,8 @@ const estiloColumnas = computed(() => {
                     <div v-if="acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action.icon" @click="action.action(fila)" />
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action.icon"
+                            @click="action.action(fila)" />
 
                         <button @click="activarCollapse(id)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
@@ -185,8 +190,8 @@ const estiloColumnas = computed(() => {
                 </div>
 
                 <div>
-                    <p v-if="datosPaginados.length === 0"
-                        class="text-gray-500 text-center mt-10">No se encontraron resultados.</p>
+                    <p v-if="datosPaginados.length === 0" class="text-gray-500 text-center mt-10">No se encontraron
+                        resultados.</p>
                 </div>
 
             </div>

@@ -10,10 +10,15 @@ import { CIE10 } from "~/data/CIE10.js";
 import { ubicacion } from "../../data/colombia.js";
 import { municipios } from '~/data/municipios.js'
 import { useVarView } from "../../stores/varview.js";
+import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { computed, watch, onMounted } from "vue";
 
 const varView = useVarView();
-const ingresarPaciente = ref(null)
+const notificacionesStore = useNotificacionesStore();
+const epsStore = useDatosEPSStore();
+const EPS = ref([])
+
+const { simple, mensaje, options } = notificacionesStore;
 
 const props = defineProps([
     'formData',
@@ -47,9 +52,73 @@ watch(
     { deep: true }
 );
 
+// Validar campo tipo de documento
+watch(
+    () => props.formData.Paciente.type_doc,
+    (newValue) => {
+        validarEdad(newValue, props.formData.Paciente.nacimiento);
+    }
+);
+// Validar campo fecha de nacimiento
+watch(
+    () => props.formData.Paciente.nacimiento,
+    (newNacimiento) => {
+        const tipo = props.formData.Paciente.type_doc;
+        if (tipo) {
+            validarEdad(tipo, newNacimiento);
+        }
+    }
+);
+
+function obtenerEdad(datoNacimiento) {
+    const nacimiento = new Date(datoNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    const día = hoy.getDate() - nacimiento.getDate();
+
+    if (mes < 0 || (mes === 0 && día < 0)) {
+        edad--;
+    }
+    return edad
+}
+
+function autocompletarTipo() {
+    const edad = obtenerEdad(props.formData.Paciente.nacimiento)
+
+    if (edad > 18) {
+        props.formData.Paciente.type_doc = 'cedula'
+    } else if (edad < 18) {
+        props.formData.Paciente.type_doc = 'Tarjeta de identidad'
+    }
+}
+
+// Funcion Validar Edad
+function validarEdad(type_doc, nacimientoStr) {
+    const edad = obtenerEdad(nacimientoStr)
+
+    if (type_doc === 'Tarjeta de identidad' && edad > 18) {
+        props.formData.Paciente.type_doc = 'cedula';
+        options.position = "top-end";
+        options.texto = "Paciente Mayor de Edad, verifique la fecha de nacimiento.";
+        options.tiempo = 1500;
+        mensaje();
+    } else if (type_doc === 'cedula' && edad < 18) {
+        props.formData.Paciente.type_doc = 'Tarjeta de identidad';
+        options.position = "top-end";
+        options.texto = "Paciente Menor de Edad, verifique la fecha de nacimiento.";
+        options.tiempo = 1500;
+        mensaje();
+    }
+    return edad
+}
+
+
+
 // Traer datos del localStorage
-onMounted(() => {
+onMounted(async () => {
     props.traerDatos();
+    EPS.value = await epsStore.listEPS
 });
 
 // Cuidades filtradas por departamento
@@ -59,6 +128,14 @@ const ciudades = computed(() => {
     )[0]?.municipios;
 
 });
+
+const opcionesEPS = computed(() => {
+    return EPS.value.map(eps => ({
+        text: eps.nombre,
+        value: eps.nombre
+    }));
+})
+
 
 </script>
 
@@ -74,19 +151,21 @@ const ciudades = computed(() => {
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.name" type="text" id="nombre"
             name="nombre" placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" minlength="5" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.nacimiento" type="date" id="nacimiento"
-            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
+            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500"
+            @blur="autocompletarTipo()" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
         <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.type_doc" id="tipoDocumento"
             name="tipoDocumento" :options="[
                 { text: 'Cedula de ciudadania', value: 'cedula' },
-                { text: 'Tarjeta de identidad', value: 'ti' },
+                { text: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
                 { text: 'Cedula Extranjera', value: 'extranjera' },
                 { text: 'RC', value: 'RC' },
             ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
         <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="props.formData.Paciente.No_document"
-            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" max="10000000000" min="1000000" />
+            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full"
+            max="10000000000" min="1000000" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
@@ -141,7 +220,7 @@ const ciudades = computed(() => {
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.celular" type="number" id="celular"
             name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000" min="1000000000" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.telefono" type="number" id="telefono"
-            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000" min="100000"/>
+            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000" min="100000" />
     </Section>
 
     <Section styles="mt-3">
@@ -151,29 +230,29 @@ const ciudades = computed(() => {
         </div>
     </Section>
     <Section styles="md:flex items-center gap-3 grid grid-cols-2 mb-3">
-        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" id="eps" name="eps" :options="[
-            { text: 'EPS', value: 'EPS' },
-        ]" placeholder="EPS" tamaño="md:w-1/3 w-full"></Select>
-        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" id="regimen" name="regimen" :options="[
-            { text: 'Contributivo', value: 'Contributivo' },
-            { text: 'Subsidiado', value: 'Subsidiado' },
-            { text: 'Especial/Excepcion', value: 'Especial/Excepcion' },
-        ]" placeholder="Regimen" tamaño="md:w-1/3 w-full"></Select>
-        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.poblacionVulnerable" id="poblacionVulnerable" name="poblacionVulnerable" :options="[
-            { text: 'Ninguno', value: 'Ninguno' },
-            { text: 'Adultos Mayores', value: 'Adultos Mayores' },
-            { text: 'Discapacidad', value: 'Discapacidad' },
-            { text: 'Victimas Conflicto Armado', value: 'Victimas Conflicto Armado' },
-            { text: 'Habitantes de calle', value: 'Habitantes de calle' },
-            { text: 'Poblacion LGBTIQ+', value: 'Poblacion LGBTIQ+' },
-            { text: 'Grupos étnicos', value: 'Grupos étnicos' },
-            { text: 'Personas privadas de la libertad', value: 'Personas privadas de la libertad' },
-            { text: 'Desmovilizados', value: 'Desmovilizados' },
-            { text: 'Migrantes colombianos repatriados', value: 'Migrantes colombianos repatriados' },
-            { text: 'Madres comunitarias o sustitutas', value: 'Madres comunitarias o sustitutas' },
-            { text: 'Voluntarios activos', value: 'Voluntarios activos' },
-            { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
-        ]" placeholder="Pblacion Vulnerable" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" id="eps" name="eps" :options="opcionesEPS" placeholder="EPS" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" id="regimen" name="regimen"
+            :options="[
+                { text: 'Contributivo', value: 'Contributivo' },
+                { text: 'Subsidiado', value: 'Subsidiado' },
+                { text: 'Especial/Excepcion', value: 'Especial/Excepcion' },
+            ]" placeholder="Regimen" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.poblacionVulnerable"
+            id="poblacionVulnerable" name="poblacionVulnerable" :options="[
+                { text: 'Ninguno', value: 'Ninguno' },
+                { text: 'Adultos Mayores', value: 'Adultos Mayores' },
+                { text: 'Discapacidad', value: 'Discapacidad' },
+                { text: 'Victimas Conflicto Armado', value: 'Victimas Conflicto Armado' },
+                { text: 'Habitantes de calle', value: 'Habitantes de calle' },
+                { text: 'Poblacion LGBTIQ+', value: 'Poblacion LGBTIQ+' },
+                { text: 'Grupos étnicos', value: 'Grupos étnicos' },
+                { text: 'Personas privadas de la libertad', value: 'Personas privadas de la libertad' },
+                { text: 'Desmovilizados', value: 'Desmovilizados' },
+                { text: 'Migrantes colombianos repatriados', value: 'Migrantes colombianos repatriados' },
+                { text: 'Madres comunitarias o sustitutas', value: 'Madres comunitarias o sustitutas' },
+                { text: 'Voluntarios activos', value: 'Voluntarios activos' },
+                { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
+            ]" placeholder="Pblacion Vulnerable" tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
     <Section styles="mt-3">
@@ -206,7 +285,8 @@ const ciudades = computed(() => {
                     codigo: {{ enfermedad.code }}
                 </option>
             </datalist>
-            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
+            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400"
+                @click="eliminarItem('Diagnosticos', i)"></i>
         </div>
         <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">
             <p class="text-gray-500">No hay Diagnosticos registrados.</p>
@@ -251,7 +331,8 @@ const ciudades = computed(() => {
                 name="antecedentes"
                 :placeholder="antecedente.tipo === 'personal' ? 'Antecedentes Personales' : antecedente.tipo === 'familiar' ? 'Antecedentes Familiares' : 'Antecedentes'"
                 tamaño="w-full" />
-            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400" @click="eliminarItem('Antecedentes', i)"></i>
+            <i v-if="!props.verPaciente" class="fa-solid fa-close text-red-400"
+                @click="eliminarItem('Antecedentes', i)"></i>
         </div>
         <div v-if="formData.Antecedentes.length < 1" class="w-full flex justify-center items-center py-3">
             <p class="text-gray-500">No hay antecedentes registrados.</p>

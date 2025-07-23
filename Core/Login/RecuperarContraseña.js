@@ -33,10 +33,10 @@ const enviarFormulario = async (datos) => {
             // mandar a api
             datos.codigoRecuperacion = generarCodigo()
             const response = await emailjs.send(
-            'service_a553hki',     // Reemplaza con tu service_id
-            'template_j2ii3f6',    // Reemplaza con tu template_id
+            import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
+            import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
             datos,
-            'vpeXqDF4WYaSSpC1H'      // Reemplaza con tu public_key
+            import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
         )
         console.log('Correo enviado con éxito:', response.status, response.text)
         return true
