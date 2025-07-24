@@ -20,9 +20,9 @@ function cerrar () {
             <h2 class="text-2xl font-semibold text-center mb-4">Consulta</h2>
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
-                    <h3>Analisis</h3>
+                    <h3>Paciente</h3>
                     <p class="p-3 border border-gray-300 rounded-2xl bg-white ">
-                        {{ props.consulta.motivo }}
+                        {{ props.consulta.name_paciente }}
                     </p>
                 </div>
                 <div class="flex flex-col">
@@ -33,23 +33,22 @@ function cerrar () {
                 </div>
             </div>
             <div>
-                <h3>Analisis</h3>
+                <h3>Motivo</h3>
                 <p class="p-3 border border-gray-200 rounded-2xl bg-white ">
-                    {{ props.consulta.analisis }}
+                    {{ props.consulta.motivo }}
                 </p>
             </div>
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
-                    <h3>Estado</h3>
-                    <p class="p-3 border border-gray-200 rounded-2xl" 
-                    :class="{'bg-red-100' : props.consulta.tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.consulta.tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-300': props.consulta.tipoAnalisis === 'Estado clinico sin cambios'}">
-                        {{ props.consulta.tipoAnalisis }}
+                    <h3>Signos Vitales</h3>
+                    <p class="bg-white p-3 border border-gray-200 rounded-2xl grid grid-cols-2 items-center gap-1">
+                        <span v-for="(item, valor) in props.consulta.signosVitales">{{ valor.toUpperCase() }} : {{ item }}</span>
                     </p>
                 </div>
                 <div class="flex flex-col">
                     <h3>Profesional</h3>
                     <p class="p-3 border border-gray-200 rounded-2xl bg-white ">
-                        Juan Perez Perez
+                        {{ props.consulta.name_profesional}}
                     </p>
                 </div>
             </div>

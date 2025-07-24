@@ -27,6 +27,13 @@ export const useCitasStore = defineStore('Citas', {
             const store = useIndexedDBStore()
             store.almacen = 'Cita'
             const citas = await store.leerdatos()
+
+            citas.sort((a, b) => {
+                const fechaA = new Date(`${a.fecha}T${a.hora}`);
+                const fechaB = new Date(`${b.fecha}T${b.hora}`);
+                return fechaA - fechaB; // Orden descendente
+            });
+
             state.Citas = citas
             return citas
         }

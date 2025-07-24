@@ -26,9 +26,8 @@ function verConsulta (consulta) {
         </div>
         <Tabla v-if="props.consultas.length !== 0" :columnas="[
             { titulo: 'fecha_historia', tamaño: 100, ordenar: true },
-            { titulo: 'analisis', tamaño: 200, ordenar: true },
             { titulo: 'motivo', tamaño: 200 },
-            { titulo: 'tipoAnalisis', tamaño: 250 },
+            { titulo: 'name_paciente', tamaño: 250 },
         ]" :headerTabla="{ titulo: 'Consultas', color: 'bg-[var(--color-default)] text-white', agregarRuta: verConsulta }"
             :acciones="{ action: true, icons: [{ icon: 'ver', action: verConsulta }], botones: true }"
             :datos="{ content: props.consultas }" />

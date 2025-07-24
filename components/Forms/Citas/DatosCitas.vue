@@ -19,8 +19,8 @@ const PacientesStore = usePacientesStore();
 const notificacionesStore = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 
-const { listPacientes } = storeToRefs(PacientesStore);
-
+const { listPacientes, Pacientes } = storeToRefs( PacientesStore );
+const { listMedicos, Medicos } = storeToRefs( medicosStore )
 const props = defineProps([
     'formData',
     'traerDatos',
@@ -135,7 +135,7 @@ const fechaformatDate = () => {
 
 // Funcion para autocompletar el paciente
 const pacienteExistente = async () => {
-    const paciente = PacientesList.value.find(
+    const paciente = Pacientes.value.find(
         p => p.name.toLowerCase() === props.formData.Cita.name_paciente.toLowerCase()
     )
 
@@ -161,7 +161,7 @@ function filtrarPacientes() {
         return;
     }
 
-    pacientesFiltrados.value = PacientesList.value.filter(p =>
+    pacientesFiltrados.value = Pacientes.value.filter(p =>
         p.name.toLowerCase().includes(props.formData.Cita.name_paciente.toLowerCase())
     );
     mostrarLista.value = true;
@@ -175,7 +175,7 @@ function seleccionarPaciente(paciente) {
 }
 
 async function seleccionarMedico(medico) {
-    const medicoSeleccionado = medicosList.value.find(m => m.name.toLowerCase() === medico.toLowerCase());
+    const medicoSeleccionado = Medicos.value.find(m => m.name.toLowerCase() === medico.toLowerCase());
     if (medicoSeleccionado) {
         props.formData.Cita.name_medico = medicoSeleccionado.name;
         props.formData.Cita.id_medico = medicoSeleccionado.id;

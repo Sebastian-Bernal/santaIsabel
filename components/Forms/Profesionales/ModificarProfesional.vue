@@ -106,7 +106,7 @@ async function eliminarMedico() {
         const res = validarYEnviarEliminarMedico(formData)
         if (res) {
             limpiar()
-            varView.showModificarProfesional = false;
+            window.location.href = '/Usuarios/Profesional'
             medicoStore.listMedicos
         }
     }

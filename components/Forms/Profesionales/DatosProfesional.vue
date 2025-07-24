@@ -5,11 +5,14 @@ import Input from "~/components/Inputs/Input.vue";
 import Section from "~/components/Forms/Section.vue";
 import Select from "~/components/Selects/Select.vue";
 // Data
+import { useDatosProfesionStore } from "~/stores/Formularios/empresa/Profesion.js";
 import { ubicacion } from "../../data/colombia.js";
 import { useVarView } from "../../stores/varview.js";
 import { computed, watch, onMounted } from "vue";
 
 const varView = useVarView();
+const storeProfesiones = useDatosProfesionStore();
+const Profesiones = ref([]);
 
 const props = defineProps([
     'formData',
@@ -40,17 +43,26 @@ watch(
 );
 
 // Traer datos del localStorage
-onMounted(() => {
+onMounted(async() => {
     props.traerDatos();
+    Profesiones.value = await storeProfesiones.listProfesion
 });
 
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
     return ubicacion.filter(
         (data) => data.departamento === props.formData.Medico.departamento
-    )[0].ciudades;
+    )[0]?.ciudades;
 
 });
+
+// Formatear array para mandar datos a Select
+const opcionesProfesion = computed(() => {
+    return Profesiones.value.map(item => ({
+        text: item.nombre,
+        value: item.nombre
+    }));
+})
 </script>
 
 <template>
@@ -77,7 +89,7 @@ const ciudades = computed(() => {
         <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.No_document" type="number" id="documento" name="documento"
             placeholder="Número de documento" tamaño="w-full" min="10000000" />
         <Select :disabled="props.verMedico" v-model="formData.Medico.profesion" id="genero" name="genero"
-            :options="[{ text: 'Medico', value: 'Medico' }, { text: 'Psicologo/a', value: 'Psicologo/a' }, { text: 'Otro', value: 'otro' }]"
+            :options="opcionesProfesion"
             placeholder="Profesion" tamaño="w-full"></Select>
     </Section>
 

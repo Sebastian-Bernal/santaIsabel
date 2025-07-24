@@ -14,7 +14,14 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     }),
 
     getters: {
+        async listProfesion(state) {
+            const store = useIndexedDBStore()
+            store.almacen = 'Profesion'
+            const Notas = await store.leerdatos()
 
+            state.Notas = Notas
+            return Notas
+        },
     },
 
     actions: {

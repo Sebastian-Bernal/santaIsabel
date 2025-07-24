@@ -7,15 +7,13 @@ import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS.js';
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";
 
-const props = defineProps(['tabla', 'datos']);
+const props = defineProps(['tabla', 'datos', 'EPS']);
 
 const storeDatosEmpresa = useDatosEPSStore();
 const DatosEmpresaStore = storeDatosEmpresa.createForm("EPS");
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
 const camposVacios = ref(false)
-const EPS = ref([]);
-
 // Importar states y funciones del store
 const {
     formData,
@@ -43,16 +41,17 @@ watch(
         const empresa = newValue.EPS;
         // Validacion
         const camposValidos = empresa.length > 0 && camposRequeridos.every((campo) => empresa.at(-1)[campo] !== '');
-        varView.formComplete = camposValidos;
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
         console.log(camposValidos)
     },
     { deep: true }
 );
 
 // Traer datos del localStorage
-onMounted(async() => {
+onMounted(() => {
     traerDatos();
-    EPS.value = await storeDatosEmpresa.listEPS
 });
 
 // Enviar formulario -------------------
@@ -117,8 +116,8 @@ const cerrarModal = () => {
                 </div>
             </div>
             <div class="flex items-center gap-3" v-for="(eps, i) in formData.EPS" :key="i">
-                <Input v-model="eps.nombre" placeholder="Nombre EPS" name="eps" id="eps"></Input>
-                <Input v-model="eps.codigo" placeholder="Codigo" name="codigo" id="codigo"></Input>
+                <Input v-model="eps.nombre" placeholder="Nombre EPS" name="eps" id="eps" minlength="5"></Input>
+                <Input v-model="eps.codigo" placeholder="Codigo" name="codigo" id="codigo" minlength="2"></Input>
                 <i class="fa-solid fa-close text-red-400" @click="eliminarItem('EPS', i)"></i>
             </div>
         </div>
@@ -128,7 +127,7 @@ const cerrarModal = () => {
                 <p>Codigo</p>
                 <p>Acciones</p>
             </div>
-            <div class="grid grid-cols-3 gap-3 text-center text-sm font-semibold" v-for="item in EPS">
+            <div class="grid grid-cols-3 gap-3 text-center text-sm font-semibold" v-for="item in props.EPS">
                 <p>{{item.nombre}}</p>
                 <p>{{item.codigo}}</p>
                 <p class="flex items-center justify-center gap-3">

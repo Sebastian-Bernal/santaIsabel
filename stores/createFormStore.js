@@ -34,16 +34,24 @@ export const createFormStore = (storeId, estructuraInicial) => {
 
             agregarItem(campo, plantilla, campoValidar) {
                 const notificaciones = useNotificacionesStore()
-                const lista = this.formData[campo];
+                // Función interna para resolver campos anidados desde un string con '.'
+                function obtenerCampo(obj, ruta) {
+                    return ruta.split('.').reduce((acc, prop) => acc?.[prop], obj);
+                }
+
+                const lista = obtenerCampo(this.formData, campo);
+
                 if (lista.length < 1) {
                     lista.push({ ...plantilla });
                     return
                 }
                 const ultimoValor = lista.at(-1)?.[campoValidar];
 
+                const campoNombre = campo.split('.').at(-1);
+
                 if (!ultimoValor || ultimoValor === '') {
                     notificaciones.options.position = 'top-end'
-                    notificaciones.options.texto = `'${campo}' esta vacio, por favor ingrese un valor`
+                    notificaciones.options.texto = `'${campoNombre}' esta vacio, por favor ingrese un valor`
                     notificaciones.options.tiempo = 1500
                     notificaciones.mensaje()
                     return;
@@ -53,7 +61,13 @@ export const createFormStore = (storeId, estructuraInicial) => {
             },
 
             eliminarItem(campo, index) {
-                const lista = this.formData[campo];
+                // Función interna para resolver campos anidados desde un string con '.'
+                function obtenerCampo(obj, ruta) {
+                    return ruta.split('.').reduce((acc, prop) => acc?.[prop], obj);
+                }
+
+                const lista = obtenerCampo(this.formData, campo);
+
                 lista.splice(index, 1);
             },
 

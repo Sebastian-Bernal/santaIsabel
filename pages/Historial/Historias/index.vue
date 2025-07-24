@@ -57,7 +57,7 @@ const verHistoria = (his) => {
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', tamaño: 100, ordenar: true },
-            { titulo: 'paciente', tamaño: 150, ordenar: true },
+            { titulo: 'paciente', tamaño: 250, ordenar: true },
             { titulo: 'estado', tamaño: 150 },
         ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarHistoria }"
             :acciones="{ action: true, icons: [{icon: 'ver', action: verHistoria}], botones: true }" :datos="{ content: historiasList }" />

@@ -3,7 +3,6 @@ import { useVarView } from '~/stores/varview.js';
 import CardRips from '~/components/Cards/CardRips.vue';
 
 const varView = useVarView();
-console.log(varView.isOnline);
 </script>
 
 <template>

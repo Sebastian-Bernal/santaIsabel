@@ -25,11 +25,9 @@ const estructuraHistoria = {
         name_paciente: '',
         type_doc_paciente: '',
         No_document_paciente: '',
-        acompañante: [{ nombre: '', parentesco: '' }],
+        acompañante: [],
         id_profesional: '',
         name_profesional: '',
-        analisis: '',
-        tipoAnalisis: '',
     },
     ExamenFisico: {
         Peso: '',
@@ -39,8 +37,10 @@ const estructuraHistoria = {
         id_historia: ''
     },
     AnalisisTratamiento: {
-        analisis: '',
+        observacion: '',
         tratamiento: '',
+        analisis: '',
+        tipoAnalisis: '',
         id_historia: ''
     },
     Plan_manejo_medicamentos: [],

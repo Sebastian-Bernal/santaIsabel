@@ -4,12 +4,12 @@ import BreadCrumb from './Breadcrumb.vue';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
-import { computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const usuarioStore = useUsuariosStore();
 
-const usuario = usuarioStore.getUsuario
+const usuario = ref([]);
 
 function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -32,6 +32,10 @@ function obtenerFechaFormateada() {
 
     return `${capitalizar(diaSemana)}, ${diaMes} ${capitalizar(mesNombre)}`;
 }
+
+onMounted(async() => {
+    usuario.value = await usuarioStore.getUsuario()
+})
 
 const fechaActualFormateada = computed(() => {
     return obtenerFechaFormateada();
@@ -155,7 +159,7 @@ const removeStorage = () => {
         top: 95px;
         right: 0;
         width: 100%;
-        background-color: var(--color-negro-rojizo);
+        background-color: var(--color-default-900);
         backdrop-filter: blur(10px);
         border-radius: 10px;
         padding: 10px;

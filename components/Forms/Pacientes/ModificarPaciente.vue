@@ -114,7 +114,7 @@ async function eliminarPaciente() {
         const res = validarYEnviarEliminarPaciente(formData)
         if(res){
             limpiar()
-            varView.showModificarPaciente = false
+            window.location.href = '/Usuarios/Pacientes'
             storePaciente.listPacientes;
         }
     }

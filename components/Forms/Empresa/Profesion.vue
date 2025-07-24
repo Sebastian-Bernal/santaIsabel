@@ -7,13 +7,13 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.j
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";
 
-const props = defineProps(['tabla', 'datos']);
+const props = defineProps(['tabla', 'datos', 'Profesiones']);
 
 const storeDatosEmpresa = useDatosProfesionStore();
 const DatosEmpresaStore = storeDatosEmpresa.createForm("Profesion");
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
-const camposVacios = ref(false)
+const camposVacios = ref(false);
 
 // Importar states y funciones del store
 const {
@@ -41,7 +41,9 @@ watch(
         const empresa = newValue.Profesion;
         // Validacion
         const camposValidos = empresa.length > 0 && camposRequeridos.every((campo) => empresa.at(-1)[campo] !== '');
-        varView.formComplete = camposValidos;
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
         console.log(camposValidos)
     },
     { deep: true }
@@ -65,7 +67,7 @@ const enviar = async (formData) => {
         const respuesta = await simple();
         if (respuesta.isConfirmed || respuesta.dismiss) {
             limpiar()
-            window.location.href = '/Empresas/Resoluciones'
+            window.location.href = '/Empresas/Datos'
             storeDatosEmpresa.listResoluciones
         }
     } else {
@@ -114,8 +116,8 @@ const cerrarModal = () => {
                 </div>
             </div>
             <div class="flex items-center gap-3" v-for="(Profesion, i) in formData.Profesion" :key="i">
-                <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion"></Input>
-                <Input v-model="Profesion.codigo" placeholder="Nombre Profesion" name="ProfesionCodigo" id="ProfesionCodigo"></Input>
+                <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion" minlength="5"></Input>
+                <Input v-model="Profesion.codigo" placeholder="Codigo" name="ProfesionCodigo" id="ProfesionCodigo" minlength="2"></Input>
                 <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Profesion', i)"></i>
             </div>
         </div>
@@ -125,9 +127,9 @@ const cerrarModal = () => {
                 <p>Codigo</p>
                 <p>Acciones</p>
             </div>
-            <div class="grid grid-cols-3 gap-3 text-center text-sm font-semibold" v-for="item in 5">
-                <p>Medico</p>
-                <p>001</p>
+            <div class="grid grid-cols-3 gap-3 text-center text-sm font-semibold" v-for="item in props.Profesiones">
+                <p>{{item.nombre}}</p>
+                <p>{{item.codigo}}</p>
                 <p class="flex items-center justify-center gap-3">
                     <i class="fa-solid fa-pencil"></i>
                     <i class="fa-solid fa-trash text-red-500"></i>

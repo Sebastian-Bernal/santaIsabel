@@ -55,7 +55,9 @@ watch(
         const empresa = newValue.Empresa;
         // Validacion
         const camposValidos = camposRequeridos.every((campo) => empresa[campo] !== '');
-        varView.formComplete = camposValidos;
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = camposValidos && !hayCamposInvalidos;
     },
     { deep: true }
 );
@@ -111,7 +113,7 @@ const logoFile = (obj, key, event) => {
             <h3 class="text-xl font-semibold">Datos de la Empresa</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-            <Input v-model="formData.Empresa.nombre" placeholder="Nombre Comercial" name="nombre" :tamaño="{'incompleto' : camposVacios && formData.Empresa.nombre === ''}"></Input>
+            <Input v-model="formData.Empresa.nombre" placeholder="Nombre Comercial" name="nombre" minlength="3" :tamaño="{'incompleto' : camposVacios && formData.Empresa.nombre === ''}"></Input>
             <InputContenido v-model="formData.Empresa.logo" placeholder="Logo" type="text" name="logo" :tamaño="{'incompleto' : camposVacios && formData.Empresa.logo === ''}">
                 <label for="logoFile" ><i class="fa-solid fa-image text-blue-500"></i></label>
                 <input type="file" accept="image/png, image/jpeg" @change="event => logoFile(formData.Empresa, 'logo', event)" name="logoFile" id="logoFile" class="hidden">

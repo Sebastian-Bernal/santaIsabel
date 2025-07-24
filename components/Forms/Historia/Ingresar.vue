@@ -14,6 +14,7 @@ import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref, onMounted } from "vue";
+import { storeToRefs } from 'pinia';
 import { useVarView } from "../../stores/varview.js";
 
 const varView = useVarView();
@@ -21,6 +22,7 @@ const HistoriaStore = useHistoriasStore();
 const PacientesStore = usePacientesStore();
 const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
+const { Pacientes } = storeToRefs(PacientesStore)
 
 // Importar states y funciones del store
 const {
@@ -68,8 +70,8 @@ watch(PacientesStore.listPacientes, (newvalue) => {
 
 // Funcion para autocompletar el paciente
 const pacienteExistente = async() => {
-    const paciente = pacientes.value.find(
-        p => p.nombre.toLowerCase() === formData.HistoriaClinica.name_paciente.toLowerCase()
+    const paciente = Pacientes.value.find(
+        p => p.name.toLowerCase() === formData.HistoriaClinica.name_paciente.toLowerCase()
     )
 
     if (paciente) {
@@ -205,10 +207,10 @@ function enviarPrimerPaso(){
 
 
             <Section styles="flex-col md:flex-row">
-                <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList" name="documento" @click="pacienteExistente"
+                <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList" name="documentoList" @click="pacienteExistente"
                     placeholder="Número de documento" tamaño="w-full" />
                 <datalist id="documentoList">
-                    <option v-for="(paciente, id) in pacientes" :key="id" :value="paciente.documento"></option>
+                    <option v-for="(paciente, id) in PacientesList" :key="id" :value="paciente.document"></option>
                 </datalist>
                 <Select v-model="formData.HistoriaClinica.type_doc_paciente" id="tipoDocumento" name="tipoDocumento"
                     :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }]"
@@ -222,34 +224,21 @@ function enviarPrimerPaso(){
                     <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <a @click="agregarItem('HistoriaClinica', { nombre: '', parentesco: ''}, 'nombre')">
+                    <a @click="agregarItem('HistoriaClinica.acompañante', { nombre: '', parentesco: ''}, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
             </Section>
 
-            <Section v-for="(item, index) in formData.HistoriaClinica.acompañante" :key="index" styles="flex-col md:flex-row">
+            <Section v-for="(item, index) in formData.HistoriaClinica.acompañante" :key="index" styles="flex-col md:flex-row items-center">
                 <Input v-model="formData.HistoriaClinica.acompañante.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
                 <Select v-model="formData.HistoriaClinica.acompañante.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
+                    <i class="fa-solid fa-close text-red-400"
+                        @click="eliminarItem('HistoriaClinica.acompañante', i)"></i>
             </Section>
-
-            <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink @click="cerrarModal">
-                    <ButtonForm color="bg-gray-500"
-                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        Atras
-                    </ButtonForm>
-                </nuxtLink>
-                <nuxtLink :to="varView.formComplete ? '/Historial/Paso2' : ''">
-                    <ButtonForm color="bg-blue-500" @click="validarform"
-                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        Siguiente
-                    </ButtonForm>
-                </nuxtLink>
-            </div> -->
 
         </FormularioWizard>
     </ModalFormLG>

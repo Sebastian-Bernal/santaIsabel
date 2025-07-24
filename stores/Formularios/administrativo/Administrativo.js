@@ -43,7 +43,6 @@ export const useAdministrativosStore = defineStore('Administrativos', {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
         },
-
     }
 });
 

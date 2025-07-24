@@ -129,6 +129,7 @@ const ciudades = computed(() => {
 
 });
 
+// Formatear array para mandar datos a Select
 const opcionesEPS = computed(() => {
     return EPS.value.map(eps => ({
         text: eps.nombre,

@@ -3,10 +3,10 @@ import ModalLG from '~/components/Modales/ModalLG.vue';
 import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
 import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
 import VerConsultas from './Consultas/VerConsultas.vue'
-import VerEvoluciones from './VerEvoluciones.vue'
+import VerEvoluciones from './Evoluciones/VerEvoluciones.vue'
 import VerNotas from './Notas/VerNotas.vue'
 import VerTratamientos from './Tratamientos/VerTratamientos.vue'
-import VerMedicacion from './VerMedicacion.vue'
+import VerMedicacion from './Medicacion/VerMedicacion.vue'
 import { useVarView } from '~/stores/varview.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -101,6 +101,7 @@ async function Botones (titulo) {
 
 async function historias () {
     const historias = []
+    analisis.value = []
         consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
         consultas.value.map((consulta) => {
             historias.push(consulta.id_temporal)

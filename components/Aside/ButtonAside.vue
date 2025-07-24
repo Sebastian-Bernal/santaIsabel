@@ -25,7 +25,7 @@ onMounted(() => {
 
         <!-- Desplegable nombre de seccion, "right" -->
         <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px] rounded-r-3xl"
-        :class="{'hover:rounded-[0_30px_0_0] ': !data.showUp, 'hover:rounded-[0_0_30px_0]': data.showUp}"
+            :class="{ 'hover:rounded-[0_30px_0_0] ': !data.showUp, 'hover:rounded-[0_0_30px_0]': data.showUp }"
             @click="storeAside.activeButton(data.id)">
             <a @click="footer.cambiarSecciones(null)">
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
@@ -35,7 +35,7 @@ onMounted(() => {
             <!-- Desplegable submenu, "down" -->
             <div id="data.id"
                 class="down overflow-y-auto absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 pointer-events-none p-[10px] w-[150px] rounded-br-3xl "
-                :class="[data.tamaño, {'up': data.showUp}]">
+                :class="[data.tamaño, { 'up': data.showUp }]">
                 <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
                     v-for="seccion in data.secciones">
                     <a :href="`/${data.nombre}/${seccion.titulo}`"
@@ -55,7 +55,7 @@ button {
 }
 
 .active {
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -162,6 +162,13 @@ button {
 
     .down h3 a {
         padding: 5px;
+    }
+
+    .down.up {
+        top: 100%;
+        bottom: auto;
+        border-radius: 0 0 16px 16px;
+        /* ajusta bordes si quieres */
     }
 }
 </style>

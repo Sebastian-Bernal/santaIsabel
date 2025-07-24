@@ -16,8 +16,8 @@ const props = defineProps({
     }
 });
 
-async function verAnalisis() {
-    historiaAnalisis.value = await historiasStore.listDatos(props.analisis[0].id_temporal, 'HistoriaClinica')
+async function verAnalisis(data) {
+    historiaAnalisis.value = data
     varView.showAnalisisInfo = true
 };
 
@@ -32,8 +32,10 @@ function agregar() {
             <p>No hay registros de Analisis para este paciente.</p>
         </div>
         <Tabla v-if="props.analisis.length !== 0" :columnas="[
+            { titulo: 'observacion', tamaño: 150, ordenar: true },
             { titulo: 'analisis', tamaño: 350, ordenar: true },
-            { titulo: 'tratamiento', tamaño: 350, ordenar: true },
+            { titulo: 'tipoAnalisis', tamaño: 200, ordenar: true },
+            { titulo: 'tratamiento', tamaño: 100, ordenar: true },
         ]" :headerTabla="{ titulo: 'Analisis', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregar }"
             :acciones="{ action: true, icons: [{ icon: 'ver', action: verAnalisis }], botones: true }"
             :datos="{ content: props.analisis }" />

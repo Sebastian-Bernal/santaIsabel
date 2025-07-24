@@ -15,7 +15,7 @@ const btnAcciones = ref(null)
 // funciones
 const props = defineProps({
     columnas: {
-        type: [Array, String],
+        type: [Object, String],
         required: true,
         default: ''
     },

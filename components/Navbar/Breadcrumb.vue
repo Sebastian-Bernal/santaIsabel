@@ -64,7 +64,7 @@ li:hover .dropdown {
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 999;
-    max-width: 250px;
+    max-width: 200px;
     overflow-x: auto;
     user-select: none;
 }

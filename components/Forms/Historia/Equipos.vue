@@ -96,13 +96,12 @@ const cerrarModal = () => {
 
             <div v-if="formData.Plan_manejo_equipos ? formData.Plan_manejo_equipos.length > 0 : false"
                 class="md:w-4/5 w-full max-h-[300px] overflow-y-auto border border-gray-300 rounded-md p-2">
-                <div class="grid grid-cols-3 text-center text-xs justify-between items-center gap-3">
+                <div class="grid grid-cols-2 text-center text-xs justify-between items-center gap-3">
                     <h4>Descripcion</h4>
                     <h4>Cantidad</h4>
-                    <h4>Mes</h4>
                 </div>
                 <div v-for="(servicio, index) in formData.Plan_manejo_equipos" :key="index"
-                    class="grid grid-cols-3 text-center justify-between items-center gap-3 mt-3">
+                    class="grid grid-cols-2 text-center justify-between items-center gap-3 mt-3">
                     <p tamaño="text-xs">{{ servicio.descripcion }}</p>
                     <p tamaño="text-xs">{{ servicio.cantidad }}</p>
                 </div>

@@ -152,10 +152,10 @@ const cerrarModal = () => {
                 </div>
             </Section>
             <Section>
-                <Select v-model="formData.HistoriaClinica.tipoAnalisis" id="rehabilitacion" name="rehabilitacion"
+                <Select v-model="formData.AnalisisTratamiento.tipoAnalisis" id="rehabilitacion" name="rehabilitacion"
                     :options="[{ text: 'Estado clinico sin cambios', value: 'Estado clinico sin cambios' }, { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' }, { text: 'Cambios criticos', value: 'Cambios criticos' }]"
                     placeholder="Tipo de Analisis" tamaño="w-full"></Select>
-                <Input v-model="formData.HistoriaClinica.analisis" type="text" id="analisist" name="analisist"
+                <Input v-model="formData.AnalisisTratamiento.observacion" type="text" id="observacion" name="observacion"
                     placeholder="Observacion" tamaño="w-full" minlength="5" />
             </Section>
 
@@ -214,11 +214,11 @@ const cerrarModal = () => {
                     <Label forLabel="motivo">Resumen De Historia</Label>
                 </div>
                 <div class="w-full flex flex-col justify-center items-start text-blue-400">
-                    <span class="text-sm font-semibold">Enfermedad Actual : {{ formData.Enfermedad.valor }}</span>
-                    <span class="text-sm font-semibold">Diagnostico Principal : {{ formData.Diagnosticos[0]?.CIE_10
-                        }}</span>
-                    <span class="text-sm font-semibold">Medicamentos : {{ formData.Plan_manejo_medicamentos.length
-                        }}</span>
+                    <p class="text-sm font-semibold">Enfermedad Actual : <span class="text-gray-500">{{ formData.Enfermedad.valor }}</span></p>
+                    <p class="text-sm font-semibold">Diagnostico Principal : 
+                        <span class="text-gray-400"> {{ formData.Diagnosticos[0]?.CIE_10}}</span>
+                    </p>
+                    <p class="text-sm font-semibold">Medicamentos : <span class="text-gray-500">{{ formData.Plan_manejo_medicamentos.length}}</span></p>
                 </div>
             </Section>
         </FormularioWizard>

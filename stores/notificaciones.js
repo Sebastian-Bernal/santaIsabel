@@ -15,7 +15,8 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 canceltext: '',
                 position: '',
                 tiempo: 2000,
-                position: ''
+                position: '',
+                background: '#d33'
             }
 
         };
@@ -44,7 +45,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 text: this.options.texto,
                 showConfirmButton: false,
                 timer: this.options.tiempo,
-                background: '#d33',
+                background: this.options.background,
                 color: '#fff'
             });
         },

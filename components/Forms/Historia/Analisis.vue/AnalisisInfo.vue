@@ -11,7 +11,6 @@ const props = defineProps({
 function cerrar () {
     varView.showAnalisisInfo = false
 }
-console.log(props.historiaAnalisis)
 </script>
 
 <template>
@@ -20,30 +19,30 @@ console.log(props.historiaAnalisis)
             <h2 class="text-2xl font-semibold text-center mb-4">Análisis</h2>
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
-                    <h3>Descripcion</h3>
+                    <h3>Observacion</h3>
                     <p class="p-3 border border-gray-300 rounded-2xl bg-white ">
-                        El paciente ingresa a urgencias por accidente en via
+                        {{ props.historiaAnalisis.observacion}}
                     </p>
                 </div>
                 <div class="flex flex-col">
-                    <h3>Fecha</h3>
+                    <h3>Tipo tratamiento</h3>
                     <p class="p-3 border border-gray-200 rounded-2xl bg-white ">
-                        {{props.historiaAnalisis[0].fecha_historia}}
+                        {{props.historiaAnalisis.tratamiento}}
                     </p>
                 </div>
             </div>
             <div>
                 <h3>Analisis</h3>
                 <p class="p-3 border border-gray-200 rounded-2xl bg-white ">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit. Corporis eveniet praesentium minus ducimus cupiditate sit, officia, deserunt quam expedita, debitis at alias labore dolores. Blanditiis perspiciatis nam qui necessitatibus? Maiores!
+                    {{props.historiaAnalisis.analisis}}
                 </p>
             </div>
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
                     <h3>Estado</h3>
-                    <p class="p-3 border border-gray-200 rounded-2xl bg-red-100"
-                    :class="{'bg-red-100' : props.historiaAnalisis[0].tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.historiaAnalisis[0].tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-300': props.historiaAnalisis[0].tipoAnalisis === 'Estado clinico sin cambios'}">
-                        {{props.historiaAnalisis[0].tipoAnalisis}}
+                    <p class="p-3 border border-gray-200 rounded-2xl"
+                    :class="{'bg-red-100' : props.historiaAnalisis.tipoAnalisis === 'Cambios criticos', 'bg-orange-100': props.historiaAnalisis.tipoAnalisis === 'Recomendaciones Adicionales', 'bg-green-300': props.historiaAnalisis.tipoAnalisis === 'Estado clinico sin cambios'}">
+                        {{props.historiaAnalisis.tipoAnalisis}}
                     </p>
                 </div>
                 <div class="flex flex-col">

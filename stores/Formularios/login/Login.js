@@ -20,19 +20,7 @@ export const useUsuariosStore = defineStore('Usuario', {
     }),
 
     getters: {
-        getUsuario(state) {
-            if (typeof window === 'undefined') {
-                console.warn('No estás en el navegador.');
-                return 'Usuario';
-            }
 
-            const Usuario = sessionStorage.getItem('Usuario');
-            if (!Usuario) return 'Usuario';
-
-            state.Usuarios = Usuario;
-            return Usuario;
-
-        },
     },
 
     actions: {
@@ -40,6 +28,19 @@ export const useUsuariosStore = defineStore('Usuario', {
         createForm(storeId, estructura = estructuraUsuario) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
+        },
+
+        async getUsuario() {
+
+            if (typeof window === 'undefined') {
+                console.log('No estás en el navegador.');
+                return 'Usuario';
+            }
+
+            const Usuario = sessionStorage.getItem('Usuario');
+            if (!Usuario) return 'Usuario';
+
+            return Usuario;
         },
 
     }
