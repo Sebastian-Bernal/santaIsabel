@@ -116,7 +116,7 @@ const estiloColumnas = computed(() => {
                     </download-excel>
                 </client-only>
 
-                <nuxt-link @click="props.headerTabla.agregarRuta" class="flex gap-1 items-center">
+                <nuxt-link v-if="props.headerTabla.accionAgregar" @click="props.headerTabla.accionAgregar" class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </Button>
@@ -134,7 +134,7 @@ const estiloColumnas = computed(() => {
                     :class="headerTabla.color" :style="estiloColumnas">
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        {{ col.titulo }}
+                        {{ col.value }}
                         <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down"></i>
                     </h2>
                     <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
@@ -158,20 +158,24 @@ const estiloColumnas = computed(() => {
                     <div v-if="acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" :tipo="action.icon"
+                        <!-- Acciones por props -->
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" 
+                        :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
 
+                        <!-- Tablas ocultas responsive  -->
                         <button @click="activarCollapse(id)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
                             <i class="fa-solid fa-plus text-gray-600"></i>
                         </button>
-
+                        <!-- Acciones porp props Responsive -->
                         <button @click="mostrarAcciones(id)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
                             <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
-                                <BotonAccion v-for="action in acciones.icons" :key="action" :tipo="action" />
+                                <BotonAccion v-for="action in acciones.icons" :key="action" 
+                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon" />
                             </div>
                         </button>
                     </div>
@@ -284,7 +288,8 @@ const estiloColumnas = computed(() => {
 
 .acciones {
     position: relative;
-    left: -50px;
+    left: -10px;
+    top: 100%;
     display: flex;
     flex-direction: column;
     border-radius: 5px;

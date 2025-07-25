@@ -16,7 +16,7 @@ const props = defineProps({
         default: ''
     },
     tamaño: {
-        type: String,
+        type: [String, Object, Array],
         default: 'w-full'
     },
     modelValue: {

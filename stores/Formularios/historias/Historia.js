@@ -108,10 +108,11 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
         async ultimasHistorias() {
             const historias = await this.listHistorias
             return historias.sort(
-                (a, b) =>
-                    new Date(b.fecha_historia) -
-                    new Date(a.fecha_historia))
-                .slice(0, 3);
+                (a, b) => {
+                const fechaA = new Date(a.fecha_historia.split('/').reverse().join('-'));
+                const fechaB = new Date(b.fecha_historia.split('/').reverse().join('-'));
+                return fechaB - fechaA; // Orden descendente
+            }).slice(0, 3);
         },
 
         async listDatos(id, Tabla) {

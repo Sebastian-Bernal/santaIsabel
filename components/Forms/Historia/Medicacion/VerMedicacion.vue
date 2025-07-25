@@ -1,6 +1,7 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
-
+import Medicinas from '../Medicinas.vue';
+const varView = useVarView()
 const props = defineProps({
     medicinas: {
         type: [Array, Object],
@@ -8,9 +9,9 @@ const props = defineProps({
     }
 });
 
-function verMedicamento () {
-
-}
+function añadirMedicamento () {
+    varView.showMedicinas = true
+};
 
 </script>
 
@@ -20,12 +21,13 @@ function verMedicamento () {
             <p>No hay registros de Medicacion para este paciente</p>
         </div>
         <Tabla v-if="props.medicinas.length !== 0" :columnas="[
-            { titulo: 'medicamento', tamaño: 100, ordenar: true },
-            { titulo: 'presentacion', tamaño: 100, ordenar: true },
-            { titulo: 'concentracion', tamaño: 100 },
-            { titulo: 'cantidad', tamaño: 100 },
-            { titulo: 'dosis', tamaño: 100 },
-        ]" :headerTabla="{ titulo: 'Medicacion', color: 'bg-[var(--color-default)] text-white', agregarRuta: verMedicamento }"
+            { titulo: 'medicamento', value: 'Medicamento', tamaño: 100, ordenar: true },
+            { titulo: 'presentacion', value: 'Presentación', tamaño: 100, ordenar: true },
+            { titulo: 'concentracion', value: 'Concentracíón', tamaño: 100 },
+            { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
+            { titulo: 'dosis', value: 'Dosis', tamaño: 100 },
+        ]" :headerTabla="{ titulo: 'Medicacion', color: 'bg-[var(--color-default-600)] text-white', }"
             :datos="{ content: props.medicinas }" />
     </div>
+    <Medicinas v-if="varView.showMedicinas"/>
 </template>

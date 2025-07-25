@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
+import ModalFormXS from "~/components/Modales/ModalFormXS.vue";
 import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
 // Data
 import { validarYEnviarEliminarMedico } from "~/Core/Profesional/EliminarMedico.js";
@@ -114,9 +114,9 @@ async function eliminarMedico() {
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarMedico" :formData="formData"
+    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarMedico" :formData="formData"
         :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
-        <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%]  bg-gray-50 rounded-2xl mt-[-12px]">
             <!-- Header -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
@@ -140,5 +140,5 @@ async function eliminarMedico() {
                     :noCambiar="true" :verMedico="!modificarMedico" />
             </div>
         </div>
-    </ModalFormLG>
+    </ModalFormXS>
 </template>

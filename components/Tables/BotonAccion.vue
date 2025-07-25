@@ -17,6 +17,8 @@ const iconoClase = computed(() => {
             return 'fa-solid fa-pencil';
         case 'borrar':
             return 'fa-solid fa-trash';
+        case 'agregar':
+            return 'fa-solid fa-plus';
         default:
             return '';
     }
@@ -25,11 +27,13 @@ const iconoClase = computed(() => {
 const botonClase = computed(() => {
     switch (props.tipo) {
         case 'ver':
-            return 'bg-sky-600';
+            return 'bg-sky-700';
         case 'actualizar':
             return 'bg-[var(--color-warning)]';
         case 'borrar':
             return 'bg-red-600';
+        case 'agregar':
+            return 'bg-blue-500';
         default:
             return '';
     }

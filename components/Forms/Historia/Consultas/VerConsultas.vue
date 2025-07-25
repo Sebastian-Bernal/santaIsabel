@@ -25,11 +25,11 @@ function verConsulta (consulta) {
             <p>No hay registros de consultas para este paciente.</p>
         </div>
         <Tabla v-if="props.consultas.length !== 0" :columnas="[
-            { titulo: 'fecha_historia', tamaño: 100, ordenar: true },
-            { titulo: 'motivo', tamaño: 200 },
-            { titulo: 'name_paciente', tamaño: 250 },
-        ]" :headerTabla="{ titulo: 'Consultas', color: 'bg-[var(--color-default)] text-white', agregarRuta: verConsulta }"
-            :acciones="{ action: true, icons: [{ icon: 'ver', action: verConsulta }], botones: true }"
+            { titulo: 'fecha_historia', value: 'Fecha', tamaño: 100, ordenar: true },
+            { titulo: 'motivo', value: 'Motivo', tamaño: 250 },
+            { titulo: 'name_paciente', value: 'Paciente', tamaño: 250 },
+        ]" :headerTabla="{ titulo: 'Consultas', color: 'bg-[var(--color-default-600)] text-white' }"
+            :acciones="{ icons: [{ icon: 'ver', action: verConsulta }], botones: true }"
             :datos="{ content: props.consultas }" />
     </div>
     <ConsultaInfo v-if="varView.showConsultaInfo" :consulta="consultaAVer"/>

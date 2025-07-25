@@ -32,12 +32,12 @@ function agregar() {
             <p>No hay registros de Analisis para este paciente.</p>
         </div>
         <Tabla v-if="props.analisis.length !== 0" :columnas="[
-            { titulo: 'observacion', tamaño: 150, ordenar: true },
-            { titulo: 'analisis', tamaño: 350, ordenar: true },
-            { titulo: 'tipoAnalisis', tamaño: 200, ordenar: true },
-            { titulo: 'tratamiento', tamaño: 100, ordenar: true },
-        ]" :headerTabla="{ titulo: 'Analisis', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregar }"
-            :acciones="{ action: true, icons: [{ icon: 'ver', action: verAnalisis }], botones: true }"
+            { titulo: 'observacion', value: 'Observación', tamaño: 150 },
+            { titulo: 'analisis', value: 'Análisis', tamaño: 250 },
+            { titulo: 'tipoAnalisis', value: 'Prioridad', tamaño: 200, ordenar: true },
+            { titulo: 'tratamiento', value: 'Tratamiento', tamaño: 100},
+        ]" :headerTabla="{ titulo: 'Análisis', color: 'bg-[var(--color-default-600)] text-white' }"
+            :acciones="{ icons: [{ icon: 'ver', action: verAnalisis }], botones: true }"
             :datos="{ content: props.analisis }" />
         <AnalisisInfo v-if="varView.showAnalisisInfo" :historiaAnalisis="historiaAnalisis"/>
     </div>

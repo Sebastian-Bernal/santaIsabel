@@ -9,7 +9,7 @@ import { ref, computed, onMounted } from 'vue';
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const usuarioStore = useUsuariosStore();
 
-const usuario = ref([]);
+const usuario = ref('Usuario');
 
 function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -50,7 +50,7 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <h2 class="text-white text-xl font-bold">Thesalus</h2>
+            <h2 class="text-white text-xl font-extrabold">Thesalus</h2>
             <div class="menuResponsive" @click="cambiarEstado()">
                 <h2 class="text-white">T</h2>
             </div>
@@ -58,8 +58,10 @@ const removeStorage = () => {
             <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
-                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs"><i class="fa-solid fa-calendar text-blue-500"></i>{{
-                        fechaActualFormateada }}</a>
+                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs">
+                        <i class="fa-solid fa-calendar text-blue-500"></i>
+                        {{fechaActualFormateada }}
+                    </a>
                 </li>
                 <li>
                     <BreadCrumb />

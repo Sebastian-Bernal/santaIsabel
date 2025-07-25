@@ -59,16 +59,12 @@ watch(
         validarEdad(newValue, props.formData.Paciente.nacimiento);
     }
 );
-// Validar campo fecha de nacimiento
-watch(
-    () => props.formData.Paciente.nacimiento,
-    (newNacimiento) => {
-        const tipo = props.formData.Paciente.type_doc;
-        if (tipo) {
-            validarEdad(tipo, newNacimiento);
-        }
+
+watch(() => props.formData.Paciente.nacimiento,
+    () => {
+        autocompletarTipo();
     }
-);
+)
 
 function obtenerEdad(datoNacimiento) {
     const nacimiento = new Date(datoNacimiento);
@@ -86,10 +82,12 @@ function obtenerEdad(datoNacimiento) {
 function autocompletarTipo() {
     const edad = obtenerEdad(props.formData.Paciente.nacimiento)
 
-    if (edad > 18) {
+    if (edad >= 18) {
         props.formData.Paciente.type_doc = 'cedula'
-    } else if (edad < 18) {
+    } else if (edad <= 18) {
         props.formData.Paciente.type_doc = 'Tarjeta de identidad'
+    } else {
+        props.formData.Paciente.type_doc = ''
     }
 }
 
@@ -97,22 +95,21 @@ function autocompletarTipo() {
 function validarEdad(type_doc, nacimientoStr) {
     const edad = obtenerEdad(nacimientoStr)
 
-    if (type_doc === 'Tarjeta de identidad' && edad > 18) {
-        props.formData.Paciente.type_doc = 'cedula';
+    if (type_doc === 'Tarjeta de identidad' && edad >= 18) {
         options.position = "top-end";
         options.texto = "Paciente Mayor de Edad, verifique la fecha de nacimiento.";
         options.tiempo = 1500;
         mensaje();
-    } else if (type_doc === 'cedula' && edad < 18) {
-        props.formData.Paciente.type_doc = 'Tarjeta de identidad';
+        props.formData.Paciente.type_doc = 'cedula';
+    } else if (type_doc === 'cedula' && edad <= 18) {
         options.position = "top-end";
         options.texto = "Paciente Menor de Edad, verifique la fecha de nacimiento.";
         options.tiempo = 1500;
         mensaje();
+        props.formData.Paciente.type_doc = 'Tarjeta de identidad';
     }
     return edad
 }
-
 
 
 // Traer datos del localStorage
@@ -152,8 +149,7 @@ const opcionesEPS = computed(() => {
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.name" type="text" id="nombre"
             name="nombre" placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" minlength="5" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.nacimiento" type="date" id="nacimiento"
-            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500"
-            @blur="autocompletarTipo()" />
+            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
 
     <Section styles="md:flex-row flex-col">
@@ -231,7 +227,8 @@ const opcionesEPS = computed(() => {
         </div>
     </Section>
     <Section styles="md:flex items-center gap-3 grid grid-cols-2 mb-3">
-        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" id="eps" name="eps" :options="opcionesEPS" placeholder="EPS" tamaño="md:w-1/3 w-full"></Select>
+        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Eps" id="eps" name="eps"
+            :options="opcionesEPS" placeholder="EPS" tamaño="md:w-1/3 w-full"></Select>
         <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.Regimen" id="regimen" name="regimen"
             :options="[
                 { text: 'Contributivo', value: 'Contributivo' },

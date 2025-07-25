@@ -50,15 +50,15 @@ const modificarMedico = (medico) => {
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
-        { titulo: 'name', tamaño: 200},
-        { titulo: 'No_document', tamaño: 100},
-        { titulo: 'edad', tamaño: 50},
-        { titulo: 'profesion', tamaño: 100},
-        { titulo: 'telefono', tamaño: 100},
-        { titulo: 'municipio', tamaño: 150}
+        { titulo: 'name', value: 'Nombre', tamaño: 200},
+        { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100},
+        { titulo: 'profesion', value: 'Profesión', tamaño: 100},
+        { titulo: 'celular', value: 'Celular', tamaño: 100},
+        { titulo: 'zona', value: 'Zona', tamaño: 50},
+        { titulo: 'municipio', value: 'Municipio', tamaño: 150}
     ]"
-    :headerTabla="{titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarMedico}"
-    :acciones="{ action: true, icons: [{icon: 'ver', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
+    :headerTabla="{titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico}"
+    :acciones="{ icons: [{icon: 'ver', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
     </div>
     <IngresarProfesional v-if="varView.showNuevoProfesional" />
     <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />

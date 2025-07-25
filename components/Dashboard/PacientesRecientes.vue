@@ -15,7 +15,7 @@ const props = defineProps(['ultimosPacientes']);
             <div v-for="patient in props.ultimosPacientes" :key="patient.id" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                 <div class="flex items-center space-x-3">
                     <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                        <i class="fa-solid fa-user h-5 w-5 text-blue-600"></i>
+                        <i class="fa-solid fa-user text-blue-600"></i>
                     </div>
                     <div>
                         <h3 class="font-medium text-gray-900">{{ patient.name_paciente }}</h3>

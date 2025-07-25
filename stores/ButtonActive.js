@@ -9,10 +9,6 @@ export const useButtonsAside = defineStore('ButtonsAside', {
 
     getters: {
         getbuttons: async(state) => {
-            // const online = navigator.onLine;
-            // if(online){
-            //     state.buttons = await getButtonsAside();
-            // }
             state.buttons = buttons
         },
     },
@@ -34,7 +30,7 @@ export const useButtonsAside = defineStore('ButtonsAside', {
             if (botonActivo) {
                 this.activeButton(parseInt(botonActivo));
             } else {
-                this.activeButton(1);
+                this.activeButton(null);
             }
         }
     }

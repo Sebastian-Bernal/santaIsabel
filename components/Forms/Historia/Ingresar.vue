@@ -64,10 +64,6 @@ onMounted(async() => {
     traerDatos();
 });
 
-watch(PacientesStore.listPacientes, (newvalue) => {
-    PacientesList.value = newvalue
-})
-
 // Funcion para autocompletar el paciente
 const pacienteExistente = async() => {
     const paciente = Pacientes.value.find(
@@ -231,9 +227,9 @@ function enviarPrimerPaso(){
             </Section>
 
             <Section v-for="(item, index) in formData.HistoriaClinica.acompañante" :key="index" styles="flex-col md:flex-row items-center">
-                <Input v-model="formData.HistoriaClinica.acompañante.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
+                <Input v-model="item.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
-                <Select v-model="formData.HistoriaClinica.acompañante.parentesco" id="parentesco" name="parentesco"
+                <Select v-model="item.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
                     <i class="fa-solid fa-close text-red-400"

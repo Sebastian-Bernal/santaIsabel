@@ -3,12 +3,16 @@ import ModalXS from '~/components/Modales/ModalXS.vue';
 import RecuperarContraseña from '~/components/Forms/Login/RecuperarContraseña.vue';
 import CambiarContraseña from '~/components/Forms/Login/CambiarContraseña.vue';
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useVarView } from '~/stores/varview';
 
 definePageMeta({
     layout: 'authentication'
 });
+
+onMounted(() => {
+    sessionStorage.clear()
+})
 
 const Usuario = reactive({
     contraseña: '',

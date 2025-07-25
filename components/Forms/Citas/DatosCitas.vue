@@ -87,7 +87,7 @@ watch(
             options.texto = "La fecha de la cita no puede ser anterior a hoy.";
             options.tiempo = 1500;
             mensaje();
-
+            props.formData.Cita.fecha = ''
         }
     });
 
@@ -109,6 +109,7 @@ watch(() => props.formData.Cita.hora, (newHora) => {
         options.texto = "La hora debe estar entre las 6:00 AM y 10:00 PM.";
         options.tiempo = 1500;
         mensaje();
+        props.formData.Cita.hora = '';
     }
 });
 

@@ -1,6 +1,6 @@
 <script setup>
 // Componentes 
-import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
+import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import DatosAdministrativos from "~/components/Forms/Administrativos/DatosAdministrativo.vue"
 // Data
 // import { validarYEnviarEliminarAdministrativo } from '~/Core/Administrativo/EliminarAdministrativo';
@@ -120,9 +120,9 @@ async function eliminarAdministrativo() {
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarAdministrativo" :formData="formData"
+    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarAdministrativo" :formData="formData"
         :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
-        <div class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl mt-[-12px]">
             <!-- Header -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
@@ -135,7 +135,7 @@ async function eliminarAdministrativo() {
 
                 </div>
                 <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i class="fa-solid fa-trash hover:text-white cursor-pointer *:" @click="eliminarAdministrativo"></i>
+                    <!-- <i class="fa-solid fa-trash hover:text-white cursor-pointer *:" @click="eliminarAdministrativo"></i> -->
                     <i class="fa-solid fa-pencil hover:text-white cursor-pointer" @click="actualizarAdministrativo"></i>
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>
@@ -147,7 +147,7 @@ async function eliminarAdministrativo() {
                     :verAdministrativo="!modificarAdministrativo" />
             </div>
         </div>
-    </ModalFormLG>
+    </ModalFormXS>
 </template>
 
 <style scoped>

@@ -51,16 +51,26 @@ const verHistoria = (his) => {
     }
     varView.showVerHistoria = true
 };
+
+const comprobarAccion = (fila) => {
+    if(fila.estado === 'Nueva'){
+        return 'agregar'
+    } else {
+        return 'ver'
+    }
+};
+
 </script>
 
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
-            { titulo: 'cedula', tamaño: 100, ordenar: true },
-            { titulo: 'paciente', tamaño: 250, ordenar: true },
-            { titulo: 'estado', tamaño: 150 },
-        ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarHistoria }"
-            :acciones="{ action: true, icons: [{icon: 'ver', action: verHistoria}], botones: true }" :datos="{ content: historiasList }" />
+            { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
+            { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
+            { titulo: 'estado', value: 'Estado', tamaño: 150 },
+        ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria }"
+            :acciones="{ icons: [ {icon: comprobarAccion, action: verHistoria} ], botones: true, }" 
+            :datos="{ content: historiasList }" />
     </div>
     <Ingresar v-if="varView.showNuevaHistoria" />
     <Paso2 v-if="varView.showPaso2" />

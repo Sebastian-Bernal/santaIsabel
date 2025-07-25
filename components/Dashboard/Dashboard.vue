@@ -15,11 +15,12 @@ const Citas = ref([]);
 const ultimosPacientes = ref();
 
 onMounted(async () => {
-    varView.cargando = true
+    varView.cargando = true;
+    sessionStorage.removeItem('activeButton');
     // Cargar citas y pacientes desde el store
     Citas.value = await citasStore.listCitas;
-    ultimosPacientes.value = await historiaStore.ultimasHistorias()
-    varView.cargando = false
+    ultimosPacientes.value = await historiaStore.ultimasHistorias();
+    varView.cargando = false;
 });
 
 const stats = [

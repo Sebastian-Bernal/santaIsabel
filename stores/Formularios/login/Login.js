@@ -39,8 +39,8 @@ export const useUsuariosStore = defineStore('Usuario', {
 
             const Usuario = sessionStorage.getItem('Usuario');
             if (!Usuario) return 'Usuario';
-
-            return Usuario;
+            
+            return Usuario.split('@')[0];
         },
 
     }

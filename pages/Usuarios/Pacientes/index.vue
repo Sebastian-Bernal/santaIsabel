@@ -52,14 +52,14 @@ const verPaciente = (paciente) => {
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
-            { titulo: 'name', tamaño: 150, ordenar: true },
-            { titulo: 'No_document', tamaño: 100, ordenar: true },
-            { titulo: 'municipio', tamaño: 150 },
-            { titulo: 'genero', tamaño: 100 },
-            { titulo: 'celular', tamaño: 100 },
-            { titulo: 'Eps', tamaño: 150, ordenar: true }
-        ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarPaciente }"
-            :acciones="{ action: true, icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
+            { titulo: 'name', value: 'Nombre', tamaño: 150, ordenar: true },
+            { titulo: 'No_document', value: 'Documento', tamaño: 100, ordenar: true },
+            { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
+            { titulo: 'genero', value: 'Genero', tamaño: 100 },
+            { titulo: 'celular', value: 'Celular', tamaño: 100 },
+            { titulo: 'Eps', value: 'EPS', tamaño: 150, ordenar: true }
+        ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente }"
+            :acciones="{ icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
     </div>
     <IngresarPaciente v-if="varView.showNuevoPaciente" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />

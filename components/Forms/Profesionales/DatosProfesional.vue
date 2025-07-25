@@ -13,6 +13,9 @@ import { computed, watch, onMounted } from "vue";
 const varView = useVarView();
 const storeProfesiones = useDatosProfesionStore();
 const Profesiones = ref([]);
+const notificacionesStore = useNotificacionesStore();
+
+const { simple, mensaje, options } = notificacionesStore;
 
 const props = defineProps([
     'formData',
@@ -41,6 +44,32 @@ watch(
     },
     { deep: true }
 );
+
+watch(() => props.formData.Medico.nacimiento,
+    (newValue) => {
+        validarEdad(newValue)
+    }
+);
+
+// Funcion Validar Edad
+function validarEdad(newValue) {
+    const nacimiento = new Date(newValue);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    const día = hoy.getDate() - nacimiento.getDate();
+
+    if (mes < 0 || (mes === 0 && día < 0)) {
+        edad--;
+    }
+
+    if (edad < 18) {
+        options.position = "top-end";
+        options.texto = "Paciente Menor de Edad, verifique la fecha de nacimiento.";
+        options.tiempo = 1500;
+        mensaje();
+    }
+};
 
 // Traer datos del localStorage
 onMounted(async() => {

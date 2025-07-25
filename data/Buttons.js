@@ -7,6 +7,14 @@ export const buttons = ref([
         nombre: "Empresas",
         secciones: [
             {
+                titulo: 'Configuracion',
+                subSecciones: [
+                    {
+                        titulo: 'Crear',
+                    },
+                ]
+            },
+            {
                 titulo: 'Resoluciones',
                 subSecciones: [
                     {
@@ -35,21 +43,10 @@ export const buttons = ref([
                 ]
             },
             {
-                titulo: 'Negocios',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
+                titulo: 'Datos',
             },
             {
-                titulo: 'Usuarios',
+                titulo: 'Negocios',
                 subSecciones: [
                     {
                         titulo: 'Crear',
@@ -118,9 +115,7 @@ export const buttons = ref([
                     }
                 ]
             },
-            {
-                titulo: 'Datos',
-            }
+
         ],
         icon: "fa-building",
         tamaño: 'max-h-[37vh] pt-10',

@@ -22,12 +22,13 @@ function agregarNota () {
             <p>No hay registros de Notas para este paciente</p>
         </div>
         <Tabla v-if="props.notas.length !== 0" :columnas="[
-            { titulo: 'fecha_nota', tamaño: 100, ordenar: true },
-            { titulo: 'hora_nota', tamaño: 100, ordenar: true },
-            { titulo: 'nota', tamaño: 400 },
-            { titulo: 'tipoAnalisis', tamaño: 200 },
-        ]" :headerTabla="{ titulo: 'Notas', color: 'bg-[var(--color-default)] text-white', agregarRuta: agregarNota }"
-            :datos="{ content: props.notas }" />
+            { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
+            { titulo: 'hora_nota', value: 'Hora', tamaño: 100, ordenar: true },
+            { titulo: 'nota', value: 'Nota', tamaño: 400 },
+            { titulo: 'tipoAnalisis', value: 'Prioridad', tamaño: 200 },
+        ]" 
+        :headerTabla="{ titulo: 'Notas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: agregarNota }"
+        :datos="{ content: props.notas }" />
     </div>
     <IngresarNota v-if="varView.showNuevaNota"/>
 </template>

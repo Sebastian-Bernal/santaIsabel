@@ -41,14 +41,14 @@ const modificarAdministrativo = (admin) => {
 <template>
     <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
         <Tabla :key="refresh" :columnas="[
-        { titulo: 'name', tamaño: 200},
-        { titulo: 'No_document', tamaño: 100},
-        { titulo: 'Tipo', tamaño: 100},
-        { titulo: 'celular', tamaño: 100},
-        { titulo: 'telefono', tamaño: 150}
+        { titulo: 'name', value: 'Nombre', tamaño: 200},
+        { titulo: 'No_document', value: 'Documento', tamaño: 100},
+        { titulo: 'Tipo', value: 'Tipo', tamaño: 100},
+        { titulo: 'celular', value: 'Celular', tamaño: 100},
+        { titulo: 'telefono', value: 'Telefono', tamaño: 150}
     ]"
-    :headerTabla="{titulo: 'Gestion de Usuarios Administrativos', descripcion: 'Administra y consulta información de Usuarios Admin', color: 'bg-[var(--color-default)] text-white', agregarRuta: nuevoAdministrativo}"
-    :acciones="{ action: true, icons: [{icon: 'actualizar', action: modificarAdministrativo}], botones: true }" :datos="{content: administrativos}"/>
+    :headerTabla="{titulo: 'Gestion de Usuarios Administrativos', descripcion: 'Administra y consulta información de Usuarios Admin', color: 'bg-[var(--color-default)] text-white', accionAgregar: nuevoAdministrativo}"
+    :acciones="{ icons: [{icon: 'actualizar', action: modificarAdministrativo}], botones: true }" :datos="{content: administrativos}"/>
     </div>
     <IngresarAdministrativo v-if="varView.showNuevoAdministrativo"></IngresarAdministrativo>
     <ModificarAdministrativo v-if="varView.showModificarAdministrativo" :Administrativo="datosAdministrativo"></ModificarAdministrativo>

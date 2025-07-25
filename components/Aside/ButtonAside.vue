@@ -87,6 +87,9 @@ button {
     background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     transition: all 0.3s ease;
+    /* scrollbar-color: var(--color-default-600) var(--color-gray-300); */
+    /* scrollbar-width: thin; */
+    overflow-x: hidden;
 }
 
 .down.up {
@@ -111,8 +114,7 @@ button {
 } */
 
 .down::-webkit-scrollbar {
-    width: 3px;
-    color: var(--color-gray-300);
+    width: 2px;
 }
 
 @media screen and (max-width: 768px) {

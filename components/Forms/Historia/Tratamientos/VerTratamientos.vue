@@ -16,10 +16,10 @@ const props = defineProps({
             <p>No hay registros de Tratamientos para este paciente</p>
         </div>
         <Tabla v-if="props.tratamientos.length !== 0" :columnas="[
-            { titulo: 'descripcion', tamaño: 100, ordenar: true },
-            { titulo: 'mes', tamaño: 100, ordenar: true },
-            { titulo: 'cantidad', tamaño: 200 },
-        ]" :headerTabla="{ titulo: 'Tratamientos', color: 'bg-[var(--color-default)] text-white', agregarRuta: '' }"
+            { titulo: 'descripcion', value: 'Descripción', tamaño: 200, ordenar: true },
+            { titulo: 'mes', value: 'Mes', tamaño: 200, ordenar: true },
+            { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
+        ]" :headerTabla="{ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', }"
             :datos="{ content: props.tratamientos }" />
     </div>
 </template>

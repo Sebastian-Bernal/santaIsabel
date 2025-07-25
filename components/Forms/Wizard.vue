@@ -34,9 +34,6 @@ const cerrar = () => {
                     :class="seccion.color"></div>
             </nuxtLink>
             <i @click="cerrar" class="fa-solid fa-close text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
-            <!-- <div class="cursor-pointer" @click="cerrar">
-                <i class="fa-solid fa-close text-white position absolute top-7 right-3"></i>
-            </div> -->
         </div>
     </div>
 </template>
