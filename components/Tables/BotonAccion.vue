@@ -1,5 +1,5 @@
 <template>
-    <button class="border-none text-white text-center rounded-full w-[24px] h-[24px] text-xs hover:opacity-75" :class="botonClase">
+    <button class="border-none text-white text-center rounded-full text-xs hover:opacity-75" :class="botonClase">
         <i :class="iconoClase"></i>
     </button>
 </template>
@@ -27,13 +27,19 @@ const iconoClase = computed(() => {
 const botonClase = computed(() => {
     switch (props.tipo) {
         case 'ver':
-            return 'bg-sky-700';
+            return 'bg-sky-700 w-[24px] h-[24px]';
         case 'actualizar':
-            return 'bg-[var(--color-warning)]';
+            return 'bg-[var(--color-warning)] w-[24px] h-[24px]';
         case 'borrar':
-            return 'bg-red-600';
+            return 'bg-red-600 w-[24px] h-[24px]';
         case 'agregar':
-            return 'bg-blue-500';
+            return 'bg-blue-500 w-[24px] h-[24px]';
+        case 'Rojo':
+            return 'bg-red-500 w-[10px] h-[10px]';        
+        case 'Naranja':
+            return 'bg-orange-500 w-[10px] h-[10px]';
+        case 'Verde':
+            return 'bg-green-500 w-[10px] h-[10px]';
         default:
             return '';
     }

@@ -32,12 +32,16 @@ const props = defineProps({
     },
     minlength: {
         type: String
+    },
+    mayuscula: {
+        type: Boolean,
+        default: true
     }
 });
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
-    <input :value="modelValue" autocomplete="off" :type="type" :id="id" :name="name" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)" :class="tamaño" :disabled="disabled"
+    <input :value="modelValue" autocomplete="off" :type="type" :id="id" :name="name" :maxlength="maxlength" :minlength="minlength" :placeholder="placeholder" @input="$emit('update:modelValue', mayuscula ? $event.target.value.toUpperCase() : $event.target.value)" :class="tamaño" :disabled="disabled"
         class="mt-1 block px-3 py-2 border text-black border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
 </template>
 

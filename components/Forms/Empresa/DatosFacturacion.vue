@@ -67,7 +67,7 @@ const enviar = async (formData) => {
         const respuesta = await simple();
         if (respuesta.isConfirmed || respuesta.dismiss) {
             limpiar()
-            window.location.href = '/Empresas/Resoluciones'
+            location.reload()
             storeFacturacion.listResoluciones
         }
     } else {

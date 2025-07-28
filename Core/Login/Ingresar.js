@@ -23,17 +23,20 @@ export const validarYEnviarLogin = async (datos) => {
         await notificacionesStore.simple()
         return;
     }
-
+    // dato guardado Temporal por indexedDB
+    sessionStorage.setItem('Nombre', correo.name)
     return await enviarFormulario(datos);
 };
 
-// Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
+// Funcion para validar conexion a internet y enviar fomulario a API
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const online = navigator.onLine;
     if (online) {
         try {
+            console.log(datos)
             sessionStorage.setItem('Usuario', datos.correo)
+            // sessionStorage.setItem('Nombre', datos.name)
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
@@ -41,7 +44,6 @@ const enviarFormulario = async (datos) => {
     } else {
         notificacionesStore.options.icono = 'warning'
         notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
-        notificacionesStore.options.texto = 'Recuperar contraseña cuando halla internet'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
         return true

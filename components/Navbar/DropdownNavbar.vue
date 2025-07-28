@@ -1,5 +1,5 @@
 <template>
-    <a href="#" class="flex items-center text-sm font-medium">
+    <a href="#" class="flex items-center text-sm font-medium hidden md:block">
         <!-- <img :src="icon" class="w-5 h-5 me-2.5"> -->
         <i class="fa-solid text-xl" :class="icon"></i>
     </a>
@@ -55,9 +55,12 @@ const titulo = defineProps(['nombre', 'icon','submenu']);
 @media screen and (max-width: 768px) {
 
     .dropdown {
+        background-color: var(--color-default-700);
+        color: #000;
         display: block;
         position: static;
         margin: 0;
+        width: 100%;
     }
 
 }

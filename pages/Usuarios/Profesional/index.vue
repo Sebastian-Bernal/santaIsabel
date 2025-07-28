@@ -48,7 +48,7 @@ const modificarMedico = (medico) => {
 };
 </script>
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
+    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg md:py-8 py-4 md:px-12 px-4">
         <Tabla :key="refresh" :columnas="[
         { titulo: 'name', value: 'Nombre', tamaño: 200},
         { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100},

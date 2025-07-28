@@ -41,7 +41,7 @@ const {
     collapse,
     activarCollapse,
     screenWidth,
-} = useColumnasResponsivas(ref(props.columnas));
+} = useColumnasResponsivas(ref(props.columnas), props.datos.espacioMargen);
 
 
 // Acomodar datos de menor a mayor segun columna
@@ -148,9 +148,6 @@ const estiloColumnas = computed(() => {
 
                     <div v-for="(col, key) in columnasVisibles" :key="key" class="relative"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="w-[10px] h-[10px] rounded-full absolute left-[-10px] top-2"
-                            :class="{ 'bg-red-500': fila[col.titulo] === 'Cambios criticos', 'bg-orange-500': fila[col.titulo] === 'Recomendaciones Adicionales', 'bg-green-500': fila[col.titulo] === 'Estado clinico sin cambios' }">
-                        </div>
                         <p class="text-black truncate rounded-2xl">{{ fila[col.titulo] }}</p>
                     </div>
 
@@ -166,7 +163,7 @@ const estiloColumnas = computed(() => {
                         <!-- Tablas ocultas responsive  -->
                         <button @click="activarCollapse(id)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
-                            <i class="fa-solid fa-plus text-gray-600"></i>
+                            <i class="fa-solid fa-angle-down text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
                         <button @click="mostrarAcciones(id)" v-if="collapse"
@@ -175,7 +172,8 @@ const estiloColumnas = computed(() => {
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
                                 <BotonAccion v-for="action in acciones.icons" :key="action" 
-                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon" />
+                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                @click="action.action(fila)" />
                             </div>
                         </button>
                     </div>
@@ -297,7 +295,7 @@ const estiloColumnas = computed(() => {
 }
 
 .acciones button {
-    width: 60px;
+    width: 50px;
     height: 25px;
     border-radius: 0;
 }

@@ -106,7 +106,7 @@ async function eliminarMedico() {
         const res = validarYEnviarEliminarMedico(formData)
         if (res) {
             limpiar()
-            window.location.href = '/Usuarios/Profesional'
+            location.reload()
             medicoStore.listMedicos
         }
     }
@@ -135,7 +135,7 @@ async function eliminarMedico() {
                 </div>
             </div>
 
-            <div class="py-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+            <div class="pt-5 px-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
                 <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"
                     :noCambiar="true" :verMedico="!modificarMedico" />
             </div>

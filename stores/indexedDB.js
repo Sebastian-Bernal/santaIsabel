@@ -114,12 +114,18 @@ export const useIndexedDBStore = defineStore("indexeddb", {
         },
 
         async guardardatos(aguardar) {
+            if (!this.bd) {
+                await this.initialize()
+            }
             let transaccion = this.bd.transaction(this.almacen, "readwrite");
             let STabre = transaccion.objectStore(this.almacen);
             STabre.add(aguardar);
         },
 
         async guardardatosID(aguardar) {
+            if (!this.bd) {
+                await this.initialize()
+            }
             const tx = this.bd.transaction(this.almacen, 'readwrite');
             const store = tx.objectStore(this.almacen);
 

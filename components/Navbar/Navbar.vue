@@ -51,8 +51,9 @@ const removeStorage = () => {
         <div class="navbar__content">
 
             <h2 class="text-white text-xl font-extrabold">Thesalus</h2>
+            <p class="text-xs text-white mr-10 mt-4 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
-                <h2 class="text-white">T</h2>
+                <h2 class="text-white"><i class="fa-solid fa-bars"></i></h2>
             </div>
 
             <ul class="navbar__content__list" @click="removeStorage()"
@@ -60,7 +61,7 @@ const removeStorage = () => {
                 <li>
                     <a href="/Usuarios/Citas" class="flex gap-1 text-xs">
                         <i class="fa-solid fa-calendar text-blue-500"></i>
-                        {{fechaActualFormateada }}
+                        <p class="text-black md:text-white">{{fechaActualFormateada }}</p>
                     </a>
                 </li>
                 <li>
@@ -71,7 +72,7 @@ const removeStorage = () => {
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
-                    <p class="text-xs ml-2">{{ usuario }}</p>
+                    <p class="text-xs ml-2 md:block hidden">{{ usuario }}</p>
                 </li>
             </ul>
 

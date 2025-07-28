@@ -24,9 +24,10 @@ export function useColumnasResponsivas(columnas, espacioMargen = 200) {
         columnasVisibles.value = [];
         columnasSobrantes.value = [];
 
+        const margen = screenWidth.value < 540 ? 150 : espacioMargen;
         columnas.value.forEach(col => {
             acumulado += col.tamaño;
-            if (acumulado <= screenWidth.value - espacioMargen) {
+            if (acumulado <= screenWidth.value - margen) {
                 columnasVisibles.value.push(col);
             } else {
                 columnasSobrantes.value.push(col);

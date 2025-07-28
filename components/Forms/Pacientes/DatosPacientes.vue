@@ -16,7 +16,7 @@ import { computed, watch, onMounted } from "vue";
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
 const epsStore = useDatosEPSStore();
-const EPS = ref([])
+const EPS = ref([]);
 
 const { simple, mensaje, options } = notificacionesStore;
 
@@ -52,6 +52,13 @@ watch(
     { deep: true }
 );
 
+// Campo tipo de documento reactivo
+const tipoDocumento = ref(props.formData.Paciente.type_doc);
+watch(tipoDocumento, (nuevoValor) => {
+  props.formData.Paciente.type_doc = nuevoValor;
+});
+
+
 // Validar campo tipo de documento
 watch(
     () => props.formData.Paciente.type_doc,
@@ -83,11 +90,11 @@ function autocompletarTipo() {
     const edad = obtenerEdad(props.formData.Paciente.nacimiento)
 
     if (edad >= 18) {
-        props.formData.Paciente.type_doc = 'cedula'
+        tipoDocumento.value = 'cedula'
     } else if (edad <= 18) {
-        props.formData.Paciente.type_doc = 'Tarjeta de identidad'
+        tipoDocumento.value = 'Tarjeta de identidad'
     } else {
-        props.formData.Paciente.type_doc = ''
+        tipoDocumento.value = ''
     }
 }
 
@@ -100,13 +107,13 @@ function validarEdad(type_doc, nacimientoStr) {
         options.texto = "Paciente Mayor de Edad, verifique la fecha de nacimiento.";
         options.tiempo = 1500;
         mensaje();
-        props.formData.Paciente.type_doc = 'cedula';
+        tipoDocumento.value = 'cedula';
     } else if (type_doc === 'cedula' && edad <= 18) {
         options.position = "top-end";
         options.texto = "Paciente Menor de Edad, verifique la fecha de nacimiento.";
         options.tiempo = 1500;
         mensaje();
-        props.formData.Paciente.type_doc = 'Tarjeta de identidad';
+        tipoDocumento.value = 'Tarjeta de identidad';
     }
     return edad
 }
@@ -153,7 +160,7 @@ const opcionesEPS = computed(() => {
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Select :disabled="props.verPaciente" v-model="props.formData.Paciente.type_doc" id="tipoDocumento"
+        <Select :disabled="props.verPaciente" v-model="tipoDocumento" id="tipoDocumento"
             name="tipoDocumento" :options="[
                 { text: 'Cedula de ciudadania', value: 'cedula' },
                 { text: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
@@ -217,7 +224,7 @@ const opcionesEPS = computed(() => {
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.celular" type="number" id="celular"
             name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000" min="1000000000" />
         <Input :disabled="props.verPaciente" v-model="props.formData.Paciente.telefono" type="number" id="telefono"
-            name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000" min="100000" />
+            name="telefono" placeholder="Telefono Fijo (opcional)" tamaño="md:w-1/2 w-full" max="100000000" min="100000" />
     </Section>
 
     <Section styles="mt-3">

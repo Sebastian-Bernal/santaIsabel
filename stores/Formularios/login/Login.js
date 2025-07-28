@@ -37,10 +37,10 @@ export const useUsuariosStore = defineStore('Usuario', {
                 return 'Usuario';
             }
 
-            const Usuario = sessionStorage.getItem('Usuario');
+            const Usuario = sessionStorage.getItem('Nombre');
             if (!Usuario) return 'Usuario';
             
-            return Usuario.split('@')[0];
+            return Usuario.split(' ')[0] + ' ' + Usuario.split(' ')[1];
         },
 
     }

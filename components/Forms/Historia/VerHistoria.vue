@@ -130,7 +130,7 @@ function showBotones () {
         <div class="pb-5 z-1 flex flex-col items-center h-[100%] bg-gray-50 rounded-2xl">
             <!-- Header -->
             <div
-                class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
+                class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
                     <h2 class="text-white font-bold text-2xl">Historias Clinicas</h2>
                     <div class="flex gap-8 text-gray-200 font-semibold">
@@ -154,12 +154,12 @@ function showBotones () {
             <!-- Body -->
             <div class="w-full h-full flex justify-center items-center" v-if="varView.showMenuHistorias">
                 <div
-                    class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] max-h-[90%] overflow-y-auto p-7">
+                    class="scrollForm w-full flex flex-col items-center gap-[15px] max-h-[90%] overflow-y-auto md:p-7 p-3">
 
-                    <div class="medical-card px-6 w-full">
+                    <div class="medical-card md:px-6 px-2 w-full">
                         <h2 class="text-lg font-semibold text-gray-900">Registros</h2>
                         <p class="text-gray-700 mb-4">Consulta por los diferentes Registros del paciente</p>
-                        <div class="space-y-3 grid grid-cols-2 w-full gap-3">
+                        <div class="space-y-3 grid md:grid-cols-2 grid-cols-1 w-full md:gap-3">
                             <ButtonDashboard v-for="action in actions" :color="action.color" :title="action.title"
                                 :description="action.description" :icon="action.icon" @click="Botones(action.title)" />
                         </div>

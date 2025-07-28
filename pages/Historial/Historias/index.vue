@@ -63,7 +63,7 @@ const comprobarAccion = (fila) => {
 </script>
 
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg py-8 px-12">
+    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg md:py-8 py-4 md:px-12 px-4">
         <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },

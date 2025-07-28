@@ -221,7 +221,7 @@ async function seleccionarMedico(medico) {
         </div>
     </Section>
 
-    <Section styles="relative" @blur="pacienteExistente">
+    <Section styles="relative md:flex-row flex-col" @blur="pacienteExistente">
         <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList" minlength="5"
             @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
             placeholder="Nombre del profesional" tamaño="w-full" />

@@ -6,7 +6,7 @@ const Evoluciones = [];
 </script>
 
 <template>
-    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg py-8 px-12">
+    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg md:py-8 py-3 md:px-12 px-4">
         <div v-if="Evoluciones.length === 0" class="flex justify-center items-center p-5">
             <p>No hay registros de Evoluciones para este paciente</p>
         </div>
@@ -16,6 +16,6 @@ const Evoluciones = [];
             { titulo: 'Diagnosticos', tamaño: 200 },
         ]" :headerTabla="{ titulo: 'Evoluciones', color: 'bg-[var(--color-default)] text-white' }"
             :acciones="{ icons: [{ icon: 'ver', action: verHistoria }], botones: true }"
-            :datos="{ content: Evoluciones }" />
+            :datos="{ content: Evoluciones, espacioMargen: 450 }" />
     </div>
 </template>

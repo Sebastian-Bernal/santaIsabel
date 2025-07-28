@@ -31,7 +31,7 @@ function nuevaNota () {
 
 <template>
     <FondoBlanco>
-        <div class="py-8 px-12 flex w-full items-center justify-between border border-gray-200">
+        <div class="md:py-8 py-4 md:px-12 px-4 flex w-full items-center justify-between border border-gray-200">
             <div>
                 <h2 class="text-2xl font-bold">Buscar Paciente</h2>
                 <p class="text-gray-600 mt-1">Registre la evolucion del paciente segun Historia clinica</p>

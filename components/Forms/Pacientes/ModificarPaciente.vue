@@ -114,7 +114,7 @@ async function eliminarPaciente() {
         const res = validarYEnviarEliminarPaciente(formData)
         if(res){
             limpiar()
-            window.location.href = '/Usuarios/Pacientes'
+            location.reload()
             storePaciente.listPacientes;
         }
     }
@@ -143,7 +143,7 @@ async function eliminarPaciente() {
                 </div>
             </div>
 
-            <div class="py-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+            <div class="px-5 pt-4 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
                 <DatosPacientes :formData="formData" :agregarItem="agregarItem" :eliminarItem="eliminarItem"
                     :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
                     :verPaciente="!modificarPaciente" />

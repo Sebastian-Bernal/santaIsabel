@@ -41,7 +41,7 @@ function cerrar () {
             <div class="grid grid-cols-2 py-5 gap-3">
                 <div>
                     <h3>Signos Vitales</h3>
-                    <p class="bg-blue-200 p-3 border border-gray-200 rounded-2xl grid grid-cols-3 items-center justift-between gap-1">
+                    <p class="bg-blue-200 p-3 border border-gray-200 rounded-2xl flex items-center justify-around gap-1">
                         <p v-for="(item, valor) in props.consulta.signosVitales" class="text-blue-500">{{ valor.toUpperCase() }} : <span class="text-gray-600">{{ item }}</span></p>
                     </p>
                 </div>

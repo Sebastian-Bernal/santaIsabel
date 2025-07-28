@@ -24,10 +24,20 @@ async function verAnalisis(data) {
 function agregar() {
 
 };
+
+const comprobarPrioridad = (fila) => {
+    if(fila.tipoAnalisis === 'Cambios criticos'){
+        return 'Rojo'
+    } else if(fila.tipoAnalisis === 'Recomendaciones Adicionales') {
+        return 'Naranja'
+    } else if(fila.tipoAnalisis === 'Estado clinico sin cambios') {
+        return 'Verde'
+    }
+};
 </script>
 
 <template>
-    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg py-8 px-12">
+    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg md:py-8 py-3 md:px-12 px-4">
         <div v-if="props.analisis.length < 1" class="flex justify-center items-center p-5">
             <p>No hay registros de Analisis para este paciente.</p>
         </div>
@@ -37,8 +47,8 @@ function agregar() {
             { titulo: 'tipoAnalisis', value: 'Prioridad', tamaño: 200, ordenar: true },
             { titulo: 'tratamiento', value: 'Tratamiento', tamaño: 100},
         ]" :headerTabla="{ titulo: 'Análisis', color: 'bg-[var(--color-default-600)] text-white' }"
-            :acciones="{ icons: [{ icon: 'ver', action: verAnalisis }], botones: true }"
-            :datos="{ content: props.analisis }" />
+            :acciones="{ icons: [{ icon: comprobarPrioridad, action: () => {} }, { icon: 'ver', action: verAnalisis }], botones: true }"
+            :datos="{ content: props.analisis, espacioMargen: 450 }" />
         <AnalisisInfo v-if="varView.showAnalisisInfo" :historiaAnalisis="historiaAnalisis"/>
     </div>
 </template>

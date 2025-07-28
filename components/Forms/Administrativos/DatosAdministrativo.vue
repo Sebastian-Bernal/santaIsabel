@@ -88,9 +88,9 @@ onMounted(() => {
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.correo" type="correo" id="correo"
-            name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5"/>
+            name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5" :mayuscula="false"/>
         <Input v-if="!props.noCambiar" :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.contraseña" type="password" id="contraseña"
-            name="contraseña" placeholder="Genera una contraseña" tamaño="w-full" minlength="5" />
+            name="contraseña" placeholder="Genera una contraseña" tamaño="w-full" minlength="5" :mayuscula="false"/>
     </Section>
 
 </template>

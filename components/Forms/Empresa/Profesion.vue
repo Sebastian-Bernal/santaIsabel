@@ -67,7 +67,7 @@ const enviar = async (formData) => {
         const respuesta = await simple();
         if (respuesta.isConfirmed || respuesta.dismiss) {
             limpiar()
-            window.location.href = '/Empresas/Datos'
+            location.reload();
             storeDatosEmpresa.listResoluciones
         }
     } else {
@@ -96,12 +96,13 @@ const cerrarModal = () => {
     <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
         <div class="flex items-center justify-between">
             <h3 class="text-xl font-semibold">Profesion Registradas</h3>
-            <div class="w-full flex justify-end">
+            <!-- <div class="w-full flex justify-end">
                 <button @click="varView.formComplete ? enviar(formData) : validarform()"
                     class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
                     <i class="fa-solid fa-user-doctor"></i>Registrar
                 </button>
-            </div>
+            </div> -->
+            <i class="fa-solid fa-user-doctor"></i>
         </div>
         <div>
             <div class="flex justify-between items-center">
@@ -109,15 +110,21 @@ const cerrarModal = () => {
                     <i class="fa-solid fa-user-doctor text-purple-500"></i>
                     <Label forLabel="Profesion" size="text-sm">Agregar Nueva Profesion</Label>
                 </div>
-                <div class="flex gap-2 items-center">
+                <div class="flex gap-2 items-center" v-if="formData.Profesion.length < 1">
                     <a @click="agregarItem('Profesion', { nombre: '', codigo: '' }, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
+                <div class="w-full flex justify-end" v-if="formData.Profesion.length > 0">
+                    <Button @click="varView.formComplete ? enviar(formData) : validarform()" color="bg-blue-600"><i
+                            class="fa-solid fa-download"></i></Button>
+                </div>
             </div>
             <div class="flex items-center gap-3" v-for="(Profesion, i) in formData.Profesion" :key="i">
-                <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion" minlength="5"></Input>
-                <Input v-model="Profesion.codigo" placeholder="Codigo" name="ProfesionCodigo" id="ProfesionCodigo" minlength="2"></Input>
+                <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion"
+                    minlength="5"></Input>
+                <Input v-model="Profesion.codigo" placeholder="Codigo" name="ProfesionCodigo" id="ProfesionCodigo"
+                    minlength="2"></Input>
                 <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Profesion', i)"></i>
             </div>
         </div>
@@ -128,8 +135,8 @@ const cerrarModal = () => {
                 <p>Acciones</p>
             </div>
             <div class="grid grid-cols-3 gap-3 text-center text-sm font-semibold" v-for="item in props.Profesiones">
-                <p>{{item.nombre}}</p>
-                <p>{{item.codigo}}</p>
+                <p>{{ item.nombre }}</p>
+                <p>{{ item.codigo }}</p>
                 <p class="flex items-center justify-center gap-3">
                     <i class="fa-solid fa-pencil"></i>
                     <i class="fa-solid fa-trash text-red-500"></i>

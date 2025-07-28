@@ -80,7 +80,7 @@ onMounted(async() => {
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
     return ubicacion.filter(
-        (data) => data.departamento === props.formData.Medico.departamento
+        (data) => data.departamento.toUpperCase() === props.formData.Medico.departamento.toUpperCase()
     )[0]?.ciudades;
 
 });
@@ -151,7 +151,7 @@ const opcionesProfesion = computed(() => {
     <Section>
         <Input :disabled="props.verMedico" v-model="formData.Medico.celular" type="number" id="celular" name="celular" placeholder="Celular"
             tamaño="w-1/2" max="1000000000000" min="1000000000"/>
-        <Input :disabled="props.verMedico" v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono"
+        <Input :disabled="props.verMedico" v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono Fijo (opcional)"
             tamaño="w-1/2" max="100000000" min="100000"/>
     </Section>
 </template>

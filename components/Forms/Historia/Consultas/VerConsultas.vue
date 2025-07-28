@@ -20,7 +20,7 @@ function verConsulta (consulta) {
 </script>
 
 <template>
-    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg py-8 px-12">
+    <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg md:py-8 py-3 md:px-12 px-4">
         <div v-if="props.consultas.length < 1" class="flex justify-center items-center p-5">
             <p>No hay registros de consultas para este paciente.</p>
         </div>
@@ -30,7 +30,7 @@ function verConsulta (consulta) {
             { titulo: 'name_paciente', value: 'Paciente', tamaño: 250 },
         ]" :headerTabla="{ titulo: 'Consultas', color: 'bg-[var(--color-default-600)] text-white' }"
             :acciones="{ icons: [{ icon: 'ver', action: verConsulta }], botones: true }"
-            :datos="{ content: props.consultas }" />
+            :datos="{ content: props.consultas, espacioMargen: 450 }" />
     </div>
     <ConsultaInfo v-if="varView.showConsultaInfo" :consulta="consultaAVer"/>
 </template>

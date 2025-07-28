@@ -22,7 +22,7 @@ const breadCrumbs = computed(() => {
 </script>
 
 <template>
-    <a href="/">
+    <a href="/" class="hidden md:block">
         <i class="fa-solid fa-house"></i>
     </a>
     <div class="dropdown">
@@ -98,9 +98,11 @@ li:hover .dropdown {
 
 @media screen and (max-width: 768px) {
     .dropdown {
+        background-color: var(--color-default-700);
         display: block;
         position: static;
         margin: 0;
+        max-width: 100%;
     }
 
 }

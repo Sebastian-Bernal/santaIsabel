@@ -35,6 +35,7 @@ export const useVarView = defineStore('varView', {
         showConsultaInfo : false,
         showVerEvoluciones : false,
         showVerNotas : false,
+        showNotasInfo : false,
         showVerTratamientos : false,
         showVerMedicacion : false,
         showMenuHistorias: true,       

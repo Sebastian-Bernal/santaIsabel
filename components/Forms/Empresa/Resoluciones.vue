@@ -24,8 +24,8 @@ watch(listResoluciones, (newValue) => {
             <div>
                 <h3 class="text-xl font-semibold">Resoluciones registradas</h3>
             </div>
-            <div class="border border-gray-300 rounded-2xl px-7 py-5 flex flex-col gap-3">
-                <div class="grid grid-cols-8 gap-3 text-center text-gray-500">
+            <div class="border border-gray-300 rounded-2xl px-7 py-5 flex md:flex-col flex-row overflow-x-auto gap-3">
+                <div class="grid md:grid-cols-8 grid-cols-1 gap-3 text-center text-gray-500">
                     <p>Tipo de documento</p>
                     <p>Prefijo</p>
                     <p>Numero</p>
@@ -35,7 +35,7 @@ watch(listResoluciones, (newValue) => {
                     <p>Hasta</p>
                     <p>Seleccionar</p>
                 </div>
-                <div class="grid grid-cols-8 gap-3 text-center text-sm font-semibold" v-for="resolucion in Resoluciones">
+                <div class="grid md:grid-cols-8 grid-cols-1 gap-3 text-center text-sm font-semibold" v-for="resolucion in Resoluciones">
                     <p>{{ resolucion.tipoDocumento }}</p>
                     <p>{{ resolucion.prefijo }}</p>
                     <p>{{ resolucion.no_resolucion }}</p>

@@ -6,7 +6,7 @@ import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
 
 <template>
     <FondoBlanco>
-        <div class="py-8 px-12">
+        <div class="md:py-8 py-4 md:px-12 px-4">
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-700">Configuracion de la Empresa</h2>

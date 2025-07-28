@@ -5,7 +5,7 @@ import FondoBlanco from '~/components/Fondos/FondoBlanco.vue';
 
 <template>
     <FondoBlanco>
-        <div class="px-12 py-8">
+        <div class="md:py-8 py-4 md:px-12 px-4">
             <Dashboard></Dashboard>
         </div>
     </FondoBlanco>

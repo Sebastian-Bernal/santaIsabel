@@ -141,7 +141,7 @@ async function eliminarAdministrativo() {
                 </div>
             </div>
 
-            <div class="py-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+            <div class="py-5 px-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
                 <DatosAdministrativos :formData="formData" :agregarItem="agregarItem" :eliminarItem="eliminarItem"
                     :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
                     :verAdministrativo="!modificarAdministrativo" />
