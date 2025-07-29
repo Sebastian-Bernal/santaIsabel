@@ -24,7 +24,9 @@ const props = defineProps({
     },
 
 });
+
 const emit = defineEmits(['update:modelValue']);
+
 </script>
 <template>
     <select :value="modelValue" :name="name" :id="id" :class="tamaño" @input="$emit('update:modelValue', $event.target.value)"

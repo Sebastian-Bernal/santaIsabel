@@ -4,14 +4,15 @@ import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
 import InputIcon from '../Inputs/InputIcon.vue';
 import Button from '../Buttons/Button.vue'
+import DatosExcel from '../Forms/Excel/DatosExcel.vue';
 
 import { usePaginacion } from '../../composables/Tabla/usePaginacion.js'
 import { useColumnasResponsivas } from '../../composables/Tabla/useTablasResponsive';
 import { useOrdenamiento } from '../../composables/Tabla/useDatosOrdenadosTabla';
 
-// 
+// Variables
 const btnAcciones = ref(null)
-
+const varView = useVarView()
 // funciones
 const props = defineProps({
     columnas: {
@@ -107,16 +108,24 @@ const estiloColumnas = computed(() => {
                 <InputIcon class="w-3/4" placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
 
                 <client-only>
-                    <download-excel class="flex gap-1 items-center" :data="props.datos.content"
-                        :name="props.headerTabla.titulo" type="xls">
-                        <Button color="bg-green-500">
-                            <i class="fa-solid fa-file-excel"></i>
-                        </Button>
-                        <h4>Exportar</h4>
-                    </download-excel>
+                    <div class="flex relative dropdown">
+                        <download-excel class="flex gap-1 items-center" :data="props.datos.content"
+                            :name="props.headerTabla.titulo" type="xls">
+                            <Button color="bg-green-500">
+                                <i class="fa-solid fa-file-excel"></i>
+                            </Button>
+                            <h4>Exportar</h4>
+                        </download-excel>
+                        <div @click="varView.showDatosExcel = true"
+                            class="configExcel absolute top-[100%] w-[100px] bg-[var(--color-default-700)] text-white p-2 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
+                            <i class="fa-solid fa-gear"></i>
+                            <p class="text-xs">Configurar</p>
+                        </div>
+                    </div>
                 </client-only>
 
-                <nuxt-link v-if="props.headerTabla.accionAgregar" @click="props.headerTabla.accionAgregar" class="flex gap-1 items-center">
+                <nuxt-link v-if="props.headerTabla.accionAgregar" @click="props.headerTabla.accionAgregar"
+                    class="flex gap-1 items-center">
                     <Button color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </Button>
@@ -156,8 +165,8 @@ const estiloColumnas = computed(() => {
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action" 
-                        :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action"
+                            :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
 
                         <!-- Tablas ocultas responsive  -->
@@ -171,9 +180,9 @@ const estiloColumnas = computed(() => {
                             <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
-                                <BotonAccion v-for="action in acciones.icons" :key="action" 
-                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                @click="action.action(fila)" />
+                                <BotonAccion v-for="action in acciones.icons" :key="action"
+                                    :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                    @click="action.action(fila)" />
                             </div>
                         </button>
                     </div>
@@ -240,11 +249,20 @@ const estiloColumnas = computed(() => {
             </div>
         </div>
     </div>
+    <DatosExcel v-if="varView.showDatosExcel" :datos="props.datos.content" :tabla="props.headerTabla.titulo" />
 </template>
 
 
 
 <style scoped>
+.configExcel {
+    display: none;
+}
+
+.dropdown:hover .configExcel {
+    display: flex;
+}
+
 .containerTable::-webkit-scrollbar {
     display: none;
 }
@@ -306,7 +324,7 @@ const estiloColumnas = computed(() => {
 
 /* Paginador css */
 .btnsPagina button {
-    background: linear-gradient(to left, var(--color-default), var(--color-default-oscuro));
+    background: linear-gradient(to left, var(--color-default), var(--color-default-700));
 }
 
 .horizontal {

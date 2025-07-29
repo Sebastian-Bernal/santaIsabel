@@ -33,7 +33,7 @@ const estructuraPaciente = {
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
     state: () => ({
-        Paciente: JSON.parse(JSON.stringify(estructuraPaciente)), // estructura base compartida
+        Paciente: estructuraPaciente, // estructura base compartida
         Pacientes: []
     }),
 
