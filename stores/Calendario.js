@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { nombresMeses } from "~/data/Fechas";
 
 // Esta funcion obtiene la fecha actual
 function obtenerFechaActual() {
@@ -13,16 +14,43 @@ function obtenerFechaActual() {
         año
     };
 };
+// Devuelve array con calendario desde año actual hasta mas 25 años
+function obtenerCalendario(desde = 2025, hasta = 2050) {
+
+  const calendario = [];
+
+  for (let año = desde; año <= hasta; año++) {
+    const meses = nombresMeses.map((nombre, i) => {
+      const fechaInicio = new Date(año, i, 1);
+      const inicio = fechaInicio.getDay();
+
+      // Verificar si es febrero y año bisiesto
+      let dias = new Date(año, i + 1, 0).getDate();
+
+      return { nombre, dias, inicio };
+    });
+
+    calendario.push({ año, meses });
+  }
+
+  return calendario;
+}
+
 
 // Store para manejar el calendario, inicializa con la fecha actual
 export const useCalendarioCitas = defineStore('CalendarioCitas', {
     state: () => {
         const { fechaFormateada, dia, mes, año } = obtenerFechaActual();
+        const desde = new Date().getFullYear();
+        const hasta = desde + 25
+        const mesesAño = obtenerCalendario(desde, hasta);
         return {
+            calendario: mesesAño,
             fecha: fechaFormateada,
             dias: dia,
-            meses: mes,
-            años: año
+            meses: parseInt(mes),
+            años: año,
+            añoDesde: desde,
         };
     },
 

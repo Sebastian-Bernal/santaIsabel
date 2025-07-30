@@ -114,13 +114,13 @@ const validarform = () => {
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <InputContenido v-model="formData.Facturacion.fechaResolucion" type="text" placeholder="Fecha de Resolucion: 'AAAA-MM-DD'" name="fechaResolucion">
-                <input type="date" v-model="formData.Facturacion.fechaResolucion" class="w-[20px]">
+                <input type="date" v-model="formData.Facturacion.fechaResolucion" class="w-[20px] cursor-pointer">
             </InputContenido>
             <InputContenido v-model="formData.Facturacion.fechaInicial" type="text" placeholder="Fecha Inicial: 'AAAA-MM-DD'" name="fechaInicial">
-                <input type="date" v-model="formData.Facturacion.fechaInicial" class="w-[20px]">
+                <input type="date" v-model="formData.Facturacion.fechaInicial" class="w-[20px] cursor-pointer">
             </InputContenido>
             <InputContenido v-model="formData.Facturacion.fechaHasta" type="text" placeholder="Fecha Hasta: 'AAAA-MM-DD'" name="fechaDesde">
-                <input type="date" v-model="formData.Facturacion.fechaHasta" class="w-[20px]">
+                <input type="date" v-model="formData.Facturacion.fechaHasta" class="w-[20px] cursor-pointer">
             </InputContenido>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -132,7 +132,7 @@ const validarform = () => {
             <Input v-model="formData.Facturacion.descripcion" placeholder="Descripcion" name="descripcion"></Input>
         </div>
         <div class="w-full flex justify-end">
-            <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
+            <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-blue-600">
                 <i class="fa-solid fa-download"></i>Guardar
             </button>
         </div>

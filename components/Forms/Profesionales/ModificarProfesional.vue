@@ -129,9 +129,9 @@ async function eliminarMedico() {
 
                 </div>
                 <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i class="fa-solid fa-trash hover:text-white" @click="eliminarMedico"></i>
-                    <i class="fa-solid fa-pencil hover:text-white" @click="actualizarMedico"></i>
-                    <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
+                    <i class="fa-solid fa-trash hover:text-white cursor-pointer" @click="eliminarMedico"></i>
+                    <i class="fa-solid fa-pencil hover:text-white cursor-pointer" @click="actualizarMedico"></i>
+                    <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>
             </div>
 

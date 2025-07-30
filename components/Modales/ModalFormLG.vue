@@ -30,13 +30,13 @@ const props = defineProps({
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
                 <ButtonForm v-if="props.botones.cancelar" color="bg-gray-500 " @click="props.cerrarModal"
-                    class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                    class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.botones ? props.botones.cancelar : 'Cancelar' }}
                 </ButtonForm>
 
                 <ButtonForm v-if="props.botones.enviar" color="bg-blue-500"
                     @click="props.formComplete ? props.enviarFormulario(props.formData) : props.validarform()"
-                    class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                    class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.botones ? props.botones.enviar : 'Registrar' }}
                 </ButtonForm>
             </div>

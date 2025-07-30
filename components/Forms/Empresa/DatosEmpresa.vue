@@ -120,21 +120,21 @@ const logoFile = (obj, key, event) => {
                 :tamaño="{ 'incompleto': camposVacios && formData.Empresa.nombre === '' }"></Input>
             <InputContenido v-model="formData.Empresa.logo" placeholder="Logo" type="text" name="logo"
                 :tamaño="{ 'incompleto': camposVacios && formData.Empresa.logo === '' }">
-                <label for="logoFile"><i class="fa-solid fa-image text-blue-500"></i></label>
+                <label for="logoFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>
                 <input type="file" accept="image/png, image/jpeg"
                     @change="event => logoFile(formData.Empresa, 'logo', event)" name="logoFile" id="logoFile"
                     class="hidden">
             </InputContenido>
             <InputContenido v-model="formData.Empresa.logoLogin" placeholder="Logo Login" type="text" name="logo"
                 :tamaño="{ 'incompleto': camposVacios && formData.Empresa.logo === '' }">
-                <label for="logoLoginFile"><i class="fa-solid fa-image text-blue-500"></i></label>
+                <label for="logoLoginFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>
                 <input type="file" accept="image/png, image/jpeg"
                     @change="event => logoFile(formData.Empresa, 'logoLogin', event)" name="logoLoginFile"
                     id="logoLoginFile" class="hidden">
             </InputContenido>
             <InputContenido v-model="formData.Empresa.JPG" placeholder="JPG firmas facturas" type="text" name="firmas"
                 :tamaño="{ 'incompleto': camposVacios && formData.Empresa.JPG === '' }">
-                <label for="JPGfirmas"><i class="fa-solid fa-image text-blue-500"></i></label>
+                <label for="JPGfirmas"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>
                 <input type="file" accept="image/png, image/jpeg"
                     @change="event => logoFile(formData.Empresa, 'JPG', event)" name="JPGfirmas" id="JPGfirmas"
                     class="hidden">

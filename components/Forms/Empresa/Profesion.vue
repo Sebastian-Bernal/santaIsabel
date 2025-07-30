@@ -112,12 +112,12 @@ const cerrarModal = () => {
                 </div>
                 <div class="flex gap-2 items-center" v-if="formData.Profesion.length < 1">
                     <a @click="agregarItem('Profesion', { nombre: '', codigo: '' }, 'nombre')">
-                        <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
+                        <Button color="bg-purple-500"><i class="fa-solid fa-plus cursor-pointer"></i></Button>
                     </a>
                 </div>
                 <div class="w-full flex justify-end" v-if="formData.Profesion.length > 0">
                     <Button @click="varView.formComplete ? enviar(formData) : validarform()" color="bg-blue-600"><i
-                            class="fa-solid fa-download"></i></Button>
+                            class="fa-solid fa-download cursor-pointer"></i></Button>
                 </div>
             </div>
             <div class="flex items-center gap-3" v-for="(Profesion, i) in formData.Profesion" :key="i">

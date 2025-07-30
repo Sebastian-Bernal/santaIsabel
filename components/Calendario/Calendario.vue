@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '../../stores/Calendario.js'
-import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';0
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js'; 0
 
-import { diasSemana, mesesAño } from '../../data/Fechas.js'
+import { diasSemana } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
 const citasStore = useCitasStore();
@@ -12,10 +12,12 @@ const Citas = ref([]);
 
 // Importar states y funciones del store
 const {
+    calendario,
     fecha,
     dias,
     meses,
-    años
+    años,
+    añoDesde
 } = storeToRefs(calendarioCitasStore);
 
 onMounted(async () => {
@@ -23,12 +25,13 @@ onMounted(async () => {
     Citas.value = await citasStore.listCitas;
 });
 
-const mesActual = ref(parseInt(meses.value) - 1)
-const nombreMes = computed(() => mesesAño[mesActual.value].nombre + ' ' + años.value)
+const mesActual = ref(parseInt(meses.value) - 1);
+const nombreMes = computed(() => calendario.value[años.value - añoDesde.value].meses[mesActual.value].nombre + ' ' + años.value)
 
 // Propiedad para acomodar Dia en el calendario
 const diasDelMes = computed(() => {
-    const mes = mesesAño[mesActual.value]; // { dias: 30, inicio: 6, etc. }
+    const añoIndex = años.value - añoDesde.value;
+    const mes = calendario.value[añoIndex].meses[mesActual.value]; // { dias: 30, inicio: 6, etc. }
     const año = años.value;
     const mesNumero = String(mesActual.value + 1).padStart(2, '0');
 
@@ -59,11 +62,29 @@ const diasConCitas = computed(() => {
 
 // Navegar entre meses
 const anteriorMes = () => {
-    mesActual.value = (mesActual.value - 1 + 12) % 12
+    if(mesActual.value === 0 && años.value === añoDesde.value) {
+        alert('Fecha minima')
+        return
+    }
+    if (mesActual.value === 0 && años.value > añoDesde.value) {
+        mesActual.value = 11;
+        meses.value = 12
+        años.value--; // Resta el año si venimos de enero
+    } else {
+        meses.value--
+        mesActual.value--;
+    }
 };
 
 const siguienteMes = () => {
-    mesActual.value = (mesActual.value + 1) % 12
+    if (mesActual.value === 11) {
+        mesActual.value = 0;
+        meses.value = 1
+        años.value++; // Suma el año si avanzamos desde diciembre
+    } else {
+        mesActual.value++;
+        meses.value ++
+    }
 };
 </script>
 
@@ -72,8 +93,8 @@ const siguienteMes = () => {
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">{{ nombreMes }}</h2>
             <div class="flex items-center gap-3">
-                <i class="fa-solid fa-angle-left text-blue-500" @click="anteriorMes"></i>
-                <i class="fa-solid fa-angle-right text-blue-500" @click="siguienteMes"></i>
+                <i class="fa-solid fa-angle-left text-blue-500 cursor-pointer" @click="anteriorMes"></i>
+                <i class="fa-solid fa-angle-right text-blue-500 cursor-pointer" @click="siguienteMes"></i>
             </div>
         </div>
         <div class="grid grid-cols-7 gap-3 text-center">

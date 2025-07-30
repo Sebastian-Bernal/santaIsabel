@@ -110,7 +110,7 @@ const validarform = () => {
             <Input v-model="formData.Software[props.tabla].testID" :placeholder="props.datos.inputTestID" name="set"></Input>
         </div>
         <div class="w-full flex justify-end">
-            <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
+            <button @click="varView.formComplete ? enviar(formData) : validarform()" class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3 cursor-pointer hover:bg-blue-600">
                 <i class="fa-solid fa-download"></i>Guardar
             </button>
         </div>

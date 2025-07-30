@@ -1,4 +1,5 @@
 import { createFormStore } from '../../createFormStore';
+import { usePacientesStore } from '../paciente/Paciente';
 import { useIndexedDBStore } from '~/stores/indexedDB';
 // Creacion del store para historia clinica
 
@@ -69,9 +70,8 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
         async datosHistoria() {
             // Traer pacientes
-            const store = useIndexedDBStore()
-            store.almacen = 'Paciente'
-            const pacientes = await store.leerdatos()
+            const pacienteStore = usePacientesStore()
+            const pacientes = await pacienteStore.listPacientes
 
             const datos = [];
             const historiasPacientes = []

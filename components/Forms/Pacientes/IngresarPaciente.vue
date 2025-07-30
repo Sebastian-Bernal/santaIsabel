@@ -73,7 +73,7 @@ function cerrarModal() {
         <Formulario class="mt-3" :datos="{
             titulo: 'Nuevo paciente',
         }">
-            <DatosPacientes :formData="formData" :agregarItem="agregarItem"
+            <DatosPacientes v-model:formData="nuevoPacienteStore.formData" :agregarItem="agregarItem"
                 :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos" />
 
         </Formulario>

@@ -1,6 +1,7 @@
 <script setup>
 import DropdownNavbar from './DropdownNavbar.vue'
 import BreadCrumb from './Breadcrumb.vue';
+import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
@@ -14,23 +15,11 @@ const usuario = ref('Usuario');
 function obtenerFechaFormateada() {
     const fecha = new Date();
 
-    const diasSemana = [
-        'domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'
-    ];
-    const meses = [
-        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-    ];
-
     const diaSemana = diasSemana[fecha.getDay()];
     const diaMes = fecha.getDate();
-    const mesNombre = meses[fecha.getMonth()];
+    const mesNombre = nombresMeses[fecha.getMonth()];
 
-    // Capitalizar la primera letra
-    const capitalizar = (palabra) =>
-        palabra.charAt(0).toUpperCase() + palabra.slice(1);
-
-    return `${capitalizar(diaSemana)}, ${diaMes} ${capitalizar(mesNombre)}`;
+    return `${diaSemana}, ${diaMes} ${mesNombre}`;
 }
 
 onMounted(async() => {

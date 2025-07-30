@@ -15,6 +15,7 @@ const historiasStore = useHistoriasStore();
 
 const historiasList = ref([]);
 const historia = ref([]);
+const paciente = ref();
 const refresh = ref(1);
 
 async function llamadatos(){
@@ -36,6 +37,7 @@ onMounted(async() => {
 
 // funcion para controlar la visibilidad del formulario de nueva historia clinica
 const agregarHistoria = () => {
+    paciente.value = ''
     varView.showNuevaHistoria = true
 };
 
@@ -46,6 +48,7 @@ const actulizarHistoria = () => {
 const verHistoria = (his) => {
     historia.value = his;
     if(his.estado === 'Nueva'){
+        paciente.value = his.paciente
         varView.showNuevaHistoria = true
         return
     }
@@ -72,7 +75,7 @@ const comprobarAccion = (fila) => {
             :acciones="{ icons: [ {icon: comprobarAccion, action: verHistoria} ], botones: true, }" 
             :datos="{ content: historiasList }" />
     </div>
-    <Ingresar v-if="varView.showNuevaHistoria" />
+    <Ingresar v-if="varView.showNuevaHistoria" :paciente="paciente" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
     <Paso4 v-if="varView.showPaso4" />

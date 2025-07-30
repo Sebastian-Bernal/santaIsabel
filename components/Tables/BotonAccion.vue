@@ -27,13 +27,13 @@ const iconoClase = computed(() => {
 const botonClase = computed(() => {
     switch (props.tipo) {
         case 'ver':
-            return 'bg-sky-700 w-[24px] h-[24px]';
+            return 'bg-sky-700 w-[24px] h-[24px] cursor-pointer';
         case 'actualizar':
-            return 'bg-[var(--color-warning)] w-[24px] h-[24px]';
+            return 'bg-[var(--color-warning)] w-[24px] h-[24px] cursor-pointer';
         case 'borrar':
-            return 'bg-red-600 w-[24px] h-[24px]';
+            return 'bg-red-600 w-[24px] h-[24px] cursor-pointer';
         case 'agregar':
-            return 'bg-blue-500 w-[24px] h-[24px]';
+            return 'bg-blue-500 w-[24px] h-[24px] cursor-pointer';
         case 'Rojo':
             return 'bg-red-500 w-[10px] h-[10px]';        
         case 'Naranja':

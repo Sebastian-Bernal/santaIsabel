@@ -24,6 +24,7 @@ const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
 const { Pacientes } = storeToRefs(PacientesStore)
 
+const props = defineProps(['paciente']);
 // Importar states y funciones del store
 const {
     formData,
@@ -42,7 +43,6 @@ const {
 } = notificacionesStore;
 
 // Delcaracionde variables y funciones
-const { $swal } = useNuxtApp();
 const fechaModificacion = ref('');
 const mostrarLista = ref(false);
 const pacientesFiltrados = ref([]);
@@ -61,6 +61,13 @@ watch(formData, (newValue) => {
 onMounted(async() => {
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
+
+    if(props.paciente !== ''){
+        const PaCienteProp = PacientesList.value.filter((paciente) => {
+            return paciente.name === props.paciente
+        });
+        seleccionarPaciente(PaCienteProp[0])
+    }
     traerDatos();
 });
 

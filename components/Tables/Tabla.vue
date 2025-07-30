@@ -108,7 +108,7 @@ const estiloColumnas = computed(() => {
                 <InputIcon class="w-3/4" placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
 
                 <client-only>
-                    <div class="flex relative dropdown">
+                    <div class="flex relative dropdown cursor-pointer">
                         <download-excel class="flex gap-1 items-center" :data="props.datos.content"
                             :name="props.headerTabla.titulo" type="xls">
                             <Button color="bg-green-500">
@@ -117,7 +117,7 @@ const estiloColumnas = computed(() => {
                             <h4>Exportar</h4>
                         </download-excel>
                         <div @click="varView.showDatosExcel = true"
-                            class="configExcel absolute top-[100%] w-[100px] bg-[var(--color-default-700)] text-white p-2 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
+                            class="configExcel flex absolute top-[100%] bg-[var(--color-default-700)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
                             <i class="fa-solid fa-gear"></i>
                             <p class="text-xs">Configurar</p>
                         </div>
@@ -125,7 +125,7 @@ const estiloColumnas = computed(() => {
                 </client-only>
 
                 <nuxt-link v-if="props.headerTabla.accionAgregar" @click="props.headerTabla.accionAgregar"
-                    class="flex gap-1 items-center">
+                    class="flex gap-1 items-center cursor-pointer">
                     <Button color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </Button>
@@ -144,7 +144,7 @@ const estiloColumnas = computed(() => {
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         {{ col.value }}
-                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down"></i>
+                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down cursor-pointer"></i>
                     </h2>
                     <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
                 </div>
@@ -239,7 +239,7 @@ const estiloColumnas = computed(() => {
 
             <div class="flex gap-2 items-center">
                 <p class="text-sm text-gray-500">Número de registros</p>
-                <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1"
+                <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
                     @change="cambiarItemsPorPagina($event.target.value)">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>
@@ -256,11 +256,16 @@ const estiloColumnas = computed(() => {
 
 <style scoped>
 .configExcel {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(0) translateY(-10%);
+    transition: all 0.3s ease;
 }
 
 .dropdown:hover .configExcel {
-    display: flex;
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0) translateY(0);
 }
 
 .containerTable::-webkit-scrollbar {

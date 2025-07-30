@@ -2,7 +2,7 @@
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { computed, onMounted, ref } from 'vue';
-import { mesesAño } from '../../data/Fechas.js'
+import { nombresMeses } from '../../data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
 const citasStore = useCitasStore();
@@ -13,8 +13,10 @@ const {
     fechaActual,
     fecha,
     dias,
-    meses
+    meses,
 } = storeToRefs(calendarioCitasStore);
+
+const mesActual = ref(parseInt(meses.value) - 1)
 
 onMounted(async () => {
     // Cargar citas desde el store
@@ -28,7 +30,7 @@ const citasFiltradas = computed(() => {
 
 // Nombre del mes
 const mes = computed(() => {
-    return mesesAño[parseInt(meses.value) - 1].nombre
+    return nombresMeses[meses.value - 1]
 });
 
 // Fecha de la cita Hoy
