@@ -9,6 +9,14 @@ import { storeToRefs } from 'pinia';
 const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
 const Citas = ref([]);
+const notificacionesStore = useNotificacionesStore();
+
+const {
+    simple,
+    mensaje,
+    alertRespuesta,
+    options
+} = notificacionesStore;
 
 // Importar states y funciones del store
 const {
@@ -63,7 +71,10 @@ const diasConCitas = computed(() => {
 // Navegar entre meses
 const anteriorMes = () => {
     if(mesActual.value === 0 && años.value === añoDesde.value) {
-        alert('Fecha minima')
+        options.position = 'top-end';
+        options.texto = "Fecha mínima permitida";
+        options.tiempo = 1500
+        mensaje()
         return
     }
     if (mesActual.value === 0 && años.value > añoDesde.value) {

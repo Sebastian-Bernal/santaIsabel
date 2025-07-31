@@ -14,7 +14,7 @@ function obtenerFechaActual() {
         año
     };
 };
-// Devuelve array con calendario desde año actual hasta mas 25 años
+// Devuelve array con calendario desde 2025, hasta el año actual mas 25 años
 function obtenerCalendario(desde = 2025, hasta = 2050) {
 
   const calendario = [];
@@ -43,7 +43,7 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
         const { fechaFormateada, dia, mes, año } = obtenerFechaActual();
         const desde = new Date().getFullYear();
         const hasta = desde + 25
-        const mesesAño = obtenerCalendario(desde, hasta);
+        const mesesAño = obtenerCalendario(2025, hasta);
         return {
             calendario: mesesAño,
             fecha: fechaFormateada,
@@ -55,7 +55,7 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
     },
 
     getters: {
-        fechaActual: (state) => {
+        fechaActual: () => {
             const fechaActual = new Date() // Retorna la fecha actual como objeto Date
             // Formatea la fecha actual como 'dd/mm/yyyy'
             const dia = String(fechaActual.getDate()).padStart(2, '0');

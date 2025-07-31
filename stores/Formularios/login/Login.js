@@ -16,7 +16,8 @@ const estructuraUsuario = {
 export const useUsuariosStore = defineStore('Usuario', {
     state: () => ({
         Usuario: JSON.parse(JSON.stringify(estructuraUsuario)), // estructura base compartida
-        Usuarios: []
+        Usuarios: [],
+        Permisos: [],
     }),
 
     getters: {
@@ -31,7 +32,6 @@ export const useUsuariosStore = defineStore('Usuario', {
         },
 
         async getUsuario() {
-
             if (typeof window === 'undefined') {
                 console.log('No estás en el navegador.');
                 return 'Usuario';

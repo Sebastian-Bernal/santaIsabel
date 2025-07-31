@@ -14,6 +14,7 @@ const estructuraAdministrativo = {
         correo: '',
         contraseña: '',
         estado: 'activo',
+        permisos: 'Todos'
     },
 }
 

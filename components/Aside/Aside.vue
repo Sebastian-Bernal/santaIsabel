@@ -4,6 +4,12 @@ import { useShowNavbar } from '../../stores/navbarResponsive.js';
 import { useButtonsAside } from '../../stores/ButtonActive';
 
 const storeAside = useButtonsAside();
+const buttons = ref([]);
+
+onMounted(() => {
+    const permisosStore = sessionStorage.getItem("Permisos");
+    buttons.value = storeAside.getbuttons(JSON.parse(permisosStore));
+});
 
 // Funcion para Responsive, si aside esta activo se oculta navbar
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
@@ -19,7 +25,7 @@ const cambiarEstadoFalse = () => {
         <div class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
 
             <div class="left" @click="cambiarEstadoFalse()">
-                <ButtonAside v-for="button in storeAside.buttons" :data="button" />
+                <ButtonAside v-for="button in buttons" :data="button" />
             </div>
 
         </div>

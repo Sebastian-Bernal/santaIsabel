@@ -154,4 +154,11 @@ const opcionesProfesion = computed(() => {
         <Input :disabled="props.verMedico" v-model="formData.Medico.telefono" type="number" id="telefono" name="telefono" placeholder="Telefono Fijo (opcional)"
             tamaño="w-1/2" max="100000000" min="100000"/>
     </Section>
+
+    <Section>
+        <Input :disabled="props.verMedico" v-model="formData.Medico.correo" type="email" id="correo" name="correo" placeholder="Correo"
+            :mayuscula="false"/>
+        <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.contraseña" type="password" id="contraseña" name="contraseña" placeholder="Contraseña"
+            minlength="5"/>
+    </Section>
 </template>

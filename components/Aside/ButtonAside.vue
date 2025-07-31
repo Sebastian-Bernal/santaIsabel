@@ -4,7 +4,6 @@ import { useSeccionFooter } from '../../stores/NavigationFooter';
 import { onMounted } from 'vue';
 
 const titulo = defineProps(['data']);
-
 // Stores ButtonAside y Footer
 const storeAside = useButtonsAside();
 const footer = useSeccionFooter();

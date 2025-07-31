@@ -1,8 +1,10 @@
 <script setup>
 import Input from '~/components/Inputs/Input.vue';
+import Select from '~/components/Selects/Select.vue';
 import Button from '~/components/Buttons/Button.vue';
 import Label from '~/components/Labels/Label.vue'
 // Data
+import { secciones } from '~/data/Buttons.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
 import { useNotificacionesStore } from "../../stores/notificaciones.js";
 import { useVarView } from "../../stores/varview.js";
@@ -14,6 +16,7 @@ const DatosEmpresaStore = storeDatosEmpresa.createForm("Profesion");
 const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
 const camposVacios = ref(false);
+const showOptions = ref(false);
 
 // Importar states y funciones del store
 const {
@@ -44,7 +47,6 @@ watch(
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
         varView.formComplete = camposValidos && !hayCamposInvalidos;
-        console.log(camposValidos)
     },
     { deep: true }
 );
@@ -53,6 +55,35 @@ watch(
 onMounted(() => {
     traerDatos();
 });
+
+function mostrarOptions() {
+    showOptions.value = !showOptions.value
+};
+
+function añadirDato(dato) {
+    const index = formData.Profesion.at(-1).permisos.indexOf(dato);
+    if (index !== -1) {
+        // Elimina el dato si ya existe
+        formData.Profesion.at(-1).permisos.splice(index, 1);
+        return
+    }
+    // Agrega el dato al final del array
+    formData.Profesion.at(-1).permisos.push(dato);
+};
+
+function seleccionarTodos() {
+    // Verifica si todos los datos ya están seleccionados
+    const todosSeleccionados = secciones.value.length === formData.Profesion.at(-1).permisos.length &&
+        secciones.value.every(valor => formData.Profesion.at(-1).permisos.includes(valor));
+
+    if (todosSeleccionados) {
+        // Si ya están todos seleccionados, deselecciona todo
+        formData.Profesion.at(-1).permisos = [];
+    } else {
+        // Si no, selecciona todos
+        formData.Profesion.at(-1).permisos = [...secciones.value];
+    }
+};
 
 // Enviar formulario -------------------
 const enviar = async (formData) => {
@@ -96,12 +127,6 @@ const cerrarModal = () => {
     <div class="flex flex-col bg-white p-4 rounded-2xl gap-4">
         <div class="flex items-center justify-between">
             <h3 class="text-xl font-semibold">Profesion Registradas</h3>
-            <!-- <div class="w-full flex justify-end">
-                <button @click="varView.formComplete ? enviar(formData) : validarform()"
-                    class="bg-blue-500 text-white text-sm p-3 rounded-2xl flex items-center gap-3">
-                    <i class="fa-solid fa-user-doctor"></i>Registrar
-                </button>
-            </div> -->
             <i class="fa-solid fa-user-doctor"></i>
         </div>
         <div>
@@ -111,7 +136,7 @@ const cerrarModal = () => {
                     <Label forLabel="Profesion" size="text-sm">Agregar Nueva Profesion</Label>
                 </div>
                 <div class="flex gap-2 items-center" v-if="formData.Profesion.length < 1">
-                    <a @click="agregarItem('Profesion', { nombre: '', codigo: '' }, 'nombre')">
+                    <a @click="agregarItem('Profesion', { nombre: '', codigo: '', permisos: [] }, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus cursor-pointer"></i></Button>
                     </a>
                 </div>
@@ -120,12 +145,28 @@ const cerrarModal = () => {
                             class="fa-solid fa-download cursor-pointer"></i></Button>
                 </div>
             </div>
-            <div class="flex items-center gap-3" v-for="(Profesion, i) in formData.Profesion" :key="i">
-                <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion"
-                    minlength="5"></Input>
-                <Input v-model="Profesion.codigo" placeholder="Codigo" name="ProfesionCodigo" id="ProfesionCodigo"
-                    minlength="2"></Input>
-                <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Profesion', i)"></i>
+            <div v-for="(Profesion, i) in formData.Profesion" :key="i">
+                <div class="flex items-center gap-3" >
+                    <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion"
+                        minlength="5"></Input>
+                    <Input v-model="Profesion.codigo" placeholder="Codigo" name="ProfesionCodigo" id="ProfesionCodigo"
+                        minlength="2"></Input>
+                    <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Profesion', i)"></i>
+                </div>
+                <div class="flex items-center gap-3 relative">
+                    <Select placeholder="Seleccione los permisos" name="permisos" id="permisos"
+                    @click="mostrarOptions"></Select>
+                        <ul v-show="showOptions"
+                            class="autocomplete-list absolute top-full left-0 right-0 max-h-[180px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
+                            <div class="flex gap-3" @click="seleccionarTodos">
+                                <label class="font-semibold w-full px-3 py-2 hover:bg-blue-100">Seleccionar Todos</label>                    
+                            </div>
+                            <li v-for="dato in secciones" class="flex gap-3" @click="añadirDato(dato)">
+                                <input v-model="Profesion.permisos" :value="dato" type="checkbox" :id="dato" />
+                                <label>{{ dato }}</label>
+                            </li>
+                        </ul>
+                </div>
             </div>
         </div>
         <div class="border border-gray-300 rounded-2xl px-7 py-5 flex flex-col gap-3">

@@ -7,6 +7,7 @@ import { watch, reactive } from 'vue'
 
 const varView = useVarView()
 const notificacionesStore = useNotificacionesStore();
+const storeExcel = useExcelExport();
 
 const {
     mensaje,
@@ -20,8 +21,9 @@ const props = defineProps({
     tabla: String,
 });
 
+const datosAExportar = ref(props.datos)
 const showOptions = ref(true)
-const datos = ref(Object.keys(props.datos[0]))
+const datos = ref(Object.keys(datosAExportar.value[0]))
 const excel = reactive({
     nombreArchivo: '',
     tipoArchivo: '',
@@ -78,6 +80,18 @@ function seleccionarTodos() {
     }
 }
 
+async function InsertarTabla() {
+    const datosCombinados = await storeExcel.obtenerPacientes(props.datos);
+    datosAExportar.value = datosCombinados
+    datos.value = Object.keys(datosAExportar.value[0])
+};
+
+// async function InsertarTabla(tabla, id_comparar) {
+//     const datosCombinados = await storeExcel.obtenerTabla(props.datos, tabla, id_comparar);
+//     datosAExportar.value = datosCombinados
+//     datos.value = Object.keys(datosAExportar.value[0])
+// };
+
 function cerrar() {
     varView.showDatosExcel = false
 };
@@ -90,6 +104,10 @@ const validarform = () => {
         mensaje()
     }
 };
+
+function mostrar() {
+    console.log(datosAExportar)
+}
 </script>
 
 <template>
@@ -97,7 +115,10 @@ const validarform = () => {
         <div class="p-10 h-full flex flex-col justify-between">
             <h2 class="text-2xl font-semibold text-center ">Configuracion Datos a exportar</h2>
             <div class="h-full pt-10">
+                <div class="flex justify-between">
                 <p class="text-lg text-gray-600">{{ props.tabla }} <i class="fa-solid fa-gear"></i></p>
+                <p class="text-lg text-blue-500" @click="InsertarTabla"><i class="fa-solid fa-plus"></i> <i class="fa-solid fa-user"></i></p>
+                </div>
                 <div class="flex md:flex-row flex-col gap-3 pt-3">
                     <Input v-model="excel.nombreArchivo" placeholder="Nombre Archivo" type="text"
                         name="nombreArchivo" />
@@ -128,8 +149,8 @@ const validarform = () => {
                     </ButtonForm>
 
                     <ButtonForm color="bg-blue-500" @click="validarform">
-                        <download-excel v-if="varView.formComplete" :data="props.datos" :name="excel.nombreArchivo" :type="excel.tipoArchivo"
-                            :fields="jsonfields" :worksheet="excel.worksheet" :before-finish="cerrar">
+                        <download-excel v-if="varView.formComplete" :data="datosAExportar" :name="excel.nombreArchivo" :type="excel.tipoArchivo"
+                            :fields="jsonfields" :worksheet="excel.worksheet" :before-finish="cerrar" :before-generate="mostrar">
                             Generar
                         </download-excel>
                         <div v-if="!varView.formComplete">
