@@ -32,7 +32,7 @@ const cerrarModal = () => {
     varView.showVerHistoria = false;
 };
 
-const actions = [
+const actions = ref([
     {
         title: 'Consultas',
         description: 'Registro de consultas',
@@ -75,7 +75,14 @@ const actions = [
         color: 'bg-[var(--color-default-700)] hover:opacity-75',
         action: () => {}
     },
-];
+]);
+
+onMounted(() => {
+    const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
+    actions.value = actions.value.filter((action) => {
+        return permisosStore.includes(action.title)
+    })
+});
 
 async function Botones (titulo) {
     varView.showMenuHistorias = !varView.showMenuHistorias;
@@ -178,38 +185,3 @@ function showBotones () {
         </div>
     </ModalLG>
 </template>
-
-<style scoped>
-/* Scroll */
-
-.scrollForm::-webkit-scrollbar {
-    height: 7px;
-    width: 7px;
-}
-
-.scrollForm::-webkit-scrollbar-track {
-    border-radius: 2px;
-    background-color: #DFE9EB;
-}
-
-.scrollForm::-webkit-scrollbar-track:hover {
-    background-color: #B8C0C2;
-}
-
-.scrollForm::-webkit-scrollbar-track:active {
-    background-color: #B8C0C2;
-}
-
-.scrollForm::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    background-color: #326872;
-}
-
-.scrollForm::-webkit-scrollbar-thumb:hover {
-    background-color: #576A72;
-}
-
-.scrollForm::-webkit-scrollbar-thumb:active {
-    background-color: #107072;
-}
-</style>

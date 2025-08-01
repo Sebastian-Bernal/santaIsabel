@@ -5,7 +5,7 @@
     </a>
     <ul class="dropdown">
         <li v-for="item in submenu" class="text-xs">
-            <a :href="item.link" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+            <a :href="item.link" class="inline-flex items-center text-sm font-medium text-black md:text-gray-400 dark:hover:text-white">
                 <i class="fa-solid text-sm me-2.5" :class="item.icon"></i>
                 {{ item.nombre }}
             </a>
@@ -55,7 +55,7 @@ const titulo = defineProps(['nombre', 'icon','submenu']);
 @media screen and (max-width: 768px) {
 
     .dropdown {
-        background-color: var(--color-default-700);
+        background-color: inherit;
         color: #000;
         display: block;
         position: static;

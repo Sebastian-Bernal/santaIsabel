@@ -175,14 +175,14 @@ const opcionesEPS = computed(() => {
         <Select :disabled="props.verPaciente" v-model="formData.Paciente.sexo" id="Sexo" name="Sexo" :options="[
             { text: 'Masculino', value: 'masculino' },
             { text: 'Femenino', value: 'femenino' },
-        ]" placeholder="Sexo al nacer" tamaño="w-full"></Select>
+        ]" placeholder="Sexo al Nacer" tamaño="w-full"></Select>
         <Select :disabled="props.verPaciente" v-model="formData.Paciente.genero" id="genero" name="genero" :options="[
             { text: 'Masculino', value: 'masculino' },
             { text: 'Femenino', value: 'femenino' },
             { text: 'Neutro', value: 'neutro' },
             { text: 'No lo declara', value: 'no lo declara' },
             { text: 'Transgenero', value: 'transgenero' },
-        ]" placeholder="Identidad de Genero" tamaño="w-full"></Select>
+        ]" placeholder="Identidad de Género" tamaño="w-full"></Select>
     </Section>
 
     <Section styles="mt-3">
@@ -238,7 +238,7 @@ const opcionesEPS = computed(() => {
             { text: 'Contributivo', value: 'Contributivo' },
             { text: 'Subsidiado', value: 'Subsidiado' },
             { text: 'Especial/Excepcion', value: 'Especial/Excepcion' },
-        ]" placeholder="Regimen" tamaño="md:w-1/3 w-full"></Select>
+        ]" placeholder="Régimen" tamaño="md:w-1/3 w-full"></Select>
         <Select :disabled="props.verPaciente" v-model="formData.Paciente.poblacionVulnerable" id="poblacionVulnerable"
             name="poblacionVulnerable" :options="[
                 { text: 'Ninguno', value: 'Ninguno' },
@@ -254,7 +254,7 @@ const opcionesEPS = computed(() => {
                 { text: 'Madres comunitarias o sustitutas', value: 'Madres comunitarias o sustitutas' },
                 { text: 'Voluntarios activos', value: 'Voluntarios activos' },
                 { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
-            ]" placeholder="Pblacion Vulnerable" tamaño="md:w-1/3 w-full"></Select>
+            ]" placeholder="Población Vulnerable" tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
     <Section styles="mt-3">
@@ -337,7 +337,7 @@ const opcionesEPS = computed(() => {
                 @click="eliminarItem('Antecedentes', i)"></i>
         </div>
         <div v-if="formData.Antecedentes.length < 1" class="w-full flex justify-center items-center py-3">
-            <p class="text-gray-500">No hay antecedentes registrados.</p>
+            <p class="text-gray-500">No hay Antecedentes registrados.</p>
         </div>
     </Section>
 </template>

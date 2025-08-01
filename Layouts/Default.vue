@@ -36,6 +36,7 @@ const varView = useVarView();
         grid-template-areas: "navbar" "aside" "main" "footer";
         grid-template-rows: 45px 60px 1fr 40px;
         grid-template-columns: 1fr;
+        max-height: 100%;
     }
 
     .section-content {
@@ -53,8 +54,9 @@ const varView = useVarView();
 }
 
 .container-content {
-    height: 98%;
-    margin-bottom: 2%;
+    height: 100%;
+    /* height: 98%;
+    margin-bottom: 2%; */
     overflow-y: scroll;
 }
 

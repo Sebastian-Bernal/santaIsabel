@@ -1,14 +1,21 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
+import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import emailjs from '@emailjs/browser';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarRecuperarContraseña = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+
     const administrativosStore = useAdministrativosStore();
     const administradores = await administrativosStore.listAdministrativos
 
-    const correo = administradores.find(
+    const profesionalesStore = useMedicosStore();
+    const medicos = await profesionalesStore.listMedicos
+
+    const usuarios = [...administradores, ...medicos]
+
+    const correo = usuarios.find(
         p => p.correo.toLowerCase() === datos.correo.toLowerCase()
     )
 
@@ -19,7 +26,7 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
         notificacionesStore.options.tiempo = 5000;
         await notificacionesStore.simple()
         return;
-    }
+    };
 
     return await enviarFormulario(datos);
 };

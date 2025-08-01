@@ -34,7 +34,7 @@ const cambiarMostrarContraseña = () => {
 
 async function ingresar() {
     const estado = await validarYEnviarLogin(Usuario)
-    if(estado) window.location.href = '/'
+    if(estado) window.location.href = '/Home'
 }
 
 function recuperarContraseña() {

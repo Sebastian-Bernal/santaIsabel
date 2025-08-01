@@ -22,15 +22,15 @@ const breadCrumbs = computed(() => {
 </script>
 
 <template>
-    <a href="/" class="hidden md:block">
+    <a href="/Home" class="hidden md:block">
         <i class="fa-solid fa-house"></i>
     </a>
     <div class="dropdown">
         <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="flex items-center">
                 <li class="flex items-center">
-                    <a href="/"
-                        class="flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                    <a href="/Home"
+                        class="flex items-center text-sm font-medium text-black hover:text-blue-600 md:text-gray-400 dark:hover:text-white">
                         <i class="fa-solid fa-house me-2 text-xs"></i>
                         Inicio
                     </a>
@@ -39,7 +39,7 @@ const breadCrumbs = computed(() => {
                     <div class="flex items-center">
                         <i class="fa-solid fa-angle-right text-gray-500"></i>
                         <nuxt-link :to="crumb.to !== '/Usuarios' && crumb.to !== '/Empresas' && crumb.to !== '/Historial' && crumb.to !== '/Facturacion' ? crumb.to : ''" 
-                            class="text-sm ms-1 font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                            class="text-sm ms-1 font-medium text-black md:text-gray-400 dark:hover:text-white">
                             {{ crumb.name }}
                         </nuxt-link>
                     </div>
@@ -98,7 +98,7 @@ li:hover .dropdown {
 
 @media screen and (max-width: 768px) {
     .dropdown {
-        background-color: var(--color-default-700);
+        background-color: inherit;
         display: block;
         position: static;
         margin: 0;

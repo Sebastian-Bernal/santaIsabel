@@ -16,15 +16,15 @@ onMounted(() => {
 
 <template>
     <button :class="{ 'active': data.active }"
-        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] p-[15px] flex relative rounded-l-full hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
+        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] h-full p-[15px] flex items-center relative hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
         <!-- Icono boton -->
-        <a class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all">
+        <a class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all md:text-black text-white">
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </a>
 
         <!-- Desplegable nombre de seccion, "right" -->
-        <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px] rounded-r-3xl"
-            :class="{ 'hover:rounded-[0_30px_0_0] ': !data.showUp, 'hover:rounded-[0_0_30px_0]': data.showUp }"
+        <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px]"
+            :class="{ 'rounded-[0_30px_0_0] ': !data.showUp, 'rounded-[0_0_30px_0]': data.showUp }"
             @click="storeAside.activeButton(data.id)">
             <a @click="footer.cambiarSecciones(null)">
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
@@ -33,7 +33,7 @@ onMounted(() => {
 
             <!-- Desplegable submenu, "down" -->
             <div id="data.id"
-                class="down overflow-y-auto absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 pointer-events-none p-[10px] w-[150px] rounded-br-3xl "
+                class="down overflow-y-auto absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 p-[10px] w-[150px] rounded-br-3xl "
                 :class="[data.tamaño, { 'up': data.showUp }]">
                 <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
                     v-for="seccion in data.secciones">
@@ -81,8 +81,8 @@ button {
 /* Lista Submenu */
 
 .down {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-5);
+    opacity: 0.75;
+    transform: translateX(10%) translateY(0);
     background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     transition: all 0.3s ease;
@@ -100,8 +100,6 @@ button {
 
 .right:hover .down {
     opacity: 1;
-    pointer-events: auto;
-    transform: translateX(10%) translateY(0);
 }
 
 /* .right:hover {

@@ -60,22 +60,22 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const citas = db.createObjectStore('Cita', { keyPath: 'id', autoIncrement: true });
                     citas.createIndex("buscaCita", "id", { unique: false });
 
-                    const empresa = db.createObjectStore('Empresa', { keyPath: 'no_identificacion'});
+                    const empresa = db.createObjectStore('Empresa', { keyPath: 'no_identificacion' });
                     empresa.createIndex("buscaEmpresa", "no_identificacion", { unique: false });
 
-                    const software = db.createObjectStore('Software', { keyPath: 'id', autoIncrement: true});
+                    const software = db.createObjectStore('Software', { keyPath: 'id', autoIncrement: true });
                     software.createIndex("buscaSoftware", "id", { unique: false });
 
-                    const facturacion = db.createObjectStore('Facturacion', { keyPath: 'id', autoIncrement: true});
+                    const facturacion = db.createObjectStore('Facturacion', { keyPath: 'id', autoIncrement: true });
                     facturacion.createIndex("buscaFacturacion", "id", { unique: false });
 
-                    const nota = db.createObjectStore('Nota', { keyPath: 'id', autoIncrement: true});
+                    const nota = db.createObjectStore('Nota', { keyPath: 'id', autoIncrement: true });
                     nota.createIndex("buscaNota", "id", { unique: false });
 
-                    const eps = db.createObjectStore('EPS', { keyPath: 'id', autoIncrement: true});
+                    const eps = db.createObjectStore('EPS', { keyPath: 'id', autoIncrement: true });
                     eps.createIndex("buscaEPS", "id", { unique: false });
 
-                    const profesion = db.createObjectStore('Profesion', { keyPath: 'id', autoIncrement: true});
+                    const profesion = db.createObjectStore('Profesion', { keyPath: 'id', autoIncrement: true });
                     profesion.createIndex("buscaProfesion", "id", { unique: false });
                 }
 
@@ -232,6 +232,34 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             this.almacen = 'HistoriaClinica'
             let datos = await this.leerdatos()
             return datos.map(dato => dato.id === null)
+        },
+
+        // Temporal Administrador Demo
+        async adminDemo() {
+            this.almacen = 'Administrativo'
+            const administradores = await this.leerdatos()
+            
+            const admin = {
+                name: 'Admin Demo',
+                No_document: '1111111111',
+                celular: '1111111111',
+                telefono: '111111',
+                Tipo: 'Gerente',
+                correo: 'demo@admin.com',
+                contraseña: 'thesalus2025*.',
+                estado: 'activo',
+                permisos: 'Todos'
+            }
+
+            administradores.find((ad) => {
+                ad.correo === admin.correo
+            })
+            console.log(administradores)
+            if(administradores.length > 0){
+                return
+            }
+
+            await this.guardardatos(admin)
         }
 
     }

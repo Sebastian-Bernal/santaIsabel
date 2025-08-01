@@ -39,7 +39,7 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <h2 class="text-white text-xl font-extrabold">Thesalus</h2>
+            <a href="/Home" class="text-white text-xl font-extrabold">Thesalus</a>
             <p class="text-xs text-white mr-10 mt-4 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
                 <h2 class="text-white"><i class="fa-solid fa-bars"></i></h2>
