@@ -37,8 +37,17 @@ const cambiarMostrarContraseña = () => {
 };
 
 async function ingresar() {
-    const estado = await validarYEnviarLogin(Usuario)
-    if(estado) window.location.href = '/Home'
+    const respuesta = await validarYEnviarLogin(Usuario)
+    console.log(respuesta)
+    if(respuesta.estado) {
+        if(respuesta.home === 'Dashboard'){
+            window.location.href = '/Home'
+        } else if(respuesta.home === 'Historia'){
+            window.location.href = '/Historia'
+        } else if(respuesta.home === 'Citas'){
+            window.location.href = '/Usuarios/Citas'
+        }
+    }
 }
 
 function recuperarContraseña() {

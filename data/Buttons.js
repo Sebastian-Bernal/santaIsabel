@@ -198,5 +198,5 @@ export const buttons = ref([
     },
 ]);
 
-export const secciones = ['Empresas','Configuracion','Resoluciones','Inventarios','Datos','Negocios','Productos','Formas de pago','Impuestos','Cajas','Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion',
-    'Usuarios','Pacientes','Profesional','Administrativos','Citas','Facturacion','Crear','Rips','Reportes'];
+export const secciones = ['Configuracion','Resoluciones','Inventarios','Datos','Negocios','Productos','Formas de pago','Impuestos','Cajas','Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion',
+    'Pacientes','Profesional','Administrativos','Citas','Crear','Rips','Reportes'];

@@ -1,6 +1,7 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js'
 import { secciones } from '~/data/Buttons.js';
@@ -13,10 +14,13 @@ export const validarYEnviarLogin = async (datos) => {
     const administrativosStore = useAdministrativosStore();
     const profesionalesStore = useMedicosStore();
     const profesionesStore = useDatosProfesionStore();
+    const pacientesStore = usePacientesStore();
+
     const administradores = await administrativosStore.listAdministrativos
     const medicos = await profesionalesStore.listMedicos
+    const pacientes = await pacientesStore.listPacientes
 
-    const usuarios = [...administradores, ...medicos]
+    const usuarios = [...administradores, ...medicos, ...pacientes]
 
     // Buscar coincidencia por correo y contraseña
     const usuarioValido = usuarios.find(usuario =>
@@ -35,19 +39,31 @@ export const validarYEnviarLogin = async (datos) => {
     // dato guardado Temporal por indexedDB
     sessionStorage.setItem('Nombre', usuarioValido.name)
 
+    let home = ''
     // Extraer permisos desde profesion
     if (usuarioValido.permisos === 'Todos') {
         sessionStorage.setItem('Permisos', JSON.stringify(secciones));
-    } else {
+        sessionStorage.setItem('Rol', 'Admin');
+        home = 'Dashboard'
+    } else if(usuarioValido.permisos === 'Historia') {
+        sessionStorage.setItem('Permisos', JSON.stringify(['Historia']));
+        sessionStorage.setItem('Rol', 'Paciente');
+        sessionStorage.setItem('Paciente', JSON.stringify(usuarioValido));
+        home = 'Historia'
+    }else {
         const profesiones = await profesionesStore.listProfesion
         const permisosProfesion = profesiones.filter(p => p.nombre === usuarioValido.profesion)?.[0].permisos
         usuarioStore.Permisos = permisosProfesion
         sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion));
+        sessionStorage.setItem('Rol', 'Profesional');
+        home = 'Citas'
     }
 
-
-
-    return await enviarFormulario(datos);
+    const estado = await enviarFormulario(datos)
+    return {
+        estado,
+        home
+    };
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API

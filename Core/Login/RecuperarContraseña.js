@@ -1,6 +1,7 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import emailjs from '@emailjs/browser';
 
 // funcion para Validar campos del formulario Nuevo Paciente
@@ -13,7 +14,10 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
     const profesionalesStore = useMedicosStore();
     const medicos = await profesionalesStore.listMedicos
 
-    const usuarios = [...administradores, ...medicos]
+    const pacientesStore = usePacientesStore();
+    const pacientes = await pacientesStore.listPacientes
+
+    const usuarios = [...administradores, ...medicos, ...pacientes]
 
     const correo = usuarios.find(
         p => p.correo.toLowerCase() === datos.correo.toLowerCase()

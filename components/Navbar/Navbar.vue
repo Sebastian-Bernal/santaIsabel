@@ -11,6 +11,7 @@ const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const usuarioStore = useUsuariosStore();
 
 const usuario = ref('Usuario');
+const usuarioRol = ref('');
 
 function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -23,6 +24,7 @@ function obtenerFechaFormateada() {
 }
 
 onMounted(async() => {
+    usuarioRol.value = sessionStorage.getItem("Rol") || [];
     usuario.value = await usuarioStore.getUsuario()
 })
 
@@ -39,7 +41,7 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a href="/Home" class="text-white text-xl font-extrabold">Thesalus</a>
+            <a :href="usuarioRol === 'Admin' ? '/Home' : ''" class="text-white text-xl font-extrabold">Thesalus</a>
             <p class="text-xs text-white mr-10 mt-4 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
                 <h2 class="text-white"><i class="fa-solid fa-bars"></i></h2>
@@ -54,7 +56,7 @@ const removeStorage = () => {
                     </a>
                 </li>
                 <li>
-                    <BreadCrumb />
+                    <BreadCrumb :usuarioRol="usuarioRol"/>
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />

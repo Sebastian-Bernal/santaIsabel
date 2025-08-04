@@ -15,8 +15,8 @@ const historiasStore = useHistoriasStore();
 
 const historiasList = ref([]);
 const historia = ref([]);
-const paciente = ref();
 const refresh = ref(1);
+const onlyWatch = ref(false)
 
 async function llamadatos(){
     const datos = await historiasStore.datosHistoria
@@ -31,37 +31,30 @@ watch(() => varView.showPaso4, async()=>{
 // Cargar los pacientes desde el store
 onMounted(async() => {
     varView.cargando = true
+    const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
+    onlyWatch.value = permisosStore.includes('Historia')
     await llamadatos()
     varView.cargando = false
 });
 
 // funcion para controlar la visibilidad del formulario de nueva historia clinica
 const agregarHistoria = () => {
-    paciente.value = ''
     varView.showNuevaHistoria = true
 };
 
-const actulizarHistoria = () => {
-    console.log('actualizar historia');
-};
 
 const verHistoria = (his) => {
     historia.value = his;
-    if(his.estado === 'Nueva'){
-        paciente.value = his.paciente
-        varView.showNuevaHistoria = true
-        return
-    }
     varView.showVerHistoria = true
 };
 
-const comprobarAccion = (fila) => {
-    if(fila.estado === 'Nueva'){
-        return 'agregar'
-    } else {
-        return 'ver'
-    }
-};
+// const comprobarAccion = (fila) => {
+//     if(fila.estado === 'Nueva'){
+//         return 'agregar'
+//     } else {
+//         return 'ver'
+//     }
+// };
 
 </script>
 
@@ -71,11 +64,12 @@ const comprobarAccion = (fila) => {
             { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
             { titulo: 'estado', value: 'Estado', tamaño: 150 },
-        ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria }"
-            :acciones="{ icons: [ {icon: comprobarAccion, action: verHistoria} ], botones: true, }" 
+        ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: !onlyWatch ? agregarHistoria : null 
+ }"
+            :acciones="{ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, }" 
             :datos="{ content: historiasList }" />
     </div>
-    <Ingresar v-if="varView.showNuevaHistoria" :paciente="paciente" />
+    <Ingresar v-if="varView.showNuevaHistoria" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
     <Paso4 v-if="varView.showPaso4" />

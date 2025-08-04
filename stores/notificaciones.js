@@ -16,7 +16,9 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 position: '',
                 tiempo: 2000,
                 position: '',
-                background: '#d33'
+                background: '#d33',
+                input: 'text',
+                inputAtributes: { placeholder: "Digite" },
             }
 
         };
@@ -67,6 +69,37 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
             } else {
                 return 'cancelado'
             }
+        },
+        // Alerta con Input
+        async alertRespuestaInput() {
+            this.inicia()
+            const result = await this.swal.fire({
+                icon: this.options.icono,
+                title: this.options.titulo,
+                html: this.options.html,
+                input: this.options.input,
+                inputAttributes: this.options.inputAtributes,
+                showCancelButton: true,
+                confirmButtonText: this.options.confirmtext,
+                cancelButtonText: this.options.canceltext,
+            })
+            if (result.isConfirmed) {
+                return {
+                    estado: 'confirmado',
+                    valor: result.value || ''
+                };
+            } else if (result.isDenied) {
+                return {
+                    estado: 'denegado',
+                    valor: null
+                };
+            } else {
+                return {
+                    estado: 'cancelado',
+                    valor: null
+                };
+            }
+
         }
     }
 })

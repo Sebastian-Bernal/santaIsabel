@@ -1,5 +1,5 @@
 // acciones validar y enviar fomularios
-import { validarYEnviarNuevaCita } from '~/Core/NuevaCita';
+import { validarYEnviarNuevaCita } from '~/Core/Cita/NuevaCita';
 import { validarYEnviarNuevoPaciente } from "~/Core/Paciente/NuevoPaciente";
 import { validarYEnviarModificarPaciente } from '~/Core/Paciente/ModificarPaciente';
 import { validarYEnviarNuevoMedico } from '~/Core/Profesional/NuevoMedico';

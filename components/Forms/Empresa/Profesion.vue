@@ -145,7 +145,7 @@ const cerrarModal = () => {
                             class="fa-solid fa-download cursor-pointer"></i></Button>
                 </div>
             </div>
-            <div v-for="(Profesion, i) in formData.Profesion" :key="i">
+            <div v-for="(Profesion, i) in formData.Profesion" :key="i" class="">
                 <div class="flex items-center gap-3" >
                     <Input v-model="Profesion.nombre" placeholder="Nombre Profesion" name="Profesion" id="Profesion"
                         minlength="5"></Input>
@@ -153,7 +153,7 @@ const cerrarModal = () => {
                         minlength="2"></Input>
                     <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Profesion', i)"></i>
                 </div>
-                <div class="flex items-center gap-3 relative">
+                <div class="flex items-center gap-3 relative mx-3">
                     <Select placeholder="Seleccione los permisos" name="permisos" id="permisos"
                     @click="mostrarOptions"></Select>
                         <ul v-show="showOptions"

@@ -73,7 +73,7 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
             // Array de días en español
             const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo', ];
             return diasSemana[fechaDate.getDay()];
-        }
+        },
     },
 
     actions: {
@@ -84,6 +84,12 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
             this.meses = partes[1];
         },
 
-
+        obtenerFecha() {
+            const { fechaFormateada, dia, mes, año } = obtenerFechaActual() 
+            this.fecha = fechaFormateada
+            this.dias = dia
+            this.meses = parseInt(mes)
+            this.años = año
+        },
     }
 })

@@ -77,12 +77,12 @@ const actions = ref([
     },
 ]);
 
-onMounted(() => {
-    const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
-    actions.value = actions.value.filter((action) => {
-        return permisosStore.includes(action.title)
-    })
-});
+// onMounted(() => {
+//     const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
+//     actions.value = actions.value.filter((action) => {
+//         return permisosStore.includes(action.title)
+//     })
+// });
 
 async function Botones (titulo) {
     varView.showMenuHistorias = !varView.showMenuHistorias;
@@ -129,7 +129,7 @@ function showBotones () {
     varView.showVerTratamientos = false
     varView.showVerMedicacion = false
 };
-
+console.log(props.historia)
 </script>
 
 <template>

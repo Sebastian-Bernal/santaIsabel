@@ -12,6 +12,7 @@ const estructuraCita = {
         name_paciente: '',
         id_medico: '',
         name_medico: '',
+        estado: 'Inactiva',
     },
 }
 

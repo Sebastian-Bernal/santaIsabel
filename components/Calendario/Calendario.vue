@@ -30,6 +30,7 @@ const {
 
 onMounted(async () => {
     // Cargar citas desde el store
+    calendarioCitasStore.obtenerFecha()
     Citas.value = await citasStore.listCitas;
 });
 

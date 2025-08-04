@@ -1,6 +1,7 @@
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
@@ -13,6 +14,9 @@ export const validarYEnviarCambiarContraseña = async (datos, correo) => {
     const profesionalesStore = useMedicosStore();
     const medicos = await profesionalesStore.listMedicos
 
+    const pacientesStore = usePacientesStore();
+    const pacientes = await pacientesStore.listPacientes
+
     const admin = administradores.find(
         p => p.correo.toLowerCase() === correo.toLowerCase()
     )
@@ -21,11 +25,17 @@ export const validarYEnviarCambiarContraseña = async (datos, correo) => {
         p => p.correo.toLowerCase() === correo.toLowerCase()
     )
 
+    const paciente = pacientes.find(
+        p => p.correo.toLowerCase() === correo.toLowerCase()
+    )
+
     let datosEnviar = {};
     if(admin){
         datosEnviar.Administrativo = { ...admin, contraseña: datos.nuevacontraseña };
     } else if(medico){
         datosEnviar.Medico = { ...medico, contraseña: datos.nuevacontraseña };
+    } else if(paciente) {
+        datosEnviar.Paciente = { ...paciente, contraseña: datos.nuevacontraseña };
     }
 
     return await enviarFormulario(datosEnviar);

@@ -254,7 +254,6 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             administradores.find((ad) => {
                 ad.correo === admin.correo
             })
-            console.log(administradores)
             if(administradores.length > 0){
                 return
             }

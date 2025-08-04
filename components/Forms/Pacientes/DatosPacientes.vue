@@ -17,6 +17,7 @@ const varView = useVarView();
 const notificacionesStore = useNotificacionesStore();
 const epsStore = useDatosEPSStore();
 const EPS = ref([]);
+const contraseñaSegura = ref(false);
 
 const { simple, mensaje, options } = notificacionesStore;
 const formData = defineModel('formData');
@@ -33,7 +34,7 @@ const props = defineProps([
 const camposRequeridos = [
     'name', 'nacimiento', 'type_doc', 'No_document', 'sexo', 'genero',
     'direccion', 'departamento', 'municipio', 'zona', 'barrio',
-    'celular', 'Eps', 'Regimen', 'poblacionVulnerable'
+    'celular', 'Eps', 'Regimen', 'poblacionVulnerable', 'correo', 'contraseña'
 ];
 
 // Guardar Datos en el localStorage
@@ -42,12 +43,18 @@ watch(
     (newValue) => {
         props.guardarDatos(newValue);
         const paciente = newValue.Paciente;
+
+        if(paciente.contraseña !== '' && !validarContraseña(paciente.contraseña)){
+            contraseñaSegura.value = true
+        } else {
+            contraseñaSegura.value = false
+        }
         // Validacion
         const camposValidos = camposRequeridos.every((campo) => paciente[campo] !== '');
 
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
-        varView.formComplete = camposValidos && !hayCamposInvalidos;
+        varView.formComplete = camposValidos && !hayCamposInvalidos && validarContraseña(paciente.contraseña);;
     },
     { deep: true }
 );
@@ -139,6 +146,17 @@ const opcionesEPS = computed(() => {
         value: eps.nombre
     }));
 })
+
+const validarContraseña = (valor) => {
+    // Al menos 3 letras (mayúsculas o minúsculas)
+    const letras = valor.match(/[a-zA-Z]/g) || [];
+    // Al menos 2 números
+    const numeros = valor.match(/[0-9]/g) || [];
+    // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
+    const simbolos = valor.match(/[^a-zA-Z0-9]/g) || [];
+
+    return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
+}
 
 
 </script>
@@ -255,6 +273,25 @@ const opcionesEPS = computed(() => {
                 { text: 'Voluntarios activos', value: 'Voluntarios activos' },
                 { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
             ]" placeholder="Población Vulnerable" tamaño="md:w-1/3 w-full"></Select>
+    </Section>
+
+    <Section styles="mt-3">
+        <div class="flex gap-3 items-center">
+            <i class="fa-solid fa-user text-blue-600"></i>
+            <Label forLabel="eps" size="text-sm">Datos de Usuario</Label>
+        </div>
+    </Section>
+
+    <Section styles="md:flex-row flex-col">
+        <Input :disabled="props.verPaciente" v-model="formData.Paciente.correo" type="email" id="correo" name="correo"
+            placeholder="Correo" tamaño="md:w-1/2 w-full" :mayuscula="false" />
+        <div class="md:w-1/2 w-full">
+            <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="formData.Paciente.contraseña" type="password" id="contraseña"
+                name="contraseña" placeholder="Contraseña" />
+            <p v-if="contraseñaSegura" class="text-red-500 text-sm">
+                La contraseña debe contener al menos 3 letras, 2 números y 1 símbolo.
+            </p>
+        </div>
     </Section>
 
     <Section styles="mt-3">

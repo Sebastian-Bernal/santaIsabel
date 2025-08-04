@@ -61,11 +61,12 @@ watch(formData, (newValue) => {
 onMounted(async() => {
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
-
-    if(props.paciente !== ''){
-        const PaCienteProp = PacientesList.value.filter((paciente) => {
-            return paciente.name === props.paciente
+    console.log(PacientesList)
+    if(props.paciente !== undefined){
+        const PaCienteProp = PacientesList.value.filter((pacient) => {
+            return parseInt(pacient.id) === parseInt(props.paciente)
         });
+        console.log(props.paciente, PaCienteProp[0])
         seleccionarPaciente(PaCienteProp[0])
     }
     traerDatos();

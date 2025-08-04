@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 
+const props = defineProps(['usuarioRol'])
 // Rutas actuales
 const route = useRoute();
 // Retorna array con cada ruta
@@ -22,14 +23,14 @@ const breadCrumbs = computed(() => {
 </script>
 
 <template>
-    <a href="/Home" class="hidden md:block">
+    <a :href="props.usuarioRol === 'Admin' ? '/Home' : ''" class="hidden md:block">
         <i class="fa-solid fa-house"></i>
     </a>
     <div class="dropdown">
         <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="flex items-center">
                 <li class="flex items-center">
-                    <a href="/Home"
+                    <a :href="props.usuarioRol === 'Admin' ? '/Home' : ''"
                         class="flex items-center text-sm font-medium text-black hover:text-blue-600 md:text-gray-400 dark:hover:text-white">
                         <i class="fa-solid fa-house me-2 text-xs"></i>
                         Inicio
