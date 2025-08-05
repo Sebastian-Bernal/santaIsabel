@@ -9,8 +9,8 @@ import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/DatosEmpresa';
 import { validarYEnviarDatosSoftware } from '~/Core/Empresa/DatosSoftware';
 import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/DatosFacturacion';
 import { validarYEnviarNuevaNota } from '~/Core/Notas/NuevaNota';
-import { validarYEnviarNuevoAdministrativo } from '~/Core/Administrativo/NuevoAdministrativo';
-import { validarYEnviarModificarAdministrativo } from '~/Core/Administrativo/ModificarAdminstrativo';
+import { validarYEnviarNuevoUsuario } from '~/Core/Usuario/NuevoUsuario';
+import { validarYEnviarModificarUsuario } from '~/Core/Usuario/ModificarUsuario';
 import { validarYEnviarDatosEPS } from '~/Core/Empresa/DatosEPS';
 import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
 // Importa accion de cada formulario desde el core
@@ -55,12 +55,12 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarNuevaNota(data)
         return respuesta
     },
-    NuevoAdministrativo: async (data) => {
-        const respuesta = await validarYEnviarNuevoAdministrativo(data)
+    NuevoUsuario: async (data) => {
+        const respuesta = await validarYEnviarNuevoUsuario(data)
         return respuesta
     },
-    ModificarAdministrativo: async (data) => {
-        const respuesta = await validarYEnviarModificarAdministrativo(data)
+    ModificarUsuario: async (data) => {
+        const respuesta = await validarYEnviarModificarUsuario(data)
         return respuesta
     },
     EPS: async (data) => {

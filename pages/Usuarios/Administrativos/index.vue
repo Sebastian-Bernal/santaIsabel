@@ -3,7 +3,7 @@ import Tabla from '~/components/Tables/Tabla.vue';
 // Data
 import IngresarAdministrativo from '~/components/Forms/Administrativos/IngresarAdministrativo.vue';
 import ModificarAdministrativo from '~/components/Forms/Administrativos/ModificarAdministrativo.vue';
-import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo';
+import { useAdministrativosStore } from '~/stores/Formularios/usuarios/Administrativo';
 import { storeToRefs } from 'pinia';
 
 const varView = useVarView();

@@ -11,6 +11,7 @@ import { ubicacion } from "../../data/colombia.js";
 import { municipios } from '~/data/municipios.js'
 import { useVarView } from "../../stores/varview.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
+import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { computed, watch, onMounted, nextTick } from "vue";
 
 const varView = useVarView();
@@ -18,6 +19,7 @@ const notificacionesStore = useNotificacionesStore();
 const epsStore = useDatosEPSStore();
 const EPS = ref([]);
 const contraseñaSegura = ref(false);
+const usuarioStore = useUsersStore();
 
 const { simple, mensaje, options } = notificacionesStore;
 const formData = defineModel('formData');
@@ -124,6 +126,24 @@ function validarEdad(type_doc, nacimientoStr) {
     }
 }
 
+async function buscarUsuario (){
+    const usuarios = await usuarioStore.listUsers
+    const usuario = usuarios.filter((user) => {
+        return user.No_document === formData.value.Paciente.No_document
+    })
+
+    if(usuario.length < 1){
+        options.position = "top-end";
+        options.texto = "Usuario no registrado.";
+        options.tiempo = 1500;
+        mensaje();
+        return
+    }
+
+    Object.assign(formData.value.Paciente, usuario[0]);
+
+}
+
 
 // Traer datos del localStorage
 onMounted(async () => {
@@ -168,6 +188,19 @@ const validarContraseña = (valor) => {
             <Label forLabel="nombre" size="text-sm">Paciente</Label>
         </div>
     </Section>
+    
+    <Section styles="md:flex-row flex-col">
+        <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="formData.Paciente.No_document"
+            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full"
+            max="10000000000" min="1000000" @keyup.enter="buscarUsuario"/>
+        <Select :disabled="props.verPaciente" v-model="formData.Paciente.type_doc" id="tipoDocumento"
+            name="tipoDocumento" :options="[
+                { text: 'Cedula de ciudadania', value: 'cedula' },
+                { text: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
+                { text: 'Cedula Extranjera', value: 'extranjera' },
+                { text: 'RC', value: 'RC' },
+            ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
+    </Section>
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verPaciente" v-model="formData.Paciente.name" type="text" id="nombre" name="nombre"
@@ -176,18 +209,6 @@ const validarContraseña = (valor) => {
             name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
 
-    <Section styles="md:flex-row flex-col">
-        <Select :disabled="props.verPaciente" v-model="formData.Paciente.type_doc" id="tipoDocumento"
-            name="tipoDocumento" :options="[
-                { text: 'Cedula de ciudadania', value: 'cedula' },
-                { text: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
-                { text: 'Cedula Extranjera', value: 'extranjera' },
-                { text: 'RC', value: 'RC' },
-            ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
-        <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="formData.Paciente.No_document"
-            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full"
-            max="10000000000" min="1000000" />
-    </Section>
 
     <Section styles="md:flex-row flex-col">
         <Select :disabled="props.verPaciente" v-model="formData.Paciente.sexo" id="Sexo" name="Sexo" :options="[
@@ -284,9 +305,9 @@ const validarContraseña = (valor) => {
 
     <Section styles="md:flex-row flex-col">
         <Input :disabled="props.verPaciente" v-model="formData.Paciente.correo" type="email" id="correo" name="correo"
-            placeholder="Correo" tamaño="md:w-1/2 w-full" :mayuscula="false" />
-        <div class="md:w-1/2 w-full">
-            <Input v-if="!props.noCambiar" :disabled="props.verPaciente" v-model="formData.Paciente.contraseña" type="password" id="contraseña"
+            placeholder="Correo" tamaño="w-full" :mayuscula="false" />
+        <div class="w-full" v-if="!props.noCambiar">
+            <Input :disabled="props.verPaciente" v-model="formData.Paciente.contraseña" type="password" id="contraseña"
                 name="contraseña" placeholder="Contraseña" />
             <p v-if="contraseñaSegura" class="text-red-500 text-sm">
                 La contraseña debe contener al menos 3 letras, 2 números y 1 símbolo.

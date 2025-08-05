@@ -46,6 +46,9 @@ export const buttons = ref([
                 titulo: 'Datos',
             },
             {
+                titulo: 'Usuarios',
+            },
+            {
                 titulo: 'Negocios',
                 subSecciones: [
                     {
@@ -160,15 +163,6 @@ export const buttons = ref([
                 ]
             },
             {
-                titulo: "Administrativos",
-                subSecciones: [
-                    {
-                        titulo: 'Datos',
-                        ruta: '/Usuarios/Administrativos'
-                    },
-                ]
-            },
-            {
                 titulo: "Citas",
             }
         ],
@@ -198,5 +192,5 @@ export const buttons = ref([
     },
 ]);
 
-export const secciones = ['Configuracion','Resoluciones','Inventarios','Datos','Negocios','Productos','Formas de pago','Impuestos','Cajas','Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion',
-    'Pacientes','Profesional','Administrativos','Citas','Crear','Rips','Reportes'];
+export const secciones = ['Configuracion','Resoluciones','Inventarios','Datos','Usuarios','Negocios','Productos','Formas de pago','Impuestos','Cajas','Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion',
+    'Pacientes','Profesional','Citas','Crear','Rips','Reportes'];

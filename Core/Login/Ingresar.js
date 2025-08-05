@@ -1,8 +1,8 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo.js';
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login.js';
+import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js'
 import { secciones } from '~/data/Buttons.js';
 
@@ -10,17 +10,13 @@ import { secciones } from '~/data/Buttons.js';
 export const validarYEnviarLogin = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const usuarioStore = useUsuariosStore();
-    // Temporal codigo INDEXDB
-    const administrativosStore = useAdministrativosStore();
-    const profesionalesStore = useMedicosStore();
+    const usersStore = useUsersStore();
+
+    const usuarios = await usersStore.listUsers
     const profesionesStore = useDatosProfesionStore();
-    const pacientesStore = usePacientesStore();
+    const profeionales = useMedicosStore();
 
-    const administradores = await administrativosStore.listAdministrativos
-    const medicos = await profesionalesStore.listMedicos
-    const pacientes = await pacientesStore.listPacientes
-
-    const usuarios = [...administradores, ...medicos, ...pacientes]
+    // Temporal codigo INDEXDB
 
     // Buscar coincidencia por correo y contraseña
     const usuarioValido = usuarios.find(usuario =>
@@ -31,7 +27,7 @@ export const validarYEnviarLogin = async (datos) => {
     if (!usuarioValido) {
         notificacionesStore.options.icono = 'error'
         notificacionesStore.options.titulo = 'Error de ingreso';
-        notificacionesStore.options.texto = 'El correo ingresado y la contraseña no son Correctos';
+        notificacionesStore.options.texto = 'El correo ingresado y/o la contraseña no son Correctos';
         notificacionesStore.options.tiempo = 5000;
         await notificacionesStore.simple()
         return;
@@ -41,19 +37,24 @@ export const validarYEnviarLogin = async (datos) => {
 
     let home = ''
     // Extraer permisos desde profesion
-    if (usuarioValido.permisos === 'Todos') {
+    if (usuarioValido.rol === 'Administrativo') {
         sessionStorage.setItem('Permisos', JSON.stringify(secciones));
         sessionStorage.setItem('Rol', 'Admin');
         home = 'Dashboard'
-    } else if(usuarioValido.permisos === 'Historia') {
+    } else if(usuarioValido.rol === 'Paciente') {
         sessionStorage.setItem('Permisos', JSON.stringify(['Historia']));
         sessionStorage.setItem('Rol', 'Paciente');
         sessionStorage.setItem('Paciente', JSON.stringify(usuarioValido));
         home = 'Historia'
-    }else {
+    } else {
+        const medicos = await profeionales.listMedicos
+        const profesional = medicos.filter(p => p.No_document === usuarioValido.No_document)?.[0];
+
         const profesiones = await profesionesStore.listProfesion
-        const permisosProfesion = profesiones.filter(p => p.nombre === usuarioValido.profesion)?.[0].permisos
+        const permisosProfesion = profesiones.filter(p => p.nombre === profesional.profesion)?.[0].permisos
+
         usuarioStore.Permisos = permisosProfesion
+        
         sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion));
         sessionStorage.setItem('Rol', 'Profesional');
         home = 'Citas'

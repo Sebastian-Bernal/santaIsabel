@@ -113,8 +113,8 @@ const validarContraseña = (valor) => {
         <Input :disabled="props.verAdministrativo" v-model="props.formData.Administrativo.correo" type="email"
             id="correo" name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5"
             :mayuscula="false" />
-        <div class="w-full ">
-            <Input v-if="!props.noCambiar" :disabled="props.verAdministrativo"
+        <div class="w-full " v-if="!props.noCambiar">
+            <Input :disabled="props.verAdministrativo"
                 v-model="props.formData.Administrativo.contraseña" type="password" id="contraseña" name="contraseña"
                 placeholder="Genera una contraseña" minlength="5" :mayuscula="false" />
             <p v-if="contraseñaSegura" class="text-red-500 text-sm">

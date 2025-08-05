@@ -6,6 +6,7 @@ import Section from "~/components/Forms/Section.vue";
 import Select from "~/components/Selects/Select.vue";
 // Data
 import { useDatosProfesionStore } from "~/stores/Formularios/empresa/Profesion.js";
+import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { ubicacion } from "../../data/colombia.js";
 import { useVarView } from "../../stores/varview.js";
 import { computed, watch, onMounted } from "vue";
@@ -15,6 +16,7 @@ const storeProfesiones = useDatosProfesionStore();
 const Profesiones = ref([]);
 const contraseñaSegura = ref(false);
 const notificacionesStore = useNotificacionesStore();
+const usuarioStore = useUsersStore();
 
 const { simple, mensaje, options } = notificacionesStore;
 
@@ -38,7 +40,7 @@ watch(
         props.guardarDatos(newValue);
         const medico = newValue.Medico
 
-        if(props.formData.Medico.contraseña !== '' && !validarContraseña(props.formData.Medico.contraseña)){
+        if (props.formData.Medico.contraseña !== '' && !validarContraseña(props.formData.Medico.contraseña)) {
             contraseñaSegura.value = true
         } else {
             contraseñaSegura.value = false
@@ -90,6 +92,23 @@ const validarContraseña = (valor) => {
     return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
 }
 
+async function buscarUsuario() {
+    const usuarios = await usuarioStore.listUsers
+    const usuario = usuarios.filter((user) => {
+        return user.No_document === props.formData.Medico.No_document
+    })
+
+    if (usuario.length < 1) {
+        options.position = "top-end";
+        options.texto = "Usuario no registrado.";
+        options.tiempo = 1500;
+        mensaje();
+        return
+    }
+    
+    Object.assign(props.formData.Medico, usuario[0]);
+}
+
 // Traer datos del localStorage
 onMounted(async () => {
     props.traerDatos();
@@ -122,22 +141,21 @@ const opcionesProfesion = computed(() => {
     </Section>
 
     <Section class="md:flex-row flex-col">
+        <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.No_document" type="number"
+            id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" min="10000000"
+            @keyup.enter="buscarUsuario" />
+        <Select :disabled="props.verMedico" v-model="formData.Medico.type_doc" id="tipoDocumento" name="tipoDocumento"
+            :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'RC', value: 'RC' }]"
+            placeholder="Tipo de documento" tamaño="w-full"></Select>
+        <Select :disabled="props.verMedico" v-model="formData.Medico.profesion" id="profesion" name="profesion"
+            :options="opcionesProfesion" placeholder="Profesion" tamaño="w-full" required></Select>
+    </Section>
+
+    <Section class="md:flex-row flex-col">
         <Input :disabled="props.verMedico" v-model="formData.Medico.name" type="text" id="nombre" name="nombre"
             placeholder="Nombres y Apellidos" tamaño="md:w-4/5 w-full" minlength="5" />
         <Input :disabled="props.verMedico" v-model="formData.Medico.nacimiento" type="date" id="nacimiento"
             name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
-    </Section>
-
-
-
-    <Section class="md:flex-row flex-col">
-        <Select :disabled="props.verMedico" v-model="formData.Medico.type_doc" id="tipoDocumento" name="tipoDocumento"
-            :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'RC', value: 'RC' }]"
-            placeholder="Tipo de documento" tamaño="w-full"></Select>
-        <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.No_document" type="number"
-            id="documento" name="documento" placeholder="Número de documento" tamaño="w-full" min="10000000" />
-        <Select :disabled="props.verMedico" v-model="formData.Medico.profesion" id="genero" name="genero"
-            :options="opcionesProfesion" placeholder="Profesion" tamaño="w-full"></Select>
     </Section>
 
     <Section styles="mt-3">
@@ -161,7 +179,7 @@ const opcionesProfesion = computed(() => {
             </option>
         </datalist>
         <Select :disabled="props.verMedico" v-model="formData.Medico.zona" id="zona" name="zona"
-            :options="[{ text: 'Rural', value: 'rural' }, { text: 'Urbana', value: 'urbana' }]" placeholder="Zona"
+            :options="[{ text: 'Rural', value: 'Rural' }, { text: 'Urbana', value: 'Urbana' }]" placeholder="Zona"
             tamaño="md:w-1/3 w-full"></Select>
     </Section>
 
@@ -176,9 +194,9 @@ const opcionesProfesion = computed(() => {
     <Section>
         <Input :disabled="props.verMedico" v-model="formData.Medico.correo" type="email" id="correo" name="correo"
             placeholder="Correo" :mayuscula="false" />
-        <div class="w-full">
-            <Input v-if="!props.noCambiar" :disabled="props.verMedico" v-model="formData.Medico.contraseña"
-                type="password" id="contraseña" name="contraseña" placeholder="Contraseña" minlength="5" />
+        <div class="w-full" v-if="!props.noCambiar">
+            <Input :disabled="props.verMedico" v-model="formData.Medico.contraseña" type="password" id="contraseña"
+                name="contraseña" placeholder="Contraseña" minlength="5" />
             <p v-if="contraseñaSegura" class="text-red-500 text-sm">
                 La contraseña debe contener al menos 3 letras, 2 números y 1 símbolo.
             </p>

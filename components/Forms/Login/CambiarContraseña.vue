@@ -40,7 +40,7 @@ const enviarRecuperarContraseña = async (formData) => {
         options.tiempo = 3000
         const res = await simple()
         sessionStorage.removeItem('codigo')
-        window.location.href = '/Login'
+        window.location.href = '/'
     } else {
         options.icono = 'error';
         options.titulo = '¡A ocurrido un problema!';

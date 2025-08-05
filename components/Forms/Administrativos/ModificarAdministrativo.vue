@@ -4,7 +4,7 @@ import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import DatosAdministrativos from "~/components/Forms/Administrativos/DatosAdministrativo.vue"
 // Data
 // import { validarYEnviarEliminarAdministrativo } from '~/Core/Administrativo/EliminarAdministrativo';
-import { useAdministrativosStore } from '~/stores/Formularios/administrativo/Administrativo';
+import { useAdministrativosStore } from '~/stores/Formularios/usuarios/Administrativo.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js';
 import { useVarView } from '../../stores/varview.js';
 import { computed, onMounted } from 'vue';

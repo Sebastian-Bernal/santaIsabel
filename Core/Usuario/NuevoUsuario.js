@@ -2,7 +2,7 @@ import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManage
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Paciente
-export const validarYEnviarNuevoAdministrativo = async (datos) => {
+export const validarYEnviarNuevoUsuario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     return await enviarFormulario(datos);

@@ -13,6 +13,9 @@ export const useVarView = defineStore('varView', {
         // formularios Administrativos
         showNuevoAdministrativo: false,
         showModificarAdministrativo: false,
+        // formularios Users
+        showNuevoUser: false,
+        showModificarUser: false,
         // Formularios Citas
         showNuevaCita: false,
         // formularios Notas

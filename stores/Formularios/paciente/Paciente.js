@@ -25,7 +25,6 @@ const estructuraPaciente = {
         Tipo: '',
         correo: '',
         contraseña: '',
-        permisos: 'Historia',
         estado: 'activo',
     },
     Diagnosticos: [],

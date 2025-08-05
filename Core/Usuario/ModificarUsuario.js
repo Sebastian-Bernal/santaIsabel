@@ -1,8 +1,8 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
-// funcion para Validar campos del formulario Modificar Administrativo
-export const validarYEnviarModificarAdministrativo = async (datos) => {
+// funcion para Validar campos del formulario Modificar Usuario
+export const validarYEnviarModificarUsuario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     return await enviarFormulario(datos);
