@@ -6,9 +6,11 @@ export const useVarView = defineStore('varView', {
         cargando: false,
         // Formularios Paciente
         showNuevoPaciente: false,
+        showNuevoPacientePaso2: false,
         showModificarPaciente: false,
         // Formularios Profesional
         showNuevoProfesional: false,
+        showNuevoProfesionalPaso2: false,
         showModificarProfesional: false,
         // formularios Administrativos
         showNuevoAdministrativo: false,

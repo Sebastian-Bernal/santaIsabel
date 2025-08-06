@@ -1,7 +1,7 @@
 <script setup>
 // Componentes
-import ModalFormXS from "~/components/Modales/ModalFormXS.vue";
-import Formulario from "~/components/Forms/Formulario.vue";
+import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
+import FormularioWizard from "~/components/Forms/FormularioWizard.vue";
 import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
 // Data
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
@@ -13,6 +13,7 @@ const medicoStore = useMedicosStore();
 const nuevoMedicoStore = medicoStore.createForm('NuevoMedico')
 const notificacionesStore = useNotificacionesStore();
 
+const props = defineProps(['usuario'])
 // Importar states y funciones del store
 const {
     formData,
@@ -24,6 +25,13 @@ const {
 } = nuevoMedicoStore;
 
 const { simple, mensaje, options } = notificacionesStore;
+
+onMounted(() => {
+    if(props.usuario){
+        console.log(props.usuario)
+        formData.User = props.usuario
+    } 
+})
 
 // Enviar formulario -------------------
 const enviarNuevoMedico = async (formData) => {
@@ -40,6 +48,8 @@ const enviarNuevoMedico = async (formData) => {
         if (respuesta.isConfirmed || respuesta.dismiss) {
             limpiar()
             varView.showNuevoProfesional = false;
+            varView.showNuevoProfesionalPaso2 = false;
+            varView.showNuevoUser = false;
             medicoStore.listMedicos
         }
     } else {
@@ -61,18 +71,24 @@ const validarform = () => {
 };
 
 function cerrarModal() {
-    limpiar()
-    varView.showNuevoProfesional = false;
+    console.log('hola')
+    varView.showNuevoProfesional = true;
+    varView.showNuevoProfesionalPaso2 = false;
 }
 </script>
 
 <template>
-    <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoMedico"
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoMedico"
         :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Atras', enviar: 'Registrar'}">
-        <Formulario class="mt-3" :datos="{
-            titulo: 'Nuevo Profesional de Medicina'
+        <FormularioWizard class="mt-[-13px]" :datos="{
+            titulo: 'Datos del Usuario',
+            tituloFormulario: 'Nuevo Profesional',
+            secciones: [
+                { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+            ]
         }">
             <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"/>
-        </Formulario>
-    </ModalFormXS>
+        </FormularioWizard>
+    </ModalFormLG>
 </template>

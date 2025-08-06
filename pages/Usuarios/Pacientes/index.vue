@@ -1,6 +1,7 @@
 <script setup>
 import Tabla from '../../components/Tables/Tabla.vue';
 import IngresarPaciente from '../../components/Forms/Pacientes/IngresarPaciente.vue';
+import IngresarUsuario from '~/components/Forms/Pacientes/IngresarUsuario.vue';
 import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
 
 import { ref, onMounted, watch } from 'vue';
@@ -16,9 +17,10 @@ const refresh = ref(1)
 
 async function llamadatos(){
     pacientes.value= await listPacientes.value;
+    console.log(pacientes.value)
 }
 
-watch(() => varView.showNuevoPaciente, async()=>{
+watch(() => varView.showNuevoPacientePaso2, async()=>{
     await llamadatos()
     refresh.value++
 })
@@ -61,6 +63,7 @@ const verPaciente = (paciente) => {
         ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente }"
             :acciones="{ icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
     </div>
-    <IngresarPaciente v-if="varView.showNuevoPaciente" />
+    <IngresarUsuario v-if="varView.showNuevoPaciente" />
+    <IngresarPaciente v-if="varView.showNuevoPacientePaso2" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />
 </template>

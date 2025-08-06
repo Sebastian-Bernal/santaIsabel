@@ -1,6 +1,7 @@
 <script setup>
 import Tabla from '../../../components/Tables/Tabla.vue';
 import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
+import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuario.vue';
 import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
 // Data
 import { ref, onMounted } from 'vue';
@@ -18,7 +19,7 @@ async function llamadatos () {
     medicos.value= await listMedicos.value;
 }
 
-watch(()=> varView.showNuevoProfesional, async()=>{
+watch(()=> varView.showNuevoProfesionalPaso2, async()=>{
     llamadatos()
     refresh.value++
 })
@@ -60,6 +61,7 @@ const modificarMedico = (medico) => {
     :headerTabla="{titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico}"
     :acciones="{ icons: [{icon: 'ver', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
     </div>
-    <IngresarProfesional v-if="varView.showNuevoProfesional" />
+    <IngresarUsuario v-if="varView.showNuevoProfesional" />
+    <IngresarProfesional v-if="varView.showNuevoProfesionalPaso2" />
     <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />
 </template>

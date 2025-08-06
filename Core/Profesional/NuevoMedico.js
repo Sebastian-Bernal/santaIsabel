@@ -1,5 +1,5 @@
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
-import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
+import { guardarProfesionalEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Medico
@@ -32,11 +32,11 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarProfesionalEnIndexedDB(JSON.parse(JSON.stringify(datos)));
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarProfesionalEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -44,7 +44,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+        await guardarProfesionalEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

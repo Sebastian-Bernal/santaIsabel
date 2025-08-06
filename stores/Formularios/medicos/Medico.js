@@ -3,22 +3,29 @@ import { createFormStore } from '../../createFormStore';
 
 // Estructura de datos de Medicos
 const estructuraMedico = {
-    Medico: {
+    User: {
+        id_empresa: '',
         name: '',
-        nacimiento: '',
-        type_doc: '',
         No_document: '',
-        genero: '',
+        tipo: '',
+        celular: '',
+        telefono: '',
+        correo: '',
+        contraseña: null,
+        rol: 'Profesional',
+        nacimiento: '',
         direccion: '',
+        municipio: '',
+        departamento: '',
+        barrio: '',
+        zona: '',
+        estado: 'activo',
+    },
+    Medico: {
         departamento: '',
         municipio: '',
         zona: '',
-        barrio: '',
-        celular: '',
-        telefono: '',
         profesion: '',
-        correo: '',
-        contraseña: '',
         estado: 'activo',
     }
 }
@@ -35,11 +42,25 @@ export const useMedicosStore = defineStore('Medicos', {
             const store = useIndexedDBStore()
             store.almacen = 'Medico'
             const medicos = await store.leerdatos()
+
+            store.almacen = 'User'
+            const usuarios = await store.leerdatos()
+
             const medicosActivos = medicos.filter((medico) => {
                 return medico.estado === 'activo'
             })
-            state.Medicos = medicosActivos
-            return medicosActivos
+
+            // Asociar cada medico con su usuario correspondiente
+            const usuariosProfesionales = medicosActivos.map((medico) => {
+                const usuario = usuarios.find((user) => user.id === medico.id_usuario)
+                return {
+                    ...medico,
+                    ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
+                }
+            })
+
+            state.Medicos = usuariosProfesionales
+            return usuariosProfesionales
         }
     },
 

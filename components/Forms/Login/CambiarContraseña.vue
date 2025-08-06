@@ -81,6 +81,17 @@ onMounted(() => {
     codigoGenerado.value = sessionStorage.getItem('codigo')
 });
 
+const validarContraseña = (valor) => {
+    // Al menos 3 letras (mayúsculas o minúsculas)
+    const letras = valor?.match(/[a-zA-Z]/g) || [];
+    // Al menos 2 números
+    const numeros = valor?.match(/[0-9]/g) || [];
+    // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
+    const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || [];
+
+    return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
+}
+
 </script>
 
 <template>

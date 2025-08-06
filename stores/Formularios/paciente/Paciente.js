@@ -5,26 +5,30 @@ import { useIndexedDBStore } from "../../indexedDB";
 
 // Estructura de datos de Pacientes
 const estructuraPaciente = {
-    Paciente: {
+    User: {
+        id_empresa: '',
         name: '',
-        nacimiento: '',
-        type_doc: '',
         No_document: '',
-        sexo: '',
-        genero: '',
-        direccion: '',
-        departamento: '',
-        municipio: '',
-        zona: '',
-        barrio: '',
+        tipo: '',
         celular: '',
         telefono: '',
+        correo: '',
+        contraseña: null,
+        rol: 'Paciente',
+        nacimiento: '',
+        direccion: '',
+        municipio: '',
+        departamento: '',
+        barrio: '',
+        zona: '',
+        estado: 'activo',
+    },
+    Paciente: {
+        sexo: '',
+        genero: '',
         Eps: '',
         Regimen: '',
         poblacionVulnerable: '',
-        Tipo: '',
-        correo: '',
-        contraseña: '',
         estado: 'activo',
     },
     Diagnosticos: [],
@@ -44,11 +48,25 @@ export const usePacientesStore = defineStore('Pacientes', {
             const store = useIndexedDBStore()
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
+
+            store.almacen = 'User'
+            const usuarios = await store.leerdatos()
+
             const pacientesActivos = pacientes.filter((paciente) => {
                 return paciente.estado === 'activo'
             })
-            state.Pacientes = pacientesActivos // Actualiza la lista de pacientes en el estado
-            return pacientesActivos
+
+            // Asociar cada paciente con su usuario correspondiente
+            const usuariosPacientes = pacientesActivos.map((paciente) => {
+                const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
+                return {
+                    ...paciente,
+                    ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
+                }
+            })
+
+            state.Pacientes = usuariosPacientes // Actualiza la lista de pacientes en el estado
+            return usuariosPacientes
         },
     },
 

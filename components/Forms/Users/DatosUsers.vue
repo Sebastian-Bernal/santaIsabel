@@ -8,36 +8,41 @@ import Select from "~/components/Selects/Select.vue";
 import { ubicacion } from "../../data/colombia.js";
 import { municipios } from '~/data/municipios.js'
 import { useVarView } from "../../stores/varview.js";
+import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { watch, onMounted } from "vue";
 
 const varView = useVarView();
 const contraseñaSegura = ref(false)
+const usuarioStore = useUsersStore();
+const notificacionesStore = useNotificacionesStore();
+
+const { simple, mensaje, options } = notificacionesStore;
+const formData = defineModel('formData');
 
 const props = defineProps([
-    'formData',
     'traerDatos',
     'guardarDatos',
     'agregarItem',
     'eliminarItem',
     'noCambiar',
-    'verUser'
+    'verUser',
+    'formulario'
 ]);
-const formData = defineModel('formData');
 
 const camposRequeridos = [
-    'name', 'nacimiento', 'type_doc', 'No_document', 'sexo', 'genero',
+    'name', 'nacimiento', 'type_doc', 'No_document',
     'direccion', 'departamento', 'municipio', 'zona', 'barrio',
-    'celular', 'Eps', 'Regimen', 'poblacionVulnerable', 'correo', 'contraseña', 'rol'
+    'celular', 'correo',
 ];
 
 // Guardar Datos en el localStorage
 watch(
-    props.formData,
+    formData.value,
     (newValue) => {
         props.guardarDatos(newValue);
         const User = newValue.User;
 
-        if(props.formData.User.contraseña !== '' && !validarContraseña(props.formData.User.contraseña)){
+        if(formData.value.User.contraseña !== '' && !validarContraseña(formData.value.User.contraseña)){
             contraseñaSegura.value = true
         } else {
             contraseñaSegura.value = false
@@ -47,7 +52,10 @@ watch(
         const camposValidos = camposRequeridos.every((campo) => User[campo] !== '');
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
-        varView.formComplete = camposValidos && !hayCamposInvalidos && validarContraseña(props.formData.User.contraseña);
+        // Validar si se digita una contraseña
+        const debeValidarContraseña = props.formulario !== 'Paciente' && props.formulario !== 'Profesional' && formData.value.User.rol === 'Administrativo';
+
+        varView.formComplete = camposValidos && !hayCamposInvalidos && (debeValidarContraseña ? validarContraseña(formData.value.User.contraseña) : true);
     },
     { deep: true }
 );
@@ -56,6 +64,97 @@ watch(
 onMounted(() => {
     props.traerDatos();
 });
+
+// Validar campo tipo de documento
+watch(
+    () => formData.value.User.type_doc,
+    (newValue) => {
+        validarEdad(newValue, formData.value.User.nacimiento);
+    }
+);
+
+watch(() => formData.value.User.nacimiento,
+    () => {
+        autocompletarTipo();
+    }
+)
+
+function obtenerEdad(datoNacimiento) {
+    const nacimiento = new Date(datoNacimiento);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    const día = hoy.getDate() - nacimiento.getDate();
+
+    if (mes < 0 || (mes === 0 && día < 0)) {
+        edad--;
+    }
+    return edad
+}
+
+function autocompletarTipo() {
+    const edad = obtenerEdad(formData.value.User.nacimiento)
+
+    if (edad >= 18) {
+        formData.value.User.type_doc = 'cedula'
+    } else if (edad <= 18) {
+        formData.value.User.type_doc = 'Tarjeta de identidad'
+    } else {
+        formData.value.User.type_doc = ''
+    }
+}
+
+// Funcion Validar Edad
+function validarEdad(type_doc, nacimientoStr) {
+    const edad = obtenerEdad(nacimientoStr)
+
+    if (type_doc === 'Tarjeta de identidad' && edad >= 18) {
+        options.position = "top-end";
+        options.texto = "Paciente Mayor de Edad, verifique la fecha de nacimiento.";
+        options.tiempo = 1500;
+        mensaje();
+        formData.value.User.type_doc = 'cedula';
+        nextTick(() => {
+            // Ya se ha renderizado correctamente
+        });
+
+    } else if (type_doc === 'cedula' && edad <= 18) {
+        options.position = "top-end";
+        options.texto = "Paciente Menor de Edad, verifique la fecha de nacimiento.";
+        options.tiempo = 1500;
+        mensaje();
+        formData.value.User.type_doc = 'Tarjeta de identidad';
+        nextTick(() => {
+            // Ya se ha renderizado correctamente
+        });
+    }
+}
+
+async function buscarUsuario (){
+    const usuarios = await usuarioStore.listUsers
+    const usuario = usuarios.filter((user) => {
+        return user.No_document === formData.value.User.No_document
+    });
+
+    if(usuario.length < 1){
+        options.position = "top-end";
+        options.texto = "Usuario no registrado.";
+        options.tiempo = 1500;
+        mensaje();
+        return
+    };
+
+    Object.assign(formData.value.User, usuario[0]);
+    
+    if(props.formulario === 'Paciente'){
+        formData.value.Paciente = {...formData.value.Paciente, id_usuario: usuario[0].id}
+    } else if (props.formulario === 'Profesional'){
+        formData.value.Medico = {...formData.value.Medico, id_usuario: usuario[0].id}
+        if(formData.value.User.rol === 'Paciente'){
+            formData.value.User.rol = 'Profesional'
+        }
+    };
+}
 
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
@@ -67,11 +166,11 @@ const ciudades = computed(() => {
 
 const validarContraseña = (valor) => {
     // Al menos 3 letras (mayúsculas o minúsculas)
-    const letras = valor.match(/[a-zA-Z]/g) || [];
+    const letras = valor?.match(/[a-zA-Z]/g) || [];
     // Al menos 2 números
-    const numeros = valor.match(/[0-9]/g) || [];
+    const numeros = valor?.match(/[0-9]/g) || [];
     // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
-    const simbolos = valor.match(/[^a-zA-Z0-9]/g) || [];
+    const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || [];
 
     return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
 }
@@ -87,13 +186,9 @@ const validarContraseña = (valor) => {
     </Section>
 
     <Section styles="md:flex-row flex-col">
-        <Input :disabled="props.verUser" v-model="props.formData.User.name" type="text" id="nombre"
-            name="nombre" placeholder="Nombres y Apellidos" tamaño="w-full" minlength="5" />
-        <Input :disabled="props.verUser" v-model="formData.User.nacimiento" type="date" id="nacimiento"
-            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
-    </Section>
-
-    <Section styles="md:flex-row flex-col">
+        <Input v-if="!props.noCambiar" :disabled="props.verUser" v-model="formData.User.No_document"
+            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full"
+            max="10000000000" min="1000000" @keyup.enter="buscarUsuario"/>
         <Select :disabled="props.verUser" v-model="formData.User.type_doc" id="tipoDocumento"
             name="tipoDocumento" :options="[
                 { text: 'Cedula de ciudadania', value: 'cedula' },
@@ -101,9 +196,13 @@ const validarContraseña = (valor) => {
                 { text: 'Cedula Extranjera', value: 'extranjera' },
                 { text: 'RC', value: 'RC' },
             ]" placeholder="Tipo de Documento" tamaño="w-full"></Select>
-        <Input v-if="!props.noCambiar" :disabled="props.verUser" v-model="formData.User.No_document"
-            type="number" id="documento" name="documento" placeholder="Número de documento" tamaño="w-full"
-            max="10000000000" min="1000000" />
+    </Section>
+
+    <Section styles="md:flex-row flex-col">
+        <Input :disabled="props.verUser" v-model="formData.User.name" type="text" id="nombre"
+            name="nombre" placeholder="Nombres y Apellidos" tamaño="w-full" minlength="5" />
+        <Input :disabled="props.verUser" v-model="formData.User.nacimiento" type="date" id="nacimiento"
+            name="nacimiento" placeholder="Nacimiento" tamaño="md:w-1/5 w-full text-gray-500" />
     </Section>
 
     <Section styles="mt-3">
@@ -145,10 +244,10 @@ const validarContraseña = (valor) => {
         </div>
     </Section>
     <Section styles="md:flex-row flex-col">
-        <Input :disabled="props.verUser" v-model="props.formData.User.celular" type="number"
+        <Input :disabled="props.verUser" v-model="formData.User.celular" type="number"
             id="celular" name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000"
             min="1000000000" />
-        <Input :disabled="props.verUser" v-model="props.formData.User.telefono" type="number"
+        <Input :disabled="props.verUser" v-model="formData.User.telefono" type="number"
             id="telefono" name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000"
             min="100000" />
     </Section>
@@ -160,13 +259,13 @@ const validarContraseña = (valor) => {
         </div>
     </Section>
     <Section styles="md:flex-row flex-col">
-        <Select :disabled="props.verUser" v-model="props.formData.User.rol" placeholder="Rol" name="rol" id="rol" tamaño="w-1/2" :options="[{text: 'Paciente', value: 'Paciente'}, {text: 'Profesional', value: 'Profesional'}, {text: 'Administrativo', value: 'Administrativo'},]"></Select>
-        <Input :disabled="props.verUser" v-model="props.formData.User.correo" type="email"
+        <Select v-if="props.formulario !== 'Paciente' && props.formulario !== 'Profesional'" :disabled="props.verUser" v-model="formData.User.rol" placeholder="Rol" name="rol" id="rol" tamaño="w-1/2" :options="[{text: 'Paciente', value: 'Paciente'}, {text: 'Profesional', value: 'Profesional'}, {text: 'Administrativo', value: 'Administrativo'},]"></Select>
+        <Input :disabled="props.verUser" v-model="formData.User.correo" type="email"
             id="correo" name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5"
             :mayuscula="false" />
-        <div class="w-full " v-if="!props.noCambiar">
+        <div class="w-full " v-if="!props.noCambiar && props.formulario !== 'Paciente' && props.formulario !== 'Profesional' && formData.User.rol === 'Administrativo'">
             <Input :disabled="props.verUser"
-                v-model="props.formData.User.contraseña" type="password" id="contraseña" name="contraseña"
+                v-model="formData.User.contraseña" type="password" id="contraseña" name="contraseña"
                 placeholder="Crea una contraseña" minlength="5" :mayuscula="false" />
             <p v-if="contraseñaSegura" class="text-red-500 text-sm">
                 La contraseña debe contener al menos 3 letras, 2 números y 1 símbolo.

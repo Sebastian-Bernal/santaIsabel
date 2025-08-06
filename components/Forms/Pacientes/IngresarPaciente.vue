@@ -1,7 +1,7 @@
 <script setup>
 // Componentes
 import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
-import Formulario from "~/components/Forms/Formulario.vue";
+import FormularioWizard from "~/components/Forms/FormularioWizard.vue";
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 // Data
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
@@ -13,6 +13,7 @@ const storePaciente = usePacientesStore();
 const nuevoPacienteStore = storePaciente.createForm("NuevoPaciente");
 const notificacionesStore = useNotificacionesStore();
 
+const props = defineProps(['usuario'])
 // Importar states y funciones del store
 const {
     formData,
@@ -26,6 +27,13 @@ const {
 } = nuevoPacienteStore;
 
 const { simple, mensaje, options } = notificacionesStore;
+
+onMounted(() => {
+    if(props.usuario){
+        console.log(props.usuario)
+        formData.User = props.usuario
+    } 
+})
 
 // Enviar formulario -------------------
 const enviarNuevoPaciente = async (formData) => {
@@ -41,6 +49,8 @@ const enviarNuevoPaciente = async (formData) => {
         if(respuesta.isConfirmed || respuesta.dismiss) {
             limpiar();
             varView.showNuevoPaciente = false;
+            varView.showNuevoPacientePaso2 = false;
+            varView.showNuevoUser = false;
             storePaciente.listPacientes
         }
     } else {
@@ -62,20 +72,32 @@ const validarform = () => {
 };
 
 function cerrarModal() {
+    varView.showNuevoPacientePaso2 = false;
+    varView.showNuevoPaciente = true;
+}
+
+function cerrar () {
     limpiar()
     varView.showNuevoPaciente = false;
-}
+    varView.showNuevoPacientePaso2 = false;
+};
 </script>
 
 <template>
     <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoPaciente"
         :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{ cancelar: 'Atras', enviar: 'Registrar' }">
-        <Formulario class="mt-3" :datos="{
-            titulo: 'Nuevo paciente',
+        <FormularioWizard  :datos="{
+            titulo: 'Datos del Paciente',
+            tituloFormulario: 'Nuevo Paciente',
+            cerrar: cerrar,
+            secciones: [
+                { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+                { numPagina: 2, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
+            ]
         }">
             <DatosPacientes v-model:formData="nuevoPacienteStore.formData" :agregarItem="agregarItem"
                 :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos" />
 
-        </Formulario>
+        </FormularioWizard>
     </ModalFormLG>
 </template>

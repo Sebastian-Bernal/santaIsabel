@@ -21,11 +21,8 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const pacientes = db.createObjectStore('Paciente', { keyPath: 'id', autoIncrement: true });
                     pacientes.createIndex("buscapaciente", "id_paciente", { unique: false });
 
-                    const medicos = db.createObjectStore('Medico', { keyPath: 'No_document' });
-                    medicos.createIndex("buscapaciente", "id_medico", { unique: false });
-
-                    const administrativos = db.createObjectStore('Administrativo', { keyPath: 'id', autoIncrement: true });
-                    administrativos.createIndex("buscaadministrativo", "id", { unique: false });
+                    const medicos = db.createObjectStore('Medico', { keyPath: 'id', autoIncrement: true });
+                    medicos.createIndex("buscapaciente", "id", { unique: false });
 
                     const users = db.createObjectStore('User', { keyPath: 'id', autoIncrement: true });
                     users.createIndex("buscaaUser", "id", { unique: false });
@@ -239,10 +236,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
         // Temporal Administrador Demo
         async adminDemo() {
-            this.almacen = 'Administrativo'
-            const administradores = await this.leerdatos()
+            this.almacen = 'User'
+            const usuarios = await this.leerdatos()
             
-            const admin = {
+            const user = {
                 name: 'Admin Demo',
                 No_document: '1111111111',
                 celular: '1111111111',
@@ -251,17 +248,17 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                 correo: 'demo@admin.com',
                 contraseña: 'thesalus2025*.',
                 estado: 'activo',
-                permisos: 'Todos'
+                rol: 'Administrativo'
             }
 
-            administradores.find((ad) => {
-                ad.correo === admin.correo
+            usuarios.find((ad) => {
+                ad.correo === user.correo
             })
-            if(administradores.length > 0){
+            if(usuarios.length > 0){
                 return
             }
 
-            await this.guardardatos(admin)
+            await this.guardardatos(user)
         }
 
     }

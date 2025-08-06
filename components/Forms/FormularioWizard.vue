@@ -74,7 +74,7 @@ const enviarFormularioPendiente = () => {
         <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center pt-5">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
-            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[50vh] overflow-y-auto">
+            <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
                 <!-- Contenido del formulario -->
                 <slot></slot>
             </div>

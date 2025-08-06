@@ -1,9 +1,12 @@
 <script setup>
 import ModalXS from '~/components/Modales/ModalXS.vue';
 import RecuperarContraseña from '~/components/Forms/Login/RecuperarContraseña.vue';
+import CambiarContraseña from '~/components/Forms/Login/CambiarContraseña.vue';
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { ref, onMounted } from 'vue';
 import { useVarView } from '~/stores/varview';
+import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
+import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 
 definePageMeta({
     layout: 'authentication'
@@ -11,8 +14,7 @@ definePageMeta({
 
 const indexedDB = useIndexedDBStore();
 
-onMounted(async() => {
-    // await indexedDB.initialize()
+onMounted(async () => {
     await indexedDB.adminDemo()
     sessionStorage.clear()
 })
@@ -24,6 +26,15 @@ const Usuario = reactive({
 
 const mostrarContraseña = ref(false);
 const varView = useVarView();
+const storeUsuarios = useUsersStore();
+const notificacionesStore = useNotificacionesStore();
+
+const {
+    simple,
+    mensaje,
+    alertRespuesta,
+    options
+} = notificacionesStore;
 
 
 const cambiarMostrarContraseña = () => {
@@ -38,16 +49,40 @@ const cambiarMostrarContraseña = () => {
 
 async function ingresar() {
     const respuesta = await validarYEnviarLogin(Usuario)
-    console.log(respuesta)
-    if(respuesta.estado) {
-        if(respuesta.home === 'Dashboard'){
+
+    if (respuesta.estado) {
+        if (respuesta.home === 'Dashboard') {
             window.location.href = '/Home'
-        } else if(respuesta.home === 'Historia'){
+        } else if (respuesta.home === 'Historia') {
             window.location.href = '/Historia'
-        } else if(respuesta.home === 'Citas'){
+        } else if (respuesta.home === 'Citas') {
             window.location.href = '/Usuarios/Citas'
         }
     }
+}
+
+// Temporal idexedDB
+async function primerIngreso() {
+    varView.cargando = true
+    const usuarios = await storeUsuarios.listUsers
+
+    const usuarioDB = usuarios.filter((usuario) => {
+        return usuario.correo === Usuario.correo
+    })
+
+    if (usuarioDB.length > 0 && usuarioDB[0].contraseña === null || usuarioDB[0].contraseña === "") {
+        const estado = await validarYEnviarRecuperarContraseña({correo: Usuario.correo, codigoRecuperacion: ''})
+
+        if (estado) {
+            options.icono = 'success';
+            options.titulo = '¡Primer Inicio de Sesión!';
+            options.texto = 'Verifica tu correo electronico para ingresar una contraseña en tu cuenta';
+            options.tiempo = 5000
+            const res = await simple()
+            varView.showCambiarContraseña = true;
+        }
+    }
+    varView.cargando = false
 }
 
 function recuperarContraseña() {
@@ -65,7 +100,7 @@ function recuperarContraseña() {
             </div>
             <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
-                    <input v-model="Usuario.correo" type="email" id="text" name="email" required
+                    <input v-model="Usuario.correo" @keyup.enter="primerIngreso" type="email" id="text" name="email" required
                         placeholder="Correo Electronico"
                         class="bg-inherit text-white mt-1 pr-8 block w-full px-3 py-3 border border-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <i class="fa-solid fa-user absolute text-white right-[3%] top-[27%] text-lg"></i>
@@ -73,8 +108,8 @@ function recuperarContraseña() {
             </div>
             <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
-                    <input v-model="Usuario.contraseña" @keyup.enter="ingresar" type="password" id="password" name="password" required
-                        placeholder="Contraseña" autocomplete="false"
+                    <input v-model="Usuario.contraseña" @keyup.enter="ingresar" type="password" id="password"
+                        name="password" required placeholder="Contraseña" autocomplete="false"
                         class="text-white bg-inherit mt-1 pr-8 block w-full px-3 py-3 border border-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <i v-if="!mostrarContraseña"
                         class="fa-solid fa-eye-slash text-gray-50 absolute right-[2%] top-[27%] text-lg"
@@ -97,7 +132,8 @@ function recuperarContraseña() {
             </p>
         </div>
     </ModalXS>
-    <RecuperarContraseña v-if="varView.showRecuperarContraseña"/>
+    <RecuperarContraseña v-if="varView.showRecuperarContraseña" />
+    <CambiarContraseña v-if="varView.showCambiarContraseña" :correo="Usuario.correo" />
 </template>
 
 <style scoped>
