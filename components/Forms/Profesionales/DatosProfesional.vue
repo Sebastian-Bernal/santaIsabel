@@ -28,7 +28,7 @@ const props = defineProps([
 ]);
 
 const camposRequeridos = [
-    'profesion', 'departamento', 'municipio', 'zona',
+    'profesion', 'departamentoLaboral', 'municipioLaboral', 'zonaLaboral',
 ]
 
 // Guardar Datos en el localStorage
@@ -57,7 +57,7 @@ onMounted(async () => {
 // Cuidades filtradas por departamento
 const ciudades = computed(() => {
     return ubicacion.filter(
-        (data) => data.departamento.toUpperCase() === props.formData.Medico.departamento.toUpperCase()
+        (data) => data.departamento.toUpperCase() === props.formData.Medico.departamentoLaboral.toUpperCase()
     )[0]?.ciudades;
 
 });
@@ -91,20 +91,20 @@ const opcionesProfesion = computed(() => {
         </div>
     </Section>
     <Section>
-        <Input :disabled="props.verMedico" v-model="formData.Medico.departamento" type="text" id="departamento"
-            name="departamento" placeholder="Departamento" tamaño="md:w-1/3 w-full" list="listDepartamento" />
+        <Input :disabled="props.verMedico" v-model="formData.Medico.departamentoLaboral" type="text" id="departamentoLaboral"
+            name="departamentoLaboral" placeholder="Departamento" tamaño="md:w-1/3 w-full" list="listDepartamento" />
         <datalist id="listDepartamento" class="bg-white text-black">
             <option v-for="(data, id) in ubicacion" :key="id" :value="data.departamento">
                 codigo: {{ 0 }}
             </option>
         </datalist>
-        <Input :disabled="props.verMedico" v-model="formData.Medico.municipio" type="text" id="municipio"
-            name="municipio" placeholder="Municipio" tamaño="md:w-1/3 w-full" list="listMunicipio" />
-        <datalist id="listMunicipio" v-if="formData.Medico.departamento">
+        <Input :disabled="props.verMedico" v-model="formData.Medico.municipioLaboral" type="text" id="municipioLaboral"
+            name="municipioLaboral" placeholder="Municipio" tamaño="md:w-1/3 w-full" list="listMunicipio" />
+        <datalist id="listMunicipio" v-if="formData.Medico.departamentoLaboral">
             <option v-for="(data, id) in ciudades" :key="id" :value="data">
             </option>
         </datalist>
-        <Select :disabled="props.verMedico" v-model="formData.Medico.zona" id="zona" name="zona"
+        <Select :disabled="props.verMedico" v-model="formData.Medico.zonaLaboral" id="zonaLaboral" name="zonaLaboral"
             :options="[{ text: 'Rural', value: 'Rural' }, { text: 'Urbana', value: 'Urbana' }]" placeholder="Zona"
             tamaño="md:w-1/3 w-full"></Select>
     </Section>

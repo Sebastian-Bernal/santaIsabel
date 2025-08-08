@@ -5,8 +5,7 @@ import DatosUsers from "~/components/Forms/Users/DatosUsers.vue"
 // Data
 // import { validarYEnviarEliminarUser } from '~/Core/User/EliminarUser';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';
-import { useNotificacionesStore } from '../../stores/notificaciones.js';
-import { useVarView } from '../../stores/varview.js';
+import { validarYEnviarEliminarUsuario } from '~/Core/Usuario/EliminarUsuario';
 import { computed, onMounted } from 'vue';
 
 const varView = useVarView();
@@ -103,16 +102,17 @@ function actualizarUser() {
 
 async function eliminarUser() {
     options.icono = 'warning';
-    options.titulo = 'Deseas eliminar este User?';
-    options.html = `Se desactivara el User: <span>${UserAModificar.value}</span>`;
+    options.titulo = 'Deseas eliminar este Usuario?';
+    options.html = `Se desactivara el Usuario: <span>${UserAModificar.value}</span>`;
     options.confirmtext = 'Si, eliminar'
     options.canceltext = 'Cancelar'
     const respuestaAlert = await alertRespuesta()
     if(respuestaAlert === 'confirmado') {
-        const res = validarYEnviarEliminarUser(formData)
+        const res = validarYEnviarEliminarUsuario(formData)
         if(res){
             limpiar()
             varView.showModificarUser = false
+            location.reload()
             storeUser.listUsers;
         }
     }
@@ -135,7 +135,7 @@ async function eliminarUser() {
 
                 </div>
                 <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <!-- <i class="fa-solid fa-trash hover:text-white cursor-pointer *:" @click="eliminarUser"></i> -->
+                    <i class="fa-solid fa-trash hover:text-white cursor-pointer *:" @click="eliminarUser"></i>
                     <i class="fa-solid fa-pencil hover:text-white cursor-pointer" @click="actualizarUser"></i>
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>

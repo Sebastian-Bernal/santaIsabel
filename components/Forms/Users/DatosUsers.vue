@@ -12,7 +12,8 @@ import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { watch, onMounted } from "vue";
 
 const varView = useVarView();
-const contraseñaSegura = ref(false)
+const contraseñaSegura = ref(false);
+const cambiarAdmin = ref(false)
 const usuarioStore = useUsersStore();
 const notificacionesStore = useNotificacionesStore();
 
@@ -54,7 +55,7 @@ watch(
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
         // Validar si se digita una contraseña
         const debeValidarContraseña = props.formulario !== 'Paciente' && props.formulario !== 'Profesional' && formData.value.User.rol === 'Administrativo';
-
+        varView.formComplete = false
         varView.formComplete = camposValidos && !hayCamposInvalidos && (debeValidarContraseña ? validarContraseña(formData.value.User.contraseña) : true);
     },
     { deep: true }
@@ -63,6 +64,7 @@ watch(
 // Traer datos del localStorage
 onMounted(() => {
     props.traerDatos();
+    cambiarAdmin.value = sessionStorage.getItem('Rol') === 'Admin'
 });
 
 // Validar campo tipo de documento
@@ -248,7 +250,7 @@ const validarContraseña = (valor) => {
             id="celular" name="celular" placeholder="Celular" tamaño="md:w-1/2 w-full" max="1000000000000"
             min="1000000000" />
         <Input :disabled="props.verUser" v-model="formData.User.telefono" type="number"
-            id="telefono" name="telefono" placeholder="Telefono" tamaño="md:w-1/2 w-full" max="100000000"
+            id="telefono" name="telefono" placeholder="Telefono (opcional)" tamaño="md:w-1/2 w-full" max="100000000"
             min="100000" />
     </Section>
 
@@ -259,17 +261,21 @@ const validarContraseña = (valor) => {
         </div>
     </Section>
     <Section styles="md:flex-row flex-col">
-        <Select v-if="props.formulario !== 'Paciente' && props.formulario !== 'Profesional'" :disabled="props.verUser" v-model="formData.User.rol" placeholder="Rol" name="rol" id="rol" tamaño="w-1/2" :options="[{text: 'Paciente', value: 'Paciente'}, {text: 'Profesional', value: 'Profesional'}, {text: 'Administrativo', value: 'Administrativo'},]"></Select>
+        <Select v-if="!props.noCambiar && props.formulario !== 'Paciente' && props.formulario !== 'Profesional'" :disabled="props.verUser" v-model="formData.User.rol" placeholder="Rol" name="rol" id="rol" tamaño="w-1/2" :options="[{text: 'Paciente', value: 'Paciente'}, {text: 'Profesional', value: 'Profesional'}, {text: 'Administrativo', value: 'Administrativo'},]"></Select>
         <Input :disabled="props.verUser" v-model="formData.User.correo" type="email"
-            id="correo" name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5"
-            :mayuscula="false" />
+        id="correo" name="correo" placeholder="Correo Electronico" tamaño="w-full" minlength="5"
+        :mayuscula="false" />
         <div class="w-full " v-if="!props.noCambiar && props.formulario !== 'Paciente' && props.formulario !== 'Profesional' && formData.User.rol === 'Administrativo'">
             <Input :disabled="props.verUser"
-                v-model="formData.User.contraseña" type="password" id="contraseña" name="contraseña"
-                placeholder="Crea una contraseña" minlength="5" :mayuscula="false" />
+            v-model="formData.User.contraseña" type="password" id="contraseña" name="contraseña"
+            placeholder="Crea una contraseña" minlength="5" :mayuscula="false" />
             <p v-if="contraseñaSegura" class="text-red-500 text-sm">
                 La contraseña debe contener al menos 3 letras, 2 números y 1 símbolo.
             </p>
+        </div>
+        <div v-if="props.noCambiar && !props.verUser" class="flex gap-2 items-center w-1/3 h-[37px] border border-gray-300 shadow p-2 mt-1 rounded-lg">
+            <input v-model="formData.User.rol" type="radio" name="admin" id="admin" value="Administrativo" />
+            <Label for="admin">Cambiar a Administrador</Label>
         </div>
     </Section>
 

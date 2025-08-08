@@ -1,28 +1,39 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
+import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 
-// funcion para Validar campos del formulario Modificar Paciente
-export const validarYEnviarEliminarMedico = async (datos) => {
+
+export const validarYEnviarEliminarUsuario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const pacientesStore = usePacientesStore();
-    const pacientes = await pacientesStore.listPacientes;
-    const existePaciente = pacientes.some(paciente => paciente.id_usuario === datos.User.id);
+    const pacientes = await pacientesStore.tablaPacientes;
+
+    const medicosStore = useMedicosStore();
+    const medicos = await medicosStore.tablaMedicos;
+
+    // validar si existe usuario en pacientes y profesionales y desactivarlos
+    const existePaciente = pacientes.find(paciente => paciente.id_usuario === datos.User.id);
+    const existeProfesional = medicos.find(medico => medico.id_usuario === datos.User.id);
 
     const datosAEnviar = {
-        Medico: {
-            ...datos.Medico,
+        User: {
+            ...datos.User,
             estado: 'inactivo'
         },
-        ...(existePaciente && {
-            User: {
-                ...datos.User,
-                rol: 'Paciente'
+        ...(existePaciente ? {
+            Paciente: {
+                ...existePaciente,
+                estado: 'inactivo'
             }
-        })
+        } : {}),
+        ...(existeProfesional ? {
+            Medico: {
+                ...existeProfesional,
+                estado: 'inactivo'
+            }
+        } : {})
     };
-
-
 
     return await enviarFormulario(datosAEnviar);
 };

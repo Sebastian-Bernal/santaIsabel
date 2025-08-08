@@ -24,6 +24,7 @@ const estructuraPaciente = {
         estado: 'activo',
     },
     Paciente: {
+        id_usuario: '',
         sexo: '',
         genero: '',
         Eps: '',
@@ -59,14 +60,36 @@ export const usePacientesStore = defineStore('Pacientes', {
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientesActivos.map((paciente) => {
                 const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
-                return {
-                    ...paciente,
-                    ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
+
+                if (usuario) {
+                    return {
+                        ...paciente,
+                        ...usuario,
+                        id_paciente: paciente.id // renombramos el id del paciente
+                    }
+                } else {
+                    return {
+                        ...paciente,
+                        usuario: null // o puedes omitir esto si no lo necesitas
+                    }
                 }
             })
 
             state.Pacientes = usuariosPacientes // Actualiza la lista de pacientes en el estado
             return usuariosPacientes
+        },
+
+        async tablaPacientes() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Paciente'
+            const pacientes = await store.leerdatos()
+
+
+            const pacientesActivos = pacientes.filter((paciente) => {
+                return paciente.estado === 'activo'
+            })
+
+            return pacientesActivos
         },
     },
 

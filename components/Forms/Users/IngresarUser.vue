@@ -5,6 +5,7 @@ import Formulario from "~/components/Forms/Formulario.vue";
 import DatosUsers from "~/components/Forms/Users/DatosUsers.vue"
 import IngresarPaciente from "../Pacientes/IngresarPaciente.vue";
 import IngresarUsuario from "../Pacientes/IngresarUsuario.vue";
+import IngresarUsuarioProfesional from "../Profesionales/IngresarUsuarioProfesional.vue";
 import IngresarProfesional from "../Profesionales/IngresarProfesional.vue";
 // Data
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
@@ -43,12 +44,15 @@ const enviarNuevoUser = async (formData) => {
         options.tiempo = 1500;
         mensaje();
         options.background = '#d33'
-        limpiar();
         if(formData.User.rol === 'Paciente'){
+            formData.User.id = estado
             usuarioRegistrado.value = formData.User
+            limpiar()
             varView.showNuevoPacientePaso2 = true
         } else if(formData.User.rol === 'Profesional'){
+            formData.User.id = estado
             usuarioRegistrado.value = formData.User
+            limpiar()
             varView.showNuevoProfesionalPaso2 = true
         }
         storeUser.listUsers
@@ -90,4 +94,5 @@ function cerrarModal() {
     <IngresarPaciente v-if="varView.showNuevoPacientePaso2" :usuario="usuarioRegistrado"/>
     <IngresarUsuario v-if="varView.showNuevoPaciente"/>
     <IngresarProfesional v-if="varView.showNuevoProfesionalPaso2" :usuario="usuarioRegistrado"/>
+    <IngresarUsuarioProfesional v-if="varView.showNuevoProfesional"/>
 </template>

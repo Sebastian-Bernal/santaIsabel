@@ -17,7 +17,6 @@ const refresh = ref(1)
 
 async function llamadatos(){
     pacientes.value= await listPacientes.value;
-    console.log(pacientes.value)
 }
 
 watch(() => varView.showNuevoPacientePaso2, async()=>{

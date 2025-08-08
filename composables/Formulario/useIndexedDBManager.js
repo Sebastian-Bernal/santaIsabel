@@ -93,6 +93,23 @@ export async function guardarProfesionalEnIndexedDB(data) {
     }
 }
 
+export async function guardarEnIndexedDBID(data){
+    const store = useIndexedDBStore();
+    let idGenerado
+    for (const [almacen, contenido] of Object.entries(data)) {
+        store.almacen = almacen;
+
+        if (Array.isArray(contenido)) {
+            for (const item of contenido) {
+                await store.guardardatosID({ ...item });
+            }
+        } else if (typeof contenido === 'object' && contenido !== null) {
+            idGenerado = await store.guardardatosID({ ...contenido });
+        }
+    }
+    return idGenerado
+}
+
 export async function guardarHistoriaEnIndexedDB(data) {
     const store = useIndexedDBStore();
     await store.initialize();
@@ -138,6 +155,7 @@ export async function actualizarEnIndexedDB(data) {
                 await store.actualiza({ ...item });
             }
         } else if (typeof contenido === 'object' && contenido !== null) {
+            console.log(almacen, contenido)
             await store.actualiza({ ...contenido });
         }
     }

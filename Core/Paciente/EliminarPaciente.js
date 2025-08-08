@@ -4,9 +4,10 @@ import { useNotificacionesStore } from '../../stores/notificaciones.js'
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarEliminarPaciente = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    datos.Paciente.estado = 'inactivo'
 
-    return await enviarFormulario(datos);
+    const datosAEnviar = { Paciente: {...datos.Paciente, estado: 'inactivo'}, }
+
+    return await enviarFormulario(datosAEnviar);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB

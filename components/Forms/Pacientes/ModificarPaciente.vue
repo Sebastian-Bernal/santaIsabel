@@ -2,6 +2,7 @@
 // Componentes 
 import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
+import DatosUsers from '../Users/DatosUsers.vue';
 // Data
 import { validarYEnviarEliminarPaciente } from '~/Core/Paciente/EliminarPaciente';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
@@ -40,14 +41,31 @@ const {
 } = notificacionesStore;
 
 // Titulo del formulario
-const pacienteAModificar = computed(() => formData.Paciente.name ? formData.Paciente.name : 'Paciente')
+const pacienteAModificar = computed(() => formData.User.name ? formData.User.name : 'Paciente')
 const modificarPaciente = ref(false)
 
 // Traer datos del localStorage
 onMounted(async() => {
     // Si se pasa un paciente por props, se asigna al formData
     if (props.paciente) {
-        formData.Paciente = props.paciente;
+        formData.User = {...formData.User, id: ''}
+        // Propiedades que van en User
+        const userKeys = Object.keys(formData.User)
+        userKeys.forEach(key => {
+            if (props.paciente.hasOwnProperty(key)) {
+                formData.User[key] = props.paciente[key]
+            }
+        })
+
+        // Propiedades que van en paciente
+        const pacienteKeys = Object.keys(formData.Paciente)
+        pacienteKeys.forEach(key => {
+            if (props.paciente.hasOwnProperty(key)) {
+                formData.Paciente[key] = props.paciente[key]
+            }
+        })
+        formData.Paciente = {...formData.Paciente, id: props.paciente.id_paciente}
+
         formData.Diagnosticos = await storePaciente.listDatos(props.paciente.id, 'Diagnosticos');
         formData.Antecedentes = await storePaciente.listDatos(props.paciente.id, 'Antecedentes');
     }
@@ -144,6 +162,8 @@ async function eliminarPaciente() {
             </div>
 
             <div class="px-5 pt-4 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+                <DatosUsers :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
+                    :verUser="!modificarPaciente" />
                 <DatosPacientes :formData="formData" :agregarItem="agregarItem" :eliminarItem="eliminarItem"
                     :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
                     :verPaciente="!modificarPaciente" />

@@ -28,8 +28,8 @@ const { simple, mensaje, options } = notificacionesStore;
 
 onMounted(() => {
     if(props.usuario){
-        console.log(props.usuario)
         formData.User = props.usuario
+        localStorage.removeItem('NuevoUsuario')
     } 
 })
 
@@ -71,7 +71,6 @@ const validarform = () => {
 };
 
 function cerrarModal() {
-    console.log('hola')
     varView.showNuevoProfesional = true;
     varView.showNuevoProfesionalPaso2 = false;
 }

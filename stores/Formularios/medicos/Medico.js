@@ -22,9 +22,10 @@ const estructuraMedico = {
         estado: 'activo',
     },
     Medico: {
-        departamento: '',
-        municipio: '',
-        zona: '',
+        id_usuario: '',
+        departamentoLaboral: '',
+        municipioLaboral: '',
+        zonaLaboral: '',
         profesion: '',
         estado: 'activo',
     }
@@ -53,6 +54,7 @@ export const useMedicosStore = defineStore('Medicos', {
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicosActivos.map((medico) => {
                 const usuario = usuarios.find((user) => user.id === medico.id_usuario)
+                usuario.id_profesional = medico.id
                 return {
                     ...medico,
                     ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
@@ -61,7 +63,19 @@ export const useMedicosStore = defineStore('Medicos', {
 
             state.Medicos = usuariosProfesionales
             return usuariosProfesionales
-        }
+        },
+
+        async tablaMedicos() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Medico'
+            const medicos = await store.leerdatos()
+
+            const medicosActivos = medicos.filter((medico) => {
+                return medico.estado === 'activo'
+            })
+
+            return medicosActivos
+        },
     },
 
     actions: {

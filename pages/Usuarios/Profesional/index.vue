@@ -1,7 +1,7 @@
 <script setup>
 import Tabla from '../../../components/Tables/Tabla.vue';
 import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
-import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuario.vue';
+import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuarioProfesional.vue';
 import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
 // Data
 import { ref, onMounted } from 'vue';

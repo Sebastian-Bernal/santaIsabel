@@ -2,6 +2,7 @@
 // Componentes
 import ModalFormXS from "~/components/Modales/ModalFormXS.vue";
 import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
+import DatosUsers from "../Users/DatosUsers.vue";
 // Data
 import { validarYEnviarEliminarMedico } from "~/Core/Profesional/EliminarMedico.js";
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
@@ -16,7 +17,7 @@ const notificacionesStore = useNotificacionesStore();
 const modificarMedico = ref(false)
 
 // Nombre del Medico
-const medicoAModificar = computed(() => formData.Medico.name ? formData.Medico.name : 'Medico')
+const medicoAModificar = computed(() => formData.User.name ? formData.User.name : 'Medico')
 
 const props = defineProps({
     medico: {
@@ -41,7 +42,23 @@ const { alertRespuesta, simple, mensaje, options } = notificacionesStore;
 onMounted(() => {
     // Si se pasa un medico por props, se asigna al formData
     if (props.medico) {
-        formData.Medico = props.medico;
+        formData.User = {...formData.User, id: ''}
+        // Propiedades que van en User
+        const userKeys = Object.keys(formData.User)
+        userKeys.forEach(key => {
+            if (props.medico.hasOwnProperty(key)) {
+                formData.User[key] = props.medico[key]
+            }
+        })
+
+        // Propiedades que van en Medico
+        const medicoKeys = Object.keys(formData.Medico)
+        medicoKeys.forEach(key => {
+            if (props.medico.hasOwnProperty(key)) {
+                formData.Medico[key] = props.medico[key]
+            }
+        })
+        formData.Medico = {...formData.Medico, id: props.medico.id_profesional}
     }
 });
 
@@ -136,6 +153,8 @@ async function eliminarMedico() {
             </div>
 
             <div class="pt-5 px-5 scrollForm w-full flex flex-col items-center gap-[15px] max-h-[87%] overflow-y-auto">
+                <DatosUsers :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos" :noCambiar="true"
+                    :verUser="!modificarMedico" />
                 <DatosProfesional :formData="formData" :traerDatos="traerDatos" :guardarDatos="guardarDatos"
                     :noCambiar="true" :verMedico="!modificarMedico" />
             </div>
