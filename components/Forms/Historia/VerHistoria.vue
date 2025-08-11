@@ -23,7 +23,6 @@ const varView = useVarView();
 const pacienteStore = usePacientesStore();
 const historiasStore = useHistoriasStore();
 const medicinas = ref([]);
-const consultas = ref([]);
 const analisis = ref([]);
 const tratamientos = ref([]);
 const notas = ref([]);
@@ -34,17 +33,10 @@ const cerrarModal = () => {
 
 const actions = ref([
     {
-        title: 'Consultas',
-        description: 'Registro de consultas',
+        title: 'Consultas y Analisis',
+        description: 'Registro de consultas del paciente',
         icon: 'fa-hospital',
-        color: 'bg-[var(--color-default-200)] hover:opacity-75',
-        action: () => {}
-    },
-    {
-        title: 'Análisis',
-        description: 'Análisis del paciente',
-        icon: 'fa-stethoscope',
-        color: "bg-[var(--color-default-300)] hover:opacity-75",
+        color: 'bg-[var(--color-default-300)] hover:opacity-75 md:col-span-2',
         action: () => {}
     },
     {
@@ -86,10 +78,7 @@ const actions = ref([
 
 async function Botones (titulo) {
     varView.showMenuHistorias = !varView.showMenuHistorias;
-    if(titulo === 'Consultas'){
-        consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
-        varView.showVerConsultas = !varView.showVerConsultas
-    } else if(titulo === 'Análisis'){
+    if(titulo === 'Consultas y Analisis'){
         await historias()
         varView.showVerAnalisis = !varView.showVerAnalisis
     } else if(titulo === 'Evoluciones'){
@@ -107,18 +96,11 @@ async function Botones (titulo) {
 };
 
 async function historias () {
-    const historias = []
     analisis.value = []
-        consultas.value = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
-        consultas.value.map((consulta) => {
-            historias.push(consulta.id_temporal)
-        })
+    const historia = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
 
-        for(const historia of historias ){
-            const valor = await historiasStore.listDatos(historia, 'AnalisisTratamiento')
-            analisis.value.push(valor[0])
-        }
-}
+    analisis.value = await historiasStore.listDatos(historia[0].id_temporal, 'Analisis')
+};
 
 function showBotones () {
     varView.showMenuHistorias = true;
@@ -129,7 +111,7 @@ function showBotones () {
     varView.showVerTratamientos = false
     varView.showVerMedicacion = false
 };
-console.log(props.historia)
+
 </script>
 
 <template>
@@ -149,9 +131,9 @@ console.log(props.historia)
 
                 </div>
                 <div v-if="varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i class="fa-solid fa-print hover:text-white"></i>
-                    <i class="fa-solid fa-download hover:text-white"></i>
-                    <i class="fa-solid fa-close hover:text-white" @click="cerrarModal"></i>
+                    <i class="fa-solid fa-print hover:text-white cursor-pointer"></i>
+                    <i class="fa-solid fa-download hover:text-white cursor-pointer"></i>
+                    <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>
                 <div v-if="!varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
                     <i @click="showBotones" class="fa-solid fa-rotate-left hover:text-white"></i>    
@@ -175,7 +157,6 @@ console.log(props.historia)
                 </div>
             </div>
             <div class="w-full h-full" v-if="!varView.showMenuHistorias">
-                <VerConsultas v-if="varView.showVerConsultas" :consultas="consultas"/>
                 <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis"/>
                 <VerEvoluciones v-if="varView.showVerEvoluciones"/>
                 <VerNotas v-if="varView.showVerNotas" :notas="notas"/>

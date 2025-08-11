@@ -114,16 +114,39 @@ export async function guardarHistoriaEnIndexedDB(data) {
     const store = useIndexedDBStore();
     await store.initialize();
 
+    // Buscar si ya existe la historia clínica
+    store.almacen = 'HistoriaClinica';
+    const historias = await store.leerdatos();
+
+    const historiaExistente = historias.find(
+        (historia) => historia.id_paciente === data.HistoriaClinica.id_paciente
+    );
+
+    let historiaID;
+
+    if (!historiaExistente) {
+        // Crear nueva historia clínica si no existe
+        historiaID = await store.guardardatosID({ ...data.HistoriaClinica });
+    } else {
+        // Usar el ID de la historia existente
+        historiaID = historiaExistente.id_temporal;
+    }
+
     let id_temporal = null;
+
+    // Guardar los demás datos relacionados
     for (const [almacen, contenido] of Object.entries(data)) {
+        if (almacen === 'HistoriaClinica') continue; // Ya procesado
+
         store.almacen = almacen;
-        // Guardar Historia y obtener ID generado
-        if (almacen === 'HistoriaClinica') {
-            const idGenerado = await store.guardardatosID({ ...contenido });
-            id_temporal = idGenerado; // Guardamos el ID para usar en otros almacenes
-        }
-        // Guardar otros datos relacionados (como diagnóstico, antecedentes, etc.)
-        else if (Array.isArray(contenido)) {
+
+        if (almacen === 'Analisis') {
+            const idGenerado = await store.guardardatosID({
+                ...contenido,
+                id_historia: historiaID,
+            });
+            id_temporal = idGenerado;
+        } else if (Array.isArray(contenido)) {
             for (const item of contenido) {
                 await store.guardardatos({
                     ...item,

@@ -73,15 +73,15 @@ function añadirDato(dato) {
 
 function seleccionarTodos() {
     // Verifica si todos los datos ya están seleccionados
-    const todosSeleccionados = secciones.value.length === formData.Profesion.at(-1).permisos.length &&
-        secciones.value.every(valor => formData.Profesion.at(-1).permisos.includes(valor));
+    const todosSeleccionados = secciones.length === formData.Profesion.at(-1).permisos.length &&
+        secciones.every(valor => formData.Profesion.at(-1).permisos.includes(valor));
 
     if (todosSeleccionados) {
         // Si ya están todos seleccionados, deselecciona todo
         formData.Profesion.at(-1).permisos = [];
     } else {
         // Si no, selecciona todos
-        formData.Profesion.at(-1).permisos = [...secciones.value];
+        formData.Profesion.at(-1).permisos = [...secciones];
     }
 };
 
@@ -109,6 +109,11 @@ const enviar = async (formData) => {
         simple();
     }
 };
+
+function modificarProfesion (data) {
+    console.log('hola')
+    agregarItem('Profesion', { nombre: data.nombre, codigo: data.codigo, permisos: data.permisos}, 'nombre')
+}
 
 const validarform = () => {
     options.position = "top-end";
@@ -157,7 +162,7 @@ const cerrarModal = () => {
                     <Select placeholder="Seleccione los permisos" name="permisos" id="permisos"
                     @click="mostrarOptions"></Select>
                         <ul v-show="showOptions"
-                            class="autocomplete-list absolute top-full left-0 right-0 max-h-[180px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
+                            class="autocomplete-list absolute top-full left-0 right-0 max-h-[180px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 px-3 mt-1">
                             <div class="flex gap-3" @click="seleccionarTodos">
                                 <label class="font-semibold w-full px-3 py-2 hover:bg-blue-100">Seleccionar Todos</label>                    
                             </div>
@@ -181,7 +186,7 @@ const cerrarModal = () => {
                 <p>{{ item.nombre }}</p>
                 <p>{{ item.codigo }}</p>
                 <p class="flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-pencil"></i>
+                    <i @click="modificarProfesion(item)" class="fa-solid fa-pencil hover:text-gray-500"></i>
                     <i class="fa-solid fa-trash text-red-500"></i>
                 </p>
             </div>

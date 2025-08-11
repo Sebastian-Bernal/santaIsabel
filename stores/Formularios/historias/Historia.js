@@ -5,6 +5,15 @@ import { useIndexedDBStore } from '~/stores/indexedDB';
 
 // Estructura de datos de Historias Clinicas
 const estructuraHistoria = {
+    Analisis: {
+        motivo: '',
+        acompañante: [],
+        observacion: '',
+        tratamiento: '',
+        analisis: '',
+        tipoAnalisis: '',
+        id_historia: '',
+    },
     Diagnosticos: [],
     Antecedentes: [],
     Enfermedad: {
@@ -13,7 +22,17 @@ const estructuraHistoria = {
         fecha_rehabilitacion: '',
     },
     HistoriaClinica: {
-        motivo: '',
+        fecha_historia: '',
+        id_paciente: '',
+        name_paciente: '',
+        type_doc_paciente: '',
+        No_document_paciente: '',
+    },
+    ExamenFisico: {
+        Peso: '',
+        altura: '',
+        otros: '',
+        id_historia: '',
         signosVitales: {
             ta: '',
             fc: '',
@@ -21,28 +40,6 @@ const estructuraHistoria = {
             t: '',
             SATo2: '',
         },
-        fecha_historia: '',
-        id_paciente: '',
-        name_paciente: '',
-        type_doc_paciente: '',
-        No_document_paciente: '',
-        acompañante: [],
-        id_profesional: '',
-        name_profesional: '',
-    },
-    ExamenFisico: {
-        Peso: '',
-        altura: '',
-        otros: '',
-        id_RegistrarHistoria: '',
-        id_historia: ''
-    },
-    AnalisisTratamiento: {
-        observacion: '',
-        tratamiento: '',
-        analisis: '',
-        tipoAnalisis: '',
-        id_historia: ''
     },
     Plan_manejo_medicamentos: [],
     Plan_manejo_procedimientos: [],
@@ -82,7 +79,6 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             await historias.map((historia) => {
                 historiasPacientes.push(historia.id_paciente)
             })
-
             // Array que devuelve json con Pacientes con historia
             await pacientes.map((paciente) => {
                 datos.push({ id: paciente.id, paciente: paciente.name, cedula: paciente.No_document, estado: historiasPacientes.includes(paciente.id) ? 'Creada' : 'Nueva' })
@@ -121,9 +117,9 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             store.almacen = Tabla
             const datosTabla = await store.leerdatos()
 
-            // Array que devuelve los datos filtrados por paciente
+            // Array que devuelve los datos filtrados por historia
             const datos = datosTabla.filter((dato) => {
-                return parseInt(dato.id_temporal) === parseInt(id)
+                return parseInt(dato.id_historia) === parseInt(id)
             })
 
             return datos

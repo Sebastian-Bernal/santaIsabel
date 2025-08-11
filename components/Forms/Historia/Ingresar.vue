@@ -61,14 +61,15 @@ watch(formData, (newValue) => {
 onMounted(async() => {
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
-    console.log(PacientesList)
+
     if(props.paciente !== undefined){
         const PaCienteProp = PacientesList.value.filter((pacient) => {
             return parseInt(pacient.id) === parseInt(props.paciente)
         });
-        console.log(props.paciente, PaCienteProp[0])
+        console.log(PaCienteProp[0])
         seleccionarPaciente(PaCienteProp[0])
     }
+
     traerDatos();
 });
 
@@ -228,20 +229,20 @@ function enviarPrimerPaso(){
                     <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <a @click="agregarItem('HistoriaClinica.acompañante', { nombre: '', parentesco: ''}, 'nombre')">
+                    <a @click="agregarItem('Analisis.acompañante', { nombre: '', parentesco: ''}, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
             </Section>
 
-            <Section v-for="(item, index) in formData.HistoriaClinica.acompañante" :key="index" styles="flex-col md:flex-row items-center">
+            <Section v-for="(item, index) in formData.Analisis.acompañante" :key="index" styles="flex-col md:flex-row items-center">
                 <Input v-model="item.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
                 <Select v-model="item.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
                     <i class="fa-solid fa-close text-red-400"
-                        @click="eliminarItem('HistoriaClinica.acompañante', i)"></i>
+                        @click="eliminarItem('Analisis.acompañante', i)"></i>
             </Section>
 
         </FormularioWizard>

@@ -45,18 +45,18 @@ const {
     options
 } = notificacionesStore;
 
+const camposRequeridos = [
+    'analisis', 'observacion', 'tipoAnalisis', 'tratamiento'
+];
 // Guardar los datos en localStorage
 watch(formData, (newValue) => {
     guardarDatos(newValue)
+    const analisis = newValue.Analisis
     // Detectar inputs inválidos
     const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0 || document.querySelectorAll('textarea:invalid').length > 0;
     // Validaciones
-    if (formData.HistoriaClinica.signosVitales.ta !== "" && formData.HistoriaClinica.signosVitales.fc !== "" && formData.HistoriaClinica.signosVitales.fr !== "" && formData.HistoriaClinica.signosVitales.t !== "" && formData.HistoriaClinica.signosVitales.SATo2 !== ""
-        && formData.ExamenFisico.otros !== "" && formData.AnalisisTratamiento.analisis !== "" && formData.AnalisisTratamiento.tratamiento !== "") {
-        varView.formComplete = !hayCamposInvalidos
-    } else {
-        varView.formComplete = false
-    }
+    const camposValidos = camposRequeridos.every((campo) => analisis[campo] !== '');
+    varView.formComplete = camposValidos && !hayCamposInvalidos;
 
 }, { deep: true });
 
@@ -152,17 +152,17 @@ const cerrarModal = () => {
                 </div>
             </Section>
             <Section>
-                <Select v-model="formData.AnalisisTratamiento.tipoAnalisis" id="rehabilitacion" name="rehabilitacion"
+                <Select v-model="formData.Analisis.tipoAnalisis" id="rehabilitacion" name="rehabilitacion"
                     :options="[{ text: 'Estado clinico sin cambios', value: 'Estado clinico sin cambios' }, { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' }, { text: 'Cambios criticos', value: 'Cambios criticos' }]"
                     placeholder="Tipo de Analisis" tamaño="w-full"></Select>
-                <Input v-model="formData.AnalisisTratamiento.observacion" type="text" id="observacion" name="observacion"
+                <Input v-model="formData.Analisis.observacion" type="text" id="observacion" name="observacion"
                     placeholder="Observacion" tamaño="w-full" minlength="5" />
             </Section>
 
 
 
             <Section class="md:flex-row flex-col">
-                <Textarea v-model="formData.AnalisisTratamiento.analisis" id="analisis" name="analisis"
+                <Textarea v-model="formData.Analisis.analisis" id="analisis" name="analisis"
                     placeholder="Analisis" minlength="10"></Textarea>
             </Section>
 
@@ -173,7 +173,7 @@ const cerrarModal = () => {
                 </div>
             </Section>
             <Section class="md:flex-row flex-col mb-3">
-                <Select v-model="formData.AnalisisTratamiento.tratamiento" id="rehabilitacion" name="rehabilitacion"
+                <Select v-model="formData.Analisis.tratamiento" id="rehabilitacion" name="rehabilitacion"
                     :options="[{ text: 'Total o Parcial', value: 'Total o Parcial' }, { text: 'Sin potencial de rehabilitacion', value: 'Sin potencial de rehabilitacion' }, { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }]"
                     placeholder="Condicion de rehabilitacion" tamaño="w-full"></Select>
             </Section>

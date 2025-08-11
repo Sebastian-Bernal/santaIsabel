@@ -25,7 +25,7 @@ const props = defineProps({
 </script>
 <template>
     <Fondo>
-        <div class="md:w-[70%] md:h-[85%] w-[90%] h-[90%] bg-gray-50 rounded-2xl shadow-lg pb-7">
+        <div class="lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%] bg-gray-50 rounded-2xl shadow-lg pb-7">
             <slot></slot>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">

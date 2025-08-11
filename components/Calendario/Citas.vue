@@ -98,7 +98,6 @@ function showMotivo(cita) {
 }
 
 async function activarCita(cita){
-    console.log(cita)
     paciente.value = cita.id_paciente
     varView.showNuevaHistoria = true
 }

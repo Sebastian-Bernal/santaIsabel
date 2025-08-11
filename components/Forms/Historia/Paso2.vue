@@ -45,7 +45,7 @@ watch(formData, (newValue) => {
     // Detectar inputs inválidos
     const hayCamposInvalidos = document.querySelectorAll('textarea:invalid').length > 0;
 
-    if (formData.HistoriaClinica.motivo !== "" && formData.Enfermedad.valor !== "" && formData.Antecedentes.at(-1)?.valor !== "") {
+    if (formData.Analisis.motivo !== "" && formData.Enfermedad.valor !== "" && formData.Antecedentes.at(-1)?.valor !== "") {
         varView.formComplete = !hayCamposInvalidos
     } else {
         varView.formComplete = false
@@ -109,7 +109,7 @@ const enviarSegundoPaso = () => {
                 </div>
             </Section>
             <Section>
-                <Textarea v-model="formData.HistoriaClinica.motivo" id="motivo" name="motivo" minlength="10"
+                <Textarea v-model="formData.Analisis.motivo" id="motivo" name="motivo" minlength="10"
                     placeholder="Describa el motivo principal de la consulta..." rows="3"></Textarea>
             </Section>
 
