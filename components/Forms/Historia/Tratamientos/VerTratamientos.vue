@@ -1,12 +1,20 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
+import TratamientosInfo from './TratamientosInfo.vue';
 
+const varView = useVarView()
+const tratamientoInfo = ref({})
 const props = defineProps({
     tratamientos: {
         type: [Array, Object],
         default: [],
     }
 });
+
+async function verTratamiento(data) {
+    tratamientoInfo.value = data
+    varView.showTratamientoInfo = true
+};
 
 </script>
 
@@ -20,6 +28,8 @@ const props = defineProps({
             { titulo: 'mes', value: 'Mes', tamaño: 200, ordenar: true },
             { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
         ]" :headerTabla="{ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', }"
+            :acciones="{ icons: [{ icon: 'ver', action: verTratamiento }], botones: true }"
             :datos="{ content: props.tratamientos, espacioMargen: 450 }" />
     </div>
+    <TratamientosInfo v-if="varView.showTratamientoInfo" :tratamientoInfo="tratamientoInfo"/>
 </template>

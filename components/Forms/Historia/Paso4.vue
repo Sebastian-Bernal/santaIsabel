@@ -4,6 +4,7 @@ import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import FormularioWizard from '../../components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
+import SelectSearch from '~/components/Selects/SelectSearch.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import Textarea from '~/components/Textareas/Textarea.vue';
@@ -26,7 +27,7 @@ const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
 const storeCIE10 = useCodigos();
 
-const CIE10 = ref([])
+const CIE10 = ref([]);
 // Importar states y funciones del store
 const {
     formData,
@@ -145,6 +146,11 @@ const cerrarModal = () => {
                         <option v-for="enfermedad in CIE10" :value="enfermedad.description">codigo: {{ enfermedad.code
                             }}</option>
                     </datalist>
+
+                    <!-- <SelectSearch v-model="diagnostico.CIE_10" :options="CIE10.value" @change="autocompletarCodigo(i)"
+                    :seleccionarItem="autocompletarCodigo" name="cie10" id="cie10"
+                    placeholder="CIE-10" :opciones="[{value: 'description'},{text: 'Codigo', value: 'code' }]"/> -->
+
                     <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
                 </div>
                 <div v-if="formData.Diagnosticos.length < 1" class="w-full flex justify-center items-center py-3">

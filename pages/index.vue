@@ -109,7 +109,7 @@ function recuperarContraseña() {
             <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
                     <input v-model="Usuario.contraseña" @keyup.enter="ingresar" type="password" id="password"
-                        name="password" required placeholder="Contraseña" autocomplete="false"
+                        name="password" required placeholder="Contraseña" autocomplete="false" minlength="1"
                         class="text-white bg-inherit mt-1 pr-8 block w-full px-3 py-3 border border-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <i v-if="!mostrarContraseña"
                         class="fa-solid fa-eye-slash text-gray-50 absolute right-[2%] top-[27%] text-lg"

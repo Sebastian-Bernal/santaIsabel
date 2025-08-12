@@ -2,7 +2,6 @@
 import ModalLG from '~/components/Modales/ModalLG.vue';
 import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
 import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
-import VerConsultas from './Consultas/VerConsultas.vue'
 import VerEvoluciones from './Evoluciones/VerEvoluciones.vue'
 import VerNotas from './Notas/VerNotas.vue'
 import VerTratamientos from './Tratamientos/VerTratamientos.vue'
@@ -37,35 +36,35 @@ const actions = ref([
         description: 'Registro de consultas del paciente',
         icon: 'fa-hospital',
         color: 'bg-[var(--color-default-300)] hover:opacity-75 md:col-span-2',
-        action: () => {}
+        action: () => { }
     },
     {
         title: 'Evoluciones',
         description: 'Evoluciones de Historias',
         icon: 'fa-file',
         color: 'bg-[var(--color-default-400)] hover:opacity-75',
-        action: () => {}
+        action: () => { }
     },
     {
         title: 'Notas',
         description: 'Registros de Notas',
         icon: 'fa-notes-medical',
         color: 'bg-[var(--color-default-500)] hover:opacity-75',
-        action: () => {}
+        action: () => { }
     },
     {
         title: 'Tratamientos',
         description: 'Tratamientos del paciente',
         icon: 'fa-kit-medical',
         color: 'bg-[var(--color-default-600)] hover:opacity-75',
-        action: () => {}
+        action: () => { }
     },
     {
         title: 'Medicacion',
         description: 'Medicacion del paciente',
         icon: 'fa-prescription-bottle-medical',
         color: 'bg-[var(--color-default-700)] hover:opacity-75',
-        action: () => {}
+        action: () => { }
     },
 ]);
 
@@ -76,33 +75,59 @@ const actions = ref([
 //     })
 // });
 
-async function Botones (titulo) {
+async function Botones(titulo) {
     varView.showMenuHistorias = !varView.showMenuHistorias;
-    if(titulo === 'Consultas y Analisis'){
+    if (titulo === 'Consultas y Analisis') {
         await historias()
         varView.showVerAnalisis = !varView.showVerAnalisis
-    } else if(titulo === 'Evoluciones'){
+    } else if (titulo === 'Evoluciones') {
         varView.showVerEvoluciones = !varView.showVerEvoluciones
-    } else if(titulo === 'Notas'){
+    } else if (titulo === 'Notas') {
         notas.value = await pacienteStore.listDatos(props.historia.id, 'Nota')
         varView.showVerNotas = !varView.showVerNotas
-    } else if(titulo === 'Tratamientos'){
+    } else if (titulo === 'Tratamientos') {
         tratamientos.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_procedimientos')
+
+        const tratamientosConAnalisis = await Promise.all(
+            tratamientos.value.map(async (tratamiento) => {
+                const analisisTratamiento = await historiasStore.listDatos(tratamiento.id_temporal, 'Analisis', 'id')
+                // Aquí puedes agregar más valores del análisis si existen
+                return {
+                    ...tratamiento,
+                    ...analisisTratamiento[0],
+                }
+            })
+        )
+        
+        tratamientos.value = tratamientosConAnalisis   
         varView.showVerTratamientos = !varView.showVerTratamientos
-    } else if(titulo === 'Medicacion'){
+    } else if (titulo === 'Medicacion') {
         medicinas.value = await pacienteStore.listDatos(props.historia.id, 'Plan_manejo_medicamentos')
+
+        const medicinasConAnalisis = await Promise.all(
+            medicinas.value.map(async (medicina) => {
+                const analisisMedicina = await historiasStore.listDatos(medicina.id_temporal, 'Analisis', 'id')
+                // Aquí puedes agregar más valores del análisis si existen
+                return {
+                    ...medicina,
+                    ...analisisMedicina[0],
+                }
+            })
+        )
+        
+        medicinas.value = medicinasConAnalisis
         varView.showVerMedicacion = !varView.showVerMedicacion
     }
 };
 
-async function historias () {
+async function historias() {
     analisis.value = []
     const historia = await pacienteStore.listDatos(props.historia.id, 'HistoriaClinica')
 
     analisis.value = await historiasStore.listDatos(historia[0].id_temporal, 'Analisis')
 };
 
-function showBotones () {
+function showBotones() {
     varView.showMenuHistorias = true;
     varView.showVerConsultas = false
     varView.showVerAnalisis = false
@@ -130,13 +155,15 @@ function showBotones () {
                     </div>
 
                 </div>
-                <div v-if="varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                <div v-if="varView.showMenuHistorias"
+                    class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
                     <i class="fa-solid fa-print hover:text-white cursor-pointer"></i>
                     <i class="fa-solid fa-download hover:text-white cursor-pointer"></i>
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrarModal"></i>
                 </div>
-                <div v-if="!varView.showMenuHistorias" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i @click="showBotones" class="fa-solid fa-rotate-left hover:text-white"></i>    
+                <div v-if="!varView.showMenuHistorias"
+                    class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                    <i @click="showBotones" class="fa-solid fa-rotate-left hover:text-white"></i>
                 </div>
             </div>
 
@@ -157,10 +184,10 @@ function showBotones () {
                 </div>
             </div>
             <div class="w-full h-full" v-if="!varView.showMenuHistorias">
-                <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis"/>
-                <VerEvoluciones v-if="varView.showVerEvoluciones"/>
-                <VerNotas v-if="varView.showVerNotas" :notas="notas"/>
-                <VerTratamientos v-if="varView.showVerTratamientos" :tratamientos="tratamientos"/>
+                <VerAnalisis v-if="varView.showVerAnalisis" :analisis="analisis" />
+                <VerEvoluciones v-if="varView.showVerEvoluciones" />
+                <VerNotas v-if="varView.showVerNotas" :notas="notas" />
+                <VerTratamientos v-if="varView.showVerTratamientos" :tratamientos="tratamientos" />
                 <VerMedicacion v-if="varView.showVerMedicacion" :medicinas="medicinas" />
             </div>
         </div>

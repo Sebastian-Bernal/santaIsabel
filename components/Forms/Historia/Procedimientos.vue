@@ -6,7 +6,9 @@ import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
+import SelectSearch from '~/components/Selects/SelectSearch.vue';
 // Data
+import { CUPS } from '~/data/CUPS';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { ref } from 'vue';
@@ -70,6 +72,12 @@ onMounted(() => {
 const cerrarModal = () => {
     varView.showProcedimientos = false;
 };
+
+function seleccionarCUPS (data) {
+    nuevoServicio.value.descripcion = data.nombreProcedimiento
+    nuevoServicio.value.codigoCups = data.codigoProcedimiento
+    console.log(nuevoServicio.value)
+}
 </script>
 
 <template>
@@ -81,8 +89,9 @@ const cerrarModal = () => {
 
             <Label forLabel="descripcion">Plan de manejo</Label>
             <Section>
-                <Input v-model="nuevoServicio.descripcion" type="text" id="descripcion" name="descripcion"
-                    placeholder="Descripcion" tamaño="w-full" />
+                <SelectSearch v-model="nuevoServicio.descripcion" :options="CUPS"
+                    :seleccionarItem="seleccionarCUPS" name="descripcion" id="descripcion"
+                    placeholder="Nombre del paciente" :opciones="[{value: 'nombreProcedimiento'},{text: 'Codigo', value: 'codigoProcedimiento' }]"/>
             </Section>
 
             <Section>

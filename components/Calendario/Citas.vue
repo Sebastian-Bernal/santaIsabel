@@ -7,17 +7,21 @@ import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 import { useCalendarioCitas } from '../../stores/Calendario.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { computed, onMounted, ref } from 'vue';
 import { nombresMeses } from '../../data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 
+const props = defineProps(['Citas'])
 const varView = useVarView();
 const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
+const historiasStore = useHistoriasStore();
 const Citas = ref([]);
-const paciente = ref({})
-const notificacionesStore = useNotificacionesStore()
+const paciente = ref({});
+const citaSeleccionada = ref({});
+const notificacionesStore = useNotificacionesStore();
 
 const {
     fechaActual,
@@ -42,8 +46,12 @@ onMounted(async () => {
 
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return Citas.value.filter(cita => cita.fecha.split('-').reverse().join('/') === fecha.value)
+    return Citas.value.filter(cita => {
+        const fechaFormateada = cita.fecha?.split('-')?.reverse()?.join('/');
+        return fechaFormateada === fecha.value;
+    });
 });
+
 
 // Nombre del mes
 const mes = computed(() => {
@@ -97,8 +105,19 @@ function showMotivo(cita) {
     simple();
 }
 
-async function activarCita(cita){
+async function showObservacion(cita) {
+    const historia = await historiasStore.listDatos(cita.id_analisis, 'Analisis', 'id')
+    const observacion = historia[0].observacion
+    options.icono = "info";
+    options.titulo = "Observacion del Profesional";
+    options.texto = `${observacion}`;
+    options.tiempo = 5000;
+    simple();
+}
+
+async function activarCita(cita) {
     paciente.value = cita.id_paciente
+    citaSeleccionada.value = cita
     varView.showNuevaHistoria = true
 }
 
@@ -125,12 +144,17 @@ async function activarCita(cita){
                 <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
             </div>
             <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
-                <Button color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i class="fa-solid fa-check"></i></Button>
+                <Button color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
+                        class="fa-solid fa-check"></i></Button>
                 <Button color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
                         class="fa-solid fa-xmark"></i></Button>
             </div>
             <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
                 <Button color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
+                        class="fa-solid fa-info"></i></Button>
+            </div>
+            <div class="flex flex-col gap-2" v-if="cita.estado === 'Realizada'">
+                <Button color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
                         class="fa-solid fa-info"></i></Button>
             </div>
         </div>
@@ -140,7 +164,7 @@ async function activarCita(cita){
         </div>
     </div>
     <IngresarPaciente v-if="varView.showNuevoPaciente" />
-    <Ingresar v-if="varView.showNuevaHistoria" :paciente="paciente" />
+    <Ingresar v-if="varView.showNuevaHistoria" :paciente="paciente" :cita="citaSeleccionada" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
     <Paso4 v-if="varView.showPaso4" />

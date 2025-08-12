@@ -45,6 +45,7 @@ const estructuraHistoria = {
     Plan_manejo_procedimientos: [],
     Plan_manejo_insumos: [],
     Plan_manejo_equipos: [],
+    Cita: {}
 }
 
 // Pinia HistoriasClinicas
@@ -64,7 +65,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             state.Historias = historias
             return historias
         },
-
+        // Tabla Historias
         async datosHistoria() {
             // Traer pacientes
             const pacienteStore = usePacientesStore()
@@ -101,6 +102,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             this.Historias = await store.leerdatos();
         },
 
+        // Dashboard
         async ultimasHistorias() {
             const historias = await this.listHistorias
             return historias.sort(
@@ -111,7 +113,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             }).slice(0, 3);
         },
 
-        async listDatos(id, Tabla) {
+        async listDatos(id, Tabla, Campo = 'id_historia') {
             // Traer datos de indexedDB
             const store = useIndexedDBStore()
             store.almacen = Tabla
@@ -119,7 +121,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             // Array que devuelve los datos filtrados por historia
             const datos = datosTabla.filter((dato) => {
-                return parseInt(dato.id_historia) === parseInt(id)
+                return parseInt(dato[Campo]) === parseInt(id)
             })
 
             return datos

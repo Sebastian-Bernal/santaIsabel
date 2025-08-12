@@ -12,6 +12,11 @@ const citasStore = useCitasStore();
 const { listCitas } = storeToRefs(citasStore);
 const varView = useVarView();
 const refresh = ref(1);
+// const Citas = ref([]);
+
+onMounted(async() => {
+    Citas.value = await citasStore.listCitasF()
+})
 
 watch(()=> varView.showNuevaCita, ()=>{
     listCitas.value
@@ -43,9 +48,9 @@ const agregarCita = () => {
 
             </div>
 
-            <div :key="refresh"
+            <div
                 class="grid lg:grid-cols-[1fr_0.6fr] md:grid-cols-[1fr_1fr] grid-cols-1 md:mx-10 mx-5 lg:gap-10 gap-3 justify-between">
-                <Citas />
+                <Citas :Citas="Citas"/>
                 <Calendario></Calendario>
             </div>
 

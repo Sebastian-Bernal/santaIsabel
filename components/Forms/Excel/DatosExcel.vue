@@ -2,6 +2,7 @@
 import ModalXS from '~/components/Modales/ModalXS.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
+import SelectMultiple from '~/components/Selects/SelectMultiple.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';
@@ -23,7 +24,6 @@ const props = defineProps({
 });
 
 const datosAExportar = ref(props.datos)
-const showOptions = ref(true)
 const showInsertar = ref(false)
 const insertarTabla = ref(false)
 const datos = ref(Object.keys(datosAExportar.value[0]))
@@ -41,11 +41,6 @@ const tablaInsert = reactive({
     id_comparar: '',
     id_compararTabla: '',
 })
-
-
-function mostrarOptions() {
-    showOptions.value = !showOptions.value
-}
 
 const camposRequeridos = [
     'nombreArchivo', 'tipoArchivo', 'worksheet'
@@ -80,31 +75,6 @@ watch(tablaInsert, async(newValue) => {
     const camposValidos = camposRequeridosInsert.every((campo) => tablaInsert.value[campo] !== '');
     showInsertar.value = camposValidos;
 });
-
-function añadirDato(dato) {
-    const index = excel.opciones.indexOf(dato);
-    if (index !== -1) {
-        // Elimina el dato si ya existe
-        excel.opciones.splice(index, 1);
-        return
-    }
-    // Agrega el dato al final del array
-    excel.opciones.push(dato);
-}
-
-function seleccionarTodos() {
-    // Verifica si todos los datos ya están seleccionados
-    const todosSeleccionados = datos.value.length === excel.opciones.length &&
-        datos.value.every(valor => excel.opciones.includes(valor));
-
-    if (todosSeleccionados) {
-        // Si ya están todos seleccionados, deselecciona todo
-        excel.opciones = [];
-    } else {
-        // Si no, selecciona todos
-        excel.opciones = [...datos.value];
-    }
-}
 
 function agregarDB () {
     insertarTabla.value = !insertarTabla.value
@@ -168,7 +138,7 @@ function mostrar() {
                     <Input v-model="excel.worksheet" placeholder="Worksheet" type="text" name="worksheet" />
                 </div>
                 <div class="flex md:flex-row pt-5 relative">
-                    <Select placeholder="Seleccione los campos que desea" name="campos" @click="mostrarOptions()">
+                    <!-- <Select placeholder="Seleccione los campos que desea" name="campos" @click="mostrarOptions()">
                     </Select>
                     <ul v-show="showOptions"
                         class="autocomplete-list absolute top-full left-0 right-0 max-h-[180px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
@@ -179,7 +149,9 @@ function mostrar() {
                             <input v-model="excel.opciones" :value="dato" type="checkbox" :id="dato" />
                             <label>{{ dato }}</label>
                         </li>
-                    </ul>
+                    </ul> -->
+                    <SelectMultiple  v-model="excel.opciones" :options="datos"
+                        name="campos" id="campos" placeholder="Seleccione los campos que deseas" />
                 </div>
             </div>
             <div class="flex ">

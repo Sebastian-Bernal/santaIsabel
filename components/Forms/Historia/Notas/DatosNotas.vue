@@ -7,7 +7,6 @@ import Select from "~/components/Selects/Select.vue";
 import InputContenido from "~/components/Inputs/InputContenido.vue";
 import Textarea from "~/components/Textareas/Textarea.vue";
 // Data
-import { CIE10 } from "~/data/CIE10.js";
 import { useVarView } from "../../stores/varview.js";
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useCalendarioCitas } from "~/stores/Calendario.js";

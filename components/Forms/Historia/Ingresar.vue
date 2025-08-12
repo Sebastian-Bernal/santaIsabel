@@ -4,6 +4,7 @@ import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
 import FormularioWizard from '~/components/Forms/FormularioWizard.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
+import SelectSearch from '~/components/Selects/SelectSearch.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import Section from '~/components/Forms/Section.vue';
@@ -24,7 +25,7 @@ const RegistrarHistoriaStore = HistoriaStore.createForm('RegistrarHistoria')
 const notificacionesStore = useNotificacionesStore();
 const { Pacientes } = storeToRefs(PacientesStore)
 
-const props = defineProps(['paciente']);
+const props = defineProps(['paciente', 'cita']);
 // Importar states y funciones del store
 const {
     formData,
@@ -44,8 +45,6 @@ const {
 
 // Delcaracionde variables y funciones
 const fechaModificacion = ref('');
-const mostrarLista = ref(false);
-const pacientesFiltrados = ref([]);
 const PacientesList = ref([]);
 
 // Guardar los datos en localStorage
@@ -58,34 +57,28 @@ watch(formData, (newValue) => {
     guardarDatos(newValue);
 }, { deep: true });
 
-onMounted(async() => {
+onMounted(async () => {
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
-
-    if(props.paciente !== undefined){
+    if (props.paciente !== undefined) {
         const PaCienteProp = PacientesList.value.filter((pacient) => {
             return parseInt(pacient.id) === parseInt(props.paciente)
         });
-        console.log(PaCienteProp[0])
+
         seleccionarPaciente(PaCienteProp[0])
+        formData.Cita = props.cita
     }
 
     traerDatos();
 });
 
 // Funcion para autocompletar el paciente
-const pacienteExistente = async() => {
+const pacienteExistente = async () => {
     const paciente = Pacientes.value.find(
         p => p.name.toLowerCase() === formData.HistoriaClinica.name_paciente.toLowerCase()
     )
 
-    if (paciente) {
-        formData.HistoriaClinica.type_doc_paciente = paciente.tipoDocumento
-        formData.HistoriaClinica.No_document_paciente = paciente.documento
-        formData.HistoriaClinica.id_paciente = paciente.id
-        fechaModificacion.value = paciente.fechaModificacion
-
-    } else if (!paciente && formData.HistoriaClinica.name_paciente !== '') {
+    if (!paciente && formData.HistoriaClinica.name_paciente !== '') {
         options.icono = 'warning';
         options.titulo = 'Paciente no encontrado';
         options.texto = 'El paciente ingresado no está registrado.';
@@ -93,25 +86,13 @@ const pacienteExistente = async() => {
         options.canceltext = 'Cancelar'
         options.tiempo = 2000
         const respuesta = await alertRespuesta();
-        if(respuesta === 'confirmado'){
+        if (respuesta === 'confirmado') {
             varView.showNuevoPaciente = true
         }
     }
 };
 
-// datalist para Pacientes
-function filtrarPacientes() {
-    if (formData.HistoriaClinica.name_paciente.length === 0) {
-        pacientesFiltrados.value = [];
-        mostrarLista.value = false;
-        return;
-    }
 
-    pacientesFiltrados.value = PacientesList.value.filter(p =>
-        p.name.toLowerCase().includes(formData.HistoriaClinica.name_paciente.toLowerCase())
-    );
-    mostrarLista.value = true;
-}
 // Autocompletar campos al seleccionar paciente en datalist
 function seleccionarPaciente(paciente) {
     formData.HistoriaClinica.name_paciente = paciente.name;
@@ -119,9 +100,7 @@ function seleccionarPaciente(paciente) {
     formData.HistoriaClinica.No_document_paciente = paciente.No_document;
     formData.HistoriaClinica.id_paciente = paciente.id;
     fechaModificacion.value = paciente.fechaModificacion;
-    mostrarLista.value = false;
     // Aquí puedes también autocompletar el número de documento
-
 }
 
 const validarform = () => {
@@ -156,7 +135,7 @@ function cerrarModal() {
     varView.showNuevaHistoria = false
 }
 
-function enviarPrimerPaso(){
+function enviarPrimerPaso() {
     event.preventDefault();
     if (varView.formComplete) {
         varView.showNuevaHistoria = false;
@@ -168,8 +147,9 @@ function enviarPrimerPaso(){
 </script>
 
 <template>
-    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarPrimerPaso"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{cancelar: 'Cancelar', enviar: 'Siguiente'}">
+    <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarPrimerPaso" :formData="formData"
+        :formComplete="varView.formComplete" :validarform="validarform"
+        :botones="{ cancelar: 'Cancelar', enviar: 'Siguiente' }">
         <FormularioWizard :datos="{
             titulo: 'Datos del paciente',
             tituloFormulario: 'Nueva Historia Clinica',
@@ -197,26 +177,22 @@ function enviarPrimerPaso(){
                     </a>
                 </div>
             </Section>
-            <Section styles="relative">
-                <Input v-model="formData.HistoriaClinica.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
-                    @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full"/>
-                <ul v-show="mostrarLista && pacientesFiltrados.length"
-                    class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-                    <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" class=""
-                        @click="seleccionarPaciente(paciente)">
-                        <strong>{{ paciente.name }}</strong><br />
-                        <small>cédula: {{ paciente.No_document }}</small>
-                    </li>
-                </ul>
+            <Section>
+                <SelectSearch v-model="formData.HistoriaClinica.name_paciente" :options="PacientesList"
+                    :seleccionarItem="seleccionarPaciente" name="nombre" id="nombre"
+                    placeholder="Nombre del paciente" :opciones="[{value: 'name'},{text: 'Cedula', value: 'No_document' }]" />
             </Section>
 
 
             <Section styles="flex-col md:flex-row">
-                <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList" name="documentoList" @click="pacienteExistente"
-                    placeholder="Número de documento" tamaño="w-full" />
+                <SelectSearch v-model="formData.HistoriaClinica.No_document_paciente" :options="PacientesList"
+                    :seleccionarItem="seleccionarPaciente" name="documento" id="documento"
+                    placeholder="Numero de documento" :opciones="[{value: 'No_document'}]"/>
+                <!-- <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList"
+                    name="documentoList" @click="pacienteExistente" placeholder="Número de documento" tamaño="w-full" />
                 <datalist id="documentoList">
                     <option v-for="(paciente, id) in PacientesList" :key="id" :value="paciente.document"></option>
-                </datalist>
+                </datalist> -->
                 <Select v-model="formData.HistoriaClinica.type_doc_paciente" id="tipoDocumento" name="tipoDocumento"
                     :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }]"
                     placeholder="Tipo de documento" tamaño="w-full"></Select>
@@ -229,20 +205,20 @@ function enviarPrimerPaso(){
                     <Label forLabel="tipo" size="text-sm">Acompañante (Opcional)</Label>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <a @click="agregarItem('Analisis.acompañante', { nombre: '', parentesco: ''}, 'nombre')">
+                    <a @click="agregarItem('Analisis.acompañante', { nombre: '', parentesco: '' }, 'nombre')">
                         <Button color="bg-purple-500"><i class="fa-solid fa-plus"></i></Button>
                     </a>
                 </div>
             </Section>
 
-            <Section v-for="(item, index) in formData.Analisis.acompañante" :key="index" styles="flex-col md:flex-row items-center">
+            <Section v-for="(item, index) in formData.Analisis.acompañante" :key="index"
+                styles="flex-col md:flex-row items-center">
                 <Input v-model="item.nombre" type="text" id="nombreAcompañante" name="nombreAcompañante"
                     placeholder="Nombre completo del acompañante" tamaño="w-full" />
                 <Select v-model="item.parentesco" id="parentesco" name="parentesco"
                     :options="[{ text: 'Padre', value: 'Padre' }, { text: 'Madre', value: 'Madre' }, { text: 'Hijo', value: 'Hijo' }, { text: 'Conyuge', value: 'Conyuge' }, { text: 'Hermano/a', value: 'Hermano/a' }]"
                     placeholder="Seleccione el parentesco" tamaño="w-full"></Select>
-                    <i class="fa-solid fa-close text-red-400"
-                        @click="eliminarItem('Analisis.acompañante', i)"></i>
+                <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Analisis.acompañante', i)"></i>
             </Section>
 
         </FormularioWizard>

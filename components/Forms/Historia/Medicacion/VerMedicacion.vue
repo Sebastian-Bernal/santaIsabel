@@ -1,7 +1,11 @@
 <script setup>
 import Tabla from '~/components/Tables/Tabla.vue';
 import Medicinas from '../Medicinas.vue';
+import MedicacionInfo from './MedicacionInfo.vue';
+
 const varView = useVarView()
+const medicacionInfo = ref([])
+
 const props = defineProps({
     medicinas: {
         type: [Array, Object],
@@ -11,6 +15,11 @@ const props = defineProps({
 
 function añadirMedicamento () {
     varView.showMedicinas = true
+};
+
+async function verMedicacion(data) {
+    medicacionInfo.value = data
+    varView.showMedicacionInfo = true
 };
 
 </script>
@@ -27,7 +36,9 @@ function añadirMedicamento () {
             { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
             { titulo: 'dosis', value: 'Dosis', tamaño: 100 },
         ]" :headerTabla="{ titulo: 'Medicacion', color: 'bg-[var(--color-default-600)] text-white', }"
+            :acciones="{ icons: [{ icon: 'ver', action: verMedicacion }], botones: true }"
             :datos="{ content: props.medicinas, espacioMargen: 450 }" />
     </div>
     <Medicinas v-if="varView.showMedicinas"/>
+    <MedicacionInfo v-if="varView.showMedicacionInfo" :medicacionInfo="medicacionInfo"/>
 </template>

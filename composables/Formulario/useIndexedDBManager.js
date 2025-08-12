@@ -133,7 +133,7 @@ export async function guardarHistoriaEnIndexedDB(data) {
     }
 
     let id_temporal = null;
-
+    let id_examen = null;
     // Guardar los demás datos relacionados
     for (const [almacen, contenido] of Object.entries(data)) {
         if (almacen === 'HistoriaClinica') continue; // Ya procesado
@@ -146,6 +146,13 @@ export async function guardarHistoriaEnIndexedDB(data) {
                 id_historia: historiaID,
             });
             id_temporal = idGenerado;
+        } else if (almacen === 'Cita') {
+            await store.actualiza({
+                ...contenido, 
+                id_analisis: id_temporal, 
+                id_examen,
+                estado: 'Realizada'
+            })
         } else if (Array.isArray(contenido)) {
             for (const item of contenido) {
                 await store.guardardatos({

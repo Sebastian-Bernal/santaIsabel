@@ -2,6 +2,7 @@
 // Componentes
 import Input from '../../components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
+import SelectSearch from '~/components/Selects/SelectSearch.vue';
 import Label from '~/components/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 // Data
@@ -123,6 +124,7 @@ onMounted(async () => {
     medicosList.value = medicosStore.Medicos;
     await PacientesStore.listPacientes
     PacientesList.value = PacientesStore.Pacientes;
+
     props.traerDatos();
     props.formData.Cita.fecha = fechaformatDate();
 
@@ -212,6 +214,10 @@ async function seleccionarMedico(medico) {
                 <small>cédula: {{ paciente.No_document }}</small>
             </li>
         </ul>
+                <!-- <SelectSearch v-if="PacientesList.value.length"
+                    v-model="props.formData.Cita.name_paciente" :options="PacientesList"
+                    :seleccionarItem="seleccionarPaciente" name="nombre" id="nombre"
+                    placeholder="Nombre del paciente" :opciones="[{value: 'name'},{text: 'Cedula', value: 'No_document' }]" /> -->
     </Section>
 
     <Section>

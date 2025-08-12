@@ -35,10 +35,7 @@ const comprobarPrioridad = (fila) => {
 
 <template>
     <div class="w-[100%] min-h-[100%] bg-gray-50 rounded-lg md:py-8 py-3 md:px-12 px-4">
-        <div v-if="props.notas.length === 0" class="flex justify-center items-center p-5">
-            <p>No hay registros de Notas para este paciente</p>
-        </div>
-        <Tabla v-if="props.notas.length !== 0" :columnas="[
+        <Tabla :columnas="[
             { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
             { titulo: 'hora_nota', value: 'Hora', tamaño: 100, ordenar: true },
             { titulo: 'nota', value: 'Nota', tamaño: 400 },
@@ -46,7 +43,6 @@ const comprobarPrioridad = (fila) => {
         ]" 
         :headerTabla="{ titulo: 'Notas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: agregarNota }"
         :acciones="{ icons: [{ icon: comprobarPrioridad, action: () => {} }, { icon: 'ver', action: verNota }], botones: true }"
-
         :datos="{ content: props.notas, espacioMargen: 450 }" />
     </div>
     <IngresarNota v-if="varView.showNuevaNota"/>
