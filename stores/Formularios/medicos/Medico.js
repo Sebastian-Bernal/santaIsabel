@@ -1,25 +1,29 @@
 import { createFormStore } from '../../createFormStore';
+import { useUsersStore } from "../usuarios/Users";
 // Creacion del store para Nuevo Medico
 
 // Estructura de datos de Medicos
 const estructuraMedico = {
     User: {
         id_empresa: '',
+        correo: '',
+        contraseña: null,
+        rol: 'Profesional',
+        estado: 'activo',
+    },
+    InformacionUser : {
+        id_usuario: '',
         name: '',
         No_document: '',
         tipo: '',
         celular: '',
         telefono: '',
-        correo: '',
-        contraseña: null,
-        rol: 'Profesional',
         nacimiento: '',
         direccion: '',
         municipio: '',
         departamento: '',
         barrio: '',
         zona: '',
-        estado: 'activo',
     },
     Medico: {
         id_usuario: '',
@@ -41,11 +45,12 @@ export const useMedicosStore = defineStore('Medicos', {
     getters: {
         async listMedicos(state) {
             const store = useIndexedDBStore()
+            const usersStore = useUsersStore()
+            
             store.almacen = 'Medico'
             const medicos = await store.leerdatos()
 
-            store.almacen = 'User'
-            const usuarios = await store.leerdatos()
+            const usuarios = await usersStore.listUsers
 
             const medicosActivos = medicos.filter((medico) => {
                 return medico.estado === 'activo'

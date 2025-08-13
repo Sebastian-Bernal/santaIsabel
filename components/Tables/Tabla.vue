@@ -34,7 +34,7 @@ const props = defineProps({
     }
 });
 
-
+console.log(props.headerTabla)
 // tamaño de pantalla
 const {
     columnasVisibles,

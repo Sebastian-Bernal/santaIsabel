@@ -8,17 +8,13 @@ export const useExcelExport = defineStore('exportExcel', {
         cargando: false,
     }),
     actions: {
-        async obtenerPacientes(datos) {
-            const pacientesStore = usePacientesStore();
-            const pacientes = await pacientesStore.listPacientes
 
-            // Mapear cada dato y agregarle los datos del paciente correspondiente
-            const datosCombinados = datos.map(dato => {
-                const paciente = pacientes.find(pac => pac.id === dato.id);
-                return paciente ? { ...dato, ...paciente } : dato; // Añade info del paciente si se encuentra
-            });
+        async obtenerDatos(tabla) {
+            const storeIndexDB = useIndexedDBStore();
+            storeIndexDB.almacen = tabla;
+            const tablaAtraer = await storeIndexDB.leerdatos();
 
-            return datosCombinados;
+            return tablaAtraer;
         },
 
         async obtenerTabla(datos, tabla, id_comparar, id_compararTabla) {
@@ -39,9 +35,9 @@ export const useExcelExport = defineStore('exportExcel', {
             const storeIndexDB = useIndexedDBStore();
             storeIndexDB.almacen = tabla;
             const tablaAtraer = await storeIndexDB.leerdatos();
-            console.log(tablaAtraer)
+
             const datos = Object.keys(tablaAtraer[0])
-            console.log(datos)
+
             const datosOptionsTabla = datos.map((dato) => {
                 return {text: dato, value: dato}
             })

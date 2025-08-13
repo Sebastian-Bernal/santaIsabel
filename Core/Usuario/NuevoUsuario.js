@@ -1,5 +1,5 @@
 import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
-import { guardarEnIndexedDBID } from '~/composables/Formulario/useIndexedDBManager.js';
+import { guardarUsuarioEnIndexedDBID } from '~/composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Paciente
@@ -17,11 +17,11 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            const respuesta = await guardarEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
+            const respuesta = await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
             return respuesta
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            const respuesta = await guardarEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
+            const respuesta = await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -29,7 +29,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await guardarEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
+        await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

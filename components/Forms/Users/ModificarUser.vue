@@ -39,14 +39,28 @@ const {
 } = notificacionesStore;
 
 // Titulo del formulario
-const UserAModificar = computed(() => formData.User.name ? formData.User.name : 'Usuario')
+const UserAModificar = computed(() => formData.InformacionUser.name ? formData.InformacionUser.name : 'Usuario')
 const modificarUser = ref(false)
 
 // Traer datos del localStorage
 onMounted(async() => {
     // Si se pasa un User por props, se asigna al formData
     if (props.User) {
-        formData.User = props.User;
+        // Propiedades que van en User
+        const userKeys = Object.keys(formData.User)
+        userKeys.forEach(key => {
+            if (props.User.hasOwnProperty(key)) {
+                formData.User[key] = props.User[key]
+            }
+        })
+
+        // Propiedades que van en User informacion
+        const userInfoKeys = Object.keys(formData.InformacionUser)
+        userInfoKeys.forEach(key => {
+            if (props.User.hasOwnProperty(key)) {
+                formData.InformacionUser[key] = props.User[key]
+            }
+        })
     }
 });
 

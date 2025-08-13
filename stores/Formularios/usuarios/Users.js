@@ -7,21 +7,24 @@ import { useIndexedDBStore } from "../../indexedDB";
 const estructuraUser = {
     User: {
         id_empresa: '',
+        correo: '',
+        contraseña: '',
+        rol: '',
+        estado: 'activo',
+    },
+    InformacionUser : {
+        id_usuario: '',
         name: '',
         No_document: '',
         tipo: '',
         celular: '',
         telefono: '',
-        correo: '',
-        contraseña: '',
-        rol: '',
         nacimiento: '',
         direccion: '',
         municipio: '',
         departamento: '',
         barrio: '',
         zona: '',
-        estado: 'activo',
     },
 }
 
@@ -37,11 +40,32 @@ export const useUsersStore = defineStore('Users', {
             const store = useIndexedDBStore()
             store.almacen = 'User'
             const Users = await store.leerdatos()
+
+            store.almacen = 'InformacionUser'
+            const informacionUsers = await store.leerdatos()
+
             const UsersActivos = Users.filter((User) => {
                 return User.estado === 'activo'
             })
-            state.Users = UsersActivos // Actualiza la lista de Users en el estado
-            return UsersActivos
+
+            const usuariosCompletos = UsersActivos.map((usuario) => {
+                const usuarioInfo = informacionUsers.find((user) => user.id_usuario === usuario.id)
+
+                if (usuarioInfo) {
+                    return {
+                        ...usuarioInfo,
+                        ...usuario,
+                        // id_paciente: usuario.id // renombramos el id del paciente
+                    }
+                } else {
+                    return {
+                        ...usuario,
+                        // usuario: null
+                    }
+                }
+            })
+            state.Users = usuariosCompletos // Actualiza la lista de Users en el estado
+            return usuariosCompletos
         },
     },
 

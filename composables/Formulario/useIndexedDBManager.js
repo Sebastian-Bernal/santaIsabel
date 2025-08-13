@@ -7,8 +7,8 @@ export async function guardarEnIndexedDB(data) {
 
     for (const [almacen, contenido] of Object.entries(data)) {
         store.almacen = almacen;
-        console.log(almacen,contenido)
-        if(almacen === 'HistoriaClinica'){
+        console.log(almacen, contenido)
+        if (almacen === 'HistoriaClinica') {
             // Si el almacen es Historia Clinica se guarda con id Null
             await store.guardardatos({ ...contenido, id: null })
         } else if (Array.isArray(contenido)) {
@@ -37,6 +37,10 @@ export async function guardarPacienteEnIndexedDB(data) {
             idUser = idGeneradoUsuario; // Guardamos el ID para usar en otros almacenes
         }
 
+        if (almacen === 'InformacionUser') {
+            await store.guardardatos({ ...contenido, id_usuario: idUser, });
+        }
+
         // Guardar Paciente y obtener ID generado
         if (almacen === 'Paciente') {
             const idGenerado = await store.guardardatosID({ ...contenido, id_usuario: idUser, });
@@ -44,14 +48,14 @@ export async function guardarPacienteEnIndexedDB(data) {
         }
 
         // Guardar otros datos relacionados (como diagnóstico, antecedentes, etc.)
-        else if (Array.isArray(contenido) && almacen !== 'User') {
+        else if (Array.isArray(contenido) && almacen !== 'User' && almacen !== 'InformacionUser') {
             for (const item of contenido) {
                 await store.guardardatos({
                     ...item,
                     id_paciente: idPaciente, // Relación con paciente
                 });
             }
-        } else if (typeof contenido === 'object' && contenido !== null && almacen !== 'User') {
+        } else if (typeof contenido === 'object' && contenido !== null && almacen !== 'User' && almacen !== 'InformacionUser') {
             await store.guardardatos({
                 ...contenido,
                 id_paciente: idPaciente, // Relación con paciente
@@ -77,13 +81,13 @@ export async function guardarProfesionalEnIndexedDB(data) {
 
         // Guardar Usuario y obtener ID generado
         if (almacen === 'User') {
-            if(rolCambio){
-                await store.actualiza({...contenido});
-            } else if(!usuarioExistente){
+            if (rolCambio) {
+                await store.actualiza({ ...contenido });
+            } else if (!usuarioExistente) {
                 const idGeneradoUsuario = await store.guardardatosID({ ...contenido });
                 idUser = idGeneradoUsuario; // Guardamos el ID para usar en otros almacenes
             }
-        } else if(almacen !== 'User'){
+        } else if (almacen !== 'User') {
             await store.guardardatos({
                 ...contenido,
                 id_usuario: idUser, // Relación con usuario
@@ -93,7 +97,7 @@ export async function guardarProfesionalEnIndexedDB(data) {
     }
 }
 
-export async function guardarEnIndexedDBID(data){
+export async function guardarEnIndexedDBID(data) {
     const store = useIndexedDBStore();
     let idGenerado
     for (const [almacen, contenido] of Object.entries(data)) {
@@ -108,6 +112,24 @@ export async function guardarEnIndexedDBID(data){
         }
     }
     return idGenerado
+}
+
+export async function guardarUsuarioEnIndexedDBID(data) {
+    const store = useIndexedDBStore();
+    let idUsuario
+    for (const [almacen, contenido] of Object.entries(data)) {
+        store.almacen = almacen;
+
+        if (almacen === 'User') {
+            idUsuario = await store.guardardatosID({ ...contenido });
+        }
+
+        if (typeof contenido === 'object' && contenido !== null && almacen !== 'User') {
+            await store.guardardatos({ ...contenido, id_usuario: idUsuario });
+        }
+    }
+
+    return idUsuario
 }
 
 export async function guardarHistoriaEnIndexedDB(data) {
@@ -148,8 +170,8 @@ export async function guardarHistoriaEnIndexedDB(data) {
             id_temporal = idGenerado;
         } else if (almacen === 'Cita') {
             await store.actualiza({
-                ...contenido, 
-                id_analisis: id_temporal, 
+                ...contenido,
+                id_analisis: id_temporal,
                 id_examen,
                 estado: 'Realizada'
             })
@@ -177,7 +199,7 @@ export async function actualizarEnIndexedDB(data) {
     for (const [almacen, contenido] of Object.entries(data)) {
         store.almacen = almacen;
 
-        if(almacen === 'HistoriaClinica'){
+        if (almacen === 'HistoriaClinica') {
             // Si el almacen es Historia Clinica se guarda con id Null
             await store.actualiza({ ...contenido, id: null })
         } else if (Array.isArray(contenido)) {

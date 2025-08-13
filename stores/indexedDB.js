@@ -27,6 +27,9 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const users = db.createObjectStore('User', { keyPath: 'id', autoIncrement: true });
                     users.createIndex("buscaaUser", "id", { unique: false });
 
+                    const usersInfo = db.createObjectStore('InformacionUser', { keyPath: 'id', autoIncrement: true });
+                    usersInfo.createIndex("buscaaInformacionUser", "id", { unique: false });
+
                     const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'CIE_10' });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
 

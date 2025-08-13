@@ -17,7 +17,7 @@ const notificacionesStore = useNotificacionesStore();
 const modificarMedico = ref(false)
 
 // Nombre del Medico
-const medicoAModificar = computed(() => formData.User.name ? formData.User.name : 'Medico')
+const medicoAModificar = computed(() => formData.InformacionUser.name ? formData.InformacionUser.name : 'Medico')
 
 const props = defineProps({
     medico: {
@@ -48,6 +48,14 @@ onMounted(() => {
         userKeys.forEach(key => {
             if (props.medico.hasOwnProperty(key)) {
                 formData.User[key] = props.medico[key]
+            }
+        })
+
+        // Propiedades que van en User informacion
+        const userInfoKeys = Object.keys(formData.InformacionUser)
+        userInfoKeys.forEach(key => {
+            if (props.medico.hasOwnProperty(key)) {
+                formData.InformacionUser[key] = props.medico[key]
             }
         })
 

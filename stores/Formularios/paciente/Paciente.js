@@ -1,27 +1,31 @@
 import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
+import { useUsersStore } from "../usuarios/Users";
 // Creacion del store Paciente
 
 // Estructura de datos de Pacientes
 const estructuraPaciente = {
     User: {
         id_empresa: '',
+        correo: '',
+        contraseña: null,
+        rol: 'Paciente',
+        estado: 'activo',
+    },
+    InformacionUser : {
+        id_usuario: '',
         name: '',
         No_document: '',
         tipo: '',
         celular: '',
         telefono: '',
-        correo: '',
-        contraseña: null,
-        rol: 'Paciente',
         nacimiento: '',
         direccion: '',
         municipio: '',
         departamento: '',
         barrio: '',
         zona: '',
-        estado: 'activo',
     },
     Paciente: {
         id_usuario: '',
@@ -47,11 +51,12 @@ export const usePacientesStore = defineStore('Pacientes', {
     getters: {
         async listPacientes(state) {
             const store = useIndexedDBStore()
+            const usersStore = useUsersStore()
+
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
 
-            store.almacen = 'User'
-            const usuarios = await store.leerdatos()
+            const usuarios = await usersStore.listUsers
 
             const pacientesActivos = pacientes.filter((paciente) => {
                 return paciente.estado === 'activo'
@@ -70,12 +75,12 @@ export const usePacientesStore = defineStore('Pacientes', {
                 } else {
                     return {
                         ...paciente,
-                        usuario: null // o puedes omitir esto si no lo necesitas
+                        usuario: null
                     }
                 }
             })
 
-            state.Pacientes = usuariosPacientes // Actualiza la lista de pacientes en el estado
+            state.Pacientes = usuariosPacientes
             return usuariosPacientes
         },
 

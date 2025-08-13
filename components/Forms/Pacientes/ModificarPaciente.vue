@@ -41,7 +41,7 @@ const {
 } = notificacionesStore;
 
 // Titulo del formulario
-const pacienteAModificar = computed(() => formData.User.name ? formData.User.name : 'Paciente')
+const pacienteAModificar = computed(() => formData.InformacionUser.name ? formData.InformacionUser.name : 'Paciente')
 const modificarPaciente = ref(false)
 
 // Traer datos del localStorage
@@ -54,6 +54,14 @@ onMounted(async() => {
         userKeys.forEach(key => {
             if (props.paciente.hasOwnProperty(key)) {
                 formData.User[key] = props.paciente[key]
+            }
+        })
+
+        // Propiedades que van en User informacion
+        const userInfoKeys = Object.keys(formData.InformacionUser)
+        userInfoKeys.forEach(key => {
+            if (props.paciente.hasOwnProperty(key)) {
+                formData.InformacionUser[key] = props.paciente[key]
             }
         })
 
