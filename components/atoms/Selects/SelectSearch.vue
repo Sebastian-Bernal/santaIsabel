@@ -1,5 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
+// Input con datos seleccionables
+// Props modelvalue, options = data. ej: Pacientes, opciones = valores a comparar: ej Name, seleccionarItem: funcion al seleccionar item
 
 const props = defineProps({
     modelValue: {
@@ -70,7 +72,7 @@ function showLista() {
     <div class="relative" :class="tamaño">
         <input :value="modelValue" :name="name" :id="id" :class="tamaño" type="text" autocomplete="off"
             :placeholder="placeholder"
-            class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             @input="$emit('update:modelValue', $event.target.value); showLista()" />
 
         <ul v-show="mostrarLista && opcionesFiltradas.length"

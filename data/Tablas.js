@@ -13,6 +13,7 @@ export const Tablas = [
   { text: 'Medico', value: 'Medico' },
   { text: 'Nota', value: 'Nota' },
   { text: 'Paciente', value: 'Paciente' },
+  { text: 'User', value: 'User' },
   { text: 'Plan_manejo_equipos', value: 'Plan_manejo_equipos' },
   { text: 'Plan_manejo_insumos', value: 'Plan_manejo_insumos' },
   { text: 'Plan_manejo_medicamentos', value: 'Plan_manejo_medicamentos' },

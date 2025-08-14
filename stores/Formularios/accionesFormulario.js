@@ -16,8 +16,8 @@ import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     NuevaCita: async (data) => {
-        await validarYEnviarNuevaCita(data);
-        return true;
+        const respuesta = await validarYEnviarNuevaCita(data);
+        return respuesta;
     },
     NuevoPaciente: async (data) => {
         await validarYEnviarNuevoPaciente(data);

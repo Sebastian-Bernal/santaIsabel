@@ -1,6 +1,6 @@
 <script setup>
-import DropdownNavbar from './DropdownNavbar.vue'
-import BreadCrumb from './Breadcrumb.vue';
+import DropdownNavbar from '~/components/molecules/Dropdowns/DropdownNavbar.vue';
+import Breadcrumb from '~/components/molecules/BreadCrumbs/Breadcrumb.vue';
 import Buttontheme from '../atoms/Buttons/Buttontheme.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';

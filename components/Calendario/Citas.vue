@@ -126,6 +126,7 @@ async function activarCita(cita) {
 <template>
     <div class="py-5 flex flex-col gap-3 border border-gray-300 rounded-2xl h-110 overflow-y-auto bg-white scrollForm">
         <h2 class="text-xl font-semibold my-2 px-10">{{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
+        <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 shadow-lg"
             v-for="cita in citasFiltradas" :class="{ 'bg-red-50': cita.estado === 'cancelada' }">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">

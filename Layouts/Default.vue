@@ -15,6 +15,7 @@
 <script setup>
 import { useVarView } from '~/stores/varview';
 const varView = useVarView();
+
 </script>
 
 <style scoped>

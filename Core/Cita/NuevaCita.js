@@ -1,5 +1,5 @@
-import { guardarEnIndexedDB } from '../../composables/Formulario/useIndexedDBManager.js';
-import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { guardarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { useNotificacionesStore } from '~/stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nueva Cita
 export const validarYEnviarNuevaCita = async (datos) => {

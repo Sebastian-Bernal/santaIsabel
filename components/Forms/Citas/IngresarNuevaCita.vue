@@ -37,8 +37,8 @@ const {
 // Enviar formulario -------------------
 const enviarNuevaCita = async (formData) => {
     event.preventDefault()
+    varView.cargando = true
     const estado = await mandarFormulario(formData)
-
     if (estado) {
         options.icono = 'success';
         options.titulo = '¡Se ha enviado correctamente!';
@@ -47,7 +47,7 @@ const enviarNuevaCita = async (formData) => {
         const respuesta = await simple()
         if(respuesta.isConfirmed || respuesta.dismiss) {
             limpiar();
-            window.location.href = '/Usuarios/Citas'
+            window.location.reload()
         }
     } else {
         options.icono = 'error';
@@ -56,6 +56,7 @@ const enviarNuevaCita = async (formData) => {
         options.tiempo = 2000
         simple()
     }
+    varView.cargando = false
 };
 
 const validarform = () => {
@@ -86,20 +87,3 @@ function cerrarModal() {
     <IngresarProfesional  v-if="varView.showNuevoProfesional"/>
     <IngresarPaciente  v-if="varView.showNuevoPaciente"/>
 </template>
-
-<style scoped>
-.autocomplete-list li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #eee;
-}
-
-.autocomplete-list li:last-child {
-    border-bottom: none;
-}
-
-.autocomplete-list li:hover {
-    background-color: #e5f0ff;
-}
-</style>

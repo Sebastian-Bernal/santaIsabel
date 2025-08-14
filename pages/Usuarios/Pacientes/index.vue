@@ -1,5 +1,7 @@
 <script setup>
-import Tabla from '../../components/Tables/Tabla.vue';
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
+import Tabla from '~/components/organism/Table/Tabla.vue';
+// import Tabla from '../../components/Tables/Tabla.vue';
 import IngresarPaciente from '../../components/Forms/Pacientes/IngresarPaciente.vue';
 import IngresarUsuario from '~/components/Forms/Pacientes/IngresarUsuario.vue';
 import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
@@ -51,7 +53,7 @@ const verPaciente = (paciente) => {
 </script>
 
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg md:py-8 py-4 md:px-12 px-4">
+    <FondoDefault>
         <Tabla :key="refresh" :columnas="[
             { titulo: 'name', value: 'Nombre', tamaño: 150, ordenar: true },
             { titulo: 'No_document', value: 'Documento', tamaño: 100, ordenar: true },
@@ -61,7 +63,7 @@ const verPaciente = (paciente) => {
             { titulo: 'Eps', value: 'EPS', tamaño: 150, ordenar: true }
         ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente }"
             :acciones="{ icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
-    </div>
+    </FondoDefault>
     <IngresarUsuario v-if="varView.showNuevoPaciente" />
     <IngresarPaciente v-if="varView.showNuevoPacientePaso2" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />

@@ -15,6 +15,7 @@ definePageMeta({
 const indexedDB = useIndexedDBStore();
 
 onMounted(async () => {
+    await indexedDB.initialize()
     await indexedDB.adminDemo()
     sessionStorage.clear()
 })
@@ -120,7 +121,7 @@ function recuperarContraseña() {
 
             </div>
 
-            <div class="mt-5 md:w-1/3 w-full">
+            <div class="mt-5 md:w-2/4 lg:w-1/3 w-full">
                 <button @click="ingresar" class="w-full h-[40px] bg-gray-100 text-[var(--color-default)] font-bold">
                     Ingresar
                 </button>
@@ -135,22 +136,3 @@ function recuperarContraseña() {
     <RecuperarContraseña v-if="varView.showRecuperarContraseña" />
     <CambiarContraseña v-if="varView.showCambiarContraseña" :correo="Usuario.correo" />
 </template>
-
-<style scoped>
-.logo {
-    transition: all 0.3s ease-in-out;
-    animation: logo 2s;
-}
-
-@keyframes logo {
-    0% {
-        transform: translate(0, -20%);
-        opacity: 0;
-    }
-
-    100% {
-        transform: translate(0%, 0%);
-        opacity: 1;
-    }
-}
-</style>

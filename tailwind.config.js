@@ -2,6 +2,7 @@
 import withMT from "@material-tailwind/html/utils/withMT";
 
 export default withMT({
+  darkMode: 'class',
   content: [
     "./components/**/*.{js,vue,ts}",
     "./layouts/**/*.{vue}",

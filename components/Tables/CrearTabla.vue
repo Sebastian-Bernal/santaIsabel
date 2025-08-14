@@ -2,6 +2,7 @@
 import ModalLG from '~/components/Modales/ModalLG.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
+import Label from '../Labels/Label.vue';
 import SelectMultiple from '~/components/Selects/SelectMultiple.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
 import { watch, reactive } from 'vue'
@@ -110,9 +111,9 @@ function agregarDB() {
 }
 
 async function InsertarTabla(tabla, id_comparar, id_compararTabla) {
-    const datosCombinados = await storeExcel.obtenerTabla(props.datos, tabla, id_comparar, id_compararTabla);
-    datosAExportar.value = datosCombinados
-    datos.value = Object.keys(datosAExportar.value[0])
+    const datosCombinados = await storeExcel.obtenerTabla(datosTabla.value, tabla, id_comparar, id_compararTabla);
+    datosTabla.value = datosCombinados
+    datos.value = Object.keys(datosTabla.value[0])
 };
 
 function cerrar() {
@@ -154,6 +155,7 @@ function construirTabla() {
 
 const colores = ref([
     { text: 'Default', value: 'bg-[var(--color-default)] text-white' },
+    { text: 'Default Obscuro', value: 'bg-[var(--color-default-600)] text-white' },
     { text: 'Azul', value: 'bg-blue-500 text-white' },
     { text: 'Verde', value: 'bg-green-500 text-white' }
 ]);
@@ -196,27 +198,30 @@ const colores = ref([
 
                     <!-- Configuración de columnas -->
                     <div class="grid grid-cols-3 gap-5 p-3 my-5 max-h-[200px] overflow-y-auto">
-                        <div v-for="(col, index) in tabla.columnas" :key="index" class="flex flex-col gap-2 mb-2">
-                            <label class="text-gray-600">{{ col.titulo }}</label>
-                            <Input v-model="col.value" placeholder="Título visible" :mayuscula="false" />
-                            <Input v-model="col.tamaño" placeholder="Tamaño en px (opcional)" type="number" max="500" />
+                        <div v-for="(col, index) in tabla.columnas" :key="index" class="flex flex-col gap-2 mb-2 border border-gray-300 rounded-xl p-2">
+                            <label for="tituloVisible" class="text-gray-600">{{ col.titulo }}</label>
+                            <Input v-model="col.value" placeholder="Título visible" :mayuscula="false" name="tituloVisible" id="tituloVisible" />
+                            <Input v-model="col.tamaño" placeholder="Tamaño en px (opcional)" type="number" max="500" name="tamaño" />
                             <label class="flex items-center gap-2">
                                 <input type="checkbox" v-model="col.ordenar" />
                                 Boton de Ordenar
                             </label>
                         </div>
+                        <div v-if="tabla.columnas.length < 1" class="col-span-3 text-center text-gray-500 font-semibold">
+                            <p>No hay columnas Seleccionadas.</p>
+                        </div>
                     </div>
 
                     <!-- Header de la tabla -->
-                    <div class="flex items-center gap-3 pt-5">
+                    <div class="flex items-center gap-3">
                         <i class="fa-solid fa-folder text-blue-500"></i>
                         <Label forLabel="header">Header (opcional)</Label>
                     </div>
 
                     <div class="flex md:flex-row flex-col gap-3 pt-3">
-                        <Input v-model="tabla.titulo" placeholder="Título" :mayuscula="false" />
-                        <Input v-model="tabla.descripcion" placeholder="Descripción" :mayuscula="false" />
-                        <Select v-model="tabla.color" placeholder="Color" :options="colores" />
+                        <Input v-model="tabla.titulo" placeholder="Título" :mayuscula="false" name="titulo" />
+                        <Input v-model="tabla.descripcion" placeholder="Descripción" :mayuscula="false" name="descripcion" />
+                        <Select v-model="tabla.color" placeholder="Color" :options="colores" name="color" />
                     </div>
 
                     <!-- Acciones -->
@@ -226,12 +231,12 @@ const colores = ref([
                     </div>
                     <div class="flex flex-col gap-3 pt-5">
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" v-model="tabla.acciones.botones" />
+                            <input type="checkbox" v-model="tabla.acciones.botones" name="botones" />
                             Mostrar botones
                         </label>
                         <div class="flex gap-2" v-if="tabla.acciones.botones">
-                            <Input v-model="tabla.acciones.icons.at(-1).icon" placeholder="Icono (ej. ver)" />
-                            <Input v-model="tabla.acciones.icons[0].action" placeholder="Acción (ej. verPaciente)" />
+                            <Input v-model="tabla.acciones.icons.at(-1).icon" placeholder="Icono (ej. ver)" :mayuscula="false" name="iconoNombre" />
+                            <Input v-model="tabla.acciones.icons[0].action" placeholder="Acción (ej. verPaciente)" :mayuscula="false" name="iconoFuncion"/>
                         </div>
                     </div>
 

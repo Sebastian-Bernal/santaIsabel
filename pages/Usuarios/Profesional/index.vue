@@ -1,8 +1,9 @@
 <script setup>
-import Tabla from '../../../components/Tables/Tabla.vue';
+import Tabla from '~/components/organism/Table/Tabla.vue';
 import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
 import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuarioProfesional.vue';
 import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 // Data
 import { ref, onMounted } from 'vue';
 import { useMedicosStore } from '../../../stores/Formularios/medicos/Medico.js';
@@ -49,7 +50,7 @@ const modificarMedico = (medico) => {
 };
 </script>
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg md:py-8 py-4 md:px-12 px-4">
+    <FondoDefault>
         <Tabla :key="refresh" :columnas="[
         { titulo: 'name', value: 'Nombre', tamaño: 200},
         { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100},
@@ -60,7 +61,7 @@ const modificarMedico = (medico) => {
     ]"
     :headerTabla="{titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico}"
     :acciones="{ icons: [{icon: 'ver', action: modificarMedico}], botones: true }" :datos="{content: medicos}"/>
-    </div>
+    </FondoDefault>
     <IngresarUsuario v-if="varView.showNuevoProfesional" />
     <IngresarProfesional v-if="varView.showNuevoProfesionalPaso2" />
     <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />

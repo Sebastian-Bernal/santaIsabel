@@ -20,8 +20,8 @@ const PacientesStore = usePacientesStore();
 const notificacionesStore = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 
-const { listPacientes, Pacientes } = storeToRefs( PacientesStore );
-const { listMedicos, Medicos } = storeToRefs( medicosStore )
+const { Pacientes } = storeToRefs(PacientesStore);
+const { Medicos } = storeToRefs(medicosStore)
 const props = defineProps([
     'formData',
     'traerDatos',
@@ -47,7 +47,6 @@ const {
 // Delcaracionde variables y funciones
 const fechaModificacion = ref('');
 const mostrarLista = ref(false);
-const pacientesFiltrados = ref([]);
 const medicosList = ref([]);
 const PacientesList = ref([]);
 const camposVacios = ref(false);
@@ -55,6 +54,18 @@ const camposVacios = ref(false);
 const camposRequeridos = [
     'name_paciente', 'servicio', 'hora', 'fecha', 'name_medico', 'motivo',
 ];
+
+onMounted(async () => {
+    await medicosStore.listMedicos
+    medicosList.value = medicosStore.Medicos;
+
+    await PacientesStore.listPacientes
+    PacientesList.value = PacientesStore.Pacientes;
+
+    props.traerDatos();
+    props.formData.Cita.fecha = fechaformatDate();
+
+});
 
 // Guardar los datos en localStorage
 watch(props.formData, (newValue) => {
@@ -114,22 +125,6 @@ watch(() => props.formData.Cita.hora, (newHora) => {
     }
 });
 
-
-watch(listPacientes, (newvalue) => {
-    PacientesList.value = newvalue.value
-})
-
-onMounted(async () => {
-    await medicosStore.listMedicos
-    medicosList.value = medicosStore.Medicos;
-    await PacientesStore.listPacientes
-    PacientesList.value = PacientesStore.Pacientes;
-
-    props.traerDatos();
-    props.formData.Cita.fecha = fechaformatDate();
-
-});
-
 // Formatear fecha dd/mm/aaaa - aaaa-mm-dd
 const fechaformatDate = () => {
     const partes = fecha.split('/')
@@ -156,19 +151,6 @@ const pacienteExistente = async () => {
     }
 };
 
-// datalist para Pacientes
-function filtrarPacientes() {
-    if (props.formData.Cita.name_paciente.length === 0) {
-        pacientesFiltrados.value = [];
-        mostrarLista.value = false;
-        return;
-    }
-
-    pacientesFiltrados.value = Pacientes.value.filter(p =>
-        p.name.toLowerCase().includes(props.formData.Cita.name_paciente.toLowerCase())
-    );
-    mostrarLista.value = true;
-}
 // Autocompletar campos del paciente al seleccionar datalist
 function seleccionarPaciente(paciente) {
     props.formData.Cita.name_paciente = paciente.name;
@@ -201,35 +183,25 @@ async function seleccionarMedico(medico) {
     <Section>
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-user text-blue-500"></i>
-            <Label forLabel="nombre" size="text-sm">Paciente</Label>
+            <Label for="nombreP" size="text-sm">Paciente</Label>
         </div>
     </Section>
-    <Section styles="relative">
-        <Input v-model="props.formData.Cita.name_paciente" type="text" id="nombre" name="nombre" list="nombreList"
-            @input="filtrarPacientes" placeholder="Nombre del paciente" tamaño="w-full" minlength="5" />
-        <ul v-show="mostrarLista && pacientesFiltrados.length"
-            class="autocomplete-list absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-            <li v-for="paciente in pacientesFiltrados" :key="paciente.documento" @click="seleccionarPaciente(paciente)">
-                <strong>{{ paciente.name }}</strong><br />
-                <small>cédula: {{ paciente.No_document }}</small>
-            </li>
-        </ul>
-                <!-- <SelectSearch v-if="PacientesList.value.length"
-                    v-model="props.formData.Cita.name_paciente" :options="PacientesList"
-                    :seleccionarItem="seleccionarPaciente" name="nombre" id="nombre"
-                    placeholder="Nombre del paciente" :opciones="[{value: 'name'},{text: 'Cedula', value: 'No_document' }]" /> -->
+    <Section>
+        <SelectSearch v-model="formData.Cita.name_paciente" :options="PacientesList"
+            :seleccionarItem="seleccionarPaciente" name="nombreP" id="nombreP" placeholder="Nombre del paciente"
+            :opciones="[{ value: 'name' }, { text: 'Cedula', value: 'No_document' }]" />
     </Section>
 
     <Section>
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-stethoscope text-blue-500"></i>
-            <Label forLabel="nombre" size="text-sm">Detalles de la cita</Label>
+            <Label for="nombre" size="text-sm">Detalles de la cita</Label>
         </div>
     </Section>
 
     <Section styles="relative md:flex-row flex-col" @blur="pacienteExistente">
-        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList" minlength="5"
-            @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
+        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList"
+            minlength="5" @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
             placeholder="Nombre del profesional" tamaño="w-full" />
         <datalist id="medicosList">
             <option v-for="medico in medicosList" :value="medico.name">
@@ -247,7 +219,7 @@ async function seleccionarMedico(medico) {
     <Section styles="mt-3">
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-calendar text-blue-500"></i>
-            <Label forLabel="tipo" size="text-sm">Fecha y Hora</Label>
+            <Label for="fecha" size="text-sm">Fecha y Hora</Label>
         </div>
     </Section>
 
@@ -258,20 +230,3 @@ async function seleccionarMedico(medico) {
             placeholder="Seleccione la hora para la cita" tamaño="w-full"></Input>
     </Section>
 </template>
-
-<style scoped>
-.autocomplete-list li {
-    padding: 10px 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #eee;
-}
-
-.autocomplete-list li:last-child {
-    border-bottom: none;
-}
-
-.autocomplete-list li:hover {
-    background-color: #e5f0ff;
-}
-</style>

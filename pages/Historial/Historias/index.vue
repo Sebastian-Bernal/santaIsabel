@@ -1,10 +1,11 @@
 <script setup>
-import Tabla from '~/components/Tables/Tabla.vue';
+import Tabla from '~/components/organism/Table/Tabla.vue';
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
 import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 import VerHistoria from '~/components/Forms/Historia/VerHistoria.vue';
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -59,7 +60,7 @@ const verHistoria = (his) => {
 </script>
 
 <template>
-    <div class="w-[100%] h-[100%] bg-gray-50 rounded-lg shadow-lg md:py-8 py-4 md:px-12 px-4">
+    <FondoDefault>
         <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
@@ -68,7 +69,7 @@ const verHistoria = (his) => {
  }"
             :acciones="{ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, }" 
             :datos="{ content: historiasList }" />
-    </div>
+    </FondoDefault>
     <Ingresar v-if="varView.showNuevaHistoria" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />
