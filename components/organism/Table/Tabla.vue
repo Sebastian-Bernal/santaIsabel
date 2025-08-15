@@ -105,7 +105,11 @@ const estiloColumnas = computed(() => {
                 <p>{{ props.headerTabla.descripcion }}</p>
             </div>
             <div class="flex gap-3 md:w-[45%] justify-end">
-                <InputIcon class="w-3/4" placeholder="Buscar por datos..." icon="fa-search" v-model="busqueda" />
+                <InputIcon class="w-3/4" :Propiedades="{
+                    placeholder: 'Buscar por datos...',
+                    icon: 'fa-search',
+                    label: ''
+                }" v-model="busqueda" />
 
                 <client-only>
                     <div class="flex relative dropdown cursor-pointer">

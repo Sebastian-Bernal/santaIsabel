@@ -1,5 +1,5 @@
 <script setup>
-import Fondo from '../Fondos/Fondo.vue';
+import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import ButtonForm from "~/components/Buttons/ButtonForm.vue";
 
 const props = defineProps({
@@ -24,7 +24,7 @@ const props = defineProps({
 });
 </script>
 <template>
-    <Fondo>
+    <FondoBlur>
         <div class="lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%] bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7">
             <slot></slot>
             <!-- Botones -->
@@ -41,5 +41,5 @@ const props = defineProps({
                 </ButtonForm>
             </div>
         </div>
-    </Fondo>
+    </FondoBlur>
 </template>

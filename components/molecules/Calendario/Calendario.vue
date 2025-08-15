@@ -100,7 +100,7 @@ const siguienteMes = () => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-5 border border-gray-300 rounded-2xl p-5 h-110 overflow-y-auto scrollForm bg-white dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+    <div class="flex flex-col gap-5 border border-gray-300 rounded-2xl p-5 h-110 overflow-y-auto scrollForm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">{{ nombreMes }}</h2>
             <div class="flex items-center gap-3">
@@ -115,8 +115,8 @@ const siguienteMes = () => {
         <div class="grid grid-cols-7 gap-3">
 
             <div v-for="(num, index) in diasDelMes" @click="calendarioCitasStore.cambiarFecha(num.fecha)"
-                class="px-5 py-3 flex justify-center items-center border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-200"
-                :class="{ 'bg-red-200': num.fecha === fecha, 'text-gray-300': num.dia === dias.value }">
+                class="px-5 py-3 flex justify-center items-center border border-gray-200 dark:border-gray-500 rounded-xl cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-500"
+                :class="{ 'bg-red-200 dark:bg-red-400': num.fecha === fecha, 'text-gray-300': num.dia === dias.value }">
                 <h2 :class="{ 'border-b-3 border-b-blue-500': diasConCitas.includes(num.fecha) }">{{ num.dia }}</h2>
             </div>
         </div>

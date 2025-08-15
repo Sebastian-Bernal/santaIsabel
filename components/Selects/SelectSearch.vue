@@ -70,11 +70,11 @@ function showLista() {
     <div class="relative" :class="tamaño">
         <input :value="modelValue" :name="name" :id="id" :class="tamaño" type="text" autocomplete="off"
             :placeholder="placeholder"
-            class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             @input="$emit('update:modelValue', $event.target.value); showLista()" />
 
         <ul v-show="mostrarLista && opcionesFiltradas.length"
-            class="autocomplete-list absolute! top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
+            class="autocomplete-list absolute! top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 border border-[#d0d7de] dark:border-gray-600 dark:text-white rounded-lg z-9 p-0 mt-1">
             <li v-for="opcion in opcionesFiltradas" :key="opcion.documento"
                 class="px-3 py-2 hover:bg-blue-100 cursor-pointer" @mousedown.prevent="seleccionar(opcion)">
                 <div v-for="campo in opciones" :key="campo.value">

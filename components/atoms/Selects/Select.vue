@@ -1,38 +1,18 @@
 <script setup>
 const props = defineProps({
-    options: {
-        type: Array,
-    },
-    id: {
-        type: String,
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    placeholder: {
-        type: String,
-        default: ''
-    },
-    tamaño: {
-        type: [String, Object, Array],
-        default: 'w-full'
-    },
-    modelValue: {
-        type: String,
-        default: ''
-    },
-
+    Propiedades: {
+        dafault: {}
+    }
 });
 
 const emit = defineEmits(['update:modelValue']);
 
 </script>
 <template>
-    <select :value="modelValue" :name="name" :id="id" :class="tamaño" @input="$emit('update:modelValue', $event.target.value)"
-        class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-        <option value="" selected disabled hidden>{{ placeholder }}</option>
-        <option v-for="option in options" :value="option.value">{{ option.text }}</option>
+    <select :value="Propiedades.modelValue" :name="Propiedades.name" :id="Propiedades.id" :class="Propiedades.tamaño" @input="$emit('update:modelValue', $event.target.value)"
+        class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        <option value="" selected disabled hidden>{{ Propiedades.placeholder }}</option>
+        <option v-for="option in Propiedades.options" :value="option.value" class="text-black dark:bg-gray-900 dark:text-white">{{ option.text }}</option>
     </select>
 </template>
 

@@ -1,11 +1,11 @@
 <script setup>
 import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
-import IngresarUsuario from '../Forms/Pacientes/IngresarUsuario.vue';
+import IngresarUsuario from '~/components/Forms/Pacientes/IngresarUsuario.vue';
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
 import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
-import { useVarView } from "../../stores/varview.js";
+import { useVarView } from "~/stores/varview.js";
 
 const varView = useVarView();
 const actions = [
@@ -46,7 +46,7 @@ const actions = [
 <template>
     <div class="space-y-6">
         <div class="medical-card p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Acciones Rápidas</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Acciones Rápidas</h2>
             <div class="space-y-3">
 
 
@@ -67,28 +67,28 @@ const actions = [
         </div>
 
         <div class="medical-card p-6">
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Resumen de Hoy</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Resumen de Hoy</h2>
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-user h-4 w-4 text-blue-500"></i>
-                        <span class="text-sm text-gray-600">Pacientes atendidos</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Pacientes atendidos</span>
                     </div>
-                    <span class="font-semibold text-gray-900">24</span>
+                    <span class="font-semibold text-gray-900 dark:text-white">24</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-file h-4 w-4 text-[#4aa759]"></i>
-                        <span class="text-sm text-gray-600">Historias creadas</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Historias creadas</span>
                     </div>
-                    <span class="font-semibold text-gray-900">18</span>
+                    <span class="font-semibold text-gray-900 dark:text-white">18</span>
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-clock h-4 w-4 text-[#a74a98]"></i>
-                        <span class="text-sm text-gray-600">Tiempo promedio</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300">Tiempo promedio</span>
                     </div>
-                    <span class="font-semibold text-gray-900">25 min</span>
+                    <span class="font-semibold text-gray-900 dark:text-white">25 min</span>
                 </div>
             </div>
         </div>

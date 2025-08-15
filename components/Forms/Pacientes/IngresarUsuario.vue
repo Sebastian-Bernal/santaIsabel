@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalFormLG from "~/components/Modales/ModalFormLG.vue";
+import ModalFormLG from "~/components/molecules/Modals/ModalFormLG.vue";
 import FormularioWizard from "~/components/Forms/FormularioWizard.vue";
 import DatosUsers from "~/components/Forms/Users/DatosUsers.vue"
 // Data

@@ -14,6 +14,10 @@
 
 <script setup>
 import { useVarView } from '~/stores/varview';
+import Navbar from '~/components/organism/Navbar/Navbar.vue';
+import Aside from '~/components/organism/Sidebar/Aside.vue';
+import Footer from '~/components/organism/Footer/Footer.vue';
+import Loader from '~/components/molecules/Spinner/Loader.vue';
 const varView = useVarView();
 
 </script>

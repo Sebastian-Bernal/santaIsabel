@@ -68,10 +68,10 @@ const enviarFormularioPendiente = () => {
 
 <template>
     <div
-        class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl">
+        class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
             <Wizard :secciones="datos.secciones" :titulo="datos.tituloFormulario" :cerrar="props.cerrar"/>
             <div class="w-full h-full px-6 pt-2">
-        <h1 class="text-3xl text-[var(--color-default)] font-bold mb-3 text-center pt-5">{{ datos.titulo }}</h1>
+        <h1 class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">{{ datos.titulo }}</h1>
         <!-- Formulario -->
         <form action="" class="w-full h-full flex justify-center">
             <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">

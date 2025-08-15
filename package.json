@@ -13,6 +13,7 @@
     "@emailjs/browser": "^4.4.1",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@material-tailwind/html": "^3.0.0-beta.7",
+    "@nuxtjs/color-mode": "^3.5.2",
     "@pinia/nuxt": "^0.11.0",
     "@tailwindcss/vite": "^4.1.7",
     "nuxt": "^3.17.1",

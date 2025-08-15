@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
+import ModalFormXS from '~/components/molecules/Modals/ModalFormXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
 import DatosCitas from './DatosCitas.vue'
 import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';

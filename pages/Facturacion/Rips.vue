@@ -1,6 +1,6 @@
 <script setup>
 import { useVarView } from '~/stores/varview.js';
-import CardRips from '~/components/Cards/CardRips.vue';
+import CardRips from '~/components/molecules/Cards/CardRips.vue';
 
 const varView = useVarView();
 </script>

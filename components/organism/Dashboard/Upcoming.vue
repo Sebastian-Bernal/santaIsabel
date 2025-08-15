@@ -20,7 +20,7 @@ const citasFiltradas = computed(() => {
 <template>
     <div class="medical-card p-6">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-lg font-semibold text-gray-900">Citas de Hoy</h2>
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Citas de Hoy</h2>
             <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                 <nuxt-link to="/Usuarios/Citas">Ver agenda</nuxt-link>
             </button>
@@ -28,15 +28,15 @@ const citasFiltradas = computed(() => {
 
         <div class="space-y-3">
             <div v-for="cita in citasFiltradas" :key="cita.id_paciente"
-                class="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
+                class="flex items-center justify-between p-3 border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div class="flex items-center space-x-3">
                     <div class="text-center">
                         <div class="text-lg font-bold text-blue-600">{{ cita.hora }}</div>
-                        <div class="text-xs text-gray-500">Hoy</div>
+                        <div class="text-xs text-gray-500 dark:text-gray-300">Hoy</div>
                     </div>
                     <div>
-                        <h3 class="font-medium text-gray-900">{{ cita.name_paciente }}</h3>
-                        <p class="text-sm text-gray-500">{{ cita.servicio }}</p>
+                        <h3 class="font-medium text-gray-900 dark:text-white">{{ cita.name_paciente }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-300">{{ cita.servicio }}</p>
                     </div>
                 </div>
 
@@ -46,7 +46,7 @@ const citasFiltradas = computed(() => {
                     </span>
                 </div>
             </div>
-            <div v-if="citasFiltradas.length === 0" class="text-center text-gray-500 pt-5">
+            <div v-if="citasFiltradas.length === 0" class="text-center text-gray-500 dark:text-gray-300 pt-5">
                 No hay citas programadas para hoy.
             </div>
         </div>

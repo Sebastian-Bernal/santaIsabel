@@ -3,7 +3,7 @@
         <!-- <img :src="icon" class="w-5 h-5 me-2.5"> -->
         <i class="fa-solid text-xl" :class="icon"></i>
     </a>
-    <ul class="dropdown absolute top-[50px] ml-[-60px] bg-[var(--color-default-oscuro)] dark:bg-[var(--color-default-claro)] rounded-[5px] p-[10px] shadow-lg z-999">
+    <ul class="dropdown absolute top-[50px] ml-[-60px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999">
         <li v-for="item in submenu" class="text-xs">
             <a :href="item.link" class="inline-flex items-center text-sm font-medium text-black md:text-gray-400 dark:hover:text-white">
                 <i class="fa-solid text-sm me-2.5" :class="item.icon"></i>

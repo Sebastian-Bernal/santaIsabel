@@ -1,5 +1,5 @@
 <script setup>
-import ModalXS from '~/components/Modales/ModalXS.vue';
+import ModalXS from '~/components/molecules/Modals/ModalXS.vue';
 import Input from '~/components/Inputs/Input.vue';
 import Select from '~/components/Selects/Select.vue';
 import SelectMultiple from '~/components/Selects/SelectMultiple.vue';

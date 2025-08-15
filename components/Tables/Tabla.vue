@@ -33,8 +33,6 @@ const props = defineProps({
         type: [Object],
     }
 });
-
-console.log(props.headerTabla)
 // tamaño de pantalla
 const {
     columnasVisibles,
@@ -146,6 +144,7 @@ const estiloColumnas = computed(() => {
                         {{ col.value }}
                         <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down cursor-pointer"></i>
                     </h2>
+
                     <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
                 </div>
 

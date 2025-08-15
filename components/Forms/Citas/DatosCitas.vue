@@ -1,9 +1,9 @@
 <script setup>
 // Componentes
-import Input from '../../components/Inputs/Input.vue';
-import Select from '~/components/Selects/Select.vue';
+import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
 import SelectSearch from '~/components/Selects/SelectSearch.vue';
-import Label from '~/components/Labels/Label.vue';
+import Label from '~/components/atoms/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 // Data
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
@@ -183,7 +183,10 @@ async function seleccionarMedico(medico) {
     <Section>
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-user text-blue-500"></i>
-            <Label for="nombreP" size="text-sm">Paciente</Label>
+            <Label :Propiedades="{
+                forLabel: 'nombreP',
+                size: 'text-sm'
+            }">Paciente</Label>
         </div>
     </Section>
     <Section>
@@ -195,38 +198,87 @@ async function seleccionarMedico(medico) {
     <Section>
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-stethoscope text-blue-500"></i>
-            <Label for="nombre" size="text-sm">Detalles de la cita</Label>
+            <Label :Propiedades="{
+                forLabel: 'nombre',
+                size: 'text-sm'
+            }">Detalles de la cita</Label>
         </div>
     </Section>
 
     <Section styles="relative md:flex-row flex-col" @blur="pacienteExistente">
-        <Input v-model="props.formData.Cita.name_medico" type="text" id="nombre" name="nombre" list="medicosList"
-            minlength="5" @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)"
-            placeholder="Nombre del profesional" tamaño="w-full" />
+        <!-- <Input v-model="props.formData.Cita.name_medico" :Propiedades="{
+            type: 'text',
+            id: 'nombre',
+            name: 'nombre',
+            list: 'medicosList',
+            minlength: 5,
+            tamaño: 'w-full',
+            placeholder: 'Nombre del profesional',
+            modelValue: props.formData.Cita.name_medico
+        }" @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)" />
         <datalist id="medicosList">
             <option v-for="medico in medicosList" :value="medico.name">
                 profesion: {{ medico.profesion }}
             </option>
-        </datalist>
-        <Select v-model="props.formData.Cita.servicio" id="profesion" name="profesion"
-            :options="[{ text: 'Medicina General', value: 'Medicina General' }, { text: 'Psicologia', value: 'Psicologia' }, { text: 'Odontologia', value: 'Odontologia' }]"
-            placeholder="Servicio" tamaño="w-full"></Select>
-        <Select v-model="props.formData.Cita.motivo" id="motivo" name="motivo"
-            :options="[{ text: 'Control', value: 'Control' }, { text: 'Primera vez', value: 'Primera vez' }, { text: 'Urgencias', value: 'Urgencias' }]"
-            placeholder="Motivo" tamaño="w-full"></Select>
+        </datalist> -->
+        <SelectSearch v-model="formData.Cita.name_medico" :options="medicosList" @click="pacienteExistente"
+            :seleccionarItem="seleccionarMedico" name="nombreM" id="nombreM" placeholder="Nombre del profesional"
+            :opciones="[{ value: 'name' }, { text: 'Profesion', value: 'profesion' }]" />
+
+        <Select v-model="props.formData.Cita.servicio" :Propiedades="{
+            placeholder: 'Servicio',
+            options: [
+                { text: 'Medicina General', value: 'Medicina General' },
+                { text: 'Psicologia', value: 'Psicologia' },
+                { text: 'Odontologia', value: 'Odontologia' }
+            ],
+            id: 'profesion',
+            name: 'profesion',
+            tamaño: 'w-full',
+            modelValue: props.formData.Cita.servicio
+        }" />
+
+        <Select v-model="props.formData.Cita.motivo" :Propiedades="{
+            placeholder: 'Motivo',
+            options: [
+                { text: 'Control', value: 'Control' },
+                { text: 'Primera vez', value: 'Primera vez' },
+                { text: 'Urgencias', value: 'Urgencias' }
+            ],
+            id: 'motivo',
+            name: 'motivo',
+            tamaño: 'w-full',
+            modelValue: props.formData.Cita.motivo
+        }" />
     </Section>
 
     <Section styles="mt-3">
         <div class="flex gap-3 items-center">
             <i class="fa-solid fa-calendar text-blue-500"></i>
-            <Label for="fecha" size="text-sm">Fecha y Hora</Label>
+            <Label :Propiedades="{
+                forLabel: 'fecha',
+                size: 'text-sm'
+            }">Fecha y Hora</Label>
         </div>
     </Section>
 
     <Section>
-        <Input v-model="props.formData.Cita.fecha" type="date" id="fecha" name="fecha"
-            placeholder="Nombre completo del acompañante" tamaño="w-full" />
-        <Input v-model="props.formData.Cita.hora" type="time" id="hora" name="hora"
-            placeholder="Seleccione la hora para la cita" tamaño="w-full"></Input>
+        <Input v-model="props.formData.Cita.fecha" :Propiedades="{
+            type: 'date',
+            id: 'fecha',
+            name: 'fecha',
+            tamaño: 'w-full',
+            placeholder: 'Nombre completo del acompañante',
+            modelValue: props.formData.Cita.fecha
+        }" />
+        <Input v-model="props.formData.Cita.hora" :Propiedades="{
+            type: 'time',
+            id: 'hora',
+            name: 'hora',
+            tamaño: 'w-full',
+            placeholder: 'Seleccione la hora para la cita',
+            modelValue: props.formData.Cita.hora
+        }" />
     </Section>
+
 </template>

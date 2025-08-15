@@ -1,6 +1,6 @@
 <script setup>
 // Componentes 
-import ModalFormLG from '~/components/Modales/ModalFormLG.vue';
+import ModalFormLG from '~/components/molecules/Modals/ModalFormLG.vue';
 import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
 import DatosUsers from '../Users/DatosUsers.vue';
 // Data
@@ -150,7 +150,7 @@ async function eliminarPaciente() {
 <template>
     <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarModificarPaciente" :formData="formData"
         :formComplete="varView.formComplete" :validarform="validarform" :botones="botones">
-        <div class="pb-5 z-1 flex flex-col items-center h-[90%] bg-gray-50 rounded-2xl">
+        <div class="pb-5 z-1 flex flex-col items-center h-[90%] rounded-2xl">
             <!-- Header -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">

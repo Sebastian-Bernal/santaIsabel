@@ -9,14 +9,14 @@ const props = defineProps({
 
 </script>
 <template>
-    <div class="medical-card p-6 bg-white">
+    <div class="medical-card p-6 bg-white dark:bg-gray-700 dark:text-white">
         <div class="flex items-center justify-between">
             <div>
-                <p class="text-sm font-medium text-gray-600">{{ data.title }}</p>
-                <p class="text-2xl font-bold text-gray-900 mt-1">{{ data.value }}</p>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-200">{{ data.title }}</p>
+                <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ data.value }}</p>
             </div>
             <div class="p-3 rounded-full">
-                <i class="h-6 w-6 fa-solid text-gray-600" :class="data.icon"></i>
+                <i class="h-6 w-6 fa-solid text-gray-600 dark:text-gray-200" :class="data.icon"></i>
             </div>
         </div>
         <div class="mt-4 flex items-center">
@@ -25,7 +25,7 @@ const props = defineProps({
             <span :class="`text-sm font-medium ${ data.changeType==='positive' ? 'text-green-600' : 'text-red-600' }`">
                 {{ data.change }}
             </span>
-            <span class="text-sm text-gray-500 ml-2">vs. mes anterior</span>
+            <span class="text-sm text-gray-500 dark:text-gray-300 ml-2">vs. mes anterior</span>
         </div>
     </div>
 </template>

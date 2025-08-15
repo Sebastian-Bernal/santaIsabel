@@ -1,15 +1,15 @@
 <script setup>
-import Button from '../Buttons/Button.vue';
+import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
 import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
-import { useCalendarioCitas } from '../../stores/Calendario.js'
+import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { computed, onMounted, ref } from 'vue';
-import { nombresMeses } from '../../data/Fechas.js'
+import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 
@@ -124,10 +124,10 @@ async function activarCita(cita) {
 </script>
 
 <template>
-    <div class="py-5 flex flex-col gap-3 border border-gray-300 rounded-2xl h-110 overflow-y-auto bg-white scrollForm">
+    <div class="py-5 flex flex-col gap-3 border border-gray-300 dark:border-gray-600 rounded-2xl h-110 overflow-y-auto bg-white dark:bg-gray-700 scrollForm">
         <h2 class="text-xl font-semibold my-2 px-10">{{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
         <!-- Card Citas -->
-        <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 shadow-lg"
+        <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
             v-for="cita in citasFiltradas" :class="{ 'bg-red-50': cita.estado === 'cancelada' }">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
@@ -145,18 +145,18 @@ async function activarCita(cita) {
                 <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
             </div>
             <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
-                <Button color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
-                        class="fa-solid fa-check"></i></Button>
-                <Button color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
-                        class="fa-solid fa-xmark"></i></Button>
+                <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
+                        class="fa-solid fa-check"></i></ButtonRounded>
+                <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
+                        class="fa-solid fa-xmark"></i></ButtonRounded>
             </div>
             <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
-                <Button color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
-                        class="fa-solid fa-info"></i></Button>
+                <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
+                        class="fa-solid fa-info"></i></ButtonRounded>
             </div>
             <div class="flex flex-col gap-2" v-if="cita.estado === 'Realizada'">
-                <Button color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
-                        class="fa-solid fa-info"></i></Button>
+                <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
+                        class="fa-solid fa-info"></i></ButtonRounded>
             </div>
         </div>
 

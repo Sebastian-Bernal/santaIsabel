@@ -1,12 +1,12 @@
 <script setup>
-import Dashboard from '../components/Dashboard/Dashboard.vue'
-import FondoBlanco from '~/components/Fondos/FondoBlanco.vue';
+import Dashboard from '~/components/organism/Dashboard/Dashboard.vue';
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 </script>
 
 <template>
-    <FondoBlanco>
+    <FondoDefault>
         <div class="md:py-8 py-4 md:px-12 px-4">
             <Dashboard></Dashboard>
         </div>
-    </FondoBlanco>
+    </FondoDefault>
 </template>

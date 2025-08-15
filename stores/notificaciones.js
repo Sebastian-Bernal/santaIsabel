@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 
 export const useNotificacionesStore = defineStore("Notificaciones", {
-
     // state
     state: () => {
+        let theme = 'light'
+
         return {
             swal: null,
             respuesta: null,
@@ -19,6 +20,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 background: '#d33',
                 input: 'text',
                 inputAtributes: { placeholder: "Digite" },
+                theme: theme
             }
 
         };
@@ -35,7 +37,10 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 title: this.options.titulo,
                 text: this.options.texto,
                 icon: this.options.icono,
-                timer: this.options.tiempo
+                timer: this.options.tiempo,
+                customClass: {
+                    popup: this.options.theme === 'dark' ? 'swal-dark' : 'swal-light',
+                },
             });
             return result
         },

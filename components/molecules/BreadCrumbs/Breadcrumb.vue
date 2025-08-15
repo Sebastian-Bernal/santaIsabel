@@ -26,7 +26,7 @@ const breadCrumbs = computed(() => {
     <a :href="props.usuarioRol === 'Admin' ? '/Home' : ''" class="hidden md:block">
         <i class="fa-solid fa-house"></i>
     </a>
-    <div class="dropdown absolute top-[50px] ml-[-35px] bg-[var(--color-default-oscuro)] dark:bg-[var(--color-default-claro)] rounded-[5px] p-[10px] shadow-lg z-999 max-w-[200px] overflow-x-auto select-none">
+    <div class="dropdown absolute top-[50px] ml-[-35px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999 max-w-[200px] overflow-x-auto select-none">
         <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="flex items-center">
                 <li class="flex items-center">

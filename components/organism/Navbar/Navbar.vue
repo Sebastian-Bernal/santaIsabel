@@ -1,7 +1,7 @@
 <script setup>
 import DropdownNavbar from '~/components/molecules/Dropdowns/DropdownNavbar.vue';
 import Breadcrumb from '~/components/molecules/BreadCrumbs/Breadcrumb.vue';
-import Buttontheme from '../atoms/Buttons/Buttontheme.vue';
+import Buttontheme from '~/components/atoms/Buttons/Buttontheme.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login';
@@ -60,7 +60,7 @@ const removeStorage = () => {
                     </a>
                 </li>
                 <li>
-                    <BreadCrumb :usuarioRol="usuarioRol"/>
+                    <Breadcrumb :usuarioRol="usuarioRol"/>
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />

@@ -31,6 +31,7 @@
 
 .scrollForm {
     position: relative;
+    border-radius: 16px;
 }
 
 .scrollForm::-webkit-scrollbar {
@@ -59,4 +60,14 @@
 
 .scrollForm::-webkit-scrollbar-thumb:active {
     background-color: #107072;
+}
+
+.swal-dark {
+  background-color: #1e293b !important; /* gris oscuro Tailwind slate-800 */
+  color: #f8fafc !important;           /* texto blanco slate-50 */
+}
+
+.swal-light {
+  background-color: #ffffff !important;
+  color: #0f172a !important;           /* texto gris oscuro */
 }

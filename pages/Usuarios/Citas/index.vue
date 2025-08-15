@@ -1,7 +1,6 @@
 <script setup>
-import FondoBlanco from '~/components/Fondos/FondoBlanco'
-import Calendario from '~/components/Calendario/Calendario.vue'
-import Citas from '~/components/Calendario/Citas.vue'
+import Citas from '~/components/molecules/Calendario/Citas.vue'
+import Calendario from '~/components/molecules/Calendario/Calendario.vue'
 import IngresarNuevaCita from '~/components/Forms/Citas/IngresarNuevaCita.vue'
 import { useVarView } from '~/stores/varview.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
@@ -30,7 +29,7 @@ const agregarCita = () => {
             <div class="md:pb-8 pb-4 flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-semibold">Calendario de citas</h2>
-                    <p class="text-gray-600 mt-1">Visualiza y administra la agenda de citas.</p>
+                    <p class="text-gray-600 dark:text-gray-200 mt-1">Visualiza y administra la agenda de citas.</p>
                 </div>
 
                 <div class="flex gap-3 items-center cursor-pointer" @click="agregarCita">

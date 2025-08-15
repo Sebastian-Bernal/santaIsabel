@@ -1,10 +1,11 @@
 <script setup>
-import ModalLG from '~/components/Modales/ModalLG.vue';
-import Input from '~/components/Inputs/Input.vue';
-import Select from '~/components/Selects/Select.vue';
-import Label from '../Labels/Label.vue';
-import SelectMultiple from '~/components/Selects/SelectMultiple.vue';
+import ModalLG from '~/components/molecules/Modals/ModalLG.vue';
+import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
+import Label from '~/components/atoms/Labels/Label.vue';
+import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
 import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+import Checkbox from '~/components/atoms/Checkbox/Checkbox.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';
 import { TablaBuilder, TablaDirector } from '~/composables/Formulario/ClassTablas';
@@ -169,7 +170,7 @@ const colores = ref([
             <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
 
                 <div class="flex justify-between items-center">
-                    <p class="text-lg text-gray-600">Tablas <i class="fa-solid fa-gear"></i></p>
+                    <p class="text-lg text-gray-600 dark:text-gray-200">Tablas <i class="fa-solid fa-gear"></i></p>
                     <p class="text-lg text-blue-500 cursor-pointer" @click="agregarDB">
                         <i v-if="showInsertar" class="fa-solid fa-download mr-3 text-green-700"
                             @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
@@ -179,35 +180,80 @@ const colores = ref([
 
                 <!-- Insertar tabla -->
                 <div v-if="insertarTabla" class="flex md:flex-row flex-col gap-3 pt-3">
-                    <Select v-model="tablaInsert.tabla" placeholder="Tabla de datos" name="tabla" :options="Tablas" />
-                    <Select v-model="tablaInsert.id_comparar" placeholder="Campo a comparar" name="campoComparar"
-                        :options="datosOptions">
+                    <Select v-model="tablaInsert.tabla" :Propiedades="{
+                        placeholder: 'Tabla de datos',
+                        options: Tablas,
+                        modelValue: tablaInsert.tabla,
+                        name: 'tabla',
+                        tamaño: 'w-full'
+                    }" />
+                    <Select v-model="tablaInsert.id_comparar" :Propiedades="{
+                        placeholder: 'Campo a comparar',
+                        options: datosOptions,
+                        modelValue: tablaInsert.id_comparar,
+                        name: 'campoComparar',
+                        tamaño: 'w-full'
+                    }">
                     </Select>
-                    <Select v-model="tablaInsert.id_compararTabla" placeholder="Campo de Tabla a insertar"
-                        name="campoCompararTabla" :options="datosOptionsTabla" />
+                    <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
+                        placeholder: 'Campo de Tabla a insertar',
+                        options: datosOptionsTabla,
+                        modelValue: tablaInsert.id_compararTabla,
+                        name: 'campoCompararTabla',
+                        tamaño: 'w-full'
+                    }" />
                 </div>
 
                 <div>
                     <!-- Selección de tabla y campos -->
                     <div class="flex md:flex-row flex-col gap-3 pt-3">
-                        <Select v-model="tabla.tabla" placeholder="Tabla de datos" :options="Tablas" name="tabla" />
-                        <SelectMultiple v-model="columnas" :options="datos" placeholder="Seleccione los campos"
-                            name="columnas" id="columnas" />
+                        <Select v-model="tabla.tabla" :Propiedades="{
+                            placeholder: 'Tabla de datos',
+                            options: Tablas,
+                            modelValue: tabla.tabla,
+                            name: 'tabla',
+                            tamaño: 'w-full'
+                        }" />
+                        <SelectMultiple v-model="columnas" :Propiedades="{
+                            placeholder: 'Seleccione los campos',
+                            options: datos,
+                            modelValue: columnas,
+                            name: 'columnas',
+                            tamaño: 'w-full'
+                        }" />
 
                     </div>
 
                     <!-- Configuración de columnas -->
                     <div class="grid grid-cols-3 gap-5 p-3 my-5 max-h-[200px] overflow-y-auto">
-                        <div v-for="(col, index) in tabla.columnas" :key="index" class="flex flex-col gap-2 mb-2 border border-gray-300 rounded-xl p-2">
-                            <label for="tituloVisible" class="text-gray-600">{{ col.titulo }}</label>
-                            <Input v-model="col.value" placeholder="Título visible" :mayuscula="false" name="tituloVisible" id="tituloVisible" />
-                            <Input v-model="col.tamaño" placeholder="Tamaño en px (opcional)" type="number" max="500" name="tamaño" />
-                            <label class="flex items-center gap-2">
-                                <input type="checkbox" v-model="col.ordenar" />
-                                Boton de Ordenar
-                            </label>
+                        <div v-for="(col, index) in tabla.columnas" :key="index"
+                            class="flex flex-col gap-2 mb-2 border border-gray-300 dark:border-gray-600 rounded-xl p-2">
+                            <Label class="text-gray-600" :Propiedades="{
+                                forLabel: 'tituloVisible',
+                                tamaño: 'text-sm text-gray-600'
+                            }">{{ col.titulo }}</Label>
+                            <Input v-model="col.value" :Propiedades="{
+                                placeholder: 'Titulo Visible',
+                                modelValue: col.value,
+                                mayuscula: false,
+                                name: 'tituloVisible',
+                            }" />
+                            <Input v-model="col.tamaño" :Propiedades="{
+                                placeholder: 'Tamaño en px (opcional)',
+                                type: 'number',
+                                max: 500,
+                                modelValue: col.value,
+                                mayuscula: false,
+                                name: 'tamaño',
+                            }" />
+                            <Checkbox v-model="col.ordenar" :Propiedades="{
+                                placeholder: 'Boton de Ordenar',
+                                name: index,
+                                modelValue: col.ordenar
+                            }" />
                         </div>
-                        <div v-if="tabla.columnas.length < 1" class="col-span-3 text-center text-gray-500 font-semibold">
+                        <div v-if="tabla.columnas.length < 1"
+                            class="col-span-3 text-center text-gray-500 font-semibold">
                             <p>No hay columnas Seleccionadas.</p>
                         </div>
                     </div>
@@ -215,28 +261,66 @@ const colores = ref([
                     <!-- Header de la tabla -->
                     <div class="flex items-center gap-3">
                         <i class="fa-solid fa-folder text-blue-500"></i>
-                        <Label forLabel="header">Header (opcional)</Label>
+                        <Label :Propiedades="{
+                            forLabel: 'header',
+                            tamaño: 'text-sm text-gray-600'
+                        }">Header (opcional)</Label>
                     </div>
 
                     <div class="flex md:flex-row flex-col gap-3 pt-3">
-                        <Input v-model="tabla.titulo" placeholder="Título" :mayuscula="false" name="titulo" />
-                        <Input v-model="tabla.descripcion" placeholder="Descripción" :mayuscula="false" name="descripcion" />
-                        <Select v-model="tabla.color" placeholder="Color" :options="colores" name="color" />
+                        <Input v-model="tabla.titulo" :Propiedades="{
+                            placeholder: 'Titulo Header',
+                            modelValue: tabla.titulo,
+                            mayuscula: false,
+                            name: 'titulo',
+                            tamaño: 'w-full'
+                        }" />
+                        <Input v-model="tabla.descripcion" :Propiedades="{
+                            placeholder: 'Descripción',
+                            modelValue: tabla.descripcion,
+                            mayuscula: false,
+                            name: 'descripcion',
+                            tamaño: 'w-full'
+                        }" />
+                        <Select v-model="tabla.color" :Propiedades="{
+                            placeholder: 'Color',
+                            options: colores,
+                            modelValue: tabla.color,
+                            name: 'color',
+                            tamaño: 'w-full'
+                        }" />
                     </div>
 
                     <!-- Acciones -->
                     <div class="flex items-center gap-3 pt-5">
                         <i class="fa-solid fa-folder text-blue-500"></i>
-                        <Label forLabel="header">Acciones (opcional)</Label>
+                        <Label :Propiedades="{
+                            forLabel: 'botones',
+                            tamaño: 'text-sm text-gray-600'
+                        }">Acciones (opcional)</Label>
                     </div>
                     <div class="flex flex-col gap-3 pt-5">
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" v-model="tabla.acciones.botones" name="botones" />
-                            Mostrar botones
-                        </label>
+                        <Checkbox v-model="tabla.acciones.botones" :Propiedades="{
+                            placeholder: 'Mostrar botones',
+                            name: 'botones',
+                            modelValue: tabla.acciones.botones,
+                            tamaño: 'w-full'
+                        }" />
                         <div class="flex gap-2" v-if="tabla.acciones.botones">
-                            <Input v-model="tabla.acciones.icons.at(-1).icon" placeholder="Icono (ej. ver)" :mayuscula="false" name="iconoNombre" />
-                            <Input v-model="tabla.acciones.icons[0].action" placeholder="Acción (ej. verPaciente)" :mayuscula="false" name="iconoFuncion"/>
+                            <Input v-model="tabla.acciones.icons.at(-1).icon" :Propiedades="{
+                                placeholder: 'Icono (ej. ver)',
+                                modelValue: tabla.acciones.icons.at(-1).icon,
+                                mayuscula: false,
+                                name: 'iconoNombre',
+                                tamaño: 'w-full'
+                            }" />
+                            <Input v-model="tabla.acciones.icons.at(-1).action" :Propiedades="{
+                                placeholder: 'Acción (ej. verPaciente)',
+                                modelValue: tabla.acciones.icons.at(-1).action,
+                                mayuscula: false,
+                                name: 'iconoFuncion',
+                                tamaño: 'w-full'
+                            }" />
                         </div>
                     </div>
 
