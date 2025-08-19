@@ -2,7 +2,7 @@
 // importando los reursos
 import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
-import InputIcon from '~/components/atoms/Inputs/InputIcon.vue';
+import Input from '~/components/atoms/Inputs/Input.vue';
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import DatosExcel from '~/components/Forms/Excel/DatosExcel.vue';
 
@@ -34,7 +34,6 @@ const props = defineProps({
     }
 });
 
-console.log(props.headerTabla)
 // tamaño de pantalla
 const {
     columnasVisibles,
@@ -105,10 +104,10 @@ const estiloColumnas = computed(() => {
                 <p>{{ props.headerTabla.descripcion }}</p>
             </div>
             <div class="flex gap-3 md:w-[45%] justify-end">
-                <InputIcon class="w-3/4" :Propiedades="{
+                <Input :Propiedades="{
                     placeholder: 'Buscar por datos...',
-                    icon: 'fa-search',
-                    label: ''
+                    icon: 'fa-solid fa-search',
+                    modelValue: busqueda
                 }" v-model="busqueda" />
 
                 <client-only>

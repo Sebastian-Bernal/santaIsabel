@@ -18,7 +18,8 @@ const props = defineProps({
     cerrar: {
         type: Function,
         default: () => {}
-    }
+    },
+    
 });
 
 const form = useFormPendiente();

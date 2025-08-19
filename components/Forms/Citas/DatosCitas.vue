@@ -13,6 +13,7 @@ import { useCalendarioCitas } from '~/stores/Calendario'
 import { ref, onMounted } from "vue";
 import { useVarView } from "../../stores/varview.js";
 import { storeToRefs } from 'pinia';
+import { FormBuilder, FormFieldBuilder } from '~/composables/Formulario/ClassFormulario.js';
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
@@ -177,6 +178,53 @@ async function seleccionarMedico(medico) {
         }
     }
 }
+
+// Crear instancia del formulario
+const userForm = new FormBuilder('registroUsuario', {
+  titulo: 'Formulario de Registro',
+  descripcion: 'Por favor, completa los siguientes campos',
+})
+
+// Crear campo de nombre
+const nombreField = new FormFieldBuilder('text')
+  .setId('nombre')
+  .setName('nombre')
+  .setPlaceholder('Ingresa tu nombre')
+  .setModelValue('')
+  .setTamaño('w-full')
+
+// Crear campo de correo electrónico
+const emailField = new FormFieldBuilder('email')
+  .setId('email')
+  .setName('email')
+  .setPlaceholder('Ingresa tu correo electrónico')
+  .setModelValue('')
+  .setTamaño('w-full')
+
+// Crear campo de tipo de usuario (select)
+const tipoUsuarioField = new FormFieldBuilder('select')
+  .setId('tipoUsuario')
+  .setName('tipoUsuario')
+  .setPlaceholder('Selecciona el tipo de usuario')
+  .setOptions([
+    { label: 'Administrador', value: 'admin' },
+    { label: 'Editor', value: 'editor' },
+    { label: 'Visitante', value: 'visitante' },
+  ])
+  .setModelValue('visitante')
+  .setTamaño('w-full')
+
+// Agregar campos al formulario
+userForm
+  .addField(nombreField)
+  .addField(emailField)
+  .addField(tipoUsuarioField)
+
+// Construir el formulario final
+const formularioFinal = userForm.build()
+
+console.log(formularioFinal)
+
 </script>
 
 <template>

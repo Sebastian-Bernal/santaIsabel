@@ -7,6 +7,7 @@ import Select from '~/components/atoms/Selects/Select.vue';
 import Label from '~/components/atoms/Labels/Label.vue';
 
 import { computed } from 'vue';
+import CampoForm from './CampoForm.vue';
 
 
 const props = defineProps({
@@ -28,7 +29,7 @@ watch(
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
         varView.formComplete = false
-        varView.formComplete =  !hayCamposInvalidos;
+        varView.formComplete = !hayCamposInvalidos;
     },
     { deep: true }
 );
@@ -41,29 +42,7 @@ onMounted(() => {
 const componentMap = {
     Input: Input,
     Select: Select,
-    Label
-}
-
-
-function getNestedValue(obj, path) {
-  if (!obj || !path) return undefined;
-  return path.split('.').reduce((acc, key) => acc?.[key], obj);
-}
-
-function setNestedValue(obj, path, value) {
-  if (!obj || !path) return;
-  const keys = path.split('.');
-  const lastKey = keys.pop();
-  const target = keys.reduce((acc, key) => acc[key] = acc[key] || {}, obj);
-  target[lastKey] = value;
-}
-
-
-function getModelValue(path) {
-  return computed({
-    get: () => getNestedValue(formData.value, path),
-    set: (val) => setNestedValue(formData.value, path, val)
-  });
+    Label: Label
 }
 
 
@@ -84,9 +63,10 @@ function getModelValue(path) {
                         <div
                             class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
                             <!-- Contenido del formulario -->
-                            <div class="w-full px-10 grid grid-cols-1 gap-[15px]">
-                                <component v-for="(item, index) in Propiedades.campos" :key="index"
-                                    :is="componentMap[item.component]" :Propiedades="item" v-model="item.modelValue" />
+                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
+                                <CampoForm v-for="(item, index) in Propiedades.campos" :key="index" :item="item"
+                                    :componentMap="componentMap"
+                                    @update:item="val => Propiedades.campos[index] = val" />
                             </div>
                         </div>
                     </form>
