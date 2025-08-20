@@ -2,7 +2,7 @@
 // Componentes
 import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
-import SelectSearch from '~/components/Selects/SelectSearch.vue';
+import SelectSearch from '~/components/atoms/Selects/SelectSearch.vue';
 import Label from '~/components/atoms/Labels/Label.vue';
 import Section from '~/components/Forms/Section.vue';
 // Data
@@ -13,7 +13,6 @@ import { useCalendarioCitas } from '~/stores/Calendario'
 import { ref, onMounted } from "vue";
 import { useVarView } from "../../stores/varview.js";
 import { storeToRefs } from 'pinia';
-import { FormBuilder, FormFieldBuilder } from '~/composables/Formulario/ClassFormulario.js';
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
@@ -179,52 +178,6 @@ async function seleccionarMedico(medico) {
     }
 }
 
-// Crear instancia del formulario
-const userForm = new FormBuilder('registroUsuario', {
-  titulo: 'Formulario de Registro',
-  descripcion: 'Por favor, completa los siguientes campos',
-})
-
-// Crear campo de nombre
-const nombreField = new FormFieldBuilder('text')
-  .setId('nombre')
-  .setName('nombre')
-  .setPlaceholder('Ingresa tu nombre')
-  .setModelValue('')
-  .setTamaño('w-full')
-
-// Crear campo de correo electrónico
-const emailField = new FormFieldBuilder('email')
-  .setId('email')
-  .setName('email')
-  .setPlaceholder('Ingresa tu correo electrónico')
-  .setModelValue('')
-  .setTamaño('w-full')
-
-// Crear campo de tipo de usuario (select)
-const tipoUsuarioField = new FormFieldBuilder('select')
-  .setId('tipoUsuario')
-  .setName('tipoUsuario')
-  .setPlaceholder('Selecciona el tipo de usuario')
-  .setOptions([
-    { label: 'Administrador', value: 'admin' },
-    { label: 'Editor', value: 'editor' },
-    { label: 'Visitante', value: 'visitante' },
-  ])
-  .setModelValue('visitante')
-  .setTamaño('w-full')
-
-// Agregar campos al formulario
-userForm
-  .addField(nombreField)
-  .addField(emailField)
-  .addField(tipoUsuarioField)
-
-// Construir el formulario final
-const formularioFinal = userForm.build()
-
-console.log(formularioFinal)
-
 </script>
 
 <template>
@@ -254,21 +207,7 @@ console.log(formularioFinal)
     </Section>
 
     <Section styles="relative md:flex-row flex-col" @blur="pacienteExistente">
-        <!-- <Input v-model="props.formData.Cita.name_medico" :Propiedades="{
-            type: 'text',
-            id: 'nombre',
-            name: 'nombre',
-            list: 'medicosList',
-            minlength: 5,
-            tamaño: 'w-full',
-            placeholder: 'Nombre del profesional',
-            modelValue: props.formData.Cita.name_medico
-        }" @click="pacienteExistente" @blur="seleccionarMedico(props.formData.Cita.name_medico)" />
-        <datalist id="medicosList">
-            <option v-for="medico in medicosList" :value="medico.name">
-                profesion: {{ medico.profesion }}
-            </option>
-        </datalist> -->
+
         <SelectSearch v-model="formData.Cita.name_medico" :options="medicosList" @click="pacienteExistente"
             :seleccionarItem="seleccionarMedico" name="nombreM" id="nombreM" placeholder="Nombre del profesional"
             :opciones="[{ value: 'name' }, { text: 'Profesion', value: 'profesion' }]" />

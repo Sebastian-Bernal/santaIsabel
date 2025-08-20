@@ -44,14 +44,29 @@
     background-color: #DFE9EB;
 }
 
+.dark .scrollForm::-webkit-scrollbar-track {
+    border-radius: 2px;
+    background-color: #202020;
+}
+
 .scrollForm::-webkit-scrollbar-track:hover,
 .scrollForm::-webkit-scrollbar-track:active {
     background-color: #B8C0C2;
 }
 
+.dark .scrollForm::-webkit-scrollbar-track:hover,
+.scrollForm::-webkit-scrollbar-track:active {
+    background-color: #343434;
+}
+
 .scrollForm::-webkit-scrollbar-thumb {
     border-radius: 3px;
     background-color: var(--color-default-100);
+}
+
+.dark .scrollForm::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--color-default-700);
 }
 
 .scrollForm::-webkit-scrollbar-thumb:hover {
@@ -61,6 +76,19 @@
 .scrollForm::-webkit-scrollbar-thumb:active {
     background-color: #107072;
 }
+
+@layer utilities {
+  .scrollForm::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--color-default-100);
+  }
+
+  .dark .scrollForm::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: var(--color-dark-100); /* 👈 define tu color oscuro */
+  }
+}
+
 
 .swal-dark {
   background-color: #1e293b !important; /* gris oscuro Tailwind slate-800 */

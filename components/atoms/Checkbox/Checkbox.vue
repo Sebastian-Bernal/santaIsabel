@@ -4,7 +4,11 @@ const props = defineProps({
         default: {
             tamaño: 'w-full'
         }
-    }
+    },
+    modelValue: {
+        type: String,
+        default: ''
+    },
 });
 const emit = defineEmits(['update:modelValue']);
 
@@ -19,7 +23,7 @@ function onChange(event) {
         type="checkbox"
         :id="Propiedades.id"
         :name="Propiedades.name"
-        :checked="Propiedades.modelValue"
+        :checked="modelValue"
         :disabled="Propiedades.disabled"
         class="sr-only"
         @change="onChange"
@@ -27,12 +31,12 @@ function onChange(event) {
       <!-- Fondo del switch -->
       <div
         class="block w-8 h-4 rounded-full transition-colors duration-300"
-        :class="Propiedades.modelValue ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-700'"
+        :class="modelValue ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-700'"
       ></div>
       <!-- Botón deslizante -->
       <div
         class="absolute left-1 top-0.5 w-3 h-3 bg-white dark:bg-gray-900 rounded-full shadow-md transition-transform duration-300"
-        :class="Propiedades.modelValue ? 'translate-x-3' : 'translate-x-0'"
+        :class="modelValue ? 'translate-x-3' : 'translate-x-0'"
       ></div>
     </div>
     <span>{{ Propiedades.placeholder }}</span>

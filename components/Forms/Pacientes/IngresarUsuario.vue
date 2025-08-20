@@ -1,14 +1,13 @@
 <script setup>
 // Componentes
 import FormLG from "~/components/organism/Forms/FormLG.vue";
-import FormularioWizard from "~/components/Forms/FormularioWizard.vue";
-import DatosUsers from "~/components/Forms/Users/DatosUsers.vue"
 // Data
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
 import { useNotificacionesStore } from "~/stores/notificaciones.js";
 import { useVarView } from "~/stores/varview.js";
 import { FormularioBuilder } from "~/composables/Formulario/ClassFormulario";
+import { municipios } from '~/data/municipios.js'
 
 const varView = useVarView();
 const storePaciente = usePacientesStore();
@@ -56,27 +55,27 @@ function cerrar() {
     varView.showNuevoPacientePaso2 = false;
 };
 
+function seleccionarDepartamento (item) {
+    formData.InformacionUser.departamento = item.nombre;
+}
+
 
 
 const builder = new FormularioBuilder()
 
 const propiedades = builder
   .setBotones([
-    { text: 'Atras', accion: cerrarModal },
-    { text: 'Siguiente', accion: enviarNuevoUser },
+    { text: 'Atras', accion: cerrarModal, color: 'bg-gray-500' },
+    { text: 'Siguiente', accion: enviarNuevoUser, color: 'bg-blue-500' },
   ])
-  .setFormData(formData)
   .setValidarForm(validarform)
-  .setFormComplete(varView.formComplete)
-  .setFormularioTitulo('Datos del Usuario')
   .setFormularioTipo('Wizard')
   .setFormularioTituloFormulario('Nuevo Paciente')
   .setFormularioCerrar(cerrar)
   .setFormularioSecciones([
     { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-    { numPagina: 2, color: 'bg-gray-300' },
+    { numPagina: 2, color: 'bg-gray-300 dark:bg-gray-500 dark:text-gray-200 text-dark font-bold' },
   ])
-  .setContentModelValue(nuevoPacienteStore.formData)
   .setContentAgregarItem(agregarItem)
   .setContentEliminarItem(eliminarItem)
   .setContentTraerDatos(traerDatos)
@@ -97,7 +96,6 @@ const propiedades = builder
     id: 'documento',
     name: 'documento',
     tamaño: 'w-full',
-    modelValue: formData.InformacionUser.No_document,
     max: '10000000000',
     min: '1000000',
     vmodel: 'InformacionUser.No_document',
@@ -108,7 +106,6 @@ const propiedades = builder
     id: 'tipoDocumento',
     name: 'tipoDocumento',
     tamaño: 'w-full',
-    modelValue: formData.InformacionUser.type_doc,
     options: [
       { text: 'Cédula de ciudadanía', value: 'cedula' },
       { text: 'Tarjeta de identidad', value: 'Tarjeta de identidad' },
@@ -125,8 +122,9 @@ const propiedades = builder
     name: 'nombre',
     tamaño: 'w-full',
     minLength: '5',
-    modelValue: formData.InformacionUser.name,
+    upperCase: true,
     vmodel: 'InformacionUser.name',
+    minlength: 5
   })
   .addCampo({
     component: 'Input',
@@ -135,7 +133,6 @@ const propiedades = builder
     id: 'nacimiento',
     name: 'nacimiento',
     tamaño: 'w-full text-gray-500',
-    modelValue: formData.InformacionUser.nacimiento,
     vmodel: 'InformacionUser.nacimiento',
   })
 
@@ -147,13 +144,14 @@ const propiedades = builder
     forLabel: 'documento'
   })
   .addCampo({
-    component: 'Input',
-    type: 'text',
+    component: 'SelectSearch',
+    options: municipios.departamentos,
+    opciones: [{ value: "nombre" },{text: 'nombre', value: 'nombre'}],
+    seleccionarItem: seleccionarDepartamento,
     placeholder: 'Departamento',
     id: 'departamento',
     name: 'departamento',
     tamaño: 'md:w-full w-full',
-    modelValue: formData.InformacionUser.departamento,
     vmodel: 'InformacionUser.departamento',
   })
   .addCampo({
@@ -163,7 +161,6 @@ const propiedades = builder
     id: 'municipio',
     name: 'municipio',
     tamaño: 'md:w-full w-full',
-    modelValue: formData.InformacionUser.municipio,
     vmodel: 'InformacionUser.municipio',
   })
   .addCampo({
@@ -172,7 +169,6 @@ const propiedades = builder
     id: 'zona',
     name: 'zona',
     tamaño: 'md:w-full w-full',
-    modelValue: formData.InformacionUser.zona,
     options: [
       { text: 'Rural', value: 'Rural' },
       { text: 'Urbana', value: 'Urbana' },
@@ -187,7 +183,6 @@ const propiedades = builder
     name: 'barrio',
     tamaño: 'md:w-full w-full',
     minLength: '5',
-    modelValue: formData.InformacionUser.barrio,
     vmodel: 'InformacionUser.barrio',
   })
   .addCampo({
@@ -198,7 +193,6 @@ const propiedades = builder
     name: 'direccion',
     tamaño: 'md:w-full w-full',
     minLength: '5',
-    modelValue: formData.InformacionUser.direccion,
     vmodel: 'InformacionUser.direccion',
   })
 
@@ -218,7 +212,6 @@ const propiedades = builder
     tamaño: 'md:w-full w-full',
     max: '1000000000000',
     min: '1000000000',
-    modelValue: formData.InformacionUser.celular,
     vmodel: 'InformacionUser.celular',
   })
   .addCampo({
@@ -230,7 +223,6 @@ const propiedades = builder
     tamaño: 'md:w-full w-full',
     max: '100000000',
     min: '100000',
-    modelValue: formData.InformacionUser.telefono,
     vmodel: 'InformacionUser.telefono',
   })
 
@@ -247,7 +239,6 @@ const propiedades = builder
     id: 'rol',
     name: 'rol',
     tamaño: 'w-full',
-    modelValue: formData.User.rol,
     options: [
       { text: 'Paciente', value: 'Paciente' },
       { text: 'Profesional', value: 'Profesional' },
@@ -264,7 +255,6 @@ const propiedades = builder
     tamaño: 'w-full',
     minLength: '5',
     mayuscula: false,
-    modelValue: formData.User.correo,
     vmodel: 'User.correo',
   })
   .addCampo({
@@ -275,29 +265,14 @@ const propiedades = builder
     name: 'contraseña',
     minLength: '5',
     mayuscula: false,
-    modelValue: formData.User.contraseña,
     vmodel: 'User.contraseña',
   })
   .build()
 
-  console.log(propiedades)
 </script>
 
 <template>
-    <FormLG :Propiedades="propiedades" v-model:formData="formData">
-        <!-- <FormularioWizard :datos="{
-            titulo: 'Datos del Usuario',
-            tituloFormulario: 'Nuevo Paciente',
-            cerrar: cerrar,
-            secciones: [
-                { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, color: 'bg-gray-300' },
-            ]
-        }">
-            <DatosUsers v-model:formData="nuevoPacienteStore.formData" :agregarItem="agregarItem"
-                :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos"
-                formulario="Paciente" />
+    <FormLG :Propiedades="propiedades">
 
-        </FormularioWizard> -->
     </FormLG>
 </template>

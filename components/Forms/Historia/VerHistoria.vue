@@ -1,6 +1,6 @@
 <script setup>
 import ModalLG from '~/components/Modales/ModalLG.vue';
-import ButtonDashboard from '~/components/Buttons/ButtonDashboard.vue';
+import ButtonDashboard from '~/components/atoms/Buttons/ButtonDashboard.vue';
 import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
 import VerEvoluciones from './Evoluciones/VerEvoluciones.vue'
 import VerNotas from './Notas/VerNotas.vue'

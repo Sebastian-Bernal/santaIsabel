@@ -1,30 +1,52 @@
 <script setup>
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
-import ButtonForm from "~/components/Buttons/ButtonForm.vue";
-import Wizard from '~/components/Forms/Wizard.vue';
-import Input from '~/components/atoms/Inputs/Input.vue';
-import Select from '~/components/atoms/Selects/Select.vue';
-import Label from '~/components/atoms/Labels/Label.vue';
-
-import { computed } from 'vue';
-import CampoForm from './CampoForm.vue';
-
+import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
+import Wizard from './Wizard.vue';
+import { loadComponent } from './componentLoader';
 
 const props = defineProps({
     Propiedades: {
         default: {}
     }
 });
-const formData = defineModel('formData');
 const varView = useVarView();
 
+// Inicializa formData con las claves de vmodel
+const formData = ref(transformarFormData(props.Propiedades.campos));
+
+function transformarFormData(campos) {
+  const resultado = {};
+
+  campos.forEach(campo => {
+    const clave = campo.vmodel;
+    if (!clave || typeof clave !== 'string' || !clave.includes('.')) return;
+    const [grupo, propiedad] = clave.split('.');
+    if (!resultado[grupo]) {
+      resultado[grupo] = {};
+    }
+    resultado[grupo][propiedad] = '';
+  });
+
+  return resultado;
+};
+
+// Propiedad para traer componentes de cada campo
+const componentInstances = computed(() => {
+  const map = {};
+  props.Propiedades.campos.forEach(campo => {
+    if (campo.component && !map[campo.component]) {
+      map[campo.component] = loadComponent(campo.component);
+    }
+  });
+  return map;
+});
+
+
+// Guardar y validar Datos
 watch(
     formData.value,
     (newValue) => {
-        props.Propiedades.content.guardarDatos(newValue);
-        // const User = newValue.User;
-        // Validacion
-        // const camposValidos = camposRequeridos.every((campo) => User[campo] !== '');
+        props.Propiedades?.content?.guardarDatos?.(newValue);
 
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
@@ -36,13 +58,22 @@ watch(
 
 // Traer datos del localStorage
 onMounted(() => {
-    props.Propiedades.content.traerDatos();
+    props.Propiedades?.content?.traerDatos?.();
 });
 
-const componentMap = {
-    Input: Input,
-    Select: Select,
-    Label: Label
+// 🔹 función para leer un path dinámico
+function getValue(obj, path) {
+    if (!path) return undefined
+    return path.split('.').reduce((acc, key) => acc[key], obj)
+}
+
+// 🔹 función para asignar en un path dinámico
+function setValue(obj, path, value) {
+    if (!path) return undefined
+  const keys = path.split('.')
+  const lastKey = keys.pop()
+  const target = keys.reduce((acc, key) => acc[key], obj)
+  target[lastKey] = value
 }
 
 
@@ -53,10 +84,11 @@ const componentMap = {
             class="lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%] bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
-                <Wizard :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
+                <!-- Formulario Wizard -->
+                <Wizard v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined" :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
                     :cerrar="Propiedades.formulario.cerrar" />
                 <div class="w-full h-full px-6 pt-2">
-                    <h1 class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">{{
+                    <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined" class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">{{
                         Propiedades.formulario.titulo }}</h1>
                     <!-- Formulario -->
                     <form action="" class="w-full h-full flex justify-center">
@@ -64,9 +96,12 @@ const componentMap = {
                             class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
                             <!-- Contenido del formulario -->
                             <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
-                                <CampoForm v-for="(item, index) in Propiedades.campos" :key="index" :item="item"
-                                    :componentMap="componentMap"
-                                    @update:item="val => Propiedades.campos[index] = val" />
+                                <component v-for="(item, index) in Propiedades.campos" :key="index"
+                                    :is="componentInstances[item.component]"
+                                    :Propiedades="item"
+                                    :modelValue="getValue(formData, item.vmodel)"
+                                    @update:modelValue="val => setValue(formData, item.vmodel, val)" />
+                                <slot></slot>
                             </div>
                         </div>
                     </form>
@@ -74,21 +109,10 @@ const componentMap = {
             </div>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
-                <ButtonForm v-for="item in props.Propiedades.botones" color="bg-gray-500 " @click="item.accion"
+                <ButtonForm v-for="item in props.Propiedades.botones" :color="item.color" @click="item.accion"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
-
-                <!-- <ButtonForm v-if="props.Propiedades.botones.cancelar" color="bg-gray-500 " @click="props.Propiedades.cerrarModal"
-                    class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                    {{ props.Propiedades.botones ? props.Propiedades.botones.cancelar : 'Cancelar' }}
-                </ButtonForm>
-
-                <ButtonForm v-if="props.Propiedades.botones.enviar" color="bg-blue-500"
-                    @click="props.Propiedades.formComplete ? props.Propiedades.enviarFormulario(props.Propiedades.formData) : props.Propiedades.validarform()"
-                    class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                    {{ props.Propiedades.botones ? props.Propiedades.botones.enviar : 'Registrar' }}
-                </ButtonForm> -->
             </div>
         </div>
     </FondoBlur>

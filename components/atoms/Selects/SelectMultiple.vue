@@ -2,29 +2,9 @@
 import { ref, computed } from 'vue';
 
 const props = defineProps({
-  options: {
-    type: Array,
-    required: true
-  },
   modelValue: {
     type: Array,
     default: () => []
-  },
-  id: {
-    type: String,
-    default: ''
-  },
-  name: {
-    type: String,
-    required: true
-  },
-  placeholder: {
-    type: String,
-    default: 'Seleccione una opción'
-  },
-  tamaño: {
-    type: [String, Object, Array],
-    default: 'w-full'
   },
   Propiedades: {
     dafault: {}
@@ -40,7 +20,7 @@ function mostrarOptions() {
 }
 
 function añadirDato(dato) {
-  const permisos = [...props.Propiedades.modelValue];
+  const permisos = [...props.modelValue];
   const index = permisos.indexOf(dato);
 
   if (index !== -1) {
@@ -53,8 +33,8 @@ function añadirDato(dato) {
 }
 
 function seleccionarTodos() {
-  const todosSeleccionados = props.Propiedades.options.length === props.Propiedades.modelValue.length &&
-    props.Propiedades.options.every(valor => props.Propiedades.modelValue.includes(valor));
+  const todosSeleccionados = props.Propiedades.options.length === props.modelValue.length &&
+    props.Propiedades.options.every(valor => props.modelValue.includes(valor));
 
   emit('update:modelValue', todosSeleccionados ? [] : [...props.Propiedades.options]);
 }
