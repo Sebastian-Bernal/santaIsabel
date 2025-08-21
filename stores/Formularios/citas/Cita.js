@@ -24,7 +24,17 @@ export const useCitasStore = defineStore('Citas', {
     }),
 
     getters: {
-        async listCitas(state) {
+    },
+
+    actions: {
+
+        // Acción para crear nuevas instancias de formulario
+        createForm(storeId, estructura = estructuraCita) {
+            const useDynamicForm = createFormStore(storeId, estructura)
+            return useDynamicForm() // devuelve instancia usable del formulario
+        },
+
+        async listCitas() {
             const store = useIndexedDBStore()
             store.almacen = 'Cita'
             const citas = await store.leerdatos()
@@ -35,18 +45,9 @@ export const useCitasStore = defineStore('Citas', {
                 return fechaA - fechaB; // Orden descendente
             });
 
-            state.Citas = citas
+            this.Citas = citas
             return citas
         }
-    },
-
-    actions: {
-
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraCita) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
     }
 });

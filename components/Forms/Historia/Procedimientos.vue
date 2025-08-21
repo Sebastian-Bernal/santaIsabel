@@ -1,6 +1,5 @@
 <script setup>
 // Componentes
-import Fondo from '~/components/Fondos/Fondo.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
@@ -81,7 +80,6 @@ function seleccionarCUPS (data) {
 </script>
 
 <template>
-    <Fondo>
     <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Datos del procedimiento',
@@ -125,5 +123,4 @@ function seleccionarCUPS (data) {
 
         </Formulario>
     </ModalFormXS>
-    </Fondo>
 </template>

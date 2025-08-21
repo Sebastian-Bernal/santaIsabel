@@ -2,10 +2,9 @@
 export class FormularioBuilder {
   constructor() {
     this.propiedades = {
-      botones: [],
-      formData: null,
-      validarform: null,
       formulario: {
+        botones: [],
+        tamañoForm: '',
         titulo: '',
         tipo: '',
         tituloFormulario: '',
@@ -13,6 +12,8 @@ export class FormularioBuilder {
         secciones: [],
       },
       content: {
+        validarform: null,
+        mandarFormulario: null,
         modelValue: null,
         agregarItem: null,
         eliminarItem: null,
@@ -25,17 +26,24 @@ export class FormularioBuilder {
   }
 
   setBotones(botones) {
-    this.propiedades.botones = botones
-    return this
-  }
-
-  setFormData(data) {
-    this.propiedades.formData = data
+    this.propiedades.formulario.botones = botones
     return this
   }
 
   setValidarForm(fn) {
-    this.propiedades.validarform = fn
+    this.propiedades.content.validarform = fn
+    return this
+  }
+
+  setMandarFormulario(fn) {
+    this.propiedades.content.mandarFormulario = fn
+    return this
+  }
+
+  setFormulariotamaño(tamañoClave = 'LG') {
+    const clases = tamañosDisponibles[tamañoClave] || tamañosDisponibles['LG']
+    this.propiedades.formulario.tamañoForm = clases
+
     return this
   }
 
@@ -102,4 +110,9 @@ export class FormularioBuilder {
   build() {
     return this.propiedades
   }
+}
+
+const tamañosDisponibles = {
+  LG: 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%]',
+  XS: 'md:w-[65%] md:h-[70%] w-[90%] h-[80%]',
 }

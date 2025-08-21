@@ -2,11 +2,10 @@
 // Propiedades
 const props = defineProps({
     Propiedades: {
-        dafault: () => ({})
+        type: Object,
+        default: () => ({})
     },
-    modelValue: {
-
-    }
+    modelValue: [String, Number, Object]
 });
 
 function handleInput(event) {
@@ -41,6 +40,10 @@ const emit = defineEmits(['update:modelValue']);
             :min="Propiedades.min" :max="Propiedades.max" 
             :placeholder="Propiedades.placeholder"
             @input="handleInput($event)"
+            @click="Propiedades.events?.onClick"
+            @change="Propiedades.events?.onChange"
+            @blur="Propiedades.events?.onBlur"
+            @keyup.enter="Propiedades.events?.onKeyUp"
             :disabled="Propiedades.disabled"
             :class="{ 'inputFondo': Propiedades.icon }" 
             class="mt-1 w-full block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"

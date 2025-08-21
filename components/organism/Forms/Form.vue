@@ -81,11 +81,12 @@ function setValue(obj, path, value) {
 <template>
     <FondoBlur>
         <div
-            class="lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%] bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7">
+            class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
+            :class="Propiedades.formulario.tamañoForm">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
                 <!-- Formulario Wizard -->
-                <Wizard v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined" :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
+                <Wizard v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'" :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
                     :cerrar="Propiedades.formulario.cerrar" />
                 <div class="w-full h-full px-6 pt-2">
                     <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined" class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">{{
@@ -109,9 +110,9 @@ function setValue(obj, path, value) {
             </div>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
-                <ButtonForm v-for="item in props.Propiedades.botones" :color="item.color" @click="item.accion"
+                <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color" @click="item.type === 'enviar' && !varView.formComplete ? Propiedades.content.validarform() : item.type === 'enviar' ? Propiedades.content.mandarFormulario(formData) : item.accion()"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                    {{ props.Propiedades.botones ? item.text : 'Cancelar' }}
+                    {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>
         </div>

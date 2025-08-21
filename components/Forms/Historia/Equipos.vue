@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import Fondo from '~/components/Fondos/Fondo.vue';
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
@@ -69,7 +69,7 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <Fondo>
+    <FondoDefault>
     <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Datos de los Equipos',
@@ -109,5 +109,5 @@ const cerrarModal = () => {
 
         </Formulario>
     </ModalFormXS>
-    </Fondo>
+    </FondoDefault>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import FormLG from "~/components/organism/Forms/FormLG.vue";
+import Form from "~/components/organism/Forms/Form.vue";
 // Data
 import { FormularioBuilder } from "~/composables/Formulario/ClassFormulario";
 import { CIE10 } from "~/data/CIE10.js";
@@ -261,23 +261,5 @@ const propiedades = builder
 </script>
 
 <template>
-    <!-- <ModalFormLG :cerrarModal="cerrarModal" :enviarFormulario="enviarNuevoPaciente"
-        :formData="formData" :formComplete="varView.formComplete" :validarform="validarform" :botones="{ cancelar: 'Atras', enviar: 'Registrar' }">
-        <FormularioWizard  :datos="{
-            titulo: 'Datos del Paciente',
-            tituloFormulario: 'Nuevo Paciente',
-            cerrar: cerrar,
-            secciones: [
-                { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-                { numPagina: 2, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-            ]
-        }">
-            <DatosPacientes v-model:formData="nuevoPacienteStore.formData" :agregarItem="agregarItem"
-                :eliminarItem="eliminarItem" :traerDatos="traerDatos" :guardarDatos="guardarDatos" />
-
-        </FormularioWizard>
-    </ModalFormLG> -->
-    <FormLG :Propiedades="propiedades" v-model:formData="formData">
-
-    </FormLG>
+    <Form :Propiedades="propiedades"/>
 </template>

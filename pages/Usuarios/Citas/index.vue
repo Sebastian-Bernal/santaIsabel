@@ -1,22 +1,78 @@
 <script setup>
 import Citas from '~/components/molecules/Calendario/Citas.vue'
 import Calendario from '~/components/molecules/Calendario/Calendario.vue'
-import IngresarNuevaCita from '~/components/Forms/Citas/IngresarNuevaCita.vue'
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue'
+import Form from '~/components/organism/Forms/Form.vue'
+
+import { useFormularioCitaBuilder } from '~/build/useCitasFormBuilder'
 import { useVarView } from '~/stores/varview.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
-import { storeToRefs } from '#imports'
-import { ref, watch } from 'vue'
-import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue'
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { useMedicosStore } from '~/stores/Formularios/medicos/Medico';
+import { ref, onMounted } from 'vue'
 
 const citasStore = useCitasStore();
-const { listCitas } = storeToRefs(citasStore);
-const varView = useVarView();
-const refresh = ref(1);
+const citas = ref([]);
 
-watch(()=> varView.showNuevaCita, ()=>{
-    listCitas.value
-    refresh.value++
-})
+const varView = useVarView();
+const pacientesStore = usePacientesStore();
+const medicosStore = useMedicosStore();
+const medicosList = ref([]);
+const pacientesList = ref([]);
+
+// Formulario
+onMounted(async () => {
+
+    // medicosList.value = medicosStore.listMedicos;
+    // pacientesList.value = pacientesStore.listPacientes;
+
+    citas.value = await citasStore.listCitas();
+});
+
+
+const NuevaCitaStore = citasStore.createForm('NuevaCita');
+
+const {
+    formData,
+    traerDatos,
+    guardarDatos,
+    limpiar,
+    validarform,
+    mandarFormulario
+} = NuevaCitaStore;
+
+function seleccionarPaciente(paciente) {
+    formData.Cita = {
+        ...formData.Cita,
+        name_paciente: paciente.name,
+        id_paciente: paciente.id
+    };
+}
+
+function seleccionarMedico(medico) {
+    formData.Cita = {
+        ...formData.Cita,
+        name_medico: medico.name,
+        id_medico: medico.id
+    };
+}
+
+
+const propiedadesCita = useFormularioCitaBuilder({
+    validarform,
+    mandarFormulario,
+    traerDatos,
+    guardarDatos,
+    cerrarModal: () => {
+        limpiar();
+        varView.showNuevaCita = false;
+    },
+    seleccionarPaciente,
+    seleccionarMedico,
+    pacientesList,
+    medicosList
+});
+
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
     varView.showNuevaCita = true;
@@ -45,12 +101,15 @@ const agregarCita = () => {
 
             <div
                 class="grid lg:grid-cols-[1fr_0.6fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3 justify-between">
-                <Citas/>
-                <Calendario></Calendario>
+                <Citas v-if="citas.length" :citas="citas" />
+                <Calendario v-if="citas.length" :citas="citas" />
             </div>
 
 
         </div>
     </FondoDefault>
-    <IngresarNuevaCita v-if="varView.showNuevaCita" />
+    <Form :Propiedades="propiedadesCita" v-if="varView.showNuevaCita" />
+
+    <!-- <IngresarNuevaCita  /> -->
+
 </template>

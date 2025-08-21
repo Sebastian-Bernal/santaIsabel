@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import Fondo from '~/components/Fondos/Fondo.vue';
+import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
 import Label from '~/components/Labels/Label.vue';
@@ -71,7 +71,7 @@ const cerrarModal = () => {
 </script>
 
 <template>
-    <Fondo>
+    <FondoBlur>
     <ModalFormXS :cerrarModal="cerrarModal" :enviarFormulario="cerrarModal" :botones="{cancelar: 'Atras'}">
         <Formulario :datos="{
             titulo: 'Insumos utilizados',
@@ -114,5 +114,5 @@ const cerrarModal = () => {
 
         </Formulario>
     </ModalFormXS>
-    </Fondo>
+    </FondoBlur>
 </template>

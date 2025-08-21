@@ -27,6 +27,9 @@ function onChange(event) {
         :disabled="Propiedades.disabled"
         class="sr-only"
         @change="onChange"
+        @click="Propiedades.events?.onClick"
+        @blur="Propiedades.events?.onBlur"
+        @keyup.enter="Propiedades.events?.onKeyUp"
       />
       <!-- Fondo del switch -->
       <div

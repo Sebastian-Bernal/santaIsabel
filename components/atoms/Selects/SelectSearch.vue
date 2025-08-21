@@ -26,7 +26,7 @@ watch(() => props.modelValue, (nuevoValor) => {
         return;
     }
 
-    opcionesFiltradas.value = props.Propiedades.options.filter(item =>
+    opcionesFiltradas.value = props.Propiedades.options?.value.filter(item =>
         item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
     ).slice(0,20);
 });
@@ -46,12 +46,19 @@ function showLista() {
 
 <template>
     <div class="relative" :class="Propiedades.tamaño">
-        <input :value="modelValue" :name="Propiedades.name" :id="Propiedades.id" :class="Propiedades.tamaño" type="text" autocomplete="off"
-            :placeholder="Propiedades.placeholder"
-            class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            @input="$emit('update:modelValue', $event.target.value); showLista()" />
+        <input :value="modelValue" 
+        class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        :class="Propiedades.tamaño" type="text" autocomplete="off"
+        :name="Propiedades.name" 
+        :id="Propiedades.id" 
+        :placeholder="Propiedades.placeholder"
+        @input="$emit('update:modelValue', $event.target.value); showLista()"
+        @click="Propiedades.events?.onClick"
+        @change="Propiedades.events?.onChange"
+        @blur="Propiedades.events?.onBlur"
+        @keyup.enter="Propiedades.events?.onKeyUp" />
 
-        <ul v-show="mostrarLista && opcionesFiltradas.length"
+        <ul v-show="mostrarLista && opcionesFiltradas?.length"
             class="autocomplete-list absolute! top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-9 p-0 mt-1">
             <li v-for="opcion in opcionesFiltradas" :key="opcion.documento"
                 class="px-3 py-2 hover:bg-blue-100 dark:hover:bg-gray-500 cursor-pointer" @mousedown.prevent="seleccionar(opcion)">

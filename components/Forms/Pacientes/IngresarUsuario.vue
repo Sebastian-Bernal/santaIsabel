@@ -1,6 +1,6 @@
 <script setup>
 // Componentes
-import FormLG from "~/components/organism/Forms/FormLG.vue";
+import Form from "~/components/organism/Forms/Form.vue";
 // Data
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
@@ -13,6 +13,7 @@ const varView = useVarView();
 const storePaciente = usePacientesStore();
 const nuevoPacienteStore = storePaciente.createForm("NuevoPaciente");
 const notificacionesStore = useNotificacionesStore();
+const usuarioStore = useUsersStore()
 
 // Importar states y funciones del store
 const {
@@ -59,6 +60,50 @@ function seleccionarDepartamento (item) {
     formData.InformacionUser.departamento = item.nombre;
 }
 
+function buscarUsuario() {
+  console.log('hola')
+    // const usuarios = await usuarioStore.listUsers
+
+    // const usuario = usuarios.filter((user) => {
+    //     return user.No_document === formData.value.InformacionUser.No_document
+    // });
+
+    // if (usuario.length < 1) {
+    //     options.position = "top-end";
+    //     options.texto = "Usuario no registrado.";
+    //     options.tiempo = 1500;
+    //     mensaje();
+    //     return
+    // };
+
+    // // Propiedades que van en User
+    // const userKeys = Object.keys(formData.value.User)
+    // userKeys.forEach(key => {
+    //     if (usuario[0].hasOwnProperty(key)) {
+    //         formData.value.User[key] = usuario[0][key]
+    //     }
+    // })
+
+    // // Propiedades que van en paciente
+    // const infoUserKeys = Object.keys(formData.value.InformacionUser)
+    // infoUserKeys.forEach(key => {
+    //     if (usuario[0].hasOwnProperty(key)) {
+    //         formData.value.InformacionUser[key] = usuario[0][key]
+    //     }
+    // })
+
+    // Object.assign(formData.value.User, usuario[0]);
+
+    // if (props.formulario === 'Paciente') {
+    //     formData.value.Paciente = { ...formData.value.Paciente, id_usuario: usuario[0].id }
+    // } else if (props.formulario === 'Profesional') {
+    //     formData.value.Medico = { ...formData.value.Medico, id_usuario: usuario[0].id }
+    //     if (formData.value.User.rol === 'Paciente') {
+    //         formData.value.User.rol = 'Profesional'
+    //     }
+    // };
+}
+
 
 
 const builder = new FormularioBuilder()
@@ -99,6 +144,9 @@ const propiedades = builder
     max: '10000000000',
     min: '1000000',
     vmodel: 'InformacionUser.No_document',
+    events: {
+      onClick : buscarUsuario
+    }
   })
   .addCampo({
     component: 'Select',
@@ -121,7 +169,6 @@ const propiedades = builder
     id: 'nombre',
     name: 'nombre',
     tamaño: 'w-full',
-    minLength: '5',
     upperCase: true,
     vmodel: 'InformacionUser.name',
     minlength: 5
@@ -272,7 +319,5 @@ const propiedades = builder
 </script>
 
 <template>
-    <FormLG :Propiedades="propiedades">
-
-    </FormLG>
+    <Form :Propiedades="propiedades" />
 </template>

@@ -5,20 +5,25 @@ import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
 import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
+
 import { useCalendarioCitas } from '~/stores/Calendario.js'
-import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { computed, onMounted, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 
-const props = defineProps(['Citas'])
+const props = defineProps({
+  citas: {
+    type: Array,
+    default: () => []
+  }
+});
+
 const varView = useVarView();
-const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
-const Citas = ref([]);
+const Citas = ref(props.citas);
 const paciente = ref({});
 const citaSeleccionada = ref({});
 const notificacionesStore = useNotificacionesStore();
@@ -39,14 +44,9 @@ const {
 
 const mesActual = ref(parseInt(meses.value) - 1)
 
-onMounted(async () => {
-    // Cargar citas desde el store
-    Citas.value = await citasStore.listCitas;
-});
-
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return Citas.value.filter(cita => {
+    return Citas.value?.filter(cita => {
         const fechaFormateada = cita.fecha?.split('-')?.reverse()?.join('/');
         return fechaFormateada === fecha.value;
     });

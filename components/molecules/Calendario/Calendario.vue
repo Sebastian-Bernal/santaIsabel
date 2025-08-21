@@ -1,19 +1,22 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '~/stores/Calendario.js'
-import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { diasSemana } from '~/data/Fechas.js'
 import { storeToRefs } from 'pinia';
 
-const citasStore = useCitasStore();
+const props = defineProps({
+  citas: {
+    type: Array,
+    default: () => []
+  }
+});
+
 const calendarioCitasStore = useCalendarioCitas();
-const Citas = ref([]);
+const Citas = ref(props.citas);
 const notificacionesStore = useNotificacionesStore();
 
 const {
-    simple,
     mensaje,
-    alertRespuesta,
     options
 } = notificacionesStore;
 
@@ -27,10 +30,9 @@ const {
     añoDesde
 } = storeToRefs(calendarioCitasStore);
 
-onMounted(async () => {
+onMounted(() => {
     // Cargar citas desde el store
     calendarioCitasStore.obtenerFecha()
-    Citas.value = await citasStore.listCitas;
 });
 
 const mesActual = ref(parseInt(meses.value) - 1);

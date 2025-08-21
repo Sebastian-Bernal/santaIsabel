@@ -71,12 +71,37 @@ export const createFormStore = (storeId, estructuraInicial) => {
                 lista.splice(index, 1);
             },
 
+            validarform() {
+                const notificaciones = useNotificacionesStore()
+                notificaciones.options.position = 'top-end';
+                notificaciones.options.texto = "Falta campos por llenar, por favor ingrese valores";
+                notificaciones.options.tiempo = 1500
+                notificaciones.mensaje()
+            },
+
             async mandarFormulario(data) {
+                const notificaciones = useNotificacionesStore()
                 const accion = accionesFormularios[storeId];
                 if (typeof accion === 'function') {
                     try {
                         const res = await accion(data);
-                        this.estado = res
+                        if (res) {
+                            notificaciones.options.icono = 'success';
+                            notificaciones.options.titulo = '¡Se ha enviado correctamente!';
+                            notificaciones.options.texto = 'Formulario enviado con exito';
+                            notificaciones.options.tiempo = 3000
+                            const respuesta = await notificaciones.simple()
+                            if (respuesta.isConfirmed || respuesta.dismiss) {
+                                this.limpiar();
+                                window.location.reload()
+                            }
+                        } else {
+                            notificaciones.options.icono = 'error';
+                            notificaciones.options.titulo = '¡A ocurrido un problema!';
+                            notificaciones.options.texto = 'No se pudo enviar formulario';
+                            notificaciones.options.tiempo = 2000
+                            notificaciones.simple()
+                        }
                         return res
                     } catch (err) {
                         this.estado = false;

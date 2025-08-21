@@ -7,7 +7,8 @@ const props = defineProps({
     default: () => []
   },
   Propiedades: {
-    dafault: {}
+    type: Object,
+    default: {}
   }
 });
 
@@ -48,6 +49,9 @@ function seleccionarTodos() {
       :class="Propiedades.tamaño"
       class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
       @click="mostrarOptions"
+      @change="Propiedades.events?.onChange"
+      @blur="Propiedades.events?.onBlur"
+      @keyup.enter="Propiedades.events?.onKeyUp"
     >
       <option disabled selected hidden>{{ Propiedades.placeholder }}</option>
     </select>
