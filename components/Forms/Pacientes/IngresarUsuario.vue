@@ -114,6 +114,7 @@ const propiedades = builder
     { text: 'Siguiente', accion: enviarNuevoUser, color: 'bg-blue-500' },
   ])
   .setValidarForm(validarform)
+  .setFormulariotamaño('LG')
   .setFormularioTipo('Wizard')
   .setFormularioTituloFormulario('Nuevo Paciente')
   .setFormularioCerrar(cerrar)

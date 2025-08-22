@@ -1,11 +1,13 @@
 import { ref, computed } from 'vue';
 
-export function usePaginacion(datos, itemsPorPaginaDefault = 10) {
+export function usePaginacion(datos = ref([]), itemsPorPaginaDefault = 10) {
     const paginaActual = ref(1);
     const itemsPorPagina = ref(itemsPorPaginaDefault);
 
-    const totalPaginas = computed(() =>
-        Math.ceil(datos.value.length / itemsPorPagina.value)
+    const totalPaginas = computed(() => {
+        const arrayDatos = datos?.value ?? [];
+        Math.ceil(arrayDatos.length / itemsPorPagina.value)
+    }
     );
 
     const cambiarItemsPorPagina = (nuevoValor) => {

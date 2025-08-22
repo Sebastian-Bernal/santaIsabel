@@ -10,7 +10,7 @@ export function useFormularioCitaBuilder({
   enviarNuevaCita,
   seleccionarPaciente,
   seleccionarMedico,
-  PacientesList,
+  pacientesList,
   medicosList
 }) {
   const builder = new FormularioBuilder()
@@ -20,6 +20,7 @@ export function useFormularioCitaBuilder({
     .setMandarFormulario(mandarFormulario)
     .setFormulariotamaño('XS')
     .setFormularioTitulo('Agendar Cita')
+    .setFormularioShow(false)
     .setContentTraerDatos(traerDatos)
     .setContentGuardarDatos(guardarDatos)
     .setFormularioCerrar(cerrarModal)
@@ -40,7 +41,7 @@ export function useFormularioCitaBuilder({
       name: 'nombreP',
       tamaño: 'w-full col-span-2',
       vmodel: 'Cita.name_paciente',
-      options: PacientesList,
+      options: pacientesList,
       opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
       seleccionarItem: seleccionarPaciente,
     })

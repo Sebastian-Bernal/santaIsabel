@@ -1,5 +1,5 @@
 <script setup>
-import FondoBlanco from '../../components/Fondos/FondoBlanco.vue'
+import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import InputIcon from '~/components/Inputs/InputIcon.vue';
 import Select from '~/components/Selects/Select.vue';
 import IngresarNota from '~/components/Forms/Historia/Notas/IngresarNota.vue';
@@ -30,7 +30,7 @@ function nuevaNota () {
 </script>
 
 <template>
-    <FondoBlanco>
+    <FondoDefault>
         <div class="md:py-8 py-4 md:px-12 px-4 flex w-full items-center justify-between border border-gray-200">
             <div>
                 <h2 class="text-2xl font-bold">Buscar Paciente</h2>
@@ -143,6 +143,6 @@ function nuevaNota () {
                 <h3>Subir</h3>
             </div>
         </div>
-    </FondoBlanco>
+    </FondoDefault>
     <IngresarNota  v-if="varView.showNuevaNota"/>
 </template>

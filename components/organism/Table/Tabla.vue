@@ -17,7 +17,6 @@ const varView = useVarView()
 const props = defineProps({
     columnas: {
         type: [Object, String],
-        required: true,
         default: ''
     },
     acciones: {
@@ -26,13 +25,17 @@ const props = defineProps({
     },
     datos: {
         type: [Object],
-        required: true,
         dafault: []
     },
     headerTabla: {
         type: [Object],
+    },
+    Propiedades: {
+        type: [Object, Array],
+        requiered: true,
+        default: {}
     }
-});
+});console.log(props.Propiedades)
 
 // tamaño de pantalla
 const {
@@ -41,7 +44,7 @@ const {
     collapse,
     activarCollapse,
     screenWidth,
-} = useColumnasResponsivas(ref(props.columnas), props.datos.espacioMargen);
+} = useColumnasResponsivas(ref(props.Propiedades.columnas), props.Propiedades.datos?.espacioMargen);
 
 
 // Acomodar datos de menor a mayor segun columna
@@ -49,7 +52,8 @@ const {
     busqueda,
     sortedItems,
     datosOrdenados
-} = useOrdenamiento(computed(() => props.datos.content));
+} = useOrdenamiento(computed(() => props.Propiedades.datos.content));
+
 
 
 // Paginador
@@ -87,7 +91,7 @@ const estiloColumnas = computed(() => {
         .join(' ');
 
     return {
-        gridTemplateColumns: `${tamaños}${props.acciones.botones ? ' 100px' : ''}`
+        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
     };
 });
 
@@ -99,9 +103,9 @@ const estiloColumnas = computed(() => {
         <div class="flex w-[100%] justify-between items-center md:flex-row flex-col gap-3">
             <div>
                 <h1 class="font-bold text-2xl tituloTabla text-gray-800 dark:text-gray-200">
-                    {{ props.headerTabla.titulo }}
+                    {{ props.Propiedades.headerTabla?.titulo }}
                 </h1>
-                <p>{{ props.headerTabla.descripcion }}</p>
+                <p>{{ props.Propiedades.headerTabla?.descripcion }}</p>
             </div>
             <div class="flex gap-3 md:w-[45%] justify-end">
                 <Input :Propiedades="{
@@ -112,8 +116,8 @@ const estiloColumnas = computed(() => {
 
                 <client-only>
                     <div class="flex relative dropdown cursor-pointer">
-                        <download-excel class="flex gap-1 items-center" :data="props.datos.content"
-                            :name="props.headerTabla.titulo" type="xls">
+                        <download-excel class="flex gap-1 items-center" :data="props.Propiedades.datos.content"
+                            :name="props.Propiedades.headerTabla.titulo" type="xls">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
                             </ButtonRounded>
@@ -127,7 +131,7 @@ const estiloColumnas = computed(() => {
                     </div>
                 </client-only>
 
-                <nuxt-link v-if="props.headerTabla.accionAgregar" @click="props.headerTabla.accionAgregar"
+                <nuxt-link v-if="props.Propiedades.headerTabla?.accionAgregar" @click="props.Propiedades.headerTabla.accionAgregar"
                     class="flex gap-1 items-center cursor-pointer">
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
@@ -143,13 +147,13 @@ const estiloColumnas = computed(() => {
 
                 <!-- Header titulos de props Columnas -->
                 <div class="sticky top-0 z-1 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
-                    :class="headerTabla.color" :style="estiloColumnas">
+                    :class="Propiedades.headerTabla?.color" :style="estiloColumnas">
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         {{ col.value }}
                         <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down cursor-pointer"></i>
                     </h2>
-                    <h2 v-if="acciones.botones" :class="acciones.class">Acciones</h2>
+                    <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
                 </div>
 
                 <!-- Body tabla -->
@@ -162,11 +166,11 @@ const estiloColumnas = computed(() => {
                     </div>
 
                     <!-- Acciones -->
-                    <div v-if="acciones.botones"
+                    <div v-if="Propiedades.acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
-                        :class="acciones.class">
+                        :class="Propiedades.acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse" v-for="action in acciones.icons" :key="action"
+                        <BotonAccion v-if="!collapse" v-for="action in Propiedades.acciones.icons" :key="action"
                             :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
 
@@ -181,7 +185,7 @@ const estiloColumnas = computed(() => {
                             <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
-                                <BotonAccion v-for="action in acciones.icons" :key="action"
+                                <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
                                     :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                                     @click="action.action(fila)" />
                             </div>
@@ -202,7 +206,7 @@ const estiloColumnas = computed(() => {
                 </div>
 
                 <div>
-                    <p v-if="datosPaginados.length === 0" class="text-gray-500 text-center mt-10">No se encontraron
+                    <p v-if="datosPaginados?.length === 0" class="text-gray-500 text-center mt-10">No se encontraron
                         resultados.</p>
                 </div>
 
@@ -250,7 +254,7 @@ const estiloColumnas = computed(() => {
             </div>
         </div>
     </div>
-    <DatosExcel v-if="varView.showDatosExcel" :datos="props.datos.content" :tabla="props.headerTabla.titulo" />
+    <DatosExcel v-if="varView.showDatosExcel" :datos="props.Propiedades.datos.content" :tabla="props.Propiedades.headerTabla.titulo" />
 </template>
 
 

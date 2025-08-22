@@ -1,3 +1,82 @@
+export class ComponenteBuilder {
+  constructor() {
+    this.propiedades = {
+      fondo: '',
+      estilos: '',
+      layout: '',
+      header: '',
+      contenedor: '',
+      componentes: [],
+    }
+  }
+
+  setFondo(fondo = 'FondoDefault') {
+    this.propiedades.fondo = fondo
+    return this
+  }
+
+  setEstilos(estilos) {
+    this.propiedades.estilos = estilos
+    return this
+  }
+
+  setLayout(layout) {
+    this.propiedades.layout = layout
+    return this
+  }
+
+  setHeaderPage(header) {
+    this.propiedades.header = header
+    return this
+  }
+
+  setContenedor(contenedor) {
+    this.propiedades.contenedor = contenedor
+    return this
+  }
+  
+  addComponente(tipo, builderInstance) {
+    if (!builderInstance || typeof builderInstance.build !== 'function') {
+      throw new Error('El componente debe tener un método build()')
+    }
+
+    const componente = builderInstance.build()
+    componente.tipo = tipo
+    this.propiedades.componentes.push(componente)
+    return this
+  }
+
+  // addComponente(tipo, config) {
+  //   let componente
+
+  //   switch (tipo) {
+  //     case 'formulario':
+  //       componente = new Formulario(config)
+  //       break
+  //     case 'tabla':
+  //       componente = new Tabla(config)
+  //       break
+  //     case 'calendario':
+  //       componente = new Calendario(config)
+  //       break
+  //     // Agrega más tipos según lo necesites
+  //     default:
+  //       throw new Error(`Tipo de componente desconocido: ${tipo}`)
+  //   }
+
+  //   this.propiedades.componentes.push(componente)
+  //   return this
+
+  // }
+
+  build() {
+    return this.propiedades
+  }
+
+
+}
+
+
 // Clase base para construir formularios completos
 export class FormularioBuilder {
   constructor() {
@@ -10,6 +89,7 @@ export class FormularioBuilder {
         tituloFormulario: '',
         cerrar: null,
         secciones: [],
+        show: false,
       },
       content: {
         validarform: null,
@@ -49,6 +129,11 @@ export class FormularioBuilder {
 
   setFormularioTitulo(titulo) {
     this.propiedades.formulario.titulo = titulo
+    return this
+  }
+
+  setFormularioShow(show) {
+    this.propiedades.formulario.show = show
     return this
   }
 

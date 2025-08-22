@@ -1,4 +1,5 @@
 <script setup>
+import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import Tabla from '~/components/organism/Table/Tabla.vue';
 // import Tabla from '../../components/Tables/Tabla.vue';
@@ -10,6 +11,8 @@ import { ref, onMounted, watch } from 'vue';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useVarView } from '../../stores/varview.js';
 import { storeToRefs } from 'pinia';
+import { ComponenteBuilder, FormularioBuilder } from '~/composables/Formulario/ClassFormulario';
+import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 
 const varView = useVarView();
 const pacientesStore = usePacientesStore();
@@ -50,20 +53,52 @@ const verPaciente = (paciente) => {
     pacienteDatos.value = paciente;
 };
 
-</script>
+const builderTabla = new TablaBuilder()
 
-<template>
-    <FondoDefault>
-        <Tabla :key="refresh" :columnas="[
+const pagina = new ComponenteBuilder()
+
+const propiedades = pagina
+    .setFondo('FondoDefault')
+    .setEstilos('pt-20 mt-3 bg-gray-200')
+    .setLayout('')
+    .setHeaderPage('Prueba de Pagina Costruida')
+    .setContenedor('flex')
+    .addComponente('Tabla', builderTabla
+        .setColumnas([
             { titulo: 'name', value: 'Nombre', tamaño: 150, ordenar: true },
             { titulo: 'No_document', value: 'Documento', tamaño: 100, ordenar: true },
             { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
             { titulo: 'genero', value: 'Genero', tamaño: 100 },
             { titulo: 'celular', value: 'Celular', tamaño: 100 },
             { titulo: 'Eps', value: 'EPS', tamaño: 150, ordenar: true }
-        ]" :headerTabla="{ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente }"
-            :acciones="{ icons: [{icon: 'ver', action: verPaciente}], botones: true }" :datos="{ content: pacientes }" />
+        ])
+        .setHeaderTabla({ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente })
+        .setAcciones({ icons: [{icon: 'ver', action: verPaciente}], botones: true })
+        .setDatos({ content: pacientes })
+        // .build()
+    )
+    .build()
+
+</script>
+
+<template>
+    <FondoDefault>
+        <Tabla :key="refresh" :Propiedades="{
+            columnas: [
+            { titulo: 'name', value: 'Nombre', tamaño: 150, ordenar: true },
+            { titulo: 'No_document', value: 'Documento', tamaño: 100, ordenar: true },
+            { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
+            { titulo: 'genero', value: 'Genero', tamaño: 100 },
+            { titulo: 'celular', value: 'Celular', tamaño: 100 },
+            { titulo: 'Eps', value: 'EPS', tamaño: 150, ordenar: true }
+            ],
+            headerTabla: { titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente },
+            acciones: { icons: [{icon: 'ver', action: verPaciente}], botones: true },
+            datos: { content: pacientes },
+        }" 
+        />
     </FondoDefault>
+    <!-- <Pagina :Propiedades="propiedades"/> -->
     <IngresarUsuario v-if="varView.showNuevoPaciente" />
     <IngresarPaciente v-if="varView.showNuevoPacientePaso2" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />

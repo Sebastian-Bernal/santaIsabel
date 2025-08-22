@@ -3,7 +3,7 @@ import { usePaginacion } from './usePaginacion';
 
 const paginaActual = usePaginacion();
 
-export function useOrdenamiento(datos) {
+export function useOrdenamiento(datos = ref([])) {
     const busqueda = ref('');
     const menorAMayor = ref(true);
     const columnaOrden = ref('');

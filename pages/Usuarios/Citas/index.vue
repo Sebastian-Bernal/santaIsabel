@@ -23,9 +23,8 @@ const pacientesList = ref([]);
 // Formulario
 onMounted(async () => {
 
-    // medicosList.value = medicosStore.listMedicos;
-    // pacientesList.value = pacientesStore.listPacientes;
-
+    medicosList.value = await medicosStore.listMedicos;
+    pacientesList.value = await pacientesStore.listPacientes;
     citas.value = await citasStore.listCitas();
 });
 
@@ -105,11 +104,8 @@ const agregarCita = () => {
                 <Calendario v-if="citas.length" :citas="citas" />
             </div>
 
-
         </div>
     </FondoDefault>
     <Form :Propiedades="propiedadesCita" v-if="varView.showNuevaCita" />
-
-    <!-- <IngresarNuevaCita  /> -->
 
 </template>
