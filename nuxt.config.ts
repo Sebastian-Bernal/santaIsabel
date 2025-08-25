@@ -2,6 +2,13 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+  runtimeConfig: {
+    piblic: {
+      api: 'https://thesalus-api.zeus01one.com',
+      user: 'api/user',
+      authentication: 'api/email-adress/',
+    }
+  },
   app: {
     head: {
       script: [

@@ -13,13 +13,13 @@ export class TablaBuilder {
         return this;
     }
 
-    setHeaderTabla(titulo, descripcion, color, accionAgregar) {
-        this.tabla.headerTabla = { titulo, descripcion, color, accionAgregar };
+    setHeaderTabla(header) {
+        this.tabla.headerTabla = { ...header };
         return this;
     }
 
-    setAcciones(icons, botones = true) {
-        this.tabla.acciones = { icons, botones };
+    setAcciones(acciones) {
+        this.tabla.acciones = { ...acciones };
         return this;
     }
 

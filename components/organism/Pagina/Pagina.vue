@@ -10,7 +10,7 @@ const props = defineProps({
     Propiedades: {
         default: {}
     }
-});console.log(props.Propiedades.componentes)
+});
 
 
 const fondos = {
@@ -36,10 +36,11 @@ const components = {
         </div>
         <div :class="Propiedades.contenedor">
 
-            <component v-for="(component, index) in props.Propiedades.componentes" 
+            <component v-for="(component, index) in Propiedades.componentes" 
                 :key="index"
                 :is="components[component.tipo]" 
                 :Propiedades="component"
+
             />
             <slot></slot>
         </div>

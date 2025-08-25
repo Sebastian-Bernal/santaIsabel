@@ -1,7 +1,6 @@
 <script setup>
 import DropdownNavbar from '~/components/molecules/Dropdowns/DropdownNavbar.vue';
 import Breadcrumb from '~/components/molecules/BreadCrumbs/Breadcrumb.vue';
-import Buttontheme from '~/components/atoms/Buttons/Buttontheme.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login';
@@ -50,9 +49,6 @@ const removeStorage = () => {
 
             <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
-                <!-- <li>
-                    <Buttontheme/>
-                </li> -->
                 <li>
                     <a href="/Usuarios/Citas" class="flex gap-1 text-xs">
                         <i class="fa-solid fa-calendar text-blue-500"></i>

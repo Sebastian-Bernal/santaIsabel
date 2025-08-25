@@ -35,7 +35,7 @@ const props = defineProps({
         requiered: true,
         default: {}
     }
-});console.log(props.Propiedades)
+});
 
 // tamaño de pantalla
 const {
@@ -44,7 +44,7 @@ const {
     collapse,
     activarCollapse,
     screenWidth,
-} = useColumnasResponsivas(ref(props.Propiedades.columnas), props.Propiedades.datos?.espacioMargen);
+} = useColumnasResponsivas(ref(props.Propiedades?.columnas), props.Propiedades.datos?.espacioMargen);
 
 
 // Acomodar datos de menor a mayor segun columna
@@ -52,8 +52,7 @@ const {
     busqueda,
     sortedItems,
     datosOrdenados
-} = useOrdenamiento(computed(() => props.Propiedades.datos.content));
-
+}  = useOrdenamiento(props.Propiedades.datos.content || ref([]));
 
 
 // Paginador

@@ -19,7 +19,6 @@ export function useOrdenamiento(datos = ref([])) {
 
     const datosOrdenados = computed(() => {
         let resultado = [...datos.value];
-
         if (busqueda.value.trim() !== '') {
             const termino = busqueda.value.trim().toLowerCase();
             resultado = resultado.filter(item =>

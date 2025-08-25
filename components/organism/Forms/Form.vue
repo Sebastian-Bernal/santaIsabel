@@ -9,38 +9,63 @@ const props = defineProps({
         default: {}
     }
 });
+
 const varView = useVarView();
+const seccionActual = ref(0);
 
 // Inicializa formData con las claves de vmodel
-const formData = ref(transformarFormData(props.Propiedades.campos));
+const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
 
-function transformarFormData(campos) {
-  const resultado = {};
+function transformarFormData(secciones) {
+    const resultado = {};
 
-  campos.forEach(campo => {
-    const clave = campo.vmodel;
-    if (!clave || typeof clave !== 'string' || !clave.includes('.')) return;
-    const [grupo, propiedad] = clave.split('.');
-    if (!resultado[grupo]) {
-      resultado[grupo] = {};
-    }
-    resultado[grupo][propiedad] = '';
-  });
+    secciones.forEach(seccion => {
+        seccion.campos.forEach(campo => {
+            const clave = campo.vmodel;
+            if (!clave || typeof clave !== 'string' || !clave.includes('.')) return;
+            const [grupo, propiedad] = clave.split('.');
+            if (!resultado[grupo]) {
+                resultado[grupo] = {};
+            }
+            resultado[grupo][propiedad] = '';
+        });
 
-  return resultado;
+    });
+
+    return resultado;
 };
+
+
+const camposActuales = computed(() => {
+    const secciones = props.Propiedades.formulario?.secciones || [];
+    return secciones[seccionActual.value]?.campos || [];
+});
 
 // Propiedad para traer componentes de cada campo
 const componentInstances = computed(() => {
-  const map = {};
-  props.Propiedades.campos.forEach(campo => {
-    if (campo.component && !map[campo.component]) {
-      map[campo.component] = loadComponent(campo.component);
-    }
-  });
-  return map;
+    const map = {};
+    const secciones = props.Propiedades.formulario?.secciones || [];
+    const campos = secciones[seccionActual.value]?.campos || [];
+
+    campos.forEach(campo => {
+        if (campo.component && !map[campo.component]) {
+            map[campo.component] = loadComponent(campo.component);
+        }
+    });
+    return map;
 });
 
+function siguienteSeccion() {
+    if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
+        seccionActual.value++;
+    }
+}
+
+function anteriorSeccion() {
+    if (seccionActual.value > 0) {
+        seccionActual.value--;
+    }
+}
 
 // Guardar y validar Datos
 watch(
@@ -70,36 +95,38 @@ function getValue(obj, path) {
 // 🔹 función para asignar en un path dinámico
 function setValue(obj, path, value) {
     if (!path) return undefined
-  const keys = path.split('.')
-  const lastKey = keys.pop()
-  const target = keys.reduce((acc, key) => acc[key], obj)
-  target[lastKey] = value
+    const keys = path.split('.')
+    const lastKey = keys.pop()
+    const target = keys.reduce((acc, key) => acc[key], obj)
+    target[lastKey] = value
 }
 
 
 </script>
 <template>
-    <FondoBlur>
-        <div
-            class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
-            :class="Propiedades.formulario.tamañoForm">
+    <FondoBlur v-if="Propiedades.formulario.show.value">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7" :class="Propiedades.formulario.tamañoForm">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
                 <!-- Formulario Wizard -->
-                <Wizard v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'" :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
+                <Wizard
+                    v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
+                    :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
                     :cerrar="Propiedades.formulario.cerrar" />
+                <!-- Body -->
                 <div class="w-full h-full px-6 pt-2">
-                    <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined" class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">{{
-                        Propiedades.formulario.titulo }}</h1>
+                    <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined"
+                        class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">
+                        {{Propiedades.formulario.secciones[seccionActual].nombre }}
+                    </h1>
                     <!-- Formulario -->
                     <form action="" class="w-full h-full flex justify-center">
                         <div
                             class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
                             <!-- Contenido del formulario -->
                             <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
-                                <component v-for="(item, index) in Propiedades.campos" :key="index"
-                                    :is="componentInstances[item.component]"
-                                    :Propiedades="item"
+                                <component v-for="(item, index) in camposActuales" :key="index"
+                                    :is="componentInstances[item.component]" :Propiedades="item"
                                     :modelValue="getValue(formData, item.vmodel)"
                                     @update:modelValue="val => setValue(formData, item.vmodel, val)" />
                                 <slot></slot>
@@ -110,10 +137,16 @@ function setValue(obj, path, value) {
             </div>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
-                <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color" @click="item.type === 'enviar' && !varView.formComplete ? Propiedades.content.validarform() : item.type === 'enviar' ? Propiedades.content.mandarFormulario(formData) : item.accion()"
+                <button @click="anteriorSeccion" :disabled="seccionActual === 0">Atrás</button>
+                <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
+                    @click="item.type === 'enviar' && seccionActual === 0 ? siguienteSeccion() 
+                    : item.type === 'cerrar' && seccionActual > 0 ? anteriorSeccion()
+                    : item.type === 'enviar' && !varView.formComplete ? Propiedades.content.validarform() 
+                    : item.type === 'enviar' ? Propiedades.content.mandarFormulario(formData) : item.accion()"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
+                <button @click="siguienteSeccion" :disabled="seccionActual === maxSecciones - 1">Siguiente</button>
             </div>
         </div>
     </FondoBlur>

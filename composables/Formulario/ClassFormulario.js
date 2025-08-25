@@ -34,16 +34,24 @@ export class ComponenteBuilder {
     this.propiedades.contenedor = contenedor
     return this
   }
-  
-  addComponente(tipo, builderInstance) {
-    if (!builderInstance || typeof builderInstance.build !== 'function') {
-      throw new Error('El componente debe tener un método build()')
+
+  addComponente(tipo, input) {
+    let componente;
+
+    // Si el input tiene un método build, asumimos que es un builder
+    if (input && typeof input.build === 'function') {
+      componente = input.build();
+    } else if (input && typeof input === 'object') {
+      // Si ya es un objeto, lo usamos directamente
+      componente = input;
+    } else {
+      throw new Error('El componente debe ser un objeto o tener un método build()');
     }
 
-    const componente = builderInstance.build()
-    componente.tipo = tipo
-    this.propiedades.componentes.push(componente)
-    return this
+    componente.tipo = tipo;
+    this.propiedades.componentes.push(componente);
+    return this;
+
   }
 
   // addComponente(tipo, config) {
@@ -102,7 +110,9 @@ export class FormularioBuilder {
         formulario: '',
       },
       campos: [],
-    }
+      seccionActual: []
+    },
+    this.seccionActual
   }
 
   setBotones(botones) {
@@ -187,10 +197,26 @@ export class FormularioBuilder {
     return this
   }
 
-  addCampo(campo) {
-    this.propiedades.campos.push(campo)
-    return this
+  nuevaSeccion(nombre, descripcion = '') {
+    const seccion = {
+      nombre,
+      descripcion,
+      campos: []
+    };
+    this.propiedades.formulario.secciones.push(seccion);
+    this.propiedades.seccionActual = seccion;
+    return this;
   }
+
+  addCampo(campo) {
+    if (this.propiedades.seccionActual) {
+      this.propiedades.seccionActual.campos.push(campo);
+    } else {
+      console.warn('No hay sección activa. Usa .nuevaSeccion(nombre) antes de agregar campos.');
+    }
+    return this;
+  }
+
 
   build() {
     return this.propiedades

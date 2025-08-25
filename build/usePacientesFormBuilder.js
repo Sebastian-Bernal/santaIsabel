@@ -1,7 +1,7 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
-export function usePacientesCitaBuilder({
+export function usePacientesBuilder({
   validarform,
   traerDatos,
   guardarDatos,
@@ -17,7 +17,8 @@ export function usePacientesCitaBuilder({
   return builder
     .setValidarForm(validarform)
     .setFormulariotamaño('LG')
-    .setFormularioTitulo('Agendar Cita')
+    .setFormularioTitulo('Datos Paciente')
+    .setFormularioTituloFormulario('Nuevo Paciente')
     .setContentTraerDatos(traerDatos)
     .setContentGuardarDatos(guardarDatos)
     .setFormularioCerrar(cerrarModal)
