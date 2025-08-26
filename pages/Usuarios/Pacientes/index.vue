@@ -1,23 +1,23 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-// import Tabla from '../../components/Tables/Tabla.vue';
-import IngresarPaciente from '../../components/Forms/Pacientes/IngresarPaciente.vue';
-import IngresarUsuario from '~/components/Forms/Pacientes/IngresarUsuario.vue';
 import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
 
 import { ref, onMounted, watch } from 'vue';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useVarView } from '../../stores/varview.js';
 import { storeToRefs } from 'pinia';
-import { ComponenteBuilder, FormularioBuilder } from '~/composables/Formulario/ClassFormulario';
+import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
-import { useUserBuilder } from '~/build/useUserFormBuilder';
-import { usePacientesBuilder } from '~/build/usePacientesFormBuilder';
+import { useUserBuilder } from '~/build/useUserPacienteBuilder';
 import { municipios } from '~/data/municipios.js'
+import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
+import { CIE10 } from '~/data/CIE10';
 
 const varView = useVarView();
 const storePaciente = usePacientesStore();
 const pacientesStore = usePacientesStore();
+const epsStore = useDatosEPSStore();
+const opcionesEPS = ref([])
 const nuevoPacienteStore = storePaciente.createForm("NuevoPaciente");
 const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
@@ -27,20 +27,27 @@ const show = ref(false)
 async function llamadatos() {
     pacientes.value = await listPacientes.value;
 }
-
+ // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => varView.showNuevoPacientePaso2, async () => {
     await llamadatos()
     refresh.value++
 })
-
 watch(() => varView.showModificarPaciente, async () => {
     await llamadatos()
     refresh.value++
 })
+
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
+
+    const EPS = await epsStore.listEPS
+    opcionesEPS.value = await EPS.map(eps => ({
+        text: eps.nombre,
+        value: eps.nombre
+    }));
+
     varView.cargando = false
 });
 
@@ -50,18 +57,14 @@ const pacienteDatos = ref({});
 // Funciones para manejar la visibilidad de los formularios
 const agregarPaciente = () => {
     varView.showNuevoPaciente = true;
+    show.value = true;
 };
-
 const verPaciente = (paciente) => {
     varView.showModificarPaciente = true;
     pacienteDatos.value = paciente;
     
 };
 
-function showForm() {
-    console.log('show')
-  show.value = true;
-}
 
 // Formulario
 const {
@@ -88,6 +91,15 @@ function seleccionarDepartamento (item) {
     formData.InformacionUser.departamento = item.nombre;
 }
 
+function seleccionarCIE_10(item) {
+    formData.Diagnosticos.push({
+        id: '',
+        CIE_10: item.description,
+        codigo: item.code
+        // id_paciente: !props.verPaciente ? formData.Paciente.id : null,
+    });
+}
+
 const propiedadesUser = useUserBuilder({
     validarform,
     traerDatos,
@@ -102,6 +114,15 @@ const propiedadesUser = useUserBuilder({
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    EPS: opcionesEPS.value,
+    // agregarDiagnostico: agregarItem(
+    //     'Diagnosticos', 
+    //     { id: '', CIE_10: '', rol_attention: '', }, 
+    //     'CIE_10'
+    // ),
+    agregarDiagnostico: () => {},
+    seleccionarCIE_10,
+    CIE10: CIE10
 });
 
 
@@ -111,9 +132,8 @@ const pagina = new ComponenteBuilder()
 
 const propiedades = pagina
     .setFondo('FondoDefault')
-    .setEstilos('bg-gray-200')
+    .setEstilos('')
     .setLayout('')
-    // .setHeaderPage('Prueba de Pagina Costruida')
     .setContenedor('w-full')
     .addComponente('Tabla', builderTabla
         .setColumnas([
@@ -125,7 +145,7 @@ const propiedades = pagina
             { titulo: 'Eps', value: 'EPS', tamaño: 150, ordenar: true }
         ])
         .setHeaderTabla({ titulo: 'Gestion de Pacientes', descripcion: 'Administra y consulta información de pacientes', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarPaciente })
-        .setAcciones({ icons: [{ icon: 'ver', action: showForm }], botones: true })
+        .setAcciones({ icons: [{ icon: 'ver', action: verPaciente }], botones: true })
         .setDatos(pacientes)
     )
     .addComponente('Form', propiedadesUser)
@@ -136,7 +156,5 @@ console.log(propiedades)
 
 <template>
     <Pagina :Propiedades="propiedades" />
-    <IngresarUsuario v-if="varView.showNuevoPaciente" />
-    <IngresarPaciente v-if="varView.showNuevoPacientePaso2" />
-    <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" />
+    <!-- <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" /> -->
 </template>

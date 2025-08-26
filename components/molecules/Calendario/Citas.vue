@@ -17,13 +17,17 @@ const props = defineProps({
   citas: {
     type: Array,
     default: () => []
+  },
+  Propiedades: {
+    type: [Array, Object],
+    default: () => []
   }
 });
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
-const Citas = ref(props.citas);
+const Citas = ref(props.Propiedades.citas);
 const paciente = ref({});
 const citaSeleccionada = ref({});
 const notificacionesStore = useNotificacionesStore();

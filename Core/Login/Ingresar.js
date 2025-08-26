@@ -5,6 +5,7 @@ import { useUsuariosStore } from '~/stores/Formularios/login/Login.js';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js'
 import { secciones } from '~/data/Buttons.js';
+import { useApiRest } from '~/stores/apiRest.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarLogin = async (datos) => {
@@ -70,6 +71,8 @@ export const validarYEnviarLogin = async (datos) => {
 // Funcion para validar conexion a internet y enviar fomulario a API
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const api = useApiRest();
+    
     const online = navigator.onLine;
     if (online) {
         try {

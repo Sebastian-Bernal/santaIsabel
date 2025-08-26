@@ -12,6 +12,7 @@ const props = defineProps({
 
 const varView = useVarView();
 const seccionActual = ref(0);
+const maxSecciones = props.Propiedades.formulario.secciones.length
 
 // Inicializa formData con las claves de vmodel
 const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));

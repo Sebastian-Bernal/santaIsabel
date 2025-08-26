@@ -1,10 +1,13 @@
 <script setup>
+import Pagina from '~/components/organism/Pagina/Pagina.vue'
 import Citas from '~/components/molecules/Calendario/Citas.vue'
 import Calendario from '~/components/molecules/Calendario/Calendario.vue'
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue'
 import Form from '~/components/organism/Forms/Form.vue'
 
 import { useFormularioCitaBuilder } from '~/build/useCitasFormBuilder'
+import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario'
+import { CalendarioBuilder, CitasBuilder } from '~/composables/Formulario/ClassCalendario'
 import { useVarView } from '~/stores/varview.js'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
@@ -19,6 +22,7 @@ const pacientesStore = usePacientesStore();
 const medicosStore = useMedicosStore();
 const medicosList = ref([]);
 const pacientesList = ref([]);
+const show = ref(true)
 
 // Formulario
 onMounted(async () => {
@@ -66,6 +70,7 @@ const propiedadesCita = useFormularioCitaBuilder({
         limpiar();
         varView.showNuevaCita = false;
     },
+    show: show,
     seleccionarPaciente,
     seleccionarMedico,
     pacientesList,
@@ -74,38 +79,36 @@ const propiedadesCita = useFormularioCitaBuilder({
 
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
+    console.log('prueba')
     varView.showNuevaCita = true;
+    show.value = true
 };
+
+
+// Construccion de pagina
+const builderCalendario = new CalendarioBuilder()
+const builderCitas = new CitasBuilder()
+const pagina = new ComponenteBuilder()
+
+const propiedades = pagina
+    .setFondo('FondoDefault')
+    .setHeaderPage({
+        titulo: 'Calendario de Citas', 
+        descripcion: 'Visualiza y administra la agenda de citas.',
+        button: [{text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita}]
+    })
+    .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3')
+        .addComponente('Citas', builderCitas
+            .setCitas(citas)
+        )
+        .addComponente('Calendario', builderCalendario
+            .setCitas(citas)
+        )
+        .addComponente('Form', propiedadesCita)
+    .build()
+    console.log(propiedades)
 </script>
 
 <template>
-    <FondoDefault>
-        <div>
-            <div class="md:pb-8 pb-4 flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-semibold">Calendario de citas</h2>
-                    <p class="text-gray-600 dark:text-gray-200 mt-1">Visualiza y administra la agenda de citas.</p>
-                </div>
-
-                <div class="flex gap-3 items-center cursor-pointer" @click="agregarCita">
-
-                    <div class="flex gap-2 items-center bg-blue-500 p-3 rounded-2xl text-white font-semibold">
-                        <i class="fa-solid fa-plus"></i>
-                        <p class="md:flex hidden">Agregar Cita</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div
-                class="grid lg:grid-cols-[1fr_0.6fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3 justify-between">
-                <Citas v-if="citas.length" :citas="citas" />
-                <Calendario v-if="citas.length" :citas="citas" />
-            </div>
-
-        </div>
-    </FondoDefault>
-    <Form :Propiedades="propiedadesCita" v-if="varView.showNuevaCita" />
-
+    <Pagina :Propiedades="propiedades"/>
 </template>

@@ -12,7 +12,6 @@ const props = defineProps({
     }
 });
 
-
 const fondos = {
     FondoDefault,
     FondoBlur
@@ -29,20 +28,32 @@ const components = {
 
 <template>
     <component :is="fondos[Propiedades.fondo]" :class="Propiedades.estilos">
-        <div class="md:pb-8 pb-4 flex items-center justify-between">
-            <h2 class="text-2xl font-semibold">
-                {{ Propiedades.header }}
-            </h2>
+        <div v-if="Propiedades.header.titulo !== ''" class="md:pb-8 pb-4 flex items-center justify-between">
+            <div>
+                <h2 class="text-2xl font-semibold">{{ Propiedades.header.titulo }}</h2>
+                <p class="text-gray-600 dark:text-gray-200 mt-1">{{ Propiedades.header.descripcion }}</p>
+            </div>
+
+            <div v-if="Propiedades.header.button" class="flex gap-3 items-center cursor-pointer">
+
+                <div v-for="button in Propiedades.header.button"
+                    class="flex gap-2 items-center p-3 rounded-2xl text-white font-semibold" :class="button.color"
+                    @click="button.action">
+                    <i :class="button.icon"></i>
+                    <p class="md:flex hidden">{{ button.text }}</p>
+                </div>
+
+            </div>
         </div>
+
         <div :class="Propiedades.contenedor">
 
-            <component v-for="(component, index) in Propiedades.componentes" 
-                :key="index"
-                :is="components[component.tipo]" 
-                :Propiedades="component"
+            <component v-for="(component, index) in Propiedades.componentes" :key="index"
+                :is="components[component.tipo]" :Propiedades="component" />
 
-            />
             <slot></slot>
+
         </div>
+
     </component>
 </template>

@@ -2,12 +2,15 @@
 import ModalXS from '~/components/Modales/ModalXS.vue';
 import RecuperarContraseña from '~/components/Forms/Login/RecuperarContraseña.vue';
 import CambiarContraseña from '~/components/Forms/Login/CambiarContraseña.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { ref, onMounted } from 'vue';
 import { useVarView } from '~/stores/varview';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 
+const api = useApiRest()
+const config = useRuntimeConfig()
 definePageMeta({
     layout: 'authentication'
 });
@@ -29,6 +32,8 @@ const mostrarContraseña = ref(false);
 const varView = useVarView();
 const storeUsuarios = useUsersStore();
 const notificacionesStore = useNotificacionesStore();
+const selectEmpresa = ref(false)
+const opcionesCompañy = ref([])
 
 const {
     simple,
@@ -63,8 +68,10 @@ async function ingresar() {
 }
 
 // Temporal idexedDB
-async function primerIngreso() {
+async function validaUsuario() {
     varView.cargando = true
+    /*codigo para manejo interno de indexbd ingreso de usuarios
+    
     const usuarios = await storeUsuarios.listUsers
 
     const usuarioDB = usuarios.filter((usuario) => {
@@ -82,13 +89,50 @@ async function primerIngreso() {
             const res = await simple()
             varView.showCambiarContraseña = true;
         }
+
+    
+    }*/
+
+    let options = {
+        metodo: 'GET',
+        url: config.public.authentication + Usuario.correo,
     }
+
+    let validacion = await api.functionCall(options)
+    console.log(validacion)
+    if(validacion.data.length > 1){
+        selectEmpresa.value = true
+        validacion.data.forEach((item) => {
+            opcionesCompañy.value.push({text: item.tenant_name, value: item.tenant_identifier}) 
+        })
+        console.log(opcionesCompañy.value)
+    }
+    console.log(validacion)
     varView.cargando = false
 }
 
 function recuperarContraseña() {
     varView.showRecuperarContraseña = true
 }
+
+
+
+// api.metodo = 'GET'
+// api.tabla = 'api/login'
+// api.params = {
+//   email: 'usuario@email.com',
+//   password: '123456'
+// }
+
+// try {
+//   const respuesta = await api.functionCall(api.tabla)
+//   api.token = respuesta.token
+//   api.user = respuesta.user
+//   console.log('Autenticación exitosa:', api.user)
+// } catch (error) {
+//   console.error('Error al autenticar:', error.message)
+// }
+
 </script>
 
 <template>
@@ -101,16 +145,26 @@ function recuperarContraseña() {
             </div>
             <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
-                    <input v-model="Usuario.correo" @keyup.enter="primerIngreso" type="email" id="text" name="email" required
-                        placeholder="Correo Electronico"
+                    <input v-model="Usuario.correo" @keyup.enter="validaUsuario" type="email" id="text" name="email"
+                        required placeholder="Correo Electronico"
                         class="bg-inherit text-white mt-1 pr-8 block w-full px-3 py-3 border border-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <i class="fa-solid fa-user absolute text-white right-[3%] top-[27%] text-lg"></i>
+                </div>
+            </div>
+            <div v-if="selectEmpresa" class="mb-5 md:w-2/4 lg:w-1/3 w-full">
+                <div class="relative">
+                    <Select v-model="Usuario.correo" :Propiedades="{
+                        name: 'empresa',
+                        options: opcionesCompañy,
+                        placeholder: 'Selecciona Empresa a ingresar'
+                    }"   
+                    />
                 </div>
             </div>
             <div class="mb-5 md:w-2/4 lg:w-1/3 w-full">
                 <div class="relative">
                     <input v-model="Usuario.contraseña" @keyup.enter="ingresar" type="password" id="password"
-                        name="password" required placeholder="Contraseña" autocomplete="false" minlength="1"
+                        name="password" required placeholder="Contraseña" autocomplete="off" minlength="1"
                         class="text-white bg-inherit mt-1 pr-8 block w-full px-3 py-3 border border-gray-100 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                     <i v-if="!mostrarContraseña"
                         class="fa-solid fa-eye-slash text-gray-50 absolute right-[2%] top-[27%] text-lg"

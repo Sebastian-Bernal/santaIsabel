@@ -1,4 +1,5 @@
 <script setup>
+import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Tabla from '~/components/organism/Table/Tabla.vue';
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
@@ -10,6 +11,8 @@ import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
 import { useVarView } from "~/stores/varview.js";
+import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -49,18 +52,33 @@ const verHistoria = (his) => {
     varView.showVerHistoria = true
 };
 
-// const comprobarAccion = (fila) => {
-//     if(fila.estado === 'Nueva'){
-//         return 'agregar'
-//     } else {
-//         return 'ver'
-//     }
-// };
+// const builderCitas = new CitasBuilder()
+const tablaBuilder = new TablaBuilder()
+const pagina = new ComponenteBuilder()
+
+const propiedades = pagina
+    .setFondo('FondoDefault')
+    .setEstilos('')
+    .setContenedor('w-full')
+        .addComponente('Tabla', tablaBuilder
+            .setColumnas([
+                { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
+                { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
+                { titulo: 'estado', value: 'Estado', tamaño: 150 },
+            ])
+            .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: !onlyWatch ? agregarHistoria : null })
+            .setAcciones({ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, })
+            .setDatos(historiasList)
+        )
+        // .addComponente('Form', propiedadesCita)
+    .build()
+    console.log(propiedades)
 
 </script>
 
 <template>
-    <FondoDefault>
+    <Pagina :Propiedades="propiedades"/>
+    <!-- <FondoDefault>
         <Tabla :key="refresh" :columnas="[
             { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
             { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
@@ -69,7 +87,7 @@ const verHistoria = (his) => {
  }"
             :acciones="{ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, }" 
             :datos="{ content: historiasList }" />
-    </FondoDefault>
+    </FondoDefault> -->
     <Ingresar v-if="varView.showNuevaHistoria" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />

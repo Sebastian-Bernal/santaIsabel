@@ -8,11 +8,15 @@ const props = defineProps({
   citas: {
     type: Array,
     default: () => []
+  },
+  Propiedades: {
+    type: [Array, Object],
+    default: () => []
   }
 });
 
 const calendarioCitasStore = useCalendarioCitas();
-const Citas = ref(props.citas);
+const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
 
 const {

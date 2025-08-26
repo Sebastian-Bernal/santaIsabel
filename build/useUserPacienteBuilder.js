@@ -7,10 +7,13 @@ export function useUserBuilder({
     guardarDatos,
     cerrarModal,
     tipoFormulario,
-    secciones,
     buscarUsuario,
     departamentos,
     seleccionarDepartamento,
+    agregarDiagnostico,
+    CIE10,
+    seleccionarCIE_10,
+    EPS,
     show,
 }) {
     const builder = new FormularioBuilder()
@@ -21,7 +24,6 @@ export function useUserBuilder({
         .setFormularioTituloFormulario('Nuevo Paciente')
         .setFormularioShow(show)
         .setFormularioTipo(tipoFormulario)
-        // .setFormularioSecciones()
         .setValidarForm(validarform)
         .setContentTraerDatos(traerDatos)
         .setContentGuardarDatos(guardarDatos)
@@ -260,15 +262,15 @@ export function useUserBuilder({
                 tamaño: 'w-full col-span-2',
                 forLabel: 'eps'
             })
-            // .addCampo({
-            //     component: 'Select',
-            //     placeholder: 'EPS',
-            //     id: 'eps',
-            //     name: 'eps',
-            //     tamaño: ' w-full',
-            //     options: opcionesEPS.value,
-            //     vmodel: 'Paciente.Eps',
-            // })
+            .addCampo({
+                component: 'Select',
+                placeholder: 'EPS',
+                id: 'eps',
+                name: 'eps',
+                tamaño: ' w-full',
+                options: EPS,
+                vmodel: 'Paciente.Eps',
+            })
             .addCampo({
                 component: 'Select',
                 placeholder: 'Régimen',
@@ -310,21 +312,22 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnósticos (opcional)',
+                buttons: [{icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarDiagnostico}],
                 tamaño: 'w-full col-span-2',
                 forLabel: 'cie10'
             })
-            // .addCampo({
-            //     component: 'SelectSearch',
-            //     key: 'Diagnosticos',
-            //     placeholder: 'CIE-10',
-            //     id: 'cie10',
-            //     name: 'cie10',
-            //     tamaño: 'w-full col-span-2',
-            //     vmodel: 'Diagnosticos',
-            //     options: CIE10,
-            //     opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-            //     seleccionarItem: seleccionarCIE_10
-            // })
+            .addCampo({
+                component: 'SelectSearch',
+                key: 'Diagnosticos',
+                placeholder: 'CIE-10',
+                id: 'cie10',
+                name: 'cie10',
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Diagnosticos',
+                options: CIE10,
+                opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                seleccionarItem: seleccionarCIE_10
+            })
 
             // 📌 Sección: Antecedentes
             .addCampo({
@@ -333,5 +336,79 @@ export function useUserBuilder({
                 tamaño: 'w-full col-span-2',
                 forLabel: 'antecedentes'
             })
+
+        // .nuevaSeccion('Datos Profesional')
+            // 📌 Sección: Médico
+            // .addCampo({
+            //     component: 'Label',
+            //     text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Medico',
+            //     tamaño: 'w-full col-span-2',
+            //     forLabel: 'nombre'
+            // })
+            // .addCampo({
+            //     component: 'Select',
+            //     placeholder: 'Profesión',
+            //     id: 'profesion',
+            //     name: 'profesion',
+            //     tamaño: 'w-full',
+            //     options: opcionesProfesion,
+            //     vmodel: 'formData.Medico.profesion',
+            //     disabled: 'props.verMedico',
+            //     required: true
+            // })
+
+            // // 📌 Sección: Ubicación Laboral
+            // .addCampo({
+            //     component: 'Label',
+            //     text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Ubicación Laboral',
+            //     tamaño: 'w-full col-span-2',
+            //     forLabel: 'departamento'
+            // })
+            // .addCampo({
+            //     component: 'Input',
+            //     type: 'text',
+            //     placeholder: 'Departamento',
+            //     id: 'departamentoLaboral',
+            //     name: 'departamentoLaboral',
+            //     tamaño: 'md:w-1/3 w-full',
+            //     list: 'listDepartamento',
+            //     vmodel: 'formData.Medico.departamentoLaboral',
+            //     disabled: 'props.verMedico'
+            // })
+            // .addCampo({
+            //     component: 'Datalist',
+            //     id: 'listDepartamento',
+            //     options: ubicacion,
+            //     opciones: [{ value: 'departamento' }],
+            // })
+            // .addCampo({
+            //     component: 'Input',
+            //     type: 'text',
+            //     placeholder: 'Municipio',
+            //     id: 'municipioLaboral',
+            //     name: 'municipioLaboral',
+            //     tamaño: 'md:w-1/3 w-full',
+            //     list: 'listMunicipio',
+            //     vmodel: 'formData.Medico.municipioLaboral',
+            //     disabled: 'props.verMedico'
+            // })
+            // .addCampo({
+            //     component: 'Input',
+            //     id: 'listMunicipio',
+            //     options: ciudades,
+            // })
+            // .addCampo({
+            //     component: 'Select',
+            //     placeholder: 'Zona',
+            //     id: 'zonaLaboral',
+            //     name: 'zonaLaboral',
+            //     tamaño: 'md:w-1/3 w-full',
+            //     options: [
+            //         { text: 'Rural', value: 'Rural' },
+            //         { text: 'Urbana', value: 'Urbana' }
+            //     ],
+            //     vmodel: 'formData.Medico.zonaLaboral',
+            //     disabled: 'props.verMedico'
+            // })
         .build()
 }

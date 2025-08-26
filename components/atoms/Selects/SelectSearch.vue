@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, unref } from 'vue';
 // Input con datos seleccionables
 // Props modelvalue, options = data. ej: Pacientes, opciones = valores a comparar: ej Name, seleccionarItem: funcion al seleccionar item
 
@@ -18,15 +18,16 @@ const mostrarLista = ref(false);
 const opcionesFiltradas = ref([]);
 
 watch(() => props.modelValue, (nuevoValor) => {
-    const propiedadFiltrar = props.Propiedades.opciones?.[0]?.value;
-    
+    const propiedadFiltrar = unref(props.Propiedades.opciones?.[0]?.value ?? '');
+    const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? [])
+
     if (!nuevoValor) {
         opcionesFiltradas.value = [];
         mostrarLista.value = false;
         return;
     }
 
-    opcionesFiltradas.value = props.Propiedades.options?.value.filter(item =>
+    opcionesFiltradas.value = opciones.filter(item =>
         item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
     ).slice(0,20);
 });

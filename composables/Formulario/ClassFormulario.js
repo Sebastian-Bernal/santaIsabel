@@ -4,7 +4,11 @@ export class ComponenteBuilder {
       fondo: '',
       estilos: '',
       layout: '',
-      header: '',
+      header: {
+        titulo: '',
+        descripcion: '',
+        button: [],
+      },
       contenedor: '',
       componentes: [],
     }
@@ -54,29 +58,6 @@ export class ComponenteBuilder {
 
   }
 
-  // addComponente(tipo, config) {
-  //   let componente
-
-  //   switch (tipo) {
-  //     case 'formulario':
-  //       componente = new Formulario(config)
-  //       break
-  //     case 'tabla':
-  //       componente = new Tabla(config)
-  //       break
-  //     case 'calendario':
-  //       componente = new Calendario(config)
-  //       break
-  //     // Agrega más tipos según lo necesites
-  //     default:
-  //       throw new Error(`Tipo de componente desconocido: ${tipo}`)
-  //   }
-
-  //   this.propiedades.componentes.push(componente)
-  //   return this
-
-  // }
-
   build() {
     return this.propiedades
   }
@@ -109,7 +90,6 @@ export class FormularioBuilder {
         guardarDatos: null,
         formulario: '',
       },
-      campos: [],
       seccionActual: []
     },
     this.seccionActual
@@ -222,6 +202,8 @@ export class FormularioBuilder {
     return this.propiedades
   }
 }
+
+
 
 const tamañosDisponibles = {
   LG: 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%]',
