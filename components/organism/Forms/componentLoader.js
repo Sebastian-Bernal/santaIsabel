@@ -9,7 +9,8 @@ export function loadComponent(name) {
     SelectSearch: () => import('~/components/atoms/Selects/SelectSearch.vue'),
     SelectMultiple: () => import('~/components/atoms/Selects/SelectMultiple.vue'),
     Textarea: () => import('~/components/atoms/Textareas/Textarea.vue'),
-    Checkbox: () => import('~/components/atoms/Checkbox/Checkbox.vue')
+    Checkbox: () => import('~/components/atoms/Checkbox/Checkbox.vue'),
+    GroupCampos: () => import('~/components/molecules/groupCampos/GroupCampos.vue'),
   };
 
   const loader = componentMap[name];

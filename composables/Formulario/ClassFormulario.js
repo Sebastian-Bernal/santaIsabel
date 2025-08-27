@@ -71,6 +71,7 @@ export class FormularioBuilder {
   constructor() {
     this.propiedades = {
       formulario: {
+        fondo: true,
         botones: [],
         tamañoForm: '',
         titulo: '',
@@ -93,6 +94,11 @@ export class FormularioBuilder {
       seccionActual: []
     },
     this.seccionActual
+  }
+
+  setFormularioFondo(fondo) {
+    this.propiedades.formulario.fondo = fondo
+    return this
   }
 
   setBotones(botones) {

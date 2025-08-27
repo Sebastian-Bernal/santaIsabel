@@ -14,6 +14,11 @@ const varView = useVarView();
 const seccionActual = ref(0);
 const maxSecciones = props.Propiedades.formulario.secciones.length
 
+const fondos = {
+    true: FondoBlur,
+    false: 'div'
+}
+
 // Inicializa formData con las claves de vmodel
 const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
 
@@ -23,12 +28,17 @@ function transformarFormData(secciones) {
     secciones.forEach(seccion => {
         seccion.campos.forEach(campo => {
             const clave = campo.vmodel;
-            if (!clave || typeof clave !== 'string' || !clave.includes('.')) return;
-            const [grupo, propiedad] = clave.split('.');
-            if (!resultado[grupo]) {
-                resultado[grupo] = {};
+            if (!clave || typeof clave !== 'string') return;
+            if(clave.includes('.')){
+                const [grupo, propiedad] = clave.split('.');
+                if (!resultado[grupo]) {
+                    resultado[grupo] = {};
+                }
+                resultado[grupo][propiedad] = '';
+            } else {
+                console.log(clave)
+                resultado[clave] = []
             }
-            resultado[grupo][propiedad] = '';
         });
 
     });
@@ -105,7 +115,7 @@ function setValue(obj, path, value) {
 
 </script>
 <template>
-    <FondoBlur v-if="Propiedades.formulario.show.value">
+    <component :is="Propiedades.formulario.fondo ? FondoBlur : 'div'" v-if="Propiedades.formulario.show.value || !fondos[Propiedades.formulario.fondo]">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7" :class="Propiedades.formulario.tamañoForm">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
@@ -150,5 +160,5 @@ function setValue(obj, path, value) {
                 <button @click="siguienteSeccion" :disabled="seccionActual === maxSecciones - 1">Siguiente</button>
             </div>
         </div>
-    </FondoBlur>
+    </component>
 </template>

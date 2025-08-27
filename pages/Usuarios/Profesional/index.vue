@@ -5,16 +5,20 @@ import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuarioPro
 import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
 // Data
 import { ref, onMounted } from 'vue';
+import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 import { storeToRefs } from 'pinia';
+import { useUserProfesionalBuilder } from '~/build/useUserProfesional';
 
 const varView = useVarView();
 const medicosStore = useMedicosStore();
+const nuevoProfesionalStore = medicosStore.createForm("NuevoProfesional");
 const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
 const refresh = ref(1);
+const show = ref(false)
 
 async function llamadatos () {
     medicos.value= await listMedicos.value;
@@ -40,14 +44,51 @@ onMounted(async () => {
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
 const medicoDatos = ref(false);
 
-const agregarMedico = () => {
-    varView.showNuevoProfesional = true;
-};
-
 const modificarMedico = (medico) => {
     varView.showModificarProfesional = true;
     medicoDatos.value = medico;
 };
+
+// Formulario
+const {
+    formData,
+    traerDatos,
+    guardarDatos,
+    validarform,
+    limpiar,
+    estado,
+} = nuevoProfesionalStore;
+
+const agregarMedico = () => {
+    varView.showNuevoPaciente = true;
+    show.value = true;
+};
+
+function cerrar() {
+    limpiar()
+    show.value = false
+}
+
+function buscarUsuario () {
+    console.log('buscar usuario')
+}
+
+function seleccionarDepartamento (item) {
+    formData.InformacionUser.departamento = item.nombre;
+}
+
+const propiedadesUser = useUserProfesionalBuilder({
+    validarform,
+    traerDatos,
+    guardarDatos,
+    cerrarModal: cerrar,
+    show : show,
+    tipoFormulario: 'Wizard',
+    buscarUsuario,
+    departamentos: municipios.departamentos,
+    seleccionarDepartamento,
+    EPS: [],
+});
 
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
@@ -70,8 +111,9 @@ const propiedades = pagina
         .setAcciones({ icons: [{icon: 'ver', action: modificarMedico}], botones: true })
         .setDatos(medicos)
     )
-    // .addComponente('Form', propiedadesUser)
+    .addComponente('Form', propiedadesUser)
     .build()
+    console.log(propiedades)
 </script>
 <template>
     <Pagina :Propiedades="propiedades"/>
