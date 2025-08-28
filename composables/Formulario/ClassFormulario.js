@@ -77,23 +77,21 @@ export class FormularioBuilder {
         titulo: '',
         tipo: '',
         tituloFormulario: '',
-        cerrar: null,
         secciones: [],
         show: false,
       },
       content: {
-        validarform: null,
-        mandarFormulario: null,
+        storeId: '',
         modelValue: null,
-        agregarItem: null,
-        eliminarItem: null,
-        traerDatos: null,
-        guardarDatos: null,
         formulario: '',
       },
       seccionActual: []
-    },
-    this.seccionActual
+    }
+  }
+
+  setStoreId(id) {
+    this.propiedades.content.storeId = id
+    return this
   }
 
   setFormularioFondo(fondo) {
@@ -103,16 +101,6 @@ export class FormularioBuilder {
 
   setBotones(botones) {
     this.propiedades.formulario.botones = botones
-    return this
-  }
-
-  setValidarForm(fn) {
-    this.propiedades.content.validarform = fn
-    return this
-  }
-
-  setMandarFormulario(fn) {
-    this.propiedades.content.mandarFormulario = fn
     return this
   }
 
@@ -143,11 +131,6 @@ export class FormularioBuilder {
     return this
   }
 
-  setFormularioCerrar(fn) {
-    this.propiedades.formulario.cerrar = fn
-    return this
-  }
-
   setFormularioSecciones(secciones) {
     this.propiedades.formulario.secciones = secciones
     return this
@@ -155,26 +138,6 @@ export class FormularioBuilder {
 
   setContentModelValue(value) {
     this.propiedades.content.modelValue = value
-    return this
-  }
-
-  setContentAgregarItem(fn) {
-    this.propiedades.content.agregarItem = fn
-    return this
-  }
-
-  setContentEliminarItem(fn) {
-    this.propiedades.content.eliminarItem = fn
-    return this
-  }
-
-  setContentTraerDatos(fn) {
-    this.propiedades.content.traerDatos = fn
-    return this
-  }
-
-  setContentGuardarDatos(fn) {
-    this.propiedades.content.guardarDatos = fn
     return this
   }
 

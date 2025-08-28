@@ -3,37 +3,23 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
 
-import { useEmpresaStore } from "~/stores/Formularios/empresa/Empresa.js";
 import { useDatosEmpresaBuilder } from '~/build/useDatosEmpresaBuilder';
+import { useDatosSofwareBuilder } from '~/build/useDatosSoftwareBuilder';
+import { useDatosNominaBuilder } from '~/build/useDatosNominaBuilder';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 
-// Formulario Empresa
-const storeEmpresa = useEmpresaStore();
-const EmpresaStore = storeEmpresa.createForm("DatosEmpresa");
-const varView = useVarView();
-const notificacionesStore = useNotificacionesStore();
-const camposVacios = ref(false);
 
-const { simple, mensaje, options } = notificacionesStore;
-
-// Importar states y funciones del store
-const {
-    validarForm,
-    formData,
-    traerDatos,
-    guardarDatos,
-    limpiar,
-    estado,
-    mandarFormulario,
-} = EmpresaStore;
-
-
-
+// Formularios Configuracion Empresa
 const propiedadesEmpresa = useDatosEmpresaBuilder({
-    validarForm,
-    guardarDatos,
-    traerDatos,
-    limpiar,
+    storeId: 'DatosEmpresa'
+})
+
+const propiedadesSoftware = useDatosSofwareBuilder({
+    storeId: 'DatosSoftware'
+})
+
+const propiedadesNomina = useDatosNominaBuilder({
+    storeId: 'DatosNomina'
 })
 
 // Construccion de pagina
@@ -44,8 +30,10 @@ const propiedades = pagina
     .setHeaderPage({titulo: 'Configuracion de la Empresa', descripcion: 'Registra y configura segun los datos de tu Empresa.'})
     .setEstilos('')
     .setLayout('')
-    .setContenedor('w-full')
+    .setContenedor('w-full flex flex-col gap-3')
     .addComponente('Form', propiedadesEmpresa)
+    .addComponente('Form', propiedadesSoftware)
+    .addComponente('Form', propiedadesNomina)
     .build()
 
 console.log(propiedades)

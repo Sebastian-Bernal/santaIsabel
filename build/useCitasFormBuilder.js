@@ -2,12 +2,8 @@
 import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useFormularioCitaBuilder({
-  validarform,
-  mandarFormulario,
-  traerDatos,
-  guardarDatos,
+  storeId,
   cerrarModal,
-  enviarNuevaCita,
   seleccionarPaciente,
   seleccionarMedico,
   pacientesList,
@@ -17,18 +13,13 @@ export function useFormularioCitaBuilder({
   const builder = new FormularioBuilder()
 
   return builder
-    .setValidarForm(validarform)
-    .setMandarFormulario(mandarFormulario)
+    .setStoreId(storeId)
     .setFormularioShow(show)
     .setFormulariotamaño('XS')
     .setFormularioTitulo('Agendar Cita')
-    .setFormularioShow(false)
-    .setContentTraerDatos(traerDatos)
-    .setContentGuardarDatos(guardarDatos)
-    .setFormularioCerrar(cerrarModal)
     .setBotones([
-      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
-      { text: 'Guardar', accion: enviarNuevaCita, color: 'bg-blue-500', type: 'enviar' },
+      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
+      { text: 'Guardar', color: 'bg-blue-500', type: 'enviar' },
     ])
     .nuevaSeccion('Agendar Cita')
       .addCampo({

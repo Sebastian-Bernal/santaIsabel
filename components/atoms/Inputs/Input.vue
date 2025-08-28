@@ -22,16 +22,17 @@ function handleInput(event) {
   emit('update:modelValue', value);
 }
 
-
-
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
-    <div :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]">
+    <div :class="[{ 'relative': props.Propiedades.icon || Propiedades.slot }, Propiedades.tamaño]">
+        <!-- Label (opcional) -->
         <label v-if="Propiedades.label" :for="Propiedades.name"
             class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
             {{ Propiedades.label }}
         </label>
+
+        <!-- Input -->
         <input :value="modelValue" autocomplete="off" 
             :type="Propiedades.type" 
             :id="Propiedades.id"
@@ -45,12 +46,26 @@ const emit = defineEmits(['update:modelValue']);
             @blur="Propiedades.events?.onBlur"
             @keyup.enter="Propiedades.events?.onKeyUp"
             :disabled="Propiedades.disabled"
-            :class="{ 'inputFondo': Propiedades.icon }" 
+            :class="{ 'inputIcon': Propiedades.icon, 'inputSlot': Propiedades.slot }" 
             class="mt-1 w-full block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
 
+        <!-- Icono (opcional) -->
         <i v-if="Propiedades.icon" :class="Propiedades.icon"
             class="iconInput absolute left-[10px] top-[55%] text-gray-600 dark:text-gray-200"></i>
+        <!-- Slot (opcional) -->
+        <div v-if="Propiedades.slot" class="absolute right-5 top-2">
+            <label v-html="Propiedades.slot.label"></label>
+            <input v-if="Propiedades.slot.input"
+                :type="Propiedades.slot.input.type"
+                :accept="Propiedades.slot.input.accept"
+                :id="Propiedades.slot.input.id"
+                :name="Propiedades.slot.input.name"
+                @input="handleInput($event)"
+                class="hidden"
+            />
+        </div>
+
     </div>
 </template>
 
@@ -63,8 +78,12 @@ input:invalid {
     border: 1px solid var(--color-red-500);
 }
 
-.inputFondo {
+.inputIcon {
     padding: 5px 10px 5px 35px;
+}
+
+.inputSlot {
+    padding: 5px 35px 5px 10px;
 }
 
 .iconInput {

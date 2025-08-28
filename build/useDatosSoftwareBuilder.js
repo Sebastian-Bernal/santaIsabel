@@ -1,0 +1,57 @@
+// builders/useFormularioCitaBuilder.js
+import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
+
+export function useDatosSofwareBuilder({
+  storeId,
+}) {
+  const builder = new FormularioBuilder()
+
+  return builder
+    .setStoreId(storeId)
+    .setFormularioFondo(false)
+    .setBotones([{
+        type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
+    }])
+    .nuevaSeccion('Datos del Software')
+      .addCampo({
+          component: 'Label',
+          text: '<i class="fa-solid fa-building text-blue-500 mr-1"></i>Datos de Software',
+          tamaño: 'w-full col-span-2',
+          forLabel: 'idSoftware'
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'text',
+          placeholder: 'ID Software',
+          id: 'idSoftware',
+          name: 'idSoftware',
+          tamaño: 'md:col-span-1 col-span-3',
+          minlength: 3,
+          vmodel: 'Software.Dian.id'
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'text',
+          maxLength: 5,
+          min: 1,
+          placeholder: 'Pin Software',
+          id: 'pinSoftware',
+          name: 'pinSoftware',
+          tamaño: 'md:col-span-1 col-span-3',
+          vmodel: 'Software.Dian.pin',
+          slot: {
+              label: '<div class="flex text-gray-500"><p>{{ formData.Software.pin.length }}</p>/<p>5</p></div>',
+          }
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'text',
+          placeholder: 'Codigo Test Software',
+          id: 'testSoftware',
+          name: 'testSoftware',
+          tamaño: 'md:col-span-1 col-span-3',
+          vmodel: 'Software.Dian.test',
+      })
+      
+    .build()
+}

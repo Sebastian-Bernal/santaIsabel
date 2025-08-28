@@ -34,10 +34,8 @@ const removeItem = (index) => {
 }
 
 const updateField = (index, field, value) => {
-    console.log(value)
 
     const updatedItems = [...items.value]
-
     // Actualizar el campo específico
     updatedItems[index] = {
         ...updatedItems[index],
@@ -68,7 +66,7 @@ const emit = defineEmits(['update:modelValue']);
     <div :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
         <div v-for="(input, index) in items" :key="index" class="relative my-2">
             <component :is="campos[Propiedades.type]" :modelValue="input.descripcion"
-                :Propiedades="Propiedades" @change="e => updateField(index, 'descripcion', e.target.value)" />
+                :Propiedades="Propiedades" @input="e => updateField(index, 'descripcion', e.target.value)" />
 
             <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
                 @click="() => removeItem(index)"></i>

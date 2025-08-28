@@ -2,9 +2,7 @@
 import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useUserBuilder({
-    validarform,
-    traerDatos,
-    guardarDatos,
+    storeId,
     cerrarModal,
     tipoFormulario,
     buscarUsuario,
@@ -18,18 +16,15 @@ export function useUserBuilder({
     const builder = new FormularioBuilder()
 
     return builder
+        .setStoreId(storeId)
         .setFormulariotamaño('LG')
         .setFormularioTitulo('Datos Usuario')
         .setFormularioTituloFormulario('Nuevo Paciente')
         .setFormularioShow(show)
         .setFormularioTipo(tipoFormulario)
-        .setValidarForm(validarform)
-        .setContentTraerDatos(traerDatos)
-        .setContentGuardarDatos(guardarDatos)
-        .setFormularioCerrar(cerrarModal)
         .setBotones([
-            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500' },
-            { text: 'Siguiente', color: 'bg-blue-500' },
+            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
+            { text: 'Siguiente', color: 'bg-blue-500', type: 'enviar' },
         ])
         // 📌 Sección: Datos
         .nuevaSeccion('Datos usuarios')
@@ -310,7 +305,7 @@ export function useUserBuilder({
             // 📌 Sección: Diagnósticos
             .addCampo({
                 component: 'GroupCampos',
-                type: 'Input',
+                type: 'SelectSearch',
                 key: 'Diagnosticos',
                 label: 'Diagnosticos',
                 buttons: [{icon: 'fa-solid fa-plus', color: 'bg-blue-500'}],
@@ -319,36 +314,25 @@ export function useUserBuilder({
                 name: 'cie10',
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
+                tipoDato: 'array',
                 options: CIE10,
                 opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                 seleccionarItem: seleccionarCIE_10
             })
-            // .addCampo({
-            //     component: 'Label',
-            //     text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnósticos (opcional)',
-            //     buttons: [{icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarDiagnostico}],
-            //     tamaño: 'w-full col-span-2',
-            //     forLabel: 'cie10'
-            // })
-            // .addCampo({
-            //     component: 'SelectSearch',
-            //     key: 'Diagnosticos',
-            //     placeholder: 'CIE-10',
-            //     id: 'cie10',
-            //     name: 'cie10',
-            //     tamaño: 'w-full col-span-2',
-            //     vmodel: 'Diagnosticos',
-            //     options: CIE10,
-            //     opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-            //     seleccionarItem: seleccionarCIE_10
-            // })
 
             // 📌 Sección: Antecedentes
             .addCampo({
-                component: 'Label',
-                text: '<i class="fa-solid fa-folder text-blue-500 mr-1"></i>Antecedentes (opcional)',
+                component: 'GroupCampos',
+                type: 'Input',
+                key: 'antecedentes',
+                label: 'Antecedentes',
+                buttons: [{icon: 'fa-solid fa-plus', color: 'bg-blue-500'}],
+                placeholder: 'Antecedente',
+                id: 'antecedente',
+                name: 'antecedente',
                 tamaño: 'w-full col-span-2',
-                forLabel: 'antecedentes'
+                vmodel: 'Antecedentes',
+                tipoDato: 'array',
             })
 
         // .nuevaSeccion('Datos Profesional')

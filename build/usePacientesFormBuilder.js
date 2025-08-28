@@ -2,11 +2,7 @@
 import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function usePacientesBuilder({
-  validarform,
-  traerDatos,
-  guardarDatos,
   cerrarModal,
-  enviarNuevaCita,
   seleccionarPaciente,
   seleccionarMedico,
   PacientesList,
@@ -15,16 +11,12 @@ export function usePacientesBuilder({
   const builder = new FormularioBuilder()
 
   return builder
-    .setValidarForm(validarform)
     .setFormulariotamaño('LG')
     .setFormularioTitulo('Datos Paciente')
     .setFormularioTituloFormulario('Nuevo Paciente')
-    .setContentTraerDatos(traerDatos)
-    .setContentGuardarDatos(guardarDatos)
-    .setFormularioCerrar(cerrarModal)
     .setBotones([
-      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500' },
-      { text: 'Guardar', accion: enviarNuevaCita, color: 'bg-blue-500' },
+      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
+      { text: 'Guardar', color: 'bg-blue-500', type: 'enviar' },
     ])
     .addCampo({
       component: 'Label',

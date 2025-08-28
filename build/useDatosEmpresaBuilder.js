@@ -2,18 +2,16 @@
 import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useDatosEmpresaBuilder({
-  validarform,
-  traerDatos,
-  guardarDatos,
-
+  storeId,
 }) {
   const builder = new FormularioBuilder()
 
   return builder
+    .setStoreId(storeId)
     .setFormularioFondo(false)
-    .setValidarForm(validarform)
-    .setContentTraerDatos(traerDatos)
-    .setContentGuardarDatos(guardarDatos)
+    .setBotones([{
+        type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
+    }])
     .nuevaSeccion('Datos Empresa')
       .addCampo({
           component: 'Label',
@@ -32,7 +30,7 @@ export function useDatosEmpresaBuilder({
           vmodel: 'Empresa.nombre'
       })
       .addCampo({
-          component: 'InputContenido',
+          component: 'Input',
           type: 'text',
           placeholder: 'Logo',
           id: 'logo',
@@ -41,7 +39,7 @@ export function useDatosEmpresaBuilder({
           vmodel: 'Empresa.logo',
           slot: {
               label: '<label for="logoFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
-              inputFile: {
+              input: {
                   type: 'file',
                   accept: 'image/png, image/jpeg',
                   id: 'logoFile',
@@ -51,7 +49,7 @@ export function useDatosEmpresaBuilder({
           }
       })
       .addCampo({
-          component: 'InputContenido',
+          component: 'Input',
           type: 'text',
           placeholder: 'Logo Login',
           id: 'logoLogin',
@@ -60,7 +58,7 @@ export function useDatosEmpresaBuilder({
           vmodel: 'Empresa.logoLogin',
           slot: {
               label: '<label for="logoLoginFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
-              inputFile: {
+              input: {
                   type: 'file',
                   accept: 'image/png, image/jpeg',
                   id: 'logoLoginFile',
@@ -70,7 +68,7 @@ export function useDatosEmpresaBuilder({
           }
       })
       .addCampo({
-          component: 'InputContenido',
+          component: 'Input',
           type: 'text',
           placeholder: 'JPG firmas facturas',
           id: 'JPG',
@@ -79,7 +77,7 @@ export function useDatosEmpresaBuilder({
           vmodel: 'Empresa.JPG',
           slot: {
               label: '<label for="JPGfirmas"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
-              inputFile: {
+              input: {
                   type: 'file',
                   accept: 'image/png, image/jpeg',
                   id: 'JPGfirmas',
@@ -138,7 +136,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Teléfono',
           id: 'telefono',
           name: 'telefono',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.telefono'
       })
       .addCampo({
@@ -147,7 +145,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Lenguaje',
           id: 'lenguaje',
           name: 'lenguaje',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.lenguaje'
       })
       .addCampo({
@@ -156,7 +154,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Impuesto',
           id: 'impuesto',
           name: 'impuesto',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.impuesto'
       })
       .addCampo({
@@ -165,7 +163,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'País',
           id: 'pais',
           name: 'pais',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.pais'
       })
       .addCampo({
@@ -174,7 +172,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo de Documento',
           id: 'tipoDocumento',
           name: 'tipoDocumento',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoDocumento'
       })
       .addCampo({
@@ -183,7 +181,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo de Operación',
           id: 'tipoOperacion',
           name: 'tipoOperacion',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoOperacion'
       })
       .addCampo({
@@ -192,7 +190,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo Entorno',
           id: 'tipoEntorno',
           name: 'tipoEntorno',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoEntorno'
       })
       .addCampo({
@@ -201,7 +199,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo Moneda',
           id: 'tipoMoneda',
           name: 'tipoMoneda',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoMoneda'
       })
       .addCampo({
@@ -210,7 +208,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo de Organización',
           id: 'tipoOrganizacion',
           name: 'tipoOrganizacion',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoOrganizacion'
       })
       .addCampo({
@@ -219,7 +217,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Municipio',
           id: 'municipio',
           name: 'municipio',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.municipio'
       })
       .addCampo({
@@ -228,7 +226,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo de Responsabilidad',
           id: 'tipoResponsabilidad',
           name: 'tipoResponsabilidad',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoResponsabilidad'
       })
       .addCampo({
@@ -237,7 +235,7 @@ export function useDatosEmpresaBuilder({
           placeholder: 'Tipo de Régimen',
           id: 'tipoRegimen',
           name: 'tipoRegimen',
-          tamaño: 'md:col-span-1 col-span-3',
+          tamaño: 'md:col-span-1 col-span-4',
           vmodel: 'Empresa.tipoRegimen'
       })
     .build()

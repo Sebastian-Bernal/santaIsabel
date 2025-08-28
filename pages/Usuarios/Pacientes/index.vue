@@ -14,11 +14,9 @@ import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { CIE10 } from '~/data/CIE10';
 
 const varView = useVarView();
-const storePaciente = usePacientesStore();
 const pacientesStore = usePacientesStore();
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([])
-const nuevoPacienteStore = storePaciente.createForm("NuevoPaciente");
 const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
 const refresh = ref(1)
@@ -56,7 +54,6 @@ const pacienteDatos = ref({});
 
 // Funciones para manejar la visibilidad de los formularios
 const agregarPaciente = () => {
-    varView.showNuevoPaciente = true;
     show.value = true;
 };
 const verPaciente = (paciente) => {
@@ -67,19 +64,7 @@ const verPaciente = (paciente) => {
 
 
 // Formulario
-const {
-    formData,
-    traerDatos,
-    guardarDatos,
-    validarform,
-    agregarItem,
-    eliminarItem,
-    limpiar,
-    estado,
-} = nuevoPacienteStore;
-
 function cerrar() {
-    limpiar()
     show.value = false
 }
 
@@ -88,38 +73,26 @@ function buscarUsuario () {
 }
 
 function seleccionarDepartamento (item) {
-    formData.InformacionUser.departamento = item.nombre;
+    // formData.InformacionUser.departamento = item.nombre;
 }
 
 function seleccionarCIE_10(item) {
-    formData.Diagnosticos.push({
-        id: '',
-        CIE_10: item.description,
-        codigo: item.code
-        // id_paciente: !props.verPaciente ? formData.Paciente.id : null,
-    });
+    // formData.Diagnosticos.push({
+    //     id: '',
+    //     CIE_10: item.description,
+    //     codigo: item.code
+    // });
 }
 
 const propiedadesUser = useUserBuilder({
-    validarform,
-    traerDatos,
-    guardarDatos,
+    storeId: 'NuevoPaciente',
     cerrarModal: cerrar,
     show : show,
     tipoFormulario: 'Wizard',
-    secciones: [
-    { numPagina: 1, color: 'bg-[rgba(0,0,0,0.5)] text-white' },
-    { numPagina: 2, color: 'bg-gray-300 dark:bg-gray-500 dark:text-gray-200 text-dark font-bold' },
-  ],
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
     EPS: opcionesEPS.value,
-    // agregarDiagnostico: agregarItem(
-    //     'Diagnosticos', 
-    //     { id: '', CIE_10: '', rol_attention: '', }, 
-    //     'CIE_10'
-    // ),
     agregarDiagnostico: () => {},
     seleccionarCIE_10,
     CIE10: CIE10
