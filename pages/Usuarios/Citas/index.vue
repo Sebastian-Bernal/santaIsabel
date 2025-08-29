@@ -1,7 +1,7 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue'
 
-import { useFormularioCitaBuilder } from '~/build/useCitasFormBuilder'
+import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder'
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario'
 import { CalendarioBuilder, CitasBuilder } from '~/composables/Formulario/ClassCalendario'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'

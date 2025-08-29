@@ -22,7 +22,7 @@ export function useDatosSofwareBuilder({
       .addCampo({
           component: 'Input',
           type: 'text',
-          placeholder: 'ID Software',
+          placeholder: 'ID asignado por la DIAN',
           id: 'idSoftware',
           name: 'idSoftware',
           tamaño: 'md:col-span-1 col-span-3',
@@ -34,7 +34,7 @@ export function useDatosSofwareBuilder({
           type: 'text',
           maxLength: 5,
           min: 1,
-          placeholder: 'Pin Software',
+          placeholder: 'Digite el pin del Software',
           id: 'pinSoftware',
           name: 'pinSoftware',
           tamaño: 'md:col-span-1 col-span-3',
@@ -46,7 +46,7 @@ export function useDatosSofwareBuilder({
       .addCampo({
           component: 'Input',
           type: 'text',
-          placeholder: 'Codigo Test Software',
+          placeholder: 'Introduzca el codigo del Set de pruebas para habilitacion',
           id: 'testSoftware',
           name: 'testSoftware',
           tamaño: 'md:col-span-1 col-span-3',

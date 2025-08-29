@@ -1,7 +1,5 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import IngresarProfesional from '~/components/Forms/Profesionales/IngresarProfesional.vue';
-import IngresarUsuario from '~/components/Forms/Profesionales/IngresarUsuarioProfesional.vue';
 import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
 // Data
 import { ref, onMounted } from 'vue';
@@ -10,11 +8,10 @@ import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 import { storeToRefs } from 'pinia';
-import { useUserProfesionalBuilder } from '~/build/useUserProfesional';
+import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 
 const varView = useVarView();
 const medicosStore = useMedicosStore();
-const nuevoProfesionalStore = medicosStore.createForm("NuevoProfesional");
 const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
 const refresh = ref(1);
@@ -50,22 +47,10 @@ const modificarMedico = (medico) => {
 };
 
 // Formulario
-const {
-    formData,
-    traerDatos,
-    guardarDatos,
-    validarform,
-    limpiar,
-    estado,
-} = nuevoProfesionalStore;
-
 const agregarMedico = () => {
-    varView.showNuevoPaciente = true;
     show.value = true;
 };
-
 function cerrar() {
-    limpiar()
     show.value = false
 }
 
@@ -74,20 +59,18 @@ function buscarUsuario () {
 }
 
 function seleccionarDepartamento (item) {
-    formData.InformacionUser.departamento = item.nombre;
+    // formData.InformacionUser.departamento = item.nombre;
 }
 
-const propiedadesUser = useUserProfesionalBuilder({
-    validarform,
-    traerDatos,
-    guardarDatos,
+const propiedadesUser = useUserBuilder({
+    storeId: 'NuevoProfesional',
     cerrarModal: cerrar,
-    show : show,
+    show: show,
     tipoFormulario: 'Wizard',
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
-    EPS: [],
+    tipoUsuario: 'Profesional'
 });
 
 // Construccion de pagina
@@ -117,7 +100,5 @@ const propiedades = pagina
 </script>
 <template>
     <Pagina :Propiedades="propiedades"/>
-    <IngresarUsuario v-if="varView.showNuevoProfesional" />
-    <IngresarProfesional v-if="varView.showNuevoProfesionalPaso2" />
     <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />
 </template>

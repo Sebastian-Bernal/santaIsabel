@@ -17,6 +17,7 @@ const {
     guardarDatos,
     getValue,
     setValue,
+    isValid,
     manejarClick,
     seccionActual,
     camposActuales,
@@ -31,15 +32,21 @@ const fondos = {
 
 // Inicializa formData con las claves de vmodel
 const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
+const camposRequeridos = ref(props.Propiedades?.content?.camposRequeridos || [])
 
 // Guardar y validar Datos
 watch(
     formData.value,
     (newValue) => {
         guardarDatos(newValue);
+        const camposValidos = camposRequeridos.value.every((ruta) => {
+            const valor = getValue(formData.value, ruta)
+            return isValid(valor)
+        });
+
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
-        varView.formComplete = !hayCamposInvalidos;
+        varView.formComplete = !hayCamposInvalidos && camposValidos;
     },
     { deep: true }
 );
@@ -50,7 +57,11 @@ onMounted(() => {
     if (datosGuardados) Object.assign(formData.value, datosGuardados)
 });
 
-
+function limpiar () {
+    // formData.value = transformarFormData(props.Propiedades.formulario.secciones)
+    localStorage.removeItem(props.Propiedades.content.storeId)
+    props.Propiedades.formulario.show.value = false
+}
 
 </script>
 <template>
@@ -62,8 +73,8 @@ onMounted(() => {
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
-                    :secciones="Propiedades.formulario.secciones" :titulo="Propiedades.formulario.tituloFormulario"
-                    :cerrar="Propiedades.formulario.cerrar" />
+                    :Propiedades="Propiedades.formulario"
+                    :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full px-6 pt-2">
                     <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined"
@@ -71,7 +82,7 @@ onMounted(() => {
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                     </h1>
                     <!-- Formulario -->
-                    <form action="" class="w-full h-full flex justify-center">
+                    <form autocomplete="off" class="w-full h-full flex justify-center">
                         <div
                             class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
                             <!-- Contenido del formulario -->

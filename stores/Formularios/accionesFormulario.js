@@ -48,6 +48,7 @@ export const accionesFormularios = {
         return respuesta
     },
     DatosFacturacion: async (data) => {
+        console.log('prueba')
         const respuesta = await validarYEnviarDatosFacturacion(data)
         return respuesta
     },

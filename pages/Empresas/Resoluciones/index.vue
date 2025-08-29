@@ -1,30 +1,57 @@
 <script setup>
-import FondoBlanco from '~/components/Fondos/FondoBlanco.vue';
-import Resoluciones from '~/components/Forms/Empresa/Resoluciones.vue'
+import Pagina from '~/components/organism/Pagina/Pagina.vue';
+
+import { useDatosResolucionBuilder } from '~/build/Empresa/useDatosResolucionBuilder';
+import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion';
+import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+
+
+const storeFacturacion = useFacturacionStore();
+const { listResoluciones } = storeToRefs(storeFacturacion);
+const Resoluciones = ref([]);
+
+onMounted(async() => {
+    Resoluciones.value = await listResoluciones.value
+});
+
+
+// Formularios Configuracion Empresa
+const propiedadesResolucion = useDatosResolucionBuilder({
+    storeId: 'DatosFacturacion'
+})
+
+// Construccion de pagina
+const pagina = new ComponenteBuilder()
+const builderTabla = new TablaBuilder()
+
+const propiedades = pagina
+    .setFondo('FondoDefault')
+    .setHeaderPage({titulo: 'Configuracion de Resolucion', descripcion: 'Registra y configura segun los datos de tu Empresa.'})
+    .setEstilos('')
+    .setLayout('')
+    .setContenedor('w-full flex flex-col gap-3')
+    .addComponente('Form', propiedadesResolucion)
+    .addComponente('Tabla', builderTabla
+        .setColumnas([
+            { titulo: 'tipoDocumento', value: 'Tipo de documento', tamaño: 100, ordenar: true },
+            { titulo: 'prefijo', value: 'Prefijo', tamaño: 100, ordenar: true },
+            { titulo: 'no_resolucion', value: 'Resolucion', tamaño: 100 },
+            { titulo: 'fechaInicial', value: 'Fecha Inicial', tamaño: 100 },
+            { titulo: 'fechaHasta', value: 'Fecha Hasta', tamaño: 100 },
+            { titulo: 'numeroInicial', value: 'Numero', tamaño: 100, ordenar: true },
+            { titulo: 'numeroHasta', value: 'Hasta', tamaño: 100, ordenar: true }
+        ])
+        .setHeaderTabla({ titulo: 'Resoluciones Registradas', color: 'bg-[var(--color-default)] text-white', })
+        .setDatos(Resoluciones)
+    )
+    .build()
+
+console.log(propiedades)
 </script>
 
 <template>
-    <FondoBlanco>
-        <div class="md:py-8 py-4 md:px-12 px-4">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-700">Configuracion de Resolucion</h2>
-                    <p class="text-gray-600 mt-2">Registra y configura segun los datos de tu Empresa.</p>
-                </div>
-                <div class="flex gap-4">
-                    <!-- <button class="bg-gray-200 p-3 rounded-2xl flex items-center gap-3">
-                        <i class="fa-solid fa-check-double"></i>
-                        Validar todo
-                    </button>
-                    <button class="bg-blue-500 text-white p-3 rounded-2xl flex items-center gap-3">
-                        <i class="fa-solid fa-download"></i>
-                        Registrar
-                    </button> -->
-                    <i class="fa-solid fa-file text-2xl text-blue-600"></i>
-                </div>
-            </div>
-
-            <Resoluciones/>
-        </div>
-    </FondoBlanco>
+    <Pagina :Propiedades="propiedades"/>
 </template>

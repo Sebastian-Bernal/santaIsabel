@@ -1,6 +1,5 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import ModificarPaciente from '../../components/Forms/Pacientes/ModificarPaciente.vue';
 
 import { ref, onMounted, watch } from 'vue';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
@@ -8,7 +7,7 @@ import { useVarView } from '../../stores/varview.js';
 import { storeToRefs } from 'pinia';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
-import { useUserBuilder } from '~/build/useUserPacienteBuilder';
+import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder.js';
 import { municipios } from '~/data/municipios.js'
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { CIE10 } from '~/data/CIE10';
@@ -21,11 +20,12 @@ const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
 const refresh = ref(1)
 const show = ref(false)
+const showVer = ref(false)
 
 async function llamadatos() {
     pacientes.value = await listPacientes.value;
 }
- // Refrescar pagina cuando se agrega o modifica Paciente
+// Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => varView.showNuevoPacientePaso2, async () => {
     await llamadatos()
     refresh.value++
@@ -56,23 +56,25 @@ const pacienteDatos = ref({});
 const agregarPaciente = () => {
     show.value = true;
 };
+
 const verPaciente = (paciente) => {
-    varView.showModificarPaciente = true;
+    showVer.value = true;
     pacienteDatos.value = paciente;
-    
+
 };
 
 
 // Formulario
 function cerrar() {
     show.value = false
+    showVer.value = false
 }
 
-function buscarUsuario () {
+function buscarUsuario() {
     console.log('buscar usuario')
 }
 
-function seleccionarDepartamento (item) {
+function seleccionarDepartamento(item) {
     // formData.InformacionUser.departamento = item.nombre;
 }
 
@@ -87,19 +89,39 @@ function seleccionarCIE_10(item) {
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoPaciente',
     cerrarModal: cerrar,
-    show : show,
+    show: show,
     tipoFormulario: 'Wizard',
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
-    EPS: opcionesEPS.value,
-    agregarDiagnostico: () => {},
+    EPS: opcionesEPS,
+    agregarDiagnostico: () => { },
     seleccionarCIE_10,
-    CIE10: CIE10
+    CIE10: CIE10,
+    tipoUsuario: 'Paciente'
 });
+
+const propiedadesVerUser = reactive(
+    useUserBuilder({
+        storeId: 'ModificarPaciente',
+        cerrarModal: cerrar,
+        show: showVer,
+        tipoFormulario: 'Wizard',
+        buscarUsuario,
+        departamentos: municipios.departamentos,
+        seleccionarDepartamento,
+        EPS: opcionesEPS.value,
+        agregarDiagnostico: () => { },
+        seleccionarCIE_10,
+        CIE10: CIE10,
+        verUser: true,
+        User: pacienteDatos.value
+    })
+);
 
 
 // Construccion de pagina
+
 const builderTabla = new TablaBuilder()
 const pagina = new ComponenteBuilder()
 
@@ -122,12 +144,12 @@ const propiedades = pagina
         .setDatos(pacientes)
     )
     .addComponente('Form', propiedadesUser)
+    .addComponente('Form', toRaw(propiedadesVerUser))
     .build()
 
-console.log(propiedades)
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades" />
+    <Pagina :Propiedades="toRaw(propiedades)" />
     <!-- <ModificarPaciente v-if="varView.showModificarPaciente" :paciente="pacienteDatos" /> -->
 </template>

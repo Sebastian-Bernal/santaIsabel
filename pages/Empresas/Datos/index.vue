@@ -1,31 +1,79 @@
 <script setup>
-import FondoBlanco from '~/components/Fondos/FondoBlanco.vue';
-import DatosAsociados from '~/components/Forms/Empresa/DatosAsociados.vue';
+import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
+import { useEpsBuilder } from '~/build/Empresa/useEpsBuilder'
+import { useProfesionesBuilder } from '~/build/Empresa/useProfesionesBuilder'
+import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+
+import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion';
+import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS';
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
+import { secciones } from '~/data/Buttons';
+import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+
+const storeFacturacion = useFacturacionStore();
+const storeEPS = useDatosEPSStore();
+const storeProfesion = useDatosProfesionStore();
+const varView = useVarView();
+const { listResoluciones } = storeToRefs(storeFacturacion);
+
+const Resoluciones = ref([]);
+const EPSdata = ref([]);
+const Profesiones = ref([]);
+
+onMounted(async () => {
+    varView.cargando = true
+    Resoluciones.value = await listResoluciones.value
+    EPSdata.value = await storeEPS.listEPS
+    Profesiones.value = await storeProfesion.listProfesion
+    varView.cargando = false
+});
+
+// Formularios Configuracion Empresa
+const propiedadesEPS = useEpsBuilder({
+    storeId: 'EPS'
+})
+
+const propiedadesProfesion = useProfesionesBuilder({
+    storeId: 'Profesion',
+    permisos: secciones
+})
+
+// Construccion de pagina
+const pagina = new ComponenteBuilder()
+const builderTabla = new TablaBuilder()
+
+const propiedades = pagina
+    .setFondo('FondoDefault')
+    .setHeaderPage({titulo: 'Datos Asociados a la Empresa', descripcion: 'Registra y configura segun los datos de tu Empresa.'})
+    .setEstilos('')
+    .setLayout('')
+    .setContenedor('w-full flex flex-col gap-3')
+    .addComponente('Form', propiedadesEPS)
+    // .addComponente('Tabla', builderTabla
+    //     .setColumnas([
+    //         { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
+    //         { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
+    //     ])
+    //     .setHeaderTabla({ titulo: 'Resoluciones Registradas', color: 'bg-[var(--color-default)] text-white', })
+    //     .setDatos(Resoluciones)
+    // )
+    .addComponente('Form', propiedadesProfesion)
+    // .addComponente('Tabla', builderTabla
+    //     .setColumnas([
+    //         { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
+    //         { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
+    //     ])
+    //     .setHeaderTabla({ titulo: 'Resoluciones Registradas', color: 'bg-[var(--color-default)] text-white', })
+    //     .setDatos(Resoluciones)
+    // )
+    .build()
+
+console.log(propiedades)
 </script>
 
 <template>
-    <FondoBlanco>
-        <div class="md:py-8 py-4 md:px-12 px-4">
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-700">Datos Asociados a la Empresa</h2>
-                    <p class="text-gray-600 mt-2">Registra y configura segun los datos de tu Empresa.</p>
-                </div>
-                <div class="flex gap-4">
-                    <!-- <button class="bg-gray-200 p-3 rounded-2xl flex items-center gap-3">
-                        <i class="fa-solid fa-check-double"></i>
-                        Validar todo
-                    </button>
-                    <button class="bg-blue-500 text-white p-3 rounded-2xl flex items-center gap-3" @click="nuevaEPS">
-                        <i class="fa-solid fa-download"></i>
-                        Registrar
-                    </button> -->
-                    <i class="fa-solid fa-database text-2xl text-blue-600"></i>
-                </div>
-            </div>
-
-            <DatosAsociados/>
-        </div>
-    </FondoBlanco>
+    <Pagina :Propiedades="propiedades"/>
 </template>

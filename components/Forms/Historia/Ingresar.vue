@@ -188,11 +188,6 @@ function enviarPrimerPaso() {
                 <SelectSearch v-model="formData.HistoriaClinica.No_document_paciente" :options="PacientesList"
                     :seleccionarItem="seleccionarPaciente" name="documento" id="documento"
                     placeholder="Numero de documento" :opciones="[{value: 'No_document'}]"/>
-                <!-- <Input v-model="formData.HistoriaClinica.No_document_paciente" type="number" id="documentoList"
-                    name="documentoList" @click="pacienteExistente" placeholder="Número de documento" tamaño="w-full" />
-                <datalist id="documentoList">
-                    <option v-for="(paciente, id) in PacientesList" :key="id" :value="paciente.document"></option>
-                </datalist> -->
                 <Select v-model="formData.HistoriaClinica.type_doc_paciente" id="tipoDocumento" name="tipoDocumento"
                     :options="[{ text: 'Cedula de ciudadania', value: 'cedula' }, { text: 'Cedula Extranjera', value: 'extranjera' }, { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }]"
                     placeholder="Tipo de documento" tamaño="w-full"></Select>

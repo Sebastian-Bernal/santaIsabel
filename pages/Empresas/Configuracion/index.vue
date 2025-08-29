@@ -1,11 +1,10 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
-import Configuracion from '~/components/Forms/Empresa/Configuracion.vue';
 
-import { useDatosEmpresaBuilder } from '~/build/useDatosEmpresaBuilder';
-import { useDatosSofwareBuilder } from '~/build/useDatosSoftwareBuilder';
-import { useDatosNominaBuilder } from '~/build/useDatosNominaBuilder';
+import { useDatosEmpresaBuilder } from '~/build/Empresa/useDatosEmpresaBuilder';
+import { useDatosSofwareBuilder } from '~/build/Empresa/useDatosSoftwareBuilder';
+import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
+import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 
 
@@ -22,6 +21,10 @@ const propiedadesNomina = useDatosNominaBuilder({
     storeId: 'DatosNomina'
 })
 
+const propiedadesEquivalente = useDatosEquivalentesBuilder({
+    storeId: 'DatosEquivalentes'
+})
+
 // Construccion de pagina
 const pagina = new ComponenteBuilder()
 
@@ -34,6 +37,7 @@ const propiedades = pagina
     .addComponente('Form', propiedadesEmpresa)
     .addComponente('Form', propiedadesSoftware)
     .addComponente('Form', propiedadesNomina)
+    .addComponente('Form', propiedadesEquivalente)
     .build()
 
 console.log(propiedades)
@@ -41,19 +45,4 @@ console.log(propiedades)
 
 <template>
     <Pagina :Propiedades="propiedades"/>
-    <fondoDefault>
-        <div>
-            <div class="flex justify-between items-center mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-700">Configuracion de la Empresa</h2>
-                    <p class="text-gray-600 mt-2">Registra y configura segun los datos de tu Empresa.</p>
-                </div>
-                <div class="flex gap-4">
-                    <i class="fa-solid fa-hospital text-2xl text-blue-600"></i>
-                </div>
-            </div>
-
-            <!-- <Configuracion/> -->
-        </div>
-    </fondoDefault>
 </template>

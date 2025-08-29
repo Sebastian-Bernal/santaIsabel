@@ -5,7 +5,7 @@ import { useNotificacionesStore } from '~/stores/notificaciones'
 import { accionesFormularios } from '~/stores/Formularios/accionesFormulario'
 import { loadComponent } from '~/components/organism/Forms/componentLoader'
 
-export function useFormulario(props, formData) {
+export function useFormulario(props) {
     const varView = useVarView()
     const notificaciones = useNotificacionesStore()
     const seccionActual = ref(0)
@@ -23,7 +23,7 @@ export function useFormulario(props, formData) {
                 for (let i = 0; i < partes.length; i++) {
                     const parte = partes[i]
                     if (i === partes.length - 1) {
-                        form[parte] = campo.tipoDato === 'array' ? [] : ''
+                        form[parte] = campo.value ? campo.value : ''
                     } else {
                         if (!form[parte] || typeof form[parte] !== 'object') {
                             form[parte] = {}
@@ -82,10 +82,15 @@ export function useFormulario(props, formData) {
         target[lastKey] = value
     }
 
+    function isValid(value) {
+    if (Array.isArray(value)) return value.length > 0
+    return value !== '' && value !== null && value !== undefined
+    }
+
     // Botones
     function manejarClick(item, formData) {
         if (item.type === 'enviar') {
-            if (seccionActual.value === 0) {
+            if (seccionActual.value === 0 && props.Propiedades.formulario.secciones.length > 1) {
                 siguienteSeccion()
             } else if (!varView.formComplete) {
                 validarform()
@@ -112,9 +117,9 @@ export function useFormulario(props, formData) {
         localStorage.setItem(props.Propiedades.content.storeId, JSON.stringify(newValue))
     }
 
-    function limpiar(formData) {
+    function limpiar(formDataRef) {
+        formDataRef = transformarFormData(props.Propiedades.formulario.secciones)
         localStorage.removeItem(props.Propiedades.content.storeId)
-        formData = {}
     }
 
     function validarform() {
@@ -170,6 +175,7 @@ export function useFormulario(props, formData) {
         anteriorSeccion,
         getValue,
         setValue,
+        isValid,
         manejarClick,
     }
 }

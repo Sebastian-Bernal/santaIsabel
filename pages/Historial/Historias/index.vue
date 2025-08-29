@@ -1,15 +1,15 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import Tabla from '~/components/organism/Table/Tabla.vue';
+
 import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
 import Paso2 from '~/components/Forms/Historia/Paso2.vue';
 import Paso3 from '~/components/Forms/Historia/Paso3.vue';
 import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 import VerHistoria from '~/components/Forms/Historia/VerHistoria.vue';
-import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
+import { useHistoriaBuilder } from '~/build/Historial/useHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
@@ -20,7 +20,8 @@ const historiasStore = useHistoriasStore();
 const historiasList = ref([]);
 const historia = ref([]);
 const refresh = ref(1);
-const onlyWatch = ref(false)
+const onlyWatch = ref(true);
+const show = ref(false);
 
 async function llamadatos(){
     const datos = await historiasStore.datosHistoria
@@ -43,7 +44,7 @@ onMounted(async() => {
 
 // funcion para controlar la visibilidad del formulario de nueva historia clinica
 const agregarHistoria = () => {
-    varView.showNuevaHistoria = true
+    show.value = true
 };
 
 
@@ -51,6 +52,17 @@ const verHistoria = (his) => {
     historia.value = his;
     varView.showVerHistoria = true
 };
+
+function cerrar () {
+    show.value = false
+}
+
+const propiedadesForm = useHistoriaBuilder({
+    storeId: 'RegistarHistoria',
+    cerrarModal: cerrar,
+    show: show,
+    tipoFormulario: 'Wizard',
+});
 
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
@@ -67,10 +79,10 @@ const propiedades = pagina
                 { titulo: 'estado', value: 'Estado', tamaño: 150 },
             ])
             .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: !onlyWatch ? agregarHistoria : null })
-            .setAcciones({ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, })
+            .setAcciones({ icons: [ {icon: 'ver', action: agregarHistoria} ], botones: true, })
             .setDatos(historiasList)
         )
-        // .addComponente('Form', propiedadesCita)
+        .addComponente('Form', propiedadesForm)
     .build()
     console.log(propiedades)
 
@@ -78,16 +90,7 @@ const propiedades = pagina
 
 <template>
     <Pagina :Propiedades="propiedades"/>
-    <!-- <FondoDefault>
-        <Tabla :key="refresh" :columnas="[
-            { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
-            { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
-            { titulo: 'estado', value: 'Estado', tamaño: 150 },
-        ]" :headerTabla="{ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: !onlyWatch ? agregarHistoria : null 
- }"
-            :acciones="{ icons: [ {icon: 'ver', action: verHistoria} ], botones: true, }" 
-            :datos="{ content: historiasList }" />
-    </FondoDefault> -->
+
     <Ingresar v-if="varView.showNuevaHistoria" />
     <Paso2 v-if="varView.showPaso2" />
     <Paso3 v-if="varView.showPaso3" />

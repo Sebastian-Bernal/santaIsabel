@@ -22,7 +22,7 @@ export function useDatosNominaBuilder({
       .addCampo({
           component: 'Input',
           type: 'text',
-          placeholder: 'ID Nomina',
+          placeholder: 'ID Software Nómina',
           id: 'idNomina',
           name: 'idNomina',
           tamaño: 'md:col-span-1 col-span-3',
@@ -34,7 +34,7 @@ export function useDatosNominaBuilder({
           type: 'text',
           maxLength: 5,
           min: 1,
-          placeholder: 'Pin Nomina',
+          placeholder: 'Pin Software Nómina',
           id: 'pinNomina',
           name: 'pinNomina',
           tamaño: 'md:col-span-1 col-span-3',
@@ -46,7 +46,7 @@ export function useDatosNominaBuilder({
       .addCampo({
           component: 'Input',
           type: 'text',
-          placeholder: 'Codigo Test Nomina',
+          placeholder: 'Test Set ID Nómina',
           id: 'testNomina',
           name: 'testNomina',
           tamaño: 'md:col-span-1 col-span-3',

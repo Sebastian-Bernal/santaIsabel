@@ -115,7 +115,7 @@ const estiloColumnas = computed(() => {
 
                 <client-only>
                     <div class="flex relative dropdown cursor-pointer">
-                        <download-excel class="flex gap-1 items-center" :data="props.Propiedades.datos.content"
+                        <download-excel class="flex gap-1 items-center" :data="Array.isArray(props.Propiedades?.datos?.content) ? props.Propiedades.datos.content : []"
                             :name="props.Propiedades.headerTabla.titulo" type="xls">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>

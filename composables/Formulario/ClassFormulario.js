@@ -82,6 +82,7 @@ export class FormularioBuilder {
       },
       content: {
         storeId: '',
+        camposRequeridos: '',
         modelValue: null,
         formulario: '',
       },
@@ -91,6 +92,11 @@ export class FormularioBuilder {
 
   setStoreId(id) {
     this.propiedades.content.storeId = id
+    return this
+  }
+
+  setCamposRequeridos(campos) {
+    this.propiedades.content.camposRequeridos = campos
     return this
   }
 
