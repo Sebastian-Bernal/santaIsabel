@@ -1,8 +1,6 @@
 <script setup>
 // Componentes 
 import ModalFormLG from '~/components/molecules/Modals/ModalFormLG.vue';
-import DatosPacientes from "../../Forms/Pacientes/DatosPacientes.vue"
-import DatosUsers from '../Users/DatosUsers.vue';
 // Data
 import { validarYEnviarEliminarPaciente } from '~/Core/Paciente/EliminarPaciente';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';

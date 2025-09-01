@@ -1,14 +1,9 @@
 <script setup>
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
-import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
-import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
-import Paso2 from '~/components/Forms/Historia/Paso2.vue';
-import Paso3 from '~/components/Forms/Historia/Paso3.vue';
-import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
@@ -168,9 +163,4 @@ async function activarCita(cita) {
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
-    <IngresarPaciente v-if="varView.showNuevoPaciente" />
-    <Ingresar v-if="varView.showNuevaHistoria" :paciente="paciente" :cita="citaSeleccionada" />
-    <Paso2 v-if="varView.showPaso2" />
-    <Paso3 v-if="varView.showPaso3" />
-    <Paso4 v-if="varView.showPaso4" />
 </template>

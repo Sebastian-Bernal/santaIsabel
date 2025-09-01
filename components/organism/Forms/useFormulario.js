@@ -90,7 +90,7 @@ export function useFormulario(props) {
     // Botones
     function manejarClick(item, formData) {
         if (item.type === 'enviar') {
-            if (seccionActual.value === 0 && props.Propiedades.formulario.secciones.length > 1) {
+            if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 siguienteSeccion()
             } else if (!varView.formComplete) {
                 validarform()

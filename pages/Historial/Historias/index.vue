@@ -13,6 +13,8 @@ import { useHistoriaBuilder } from '~/build/Historial/useHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { CIE10 } from '~/data/CIE10';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -22,6 +24,8 @@ const historia = ref([]);
 const refresh = ref(1);
 const onlyWatch = ref(true);
 const show = ref(false);
+const pacientesStore = usePacientesStore();
+const pacientesList = ref([])
 
 async function llamadatos(){
     const datos = await historiasStore.datosHistoria
@@ -36,6 +40,7 @@ watch(() => varView.showPaso4, async()=>{
 // Cargar los pacientes desde el store
 onMounted(async() => {
     varView.cargando = true
+    pacientesList.value = await pacientesStore.listPacientes;
     const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
     onlyWatch.value = permisosStore.includes('Historia')
     await llamadatos()
@@ -45,6 +50,7 @@ onMounted(async() => {
 // funcion para controlar la visibilidad del formulario de nueva historia clinica
 const agregarHistoria = () => {
     show.value = true
+    // varView.showNuevaHistoria = true
 };
 
 
@@ -57,11 +63,24 @@ function cerrar () {
     show.value = false
 }
 
+function seleccionarPaciente(){
+
+}
+
+function validarCampo(){
+    console.log('campo')
+}
+
 const propiedadesForm = useHistoriaBuilder({
-    storeId: 'RegistarHistoria',
+    storeId: 'RegistrarHistoria',
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'Wizard',
+    PacientesList: pacientesList,
+    seleccionarPaciente: seleccionarPaciente,
+    CIE10: CIE10,
+    validarCampo,
+    seleccionarCIE_10: () => {}
 });
 
 // const builderCitas = new CitasBuilder()
@@ -78,7 +97,7 @@ const propiedades = pagina
                 { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                 { titulo: 'estado', value: 'Estado', tamaño: 150 },
             ])
-            .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: !onlyWatch ? agregarHistoria : null })
+            .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria })
             .setAcciones({ icons: [ {icon: 'ver', action: agregarHistoria} ], botones: true, })
             .setDatos(historiasList)
         )

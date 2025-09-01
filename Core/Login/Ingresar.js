@@ -21,8 +21,8 @@ export const validarYEnviarLogin = async (datos) => {
 
     // Buscar coincidencia por correo y contraseña
     const usuarioValido = usuarios.find(usuario =>
-        usuario.correo?.toLowerCase() === datos.correo.toLowerCase() &&
-        usuario.contraseña?.toLowerCase() === datos.contraseña.toLowerCase()
+        usuario.correo?.toLowerCase() === datos.Usuario.correo.toLowerCase() &&
+        usuario.contraseña?.toLowerCase() === datos.Usuario.contraseña.toLowerCase()
     );
 
     if (!usuarioValido) {
@@ -61,7 +61,7 @@ export const validarYEnviarLogin = async (datos) => {
         home = 'Citas'
     }
 
-    const estado = await enviarFormulario(datos)
+    const estado = await enviarFormulario(datos.Usuario)
     return {
         estado,
         home

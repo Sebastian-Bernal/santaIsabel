@@ -1,10 +1,4 @@
 <script setup>
-import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue'
-import IngresarUsuario from '~/components/Forms/Pacientes/IngresarUsuario.vue';
-import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
-import Paso2 from '~/components/Forms/Historia/Paso2.vue';
-import Paso3 from '~/components/Forms/Historia/Paso3.vue';
-import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 import { useVarView } from "~/stores/varview.js";
 
 const varView = useVarView();
@@ -93,10 +87,4 @@ const actions = [
             </div>
         </div>
     </div>
-        <IngresarUsuario v-if="varView.showNuevoPaciente"/>
-        <IngresarPaciente v-if="varView.showNuevoPacientePaso2"/>
-        <Ingresar v-if="varView.showNuevaHistoria"/>
-        <Paso2 v-if="varView.showPaso2" />
-        <Paso3 v-if="varView.showPaso3" />
-        <Paso4 v-if="varView.showPaso4" />
 </template>

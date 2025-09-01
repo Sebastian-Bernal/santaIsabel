@@ -1,0 +1,68 @@
+// builders/useFormularioCitaBuilder.js
+import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
+import CrossImg from '~/assets/img/cross.png'
+
+export function useLoginBuilder({
+  storeId,
+  recuperarcontraseña
+}) {
+  const builder = new FormularioBuilder()
+
+  return builder
+    .setStoreId(storeId)
+    .setFormulariotamaño('SM')
+    .setFormularioEstilos('bg-inherit!')
+    .setFormularioFondo('FondoTransparent')
+    .setFormularioShow(true)
+    .setBotones([
+      { text: 'Ingresar', color: 'bg-white text-black!', type: 'enviar' },
+    ])
+    .nuevaSeccion()
+    .addCampo({
+        component: 'Imagen',
+        src: CrossImg,
+        tamaño: 'w-1/6 logo mb-2 select-none',
+        contenedor: 'flex justify-center w-full col-span-2'
+      })
+      .addCampo({
+        component: 'Label',
+        text: `
+            <div class="flex flex-col justify-center items-center gap-1 pb-5">
+                <h3 class="text-white text-3xl font-bold">Thesalus</h3>
+            </div>
+        `,
+        tamaño: 'w-full col-span-2 flex justify-center'
+      })
+      .addCampo({
+        component: 'Input',
+        placeholder: 'Correo Electronico',
+        type: 'email',
+        id: 'correo-user',
+        name: 'correo-user',
+        tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center text-white!',
+        vmodel: 'Usuario.correo',
+      })
+      .addCampo({
+        component: 'Input',
+        placeholder: 'Contraseña',
+        type: 'password',
+        id: 'contraseña',
+        name: 'contraseña',
+        tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
+        vmodel: 'Usuario.contraseña',
+      })
+      .addCampo({
+        component: 'Label',
+        text: `
+            <p class="text-sm my-3 text-gray-100">
+                Olvidaste tu contraseña?
+                <span @click="recuperarContraseña" class="underline font-semibold cursor-pointer">Recuperar</span>
+            </p>
+        `,
+        events: {
+            onClick: recuperarcontraseña
+        },
+        tamaño: 'w-full col-span-2 flex justify-center'
+      })
+    .build()
+}

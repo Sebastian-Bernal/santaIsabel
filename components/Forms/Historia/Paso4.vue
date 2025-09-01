@@ -140,16 +140,10 @@ const cerrarModal = () => {
 
             <Section styles="flex-col max-h-[150px] overflow-y-auto">
                 <div class="w-full flex gap-3 items-center" v-for="(diagnostico, i) in formData.Diagnosticos">
-                    <Input v-model="diagnostico.CIE_10" type="text" id="cie10" name="cie10" placeholder="CIE-10"
-                        list="cie10List" tamaño="w-full" @change="autocompletarCodigo(i)" />
-                    <datalist id="cie10List">
-                        <option v-for="enfermedad in CIE10" :value="enfermedad.description">codigo: {{ enfermedad.code
-                            }}</option>
-                    </datalist>
 
-                    <!-- <SelectSearch v-model="diagnostico.CIE_10" :options="CIE10.value" @change="autocompletarCodigo(i)"
+                    <SelectSearch v-model="diagnostico.CIE_10" :options="CIE10.value" @change="autocompletarCodigo(i)"
                     :seleccionarItem="autocompletarCodigo" name="cie10" id="cie10"
-                    placeholder="CIE-10" :opciones="[{value: 'description'},{text: 'Codigo', value: 'code' }]"/> -->
+                    placeholder="CIE-10" :opciones="[{value: 'description'},{text: 'Codigo', value: 'code' }]"/>
 
                     <i class="fa-solid fa-close text-red-400" @click="eliminarItem('Diagnosticos', i)"></i>
                 </div>

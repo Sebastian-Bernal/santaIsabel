@@ -11,6 +11,7 @@ export function loadComponent(name) {
     Textarea: () => import('~/components/atoms/Textareas/Textarea.vue'),
     Checkbox: () => import('~/components/atoms/Checkbox/Checkbox.vue'),
     GroupCampos: () => import('~/components/molecules/groupCampos/GroupCampos.vue'),
+    Imagen: () => import('~/components/atoms/Images/Imagen.vue')
   };
 
   const loader = componentMap[name];

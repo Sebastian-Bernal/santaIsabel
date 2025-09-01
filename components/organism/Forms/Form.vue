@@ -1,5 +1,6 @@
 <script setup>
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
+import FondoTransparent from '~/components/atoms/Fondos/FondoTransparent.vue';
 import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
 import Wizard from './Wizard.vue';
 
@@ -27,8 +28,9 @@ const {
 const varView = useVarView();
 const fondos = {
     true: FondoBlur,
-    false: 'div'
-}
+    false: 'div',
+    FondoTransparent,
+};console.log(!props.Propiedades.formulario.fondo, toRef(props.Propiedades.formulario.show))
 
 // Inicializa formData con las claves de vmodel
 const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
@@ -66,14 +68,14 @@ function limpiar () {
 </script>
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
-        v-if="!Propiedades.formulario.fondo || Propiedades.formulario.show.value">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7" :class="Propiedades.formulario.tamañoForm">
+        v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7" :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
-            <div class="pb-5 z-1 flex flex-col items-center h-[90%]  rounded-2xl">
+            <div class="pb-5 z-1 flex flex-col items-center h-[90%] rounded-2xl">
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
-                    :Propiedades="Propiedades.formulario"
+                    :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
                     :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full px-6 pt-2">
@@ -84,7 +86,7 @@ function limpiar () {
                     <!-- Formulario -->
                     <form autocomplete="off" class="w-full h-full flex justify-center">
                         <div
-                            class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[73%] overflow-y-auto">
+                            class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto" :class="{'h-[75%]!' : Propiedades.formulario.tipo === 'Wizard'}">
                             <!-- Contenido del formulario -->
                             <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
                                 <component v-for="(item, index) in camposActuales" :key="index"

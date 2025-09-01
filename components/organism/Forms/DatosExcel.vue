@@ -111,7 +111,7 @@ function mostrar() {
 <template>
     <ModalXS>
         <div class="py-5 h-full flex flex-col justify-between">
-            <h2 class="text-2xl font-semibold text-center py-2">Configuracion Datos a exportar</h2>
+            <h2 class="text-2xl font-semibold text-center py-2">Configuracion Datos a exportarr</h2>
             <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
                 <div class="flex justify-between items-center">
                     <p class="text-lg text-gray-600">{{ props.tabla }} <i class="fa-solid fa-gear"></i></p>

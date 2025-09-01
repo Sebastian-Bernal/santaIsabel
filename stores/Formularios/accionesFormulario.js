@@ -13,8 +13,22 @@ import { validarYEnviarNuevoUsuario } from '~/Core/Usuario/NuevoUsuario';
 import { validarYEnviarModificarUsuario } from '~/Core/Usuario/ModificarUsuario';
 import { validarYEnviarDatosEPS } from '~/Core/Empresa/DatosEPS';
 import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
+import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
+    Ingresar: async (data) => {
+        const respuesta = await validarYEnviarLogin(data);
+        if (respuesta.estado) {
+            if (respuesta.home === 'Dashboard') {
+                window.location.href = '/Home'
+            } else if (respuesta.home === 'Historia') {
+                window.location.href = '/Historia'
+            } else if (respuesta.home === 'Citas') {
+                window.location.href = '/Usuarios/Citas'
+            }
+        }
+        return respuesta;
+    },
     NuevaCita: async (data) => {
         const respuesta = await validarYEnviarNuevaCita(data);
         return respuesta;

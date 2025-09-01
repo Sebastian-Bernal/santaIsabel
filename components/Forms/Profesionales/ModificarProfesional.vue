@@ -1,8 +1,6 @@
 <script setup>
 // Componentes
 import ModalFormXS from "~/components/Modales/ModalFormXS.vue";
-import DatosProfesional from "~/components/Forms/Profesionales/DatosProfesional.vue";
-import DatosUsers from "../Users/DatosUsers.vue";
 // Data
 import { validarYEnviarEliminarMedico } from "~/Core/Profesional/EliminarMedico.js";
 import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';

@@ -4,7 +4,7 @@ import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
-import DatosExcel from '~/components/Forms/Excel/DatosExcel.vue';
+import DatosExcel from '~/components/organism/Forms/DatosExcel.vue';
 
 import { usePaginacion } from '~/composables/Tabla/usePaginacion.js'
 import { useColumnasResponsivas } from '~/composables/Tabla/useTablasResponsive';

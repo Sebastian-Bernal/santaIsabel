@@ -8,7 +8,6 @@ import SelectSearch from '~/components/Selects/SelectSearch.vue';
 import Label from '~/components/Labels/Label.vue';
 import Button from '~/components/Buttons/Button.vue';
 import Section from '~/components/Forms/Section.vue';
-import IngresarPaciente from '~/components/Forms/Pacientes/IngresarPaciente.vue';
 import ModificarPaciente from '~/components/Forms/Pacientes/ModificarPaciente.vue';
 // Data
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -218,7 +217,6 @@ function enviarPrimerPaso() {
 
         </FormularioWizard>
     </ModalFormLG>
-    <IngresarPaciente v-if="varView.showNuevoPaciente" />
     <ModificarPaciente v-if="varView.showModificarPaciente" :pacienteId="formData.HistoriaClinica.id_paciente" />
 </template>
 
