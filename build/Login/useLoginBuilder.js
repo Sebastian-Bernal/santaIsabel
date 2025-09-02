@@ -4,12 +4,14 @@ import CrossImg from '~/assets/img/cross.png'
 
 export function useLoginBuilder({
   storeId,
+  storePinia,
   recuperarcontraseña
 }) {
   const builder = new FormularioBuilder()
 
   return builder
     .setStoreId(storeId)
+    .setStorePinia(storePinia)
     .setFormulariotamaño('SM')
     .setFormularioEstilos('bg-inherit!')
     .setFormularioFondo('FondoTransparent')

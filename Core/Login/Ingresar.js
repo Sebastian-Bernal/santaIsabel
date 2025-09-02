@@ -1,5 +1,5 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useUsuariosStore } from '~/stores/Formularios/login/Login.js';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';

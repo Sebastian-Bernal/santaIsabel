@@ -3,6 +3,7 @@ import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useFormularioCitaBuilder({
   storeId,
+  storePinia,
   cerrarModal,
   seleccionarPaciente,
   seleccionarMedico,
@@ -14,6 +15,7 @@ export function useFormularioCitaBuilder({
 
   return builder
     .setStoreId(storeId)
+    .setStorePinia(storePinia)
     .setFormularioShow(show)
     .setFormulariotamaño('XS')
     .setFormularioTitulo('Agendar Cita')

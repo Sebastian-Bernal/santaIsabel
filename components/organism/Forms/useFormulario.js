@@ -117,8 +117,7 @@ export function useFormulario(props) {
         localStorage.setItem(props.Propiedades.content.storeId, JSON.stringify(newValue))
     }
 
-    function limpiar(formDataRef) {
-        formDataRef = transformarFormData(props.Propiedades.formulario.secciones)
+    function limpiar() {
         localStorage.removeItem(props.Propiedades.content.storeId)
     }
 

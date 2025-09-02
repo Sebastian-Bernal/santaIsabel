@@ -10,7 +10,7 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
     const usuarios = await usersStore.listUsers
 
     const correo = usuarios.find(
-        p => p.correo.toLowerCase() === datos.correo.toLowerCase()
+        p => p.correo.toLowerCase() === datos.Usuario.correo.toLowerCase()
     )
 
     if (!correo) {
@@ -22,24 +22,26 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
         return;
     };
 
-    return await enviarFormulario(datos);
+    return await enviarFormulario(datos.Usuario);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const varView = useVarView();
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
-            datos.codigoRecuperacion = generarCodigo()
-            const response = await emailjs.send(
-                import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
-                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
-                datos,
-                import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
-            )
-            console.log('Correo enviado con éxito:', response.status, response.text)
+            // datos.codigoRecuperacion = generarCodigo()
+            // const response = await emailjs.send(
+            //     import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
+            //     import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
+            //     datos,
+            //     import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
+            // )
+            // console.log('Correo enviado con éxito:', response.status, response.text)
+            varView.showCambiarContraseña = true
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);

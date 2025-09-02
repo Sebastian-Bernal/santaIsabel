@@ -73,6 +73,7 @@ function validarCampo(){
 
 const propiedadesForm = useHistoriaBuilder({
     storeId: 'RegistrarHistoria',
+    storePinia: 'Historias',
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'Wizard',

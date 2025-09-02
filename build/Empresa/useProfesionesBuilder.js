@@ -3,12 +3,14 @@ import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useProfesionesBuilder({
   storeId,
+  storePinia,
   permisos
 }) {
   const builder = new FormularioBuilder()
 
   return builder
     .setStoreId(storeId)
+    .setStorePinia(storePinia)
     .setFormularioFondo(false)
     .setBotones([{
       type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
@@ -46,7 +48,7 @@ export function useProfesionesBuilder({
       id: 'permisos',
       name: 'permisos',
       tamaño: 'col-span-2',
-      vmodel: 'Profesion.at(-1).permisos',
+      vmodel: 'Profesion.permisos',
       options: permisos
     })
     .addCampo({

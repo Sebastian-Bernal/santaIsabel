@@ -1,4 +1,4 @@
-import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { guardarProfesionalEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 

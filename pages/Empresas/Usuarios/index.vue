@@ -1,7 +1,5 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-// Data
-import ModificarUser from '~/components/Forms/Users/ModificarUser.vue';
 
 import { municipios } from '~/data/municipios';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
@@ -58,6 +56,7 @@ function seleccionarDepartamento() {
 
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoUser',
+    storePinia: 'Usuarios',
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'single',
@@ -94,5 +93,4 @@ const propiedades = pagina
 </script>
 <template>
     <Pagina :Propiedades="propiedades"/>
-    <ModificarUser v-if="varView.showModificarUser" :User="datosUser"></ModificarUser>
 </template>

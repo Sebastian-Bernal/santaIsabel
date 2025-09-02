@@ -30,6 +30,7 @@ const estructuraCita = {
 // Pinia Empresa
 export const useEmpresaStore = defineStore('Empresa', {
     state: () => ({
+        Formulario: estructuraCita,
         Empresa: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
         EmpresaData: []
     }),

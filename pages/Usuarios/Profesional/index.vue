@@ -1,10 +1,9 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import ModificarProfesional from '~/components/Forms/Profesionales/ModificarProfesional.vue';
 // Data
 import { ref, onMounted } from 'vue';
 import { municipios } from '~/data/municipios.js'
-import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 import { storeToRefs } from 'pinia';
@@ -64,6 +63,7 @@ function seleccionarDepartamento (item) {
 
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoProfesional',
+    storePinia: 'Profesionales',
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'Wizard',
@@ -100,5 +100,4 @@ const propiedades = pagina
 </script>
 <template>
     <Pagina :Propiedades="propiedades"/>
-    <ModificarProfesional v-if="varView.showModificarProfesional" :medico="medicoDatos" />
 </template>

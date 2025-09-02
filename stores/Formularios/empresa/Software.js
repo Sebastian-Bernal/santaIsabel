@@ -25,6 +25,7 @@ const estructuraCita = {
 // Pinia Empresa
 export const useSoftwareStore = defineStore('Software', {
     state: () => ({
+        Formulario: estructuraCita,
         Software: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
         SoftwareData: []
     }),

@@ -17,3 +17,75 @@ export function loadComponent(name) {
   const loader = componentMap[name];
   return loader ? defineAsyncComponent(loader) : null;
 }
+
+export async function cargarStore(storeName) {
+  let tablaStore;
+
+  switch (storeName) {
+    case 'Pacientes': {
+      const { usePacientesStore } = await import('~/stores/Formularios/paciente/Paciente');
+      tablaStore = usePacientesStore();
+      break;
+    }
+    case 'Profesionales': {
+      const { useMedicosStore } = await import('~/stores/Formularios/profesional/Profesionales');
+      tablaStore = useMedicosStore();
+      break;
+    }
+    case 'Usuarios': {
+      const { useUsersStore } = await import('~/stores/Formularios/usuarios/Users');
+      tablaStore = useUsersStore();
+      break;
+    }
+    case 'Historias': {
+      const { useHistoriasStore } = await import('~/stores/Formularios/historias/Historia');
+      tablaStore = useHistoriasStore();
+      break;
+    }
+    case 'Login': {
+      const { useUsuariosStore } = await import('~/stores/Formularios/login/Login');
+      tablaStore = useUsuariosStore();
+      break;
+    }
+    case 'Notas': {
+      const { useUsuariosStore } = await import('~/stores/Formularios/historias/Notas');
+      tablaStore = useUsuariosStore();
+      break;
+    }
+    case 'Citas': {
+      const { useCitasStore } = await import('~/stores/Formularios/citas/Cita');
+      tablaStore = useCitasStore();
+      break;
+    }
+    case 'Resolucion': {
+      const { useFacturacionStore } = await import('~/stores/Formularios/empresa/Facturacion');
+      tablaStore = useFacturacionStore();
+      break;
+    }
+    case 'Profesion': {
+      const { useDatosProfesionStore } = await import('~/stores/Formularios/empresa/Profesion');
+      tablaStore = useDatosProfesionStore();
+      break;
+    }
+    case 'EPS': {
+      const { useDatosEPSStore } = await import('~/stores/Formularios/empresa/EPS');
+      tablaStore = useDatosEPSStore();
+      break;
+    }
+    case 'Empresa': {
+      const { useEmpresaStore } = await import('~/stores/Formularios/empresa/Empresa');
+      tablaStore = useEmpresaStore();
+      break;
+    }
+    case 'Software': {
+      const { useSoftwareStore } = await import('~/stores/Formularios/empresa/Software');
+      tablaStore = useSoftwareStore();
+      break;
+    }
+    default:
+      console.warn(`Store "${storeName}" no reconocido.`);
+      break;
+  }
+
+  return tablaStore;
+}

@@ -1,44 +1,40 @@
 import { createFormStore } from '../../createFormStore';
 import { useUsersStore } from "../usuarios/Users";
-// Creacion del store para Nuevo Medico
-
-// Estructura de datos de Medicos
-const estructuraMedico = {
-    User: {
-        id_empresa: '',
-        correo: '',
-        contraseña: null,
-        rol: 'Profesional',
-        estado: 'activo',
-    },
-    InformacionUser : {
-        id_usuario: '',
-        name: '',
-        No_document: '',
-        tipo: '',
-        celular: '',
-        telefono: '',
-        nacimiento: '',
-        direccion: '',
-        municipio: '',
-        departamento: '',
-        barrio: '',
-        zona: '',
-    },
-    Medico: {
-        id_usuario: '',
-        departamentoLaboral: '',
-        municipioLaboral: '',
-        zonaLaboral: '',
-        profesion: '',
-        estado: 'activo',
-    }
-}
 
 // Pinia Medicos
 export const useMedicosStore = defineStore('Medicos', {
     state: () => ({
-        Medico: JSON.parse(JSON.stringify(estructuraMedico)), // estructura base compartida
+        Formulario: {
+            User: {
+                id_empresa: '',
+                correo: '',
+                contraseña: null,
+                rol: 'Profesional',
+                estado: 'activo',
+            },
+            InformacionUser: {
+                id_usuario: '',
+                name: '',
+                No_document: '',
+                tipo: '',
+                celular: '',
+                telefono: '',
+                nacimiento: '',
+                direccion: '',
+                municipio: '',
+                departamento: '',
+                barrio: '',
+                zona: '',
+            },
+            Medico: {
+                id_usuario: '',
+                departamentoLaboral: '',
+                municipioLaboral: '',
+                zonaLaboral: '',
+                profesion: '',
+                estado: 'activo',
+            }
+        },
         Medicos: [] // Lista de medicos
     }),
 
@@ -46,7 +42,7 @@ export const useMedicosStore = defineStore('Medicos', {
         async listMedicos(state) {
             const store = useIndexedDBStore()
             const usersStore = useUsersStore()
-            
+
             store.almacen = 'Medico'
             const medicos = await store.leerdatos()
 

@@ -80,9 +80,11 @@ export class FormularioBuilder {
         tituloFormulario: '',
         secciones: [],
         show: false,
+        soloVer: false,
       },
       content: {
         storeId: '',
+        storePinia: '',
         camposRequeridos: '',
         modelValue: null,
         formulario: '',
@@ -93,6 +95,16 @@ export class FormularioBuilder {
 
   setStoreId(id) {
     this.propiedades.content.storeId = id
+    return this
+  }
+
+  setStorePinia(pinia) {
+    this.propiedades.content.storePinia = pinia
+    return this
+  }
+
+  setSoloVer(estado) {
+    this.propiedades.formulario.soloVer = estado
     return this
   }
 

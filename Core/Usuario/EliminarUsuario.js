@@ -1,7 +1,7 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
-import { useMedicosStore } from '~/stores/Formularios/medicos/Medico.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 
 
 export const validarYEnviarEliminarUsuario = async (datos) => {

@@ -3,6 +3,7 @@ import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useHistoriaBuilder({
     storeId,
+    storePinia,
     cerrarModal,
     tipoFormulario,
     PacientesList,
@@ -16,6 +17,7 @@ export function useHistoriaBuilder({
 
     builder
         .setStoreId(storeId)
+        .setStorePinia(storePinia)
         // .setCamposRequeridos(['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo'])
         .setFormulariotamaño('LG')
         .setFormularioTituloFormulario('Registrar Consulta')

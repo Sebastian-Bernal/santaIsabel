@@ -10,6 +10,7 @@ const estructuraDatosEPS = {
 // Pinia EPS
 export const useDatosEPSStore = defineStore('DatosEPS', {
     state: () => ({
+        Formulario: estructuraDatosEPS,
         Datos: JSON.parse(JSON.stringify(estructuraDatosEPS)), // estructura base compartida
         DatosEPS: []
     }),

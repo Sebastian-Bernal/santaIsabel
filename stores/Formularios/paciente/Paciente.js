@@ -2,50 +2,45 @@ import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
-// Creacion del store Paciente
-
-// Estructura de datos de Pacientes
-const estructuraPaciente = {
-    User: {
-        id_empresa: '',
-        correo: '',
-        contraseña: null,
-        rol: 'Paciente',
-        estado: 'activo',
-    },
-    InformacionUser : {
-        id_usuario: '',
-        name: '',
-        No_document: '',
-        tipo: '',
-        celular: '',
-        telefono: '',
-        nacimiento: '',
-        direccion: '',
-        municipio: '',
-        departamento: '',
-        barrio: '',
-        zona: '',
-    },
-    Paciente: {
-        id_usuario: '',
-        sexo: '',
-        genero: '',
-        Eps: '',
-        Regimen: '',
-        poblacionVulnerable: '',
-        estado: 'activo',
-    },
-    Diagnosticos: [],
-    Antecedentes: [],
-
-}
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
     state: () => ({
-        Paciente: estructuraPaciente, // estructura base compartida
-        Pacientes: []
+        Pacientes: [],
+        Formulario: {
+            User: {
+                id_empresa: '',
+                correo: '',
+                contraseña: null,
+                rol: 'Paciente',
+                estado: 'activo',
+            },
+            InformacionUser: {
+                id_usuario: '',
+                name: '',
+                No_document: '',
+                tipo: '',
+                celular: '',
+                telefono: '',
+                nacimiento: '',
+                direccion: '',
+                municipio: '',
+                departamento: '',
+                barrio: '',
+                zona: '',
+            },
+            Paciente: {
+                id_usuario: '',
+                sexo: '',
+                genero: '',
+                Eps: '',
+                Regimen: '',
+                poblacionVulnerable: '',
+                estado: 'activo',
+            },
+            Diagnosticos: [],
+            Antecedentes: [],
+        }
     }),
 
     getters: {
@@ -100,7 +95,7 @@ export const usePacientesStore = defineStore('Pacientes', {
 
     actions: {
         // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraPaciente) {
+        createForm(storeId, estructura = []) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
         },

@@ -5,12 +5,15 @@ import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
 import Wizard from './Wizard.vue';
 
 import { useFormulario } from './useFormulario';
+import { cargarStore } from './componentLoader';
 
 const props = defineProps({
     Propiedades: {
         default: {}
     }
 });
+
+const tablaStore = await cargarStore(props.Propiedades.content.storePinia) || {}
 
 const {
     transformarFormData,
@@ -30,19 +33,19 @@ const fondos = {
     true: FondoBlur,
     false: 'div',
     FondoTransparent,
-};console.log(!props.Propiedades.formulario.fondo, toRef(props.Propiedades.formulario.show))
+};
 
 // Inicializa formData con las claves de vmodel
-const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
+// const formData = ref(transformarFormData(props.Propiedades.formulario.secciones));
 const camposRequeridos = ref(props.Propiedades?.content?.camposRequeridos || [])
 
 // Guardar y validar Datos
 watch(
-    formData.value,
+    tablaStore?.Formulario,
     (newValue) => {
         guardarDatos(newValue);
         const camposValidos = camposRequeridos.value.every((ruta) => {
-            const valor = getValue(formData.value, ruta)
+            const valor = getValue(tablaStore?.Formulario, ruta)
             return isValid(valor)
         });
 
@@ -56,11 +59,10 @@ watch(
 // Traer datos del localStorage
 onMounted(() => {
     const datosGuardados = traerDatos();
-    if (datosGuardados) Object.assign(formData.value, datosGuardados)
+    if (datosGuardados) Object.assign(tablaStore?.Formulario, datosGuardados)
 });
 
 function limpiar () {
-    // formData.value = transformarFormData(props.Propiedades.formulario.secciones)
     localStorage.removeItem(props.Propiedades.content.storeId)
     props.Propiedades.formulario.show.value = false
 }
@@ -91,8 +93,8 @@ function limpiar () {
                             <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]" :Propiedades="item"
-                                    :modelValue="getValue(formData, item.vmodel)"
-                                    @update:modelValue="val => setValue(formData, item.vmodel, val)" />
+                                    :modelValue="getValue(tablaStore?.Formulario, item.vmodel)"
+                                    @update:modelValue="val => setValue(tablaStore?.Formulario, item.vmodel, val)" />
                                 <slot></slot>
                             </div>
                         </div>
@@ -102,7 +104,7 @@ function limpiar () {
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
-                    @click="manejarClick(item, formData)"
+                    @click="manejarClick(item, tablaStore?.Formulario)"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>

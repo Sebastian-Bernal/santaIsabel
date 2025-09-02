@@ -33,11 +33,13 @@ onMounted(async () => {
 
 // Formularios Configuracion Empresa
 const propiedadesEPS = useEpsBuilder({
-    storeId: 'EPS'
+    storeId: 'EPS',
+    storePinia: 'EPS',
 })
 
 const propiedadesProfesion = useProfesionesBuilder({
     storeId: 'Profesion',
+    storePinia: 'Profesion',
     permisos: secciones
 })
 

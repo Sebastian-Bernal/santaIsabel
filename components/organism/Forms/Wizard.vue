@@ -25,8 +25,8 @@ const props = defineProps({
                 </button>
                 <div v-if="index + 1 !== props.Propiedades.secciones.length" class="md:w-[30px] h-[5px] rounded-lg bg-gray-300"></div>
             </nuxtLink>
-            <!-- <i class="fa-solid fa-trash text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
-            <i class="fa-solid fa-pencil text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i> -->
+            <i v-if="props.Propiedades.formulario?.soloVer" class="fa-solid fa-trash text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
+            <i class="fa-solid fa-pencil text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
             <i @click="props.cerrar" class="fa-solid fa-close text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
         </div>
     </div>

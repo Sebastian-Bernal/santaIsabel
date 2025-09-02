@@ -6,7 +6,7 @@ import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario'
 import { CalendarioBuilder, CitasBuilder } from '~/composables/Formulario/ClassCalendario'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { useMedicosStore } from '~/stores/Formularios/medicos/Medico';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { ref, onMounted } from 'vue'
 
 const citasStore = useCitasStore();
@@ -56,6 +56,7 @@ function cerrar () {
 
 const propiedadesCita = useFormularioCitaBuilder({
     storeId: 'NuevaCita',
+    storePinia: 'Citas',
     cerrarModal: cerrar,
     show: show,
     seleccionarPaciente,

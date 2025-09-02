@@ -4,23 +4,23 @@ import { createFormStore } from '../../createFormStore';
 // Estructura de datos de Citas
 const estructuraCita = {
     Facturacion: {
-        'tipoDocumento': '',
-        'prefijo': '',
-        'no_resolucion': '',
-        'fechaResolucion': '',
-        'fechaInicial': '',
-        'fechaHasta': '',
-        'numeroInicial': '',
-        'numeroHasta': '',
-        'claveTecnica': '',
-        'descripcion': '',
+        tipoDocumento: '',
+        prefijo: '',
+        no_resolucion: '',
+        fechaResolucion: '',
+        fechaInicial: '',
+        fechaHasta: '',
+        numeroInicial: '',
+        numeroHasta: '',
+        claveTecnica: '',
+        descripcion: '',
     },
 }
 
 // Pinia Empresa
 export const useFacturacionStore = defineStore('Facturacion', {
     state: () => ({
-        Facturacion: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
+        Formulario : estructuraCita,
         FacturacionData: []
     }),
 

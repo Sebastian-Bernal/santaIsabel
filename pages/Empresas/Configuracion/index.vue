@@ -10,19 +10,23 @@ import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 
 // Formularios Configuracion Empresa
 const propiedadesEmpresa = useDatosEmpresaBuilder({
-    storeId: 'DatosEmpresa'
+    storeId: 'DatosEmpresa',
+    storePinia: 'Empresa'
 })
 
 const propiedadesSoftware = useDatosSofwareBuilder({
-    storeId: 'DatosSoftware'
+    storeId: 'DatosSoftware',
+    storePinia: 'Software'
 })
 
 const propiedadesNomina = useDatosNominaBuilder({
-    storeId: 'DatosNomina'
+    storeId: 'DatosNomina',
+    storePinia: 'Software'
 })
 
 const propiedadesEquivalente = useDatosEquivalentesBuilder({
-    storeId: 'DatosEquivalentes'
+    storeId: 'DatosEquivalentes',
+    storePinia: 'Software'
 })
 
 // Construccion de pagina

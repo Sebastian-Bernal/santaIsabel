@@ -20,7 +20,8 @@ onMounted(async() => {
 
 // Formularios Configuracion Empresa
 const propiedadesResolucion = useDatosResolucionBuilder({
-    storeId: 'DatosFacturacion'
+    storeId: 'DatosFacturacion',
+    storePinia: 'Resolucion',
 })
 
 // Construccion de pagina

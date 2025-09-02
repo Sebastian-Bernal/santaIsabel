@@ -3,11 +3,13 @@ import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 
 export function useDatosNominaBuilder({
   storeId,
+  storePinia
 }) {
   const builder = new FormularioBuilder()
 
   return builder
     .setStoreId(storeId)
+    .setStorePinia(storePinia)
     .setFormularioFondo(false)
     .setBotones([{
         type: 'enviar', text: 'Enviar', color: 'bg-blue-500',

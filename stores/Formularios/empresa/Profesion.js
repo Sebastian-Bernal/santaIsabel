@@ -3,12 +3,18 @@ import { createFormStore } from '../../createFormStore';
 
 // Estructura de datos de Citas
 const estructuraDatosProfesion = {
-    Profesion: []
+    Profesion: {
+        nombre: '',
+        codigo: '',
+        permisos: [],
+        tipo: ''
+    }
 }
 
 // Pinia Profesion
 export const useDatosProfesionStore = defineStore('DatosProfesion', {
     state: () => ({
+        Formulario: estructuraDatosProfesion,
         Datos: JSON.parse(JSON.stringify(estructuraDatosProfesion)), // estructura base compartida
         DatosProfesion: []
     }),

@@ -1,37 +1,33 @@
 import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
-// Creacion del store User
-
-// Estructura de datos de Users
-const estructuraUser = {
-    User: {
-        id_empresa: '',
-        correo: '',
-        contraseña: '',
-        rol: '',
-        estado: 'activo',
-    },
-    InformacionUser : {
-        id_usuario: '',
-        name: '',
-        No_document: '',
-        tipo: '',
-        celular: '',
-        telefono: '',
-        nacimiento: '',
-        direccion: '',
-        municipio: '',
-        departamento: '',
-        barrio: '',
-        zona: '',
-    },
-}
 
 // Pinia Users
 export const useUsersStore = defineStore('Users', {
     state: () => ({
-        User: JSON.parse(JSON.stringify(estructuraUser)), // estructura base compartida
+        Formulario: {
+            User: {
+                id_empresa: '',
+                correo: '',
+                contraseña: '',
+                rol: '',
+                estado: 'activo',
+            },
+            InformacionUser: {
+                id_usuario: '',
+                name: '',
+                No_document: '',
+                tipo: '',
+                celular: '',
+                telefono: '',
+                nacimiento: '',
+                direccion: '',
+                municipio: '',
+                departamento: '',
+                barrio: '',
+                zona: '',
+            },
+        },
         Users: []
     }),
 

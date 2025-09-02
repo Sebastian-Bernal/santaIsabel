@@ -1,57 +1,53 @@
 import { createFormStore } from '../../createFormStore';
 import { usePacientesStore } from '../paciente/Paciente';
 import { useIndexedDBStore } from '~/stores/indexedDB';
-// Creacion del store para historia clinica
-
-// Estructura de datos de Historias Clinicas
-const estructuraHistoria = {
-    Analisis: {
-        motivo: '',
-        acompañante: [],
-        observacion: '',
-        tratamiento: '',
-        analisis: '',
-        tipoAnalisis: '',
-        id_historia: '',
-    },
-    Diagnosticos: [],
-    Antecedentes: [],
-    Enfermedad: {
-        valor: '',
-        fecha_diagnostico: '',
-        fecha_rehabilitacion: '',
-    },
-    HistoriaClinica: {
-        fecha_historia: '',
-        id_paciente: '',
-        name_paciente: '',
-        type_doc_paciente: '',
-        No_document_paciente: '',
-    },
-    ExamenFisico: {
-        Peso: '',
-        altura: '',
-        otros: '',
-        id_historia: '',
-        signosVitales: {
-            ta: '',
-            fc: '',
-            fr: '',
-            t: '',
-            SATo2: '',
-        },
-    },
-    Plan_manejo_medicamentos: [],
-    Plan_manejo_procedimientos: [],
-    Plan_manejo_insumos: [],
-    Plan_manejo_equipos: [],
-    Cita: {}
-}
 
 // Pinia HistoriasClinicas
 export const useHistoriasStore = defineStore('HistoriaClinica', {
     state: () => ({
-        Historia: JSON.parse(JSON.stringify(estructuraHistoria)), // estructura base compartida
+        Formulario: {
+            Analisis: {
+                motivo: '',
+                acompañante: [],
+                observacion: '',
+                tratamiento: '',
+                analisis: '',
+                tipoAnalisis: '',
+                id_historia: '',
+            },
+            Diagnosticos: [],
+            Antecedentes: [],
+            Enfermedad: {
+                valor: '',
+                fecha_diagnostico: '',
+                fecha_rehabilitacion: '',
+            },
+            HistoriaClinica: {
+                fecha_historia: '',
+                id_paciente: '',
+                name_paciente: '',
+                type_doc_paciente: '',
+                No_document_paciente: '',
+            },
+            ExamenFisico: {
+                Peso: '',
+                altura: '',
+                otros: '',
+                id_historia: '',
+                signosVitales: {
+                    ta: '',
+                    fc: '',
+                    fr: '',
+                    t: '',
+                    SATo2: '',
+                },
+            },
+            Plan_manejo_medicamentos: [],
+            Plan_manejo_procedimientos: [],
+            Plan_manejo_insumos: [],
+            Plan_manejo_equipos: [],
+            Cita: {}
+        },
         Historias: [],
 
     }),
@@ -107,10 +103,10 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             const historias = await this.listHistorias
             return historias.sort(
                 (a, b) => {
-                const fechaA = new Date(a.fecha_historia.split('/').reverse().join('-'));
-                const fechaB = new Date(b.fecha_historia.split('/').reverse().join('-'));
-                return fechaB - fechaA; // Orden descendente
-            }).slice(0, 3);
+                    const fechaA = new Date(a.fecha_historia.split('/').reverse().join('-'));
+                    const fechaB = new Date(b.fecha_historia.split('/').reverse().join('-'));
+                    return fechaB - fechaA; // Orden descendente
+                }).slice(0, 3);
         },
 
         async listDatos(id, Tabla, Campo = 'id_historia') {
