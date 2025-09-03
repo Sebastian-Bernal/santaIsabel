@@ -5,7 +5,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       api: 'http://thesalus-api.zeus01one.com',
+      login: 'api/v1/login',
       user: 'api/user',
+      eps: 'api/v1/eps',
       authentication: 'api/email-addresses/',
     }
   },

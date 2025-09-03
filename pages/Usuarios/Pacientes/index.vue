@@ -10,6 +10,7 @@ import { TablaBuilder } from "~/composables/Formulario/ClassTablas";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
+import { mapCampos } from "~/components/organism/Forms/useFormulario.js";
 import { CIE10 } from "~/data/CIE10";
 
 const varView = useVarView();
@@ -61,21 +62,9 @@ const agregarPaciente = () => {
 };
 
 const verPaciente = (paciente) => {
-    console.log(paciente);
-    mapFields(paciente, pacientesStore.Formulario)
+    mapCampos(paciente, pacientesStore.Formulario)
     showVer.value = true;
 };
-
-function mapFields(source, target) {
-  for (const key in target) {
-    if (typeof target[key] === 'object' && target[key] !== null && !Array.isArray(target[key])) {
-      mapFields(source, target[key]);
-    } else if (key in source) {
-      target[key] = source[key];
-    }
-  }
-}
-
 
 // Formulario
 function cerrar() {
@@ -99,9 +88,12 @@ function seleccionarCIE_10(item) {
     // });
 }
 
+const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
+
 const propiedadesUser = useUserBuilder({
     storeId: "NuevoPaciente",
     storePinia: "Pacientes",
+    camposRequeridos,
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: "Wizard",
@@ -118,6 +110,7 @@ const propiedadesUser = useUserBuilder({
 const propiedadesVerUser = useUserBuilder({
     storeId: "ModificarPaciente",
     storePinia: "Pacientes",
+    camposRequeridos,
     cerrarModal: cerrar,
     show: showVer,
     tipoFormulario: "Wizard",

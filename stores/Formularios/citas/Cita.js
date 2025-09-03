@@ -19,6 +19,7 @@ const estructuraCita = {
 // Pinia Citas
 export const useCitasStore = defineStore('Citas', {
     state: () => ({
+        Formulario: estructuraCita,
         Cita: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
         Citas: []
     }),
@@ -27,7 +28,6 @@ export const useCitasStore = defineStore('Citas', {
     },
 
     actions: {
-
         // Acción para crear nuevas instancias de formulario
         createForm(storeId, estructura = estructuraCita) {
             const useDynamicForm = createFormStore(storeId, estructura)
@@ -47,7 +47,11 @@ export const useCitasStore = defineStore('Citas', {
 
             this.Citas = citas
             return citas
-        }
+        },
+
+        borrarFormulario(){
+            this.Formulario = estructuraCita
+        },
 
     }
 });

@@ -4,7 +4,14 @@ import { useIndexedDBStore } from '~/stores/indexedDB';
 
 // Estructura de datos de eps
 const estructuraDatosEPS = {
-    EPS: []
+    EPS: {
+        nombre: '',
+        codigo: '',
+        direccion: '',
+        telefono: '',
+        email: '',
+        website: '',
+    }
 }
 
 // Pinia EPS

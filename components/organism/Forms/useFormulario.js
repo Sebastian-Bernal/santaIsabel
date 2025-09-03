@@ -83,25 +83,43 @@ export function useFormulario(props) {
     }
 
     function isValid(value) {
-    if (Array.isArray(value)) return value.length > 0
-    return value !== '' && value !== null && value !== undefined
+        if (Array.isArray(value)) return value.length > 0
+        return value !== '' && value !== null && value !== undefined
+    }
+
+    function camposRequeridos(formData) {
+        const camposRequeridos = ref(props.Propiedades?.content?.camposRequeridos || []);
+        const camposValidos = camposRequeridos.value.every((ruta) => {
+            const valor = getValue(formData, ruta)
+            return isValid(valor)
+        });
+
+        // Detectar inputs inválidos
+        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
+        varView.formComplete = !hayCamposInvalidos && camposValidos;
+        console.log(varView.formComplete)
+        return varView.formComplete
     }
 
     // Botones
-    function manejarClick(item, formData) {
+    function manejarClick(item, formData, limpiar) {
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
+                guardarDatos(formData)
                 siguienteSeccion()
-            } else if (!varView.formComplete) {
-                validarform()
             } else {
-                mandarFormulario(formData)
+                const validacion = camposRequeridos(formData)
+                if (validacion) {
+                    mandarFormulario(formData)
+                } else {
+                    validarform()
+                }
             }
         } else if (item.type === 'cerrar') {
             if (seccionActual.value > 0) {
                 anteriorSeccion()
             } else {
-                limpiar(formData)
+                limpiar()
                 item.accion()
             }
         }
@@ -117,7 +135,7 @@ export function useFormulario(props) {
         localStorage.setItem(props.Propiedades.content.storeId, JSON.stringify(newValue))
     }
 
-    function limpiar() {
+    function limpiarLocal() {
         localStorage.removeItem(props.Propiedades.content.storeId)
     }
 
@@ -129,6 +147,7 @@ export function useFormulario(props) {
     }
 
     async function mandarFormulario(data) {
+        console.log('mandado')
         const accion = accionesFormularios[props.Propiedades.content.storeId]
 
         if (typeof accion === 'function') {
@@ -141,7 +160,7 @@ export function useFormulario(props) {
                     notificaciones.options.tiempo = 3000
                     const respuesta = await notificaciones.simple()
                     if (respuesta.isConfirmed || respuesta.dismiss) {
-                        limpiar()
+                        limpiarLocal()
                         window.location.reload()
                     }
                 } else {
@@ -166,7 +185,6 @@ export function useFormulario(props) {
         transformarFormData,
         traerDatos,
         guardarDatos,
-        limpiar,
         seccionActual,
         camposActuales,
         componentInstances,
@@ -176,5 +194,39 @@ export function useFormulario(props) {
         setValue,
         isValid,
         manejarClick,
+    }
+}
+
+// Funcion para completar formulario con datos de Tablas
+export function mapCampos(tabla, pinia) {
+    for (const key in pinia) {
+        if (typeof pinia[key] === 'object' && pinia[key] !== null && !Array.isArray(pinia[key])) {
+            mapCampos(tabla, pinia[key]);
+        } else if (key in tabla) {
+            pinia[key] = tabla[key];
+        }
+    }
+}
+
+export function mapCamposLimpios(pinia) {
+    for (const key in pinia) {
+        const valor = pinia[key]
+        if (typeof valor === 'object' && valor !== null && !Array.isArray(valor)) {
+            mapCamposLimpios(valor);
+        } else {
+            // Limpiar según el tipo de dato
+            if (typeof valor === 'string') {
+                pinia[key] = '';
+            } else if (typeof valor === 'number') {
+                pinia[key] = 0;
+            } else if (typeof valor === 'boolean') {
+                pinia[key] = false;
+            } else if (Array.isArray(valor)) {
+                pinia[key] = [];
+            } else {
+                pinia[key] = null;
+            }
+
+        }
     }
 }

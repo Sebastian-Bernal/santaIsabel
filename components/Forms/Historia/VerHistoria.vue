@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import ModalLG from '~/components/Modales/ModalLG.vue';
 import ButtonDashboard from '~/components/atoms/Buttons/ButtonDashboard.vue';
 import VerAnalisis from './Analisis.vue/VerAnalisis.vue';
@@ -142,7 +142,7 @@ function showBotones() {
 <template>
     <ModalLG>
         <div class="pb-5 z-1 flex flex-col items-center h-[100%] bg-gray-50 rounded-2xl">
-            <!-- Header -->
+
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-start gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
@@ -167,7 +167,7 @@ function showBotones() {
                 </div>
             </div>
 
-            <!-- Body -->
+ 
             <div class="w-full h-full flex justify-center items-center" v-if="varView.showMenuHistorias">
                 <div
                     class="scrollForm w-full flex flex-col items-center gap-[15px] max-h-[90%] overflow-y-auto md:p-7 p-3">
@@ -192,4 +192,6 @@ function showBotones() {
             </div>
         </div>
     </ModalLG>
-</template>
+</template> -->
+
+<template></template>

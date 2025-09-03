@@ -29,7 +29,8 @@ export function useEpsBuilder({
           name: 'eps',
           tamaño: '',
           minlength: 5,
-          vmodel: 'EPS.nombre'
+          vmodel: 'EPS.nombre',
+          upperCase: true
       })
       .addCampo({
           component: 'Input',
@@ -40,6 +41,44 @@ export function useEpsBuilder({
           name: 'codigo',
           tamaño: '3',
           vmodel: 'EPS.codigo',
+          upperCase: true
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'text',
+          maxLength: 3,
+          placeholder: 'Direccion',
+          id: 'Direccion',
+          name: 'Direccion',
+          vmodel: 'EPS.direccion',
+          upperCase: true
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'number',
+          maxLength: 3,
+          placeholder: 'Telefono',
+          id: 'Telefono',
+          name: 'Telefono',
+          vmodel: 'EPS.telefono',
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'email',
+          maxLength: 3,
+          placeholder: 'Email',
+          id: 'Email',
+          name: 'Email',
+          vmodel: 'EPS.email',
+      })
+      .addCampo({
+          component: 'Input',
+          type: 'text',
+          maxLength: 3,
+          placeholder: 'Website',
+          id: 'Website',
+          name: 'Website',
+          vmodel: 'EPS.website',
       })
       
     .build()

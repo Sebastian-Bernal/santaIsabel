@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
@@ -131,16 +131,8 @@ const cerrarModal = () => {
                 </div>
             </div>
 
-            <!-- <div class="w-3/4 flex justify-center items-center gap-3 absolute bottom-[10px] left-auto right-auto">
-                <nuxtLink to="/Historial/Paso4">
-                    <ButtonForm color="bg-gray-500"
-                        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
-                        Atras
-                    </ButtonForm>
-                </nuxtLink>
-            </div> -->
 
         </Formulario>
     </ModalFormXS>
     </FondoBlur>
-</template>
+</template> -->

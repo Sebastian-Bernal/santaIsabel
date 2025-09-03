@@ -28,6 +28,7 @@ export const useApiRest = defineStore('apiRest', {
             const headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                'X-Company': 'store_two',
                 ...opcion.head
             }
 
@@ -45,7 +46,7 @@ export const useApiRest = defineStore('apiRest', {
             if (opcion.body) {
                 options.body = JSON.stringify(opcion.body)
             }
-
+            console.log(url, options)
             try {
                 const response = await fetch(url.toString(), options)
                 if (response.status === 200 || response.status === 201 || response.status === 204) {

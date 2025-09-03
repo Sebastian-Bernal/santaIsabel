@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import Formulario from '../../components/Forms/Formulario.vue';
 import Input from '../../components/Inputs/Input.vue';
@@ -123,4 +123,4 @@ function seleccionarCUPS (data) {
 
         </Formulario>
     </ModalFormXS>
-</template>
+</template> -->

@@ -4,6 +4,7 @@ import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
 export function useUserBuilder({
     storeId,
     storePinia,
+    camposRequeridos,
     cerrarModal,
     tipoFormulario,
     buscarUsuario,
@@ -22,7 +23,7 @@ export function useUserBuilder({
         .setStoreId(storeId)
         .setStorePinia(storePinia)
         .setSoloVer(verUser)
-        .setCamposRequeridos(['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo'])
+        .setCamposRequeridos(camposRequeridos)
         .setFormulariotamaño('LG')
         .setFormularioTitulo('Datos Usuario')
         .setFormularioTituloFormulario('Nuevo Paciente')
@@ -53,8 +54,6 @@ export function useUserBuilder({
             events: {
                 onClick: buscarUsuario
             },
-            disabled: verUser,
-            // value: verUser && No_document ? No_document : ''
         })
         .addCampo({
             component: 'Select',
@@ -69,7 +68,6 @@ export function useUserBuilder({
                 { text: 'RC', value: 'RC' },
             ],
             vmodel: 'InformacionUser.type_doc',
-            // value: verUser && datosUser ? unref(datosUser.type_doc) : ''
         })
         .addCampo({
             component: 'Input',
@@ -81,7 +79,6 @@ export function useUserBuilder({
             upperCase: true,
             vmodel: 'InformacionUser.name',
             minlength: 5,
-            disabled: verUser
         })
         .addCampo({
             component: 'Input',

@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import InputIcon from '~/components/Inputs/InputIcon.vue';
 import Select from '~/components/Selects/Select.vue';
@@ -145,4 +145,5 @@ function nuevaNota () {
         </div>
     </FondoDefault>
     <IngresarNota  v-if="varView.showNuevaNota"/>
-</template>
+</template> -->
+<template>hola</template>

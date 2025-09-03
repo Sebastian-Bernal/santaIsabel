@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
@@ -115,4 +115,4 @@ const cerrarModal = () => {
         </Formulario>
     </ModalFormXS>
     </FondoBlur>
-</template>
+</template> -->

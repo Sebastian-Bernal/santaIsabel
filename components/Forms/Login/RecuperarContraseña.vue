@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import ModalFormXS from '~/components/Modales/ModalFormXS.vue';
 import Formulario from '~/components/Forms/Formulario.vue';
@@ -100,4 +100,4 @@ watch(formData, (newValue) => {
 .autocomplete-list li:hover {
     background-color: #e5f0ff;
 }
-</style>
+</style> -->

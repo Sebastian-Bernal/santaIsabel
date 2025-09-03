@@ -248,8 +248,8 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                 celular: '1111111111',
                 telefono: '111111',
                 Tipo: 'Gerente',
-                correo: 'demo@admin.com',
-                contraseña: 'thesalus2025*.',
+                correo: 'admin@mail.com',
+                contraseña: 'password',
                 estado: 'activo',
                 rol: 'Administrativo'
             }

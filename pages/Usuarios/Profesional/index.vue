@@ -4,17 +4,22 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import { ref, onMounted } from 'vue';
 import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
 import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
 import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
+import { mapCampos } from '~/components/organism/Forms/useFormulario';
 
 const varView = useVarView();
 const medicosStore = useMedicosStore();
+const profesionStore = useDatosProfesionStore()
 const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
+const profesiones = ref([]);
 const refresh = ref(1);
 const show = ref(false)
+const showVer = ref(false)
 
 async function llamadatos () {
     medicos.value= await listMedicos.value;
@@ -34,23 +39,24 @@ watch(()=> varView.showModificarProfesional, async()=>{
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
+    profesiones.value = await profesionStore.listProfesion
     varView.cargando = false
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
-const medicoDatos = ref(false);
-
 const modificarMedico = (medico) => {
-    varView.showModificarProfesional = true;
-    medicoDatos.value = medico;
+    mapCampos(medico, medicosStore.Formulario)
+    showVer = true;
 };
 
 // Formulario
 const agregarMedico = () => {
     show.value = true;
 };
+
 function cerrar() {
     show.value = false
+    showVer.value = false
 }
 
 function buscarUsuario () {
@@ -64,13 +70,29 @@ function seleccionarDepartamento (item) {
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoProfesional',
     storePinia: 'Profesionales',
+    camposRequeridos: [],
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'Wizard',
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    opcionesProfesion: profesiones,
     tipoUsuario: 'Profesional'
+});
+
+const propiedadesVerUser = useUserBuilder({
+    storeId: 'NuevoProfesional',
+    storePinia: 'Profesionales',
+    camposRequeridos: [],
+    cerrarModal: cerrar,
+    show: showVer,
+    tipoFormulario: 'Wizard',
+    buscarUsuario,
+    departamentos: municipios.departamentos,
+    seleccionarDepartamento,
+    tipoUsuario: 'Profesional',
+    verUser: true
 });
 
 // Construccion de pagina
@@ -95,6 +117,7 @@ const propiedades = pagina
         .setDatos(medicos)
     )
     .addComponente('Form', propiedadesUser)
+    .addComponente('Form', propiedadesVerUser)
     .build()
     console.log(propiedades)
 </script>

@@ -17,9 +17,6 @@ export const validarYEnviarLogin = async (datos) => {
     const profesionesStore = useDatosProfesionStore();
     const profeionales = useMedicosStore();
 
-    // Temporal codigo INDEXDB
-
-    // Buscar coincidencia por correo y contraseña
     const usuarioValido = usuarios.find(usuario =>
         usuario.correo?.toLowerCase() === datos.Usuario.correo.toLowerCase() &&
         usuario.contraseña?.toLowerCase() === datos.Usuario.contraseña.toLowerCase()
@@ -55,11 +52,12 @@ export const validarYEnviarLogin = async (datos) => {
         const permisosProfesion = profesiones.filter(p => p.nombre === profesional.profesion)?.[0].permisos
 
         usuarioStore.Permisos = permisosProfesion
-        
+
         sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion));
         sessionStorage.setItem('Rol', 'Profesional');
         home = 'Citas'
     }
+
 
     const estado = await enviarFormulario(datos.Usuario)
     return {
@@ -72,16 +70,35 @@ export const validarYEnviarLogin = async (datos) => {
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
-    
+    const config = useRuntimeConfig()
+
     const online = navigator.onLine;
     if (online) {
         try {
-            console.log(datos)
-            sessionStorage.setItem('Usuario', datos.correo)
-            // sessionStorage.setItem('Nombre', datos.name)
-            return true
+            console.log(datos.correo, datos.contraseña)
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.login,
+                // head: {
+                //     'X-Company': 'store_one'
+                // },
+                body: {
+                    email: datos.correo,
+                    password: datos.contraseña
+                },
+            }
+            const respuesta = await api.functionCall(options)
+            if (respuesta) {
+                sessionStorage.setItem('token', respuesta.access_token)
+                sessionStorage.setItem('name', respuesta.user_name)
+                sessionStorage.setItem('Usuario', datos.correo)
+                return true
+            } else {
+                return false
+            }
         } catch (error) {
-            console.error('Fallo al enviar. Guardando localmente', error);
+            console.error('Fallo al enviar. Intenta en otro momento', error);
         }
     } else {
         notificacionesStore.options.icono = 'warning'

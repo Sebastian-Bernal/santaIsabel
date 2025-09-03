@@ -1,10 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
-import Ingresar from '~/components/Forms/Historia/Ingresar.vue';
-import Paso2 from '~/components/Forms/Historia/Paso2.vue';
-import Paso3 from '~/components/Forms/Historia/Paso3.vue';
-import Paso4 from '~/components/Forms/Historia/Paso4.vue';
 import VerHistoria from '~/components/Forms/Historia/VerHistoria.vue';
 
 import { ref, onMounted } from 'vue';
@@ -63,8 +59,9 @@ function cerrar () {
     show.value = false
 }
 
-function seleccionarPaciente(){
-
+function seleccionarPaciente(paciente){
+    historiasStore.Formulario.HistoriaClinica.type_doc_paciente = paciente.type_doc
+    historiasStore.Formulario.HistoriaClinica.No_document_paciente = paciente.No_document
 }
 
 function validarCampo(){
@@ -110,10 +107,5 @@ const propiedades = pagina
 
 <template>
     <Pagina :Propiedades="propiedades"/>
-
-    <Ingresar v-if="varView.showNuevaHistoria" />
-    <Paso2 v-if="varView.showPaso2" />
-    <Paso3 v-if="varView.showPaso3" />
-    <Paso4 v-if="varView.showPaso4" />
     <VerHistoria v-if="varView.showVerHistoria" :historia="historia" />
 </template>

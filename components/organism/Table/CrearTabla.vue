@@ -4,7 +4,7 @@ import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import Label from '~/components/atoms/Labels/Label.vue';
 import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
-import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue'
 import Checkbox from '~/components/atoms/Checkbox/Checkbox.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';

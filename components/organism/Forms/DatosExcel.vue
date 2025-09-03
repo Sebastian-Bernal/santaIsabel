@@ -1,9 +1,9 @@
 <script setup>
 import ModalXS from '~/components/molecules/Modals/ModalXS.vue';
-import Input from '~/components/Inputs/Input.vue';
-import Select from '~/components/Selects/Select.vue';
-import SelectMultiple from '~/components/Selects/SelectMultiple.vue';
-import ButtonForm from '~/components/Buttons/ButtonForm.vue';
+import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
+import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
+import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';
 
@@ -121,37 +121,55 @@ function mostrar() {
                             class="fa-solid fa-database"></i></p>
                 </div>
                 <div v-if="insertarTabla" class="flex md:flex-row flex-col gap-3 pt-3">
-                    <Select v-model="tablaInsert.tabla" placeholder="Tabla de datos"
-                        name="tabla" :options="Tablas"/>
-                    <Select v-model="tablaInsert.id_comparar" placeholder="Campo a comparar" name="campoComparar"
-                        :options="datosOptions">
+                    <Select v-model="tablaInsert.tabla" :Propiedades="{
+                            placeholder: 'Tabla de datos',
+                            id: 'datos',
+                            name: 'datos',
+                            options: Tablas,
+                        }"/>
+                    <Select v-model="tablaInsert.id_comparar" :Propiedades="{
+                            placeholder: 'Campo a comparar',
+                            id: 'campoComparar',
+                            name: 'campoComparar',
+                            options: datosOptions,
+                        }">
                     </Select>
-                    <Select v-model="tablaInsert.id_compararTabla" placeholder="Campo de Tabla a insertar" name="campoCompararTabla" 
-                    :options="datosOptionsTabla"/>
+                    <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
+                            placeholder: 'Campo de Tabla a insertar',
+                            id: 'campoCompararTabla',
+                            name: 'campoCompararTabla',
+                            options: datosOptionsTabla,
+                        }"/>
                 </div>   
                 <div class="flex md:flex-row flex-col gap-3 pt-3">
-                    <Input v-model="excel.nombreArchivo" placeholder="Nombre Archivo" type="text"
-                        name="nombreArchivo" />
-                    <Select v-model="excel.tipoArchivo" placeholder="Formato Hoja de calculo" name="tipoArchivo"
-                        :options="[{ text: 'xlsx', value: 'xlsx' }, { text: 'xls', value: 'xls' }, { text: 'csv', value: 'csv' }]">
+                    <Input v-model="excel.nombreArchivo" :Propiedades="{
+                            placeholder: 'Nombre Archivo',
+                            id: 'nombre',
+                            name: 'nombre',
+                            type: 'text',
+                        }" />
+                    <Select v-model="excel.tipoArchivo" :Propiedades="{
+                            placeholder: 'Formato Hoja de calculo',
+                            id: 'tipoArchivo',
+                            name: 'tipoArchivo',
+                            options: [{ text: 'xlsx', value: 'xlsx' }, { text: 'xls', value: 'xls' }, { text: 'csv', value: 'csv' }],
+                        }">
                     </Select>
-                    <Input v-model="excel.worksheet" placeholder="Worksheet" type="text" name="worksheet" />
+                    <Input v-model="excel.worksheet" :Propiedades="{
+                            placeholder: 'Worksheet',
+                            id: 'worksheet',
+                            name: 'worksheet',
+                            type: 'text',
+                        }" />
                 </div>
                 <div class="flex md:flex-row pt-5 relative">
-                    <!-- <Select placeholder="Seleccione los campos que desea" name="campos" @click="mostrarOptions()">
-                    </Select>
-                    <ul v-show="showOptions"
-                        class="autocomplete-list absolute top-full left-0 right-0 max-h-[180px] overflow-y-auto bg-white border border-[#d0d7de] rounded-lg z-9 p-0 mt-1">
-                        <div class="flex gap-3" @click="seleccionarTodos">
-                            <label class="font-semibold w-full px-3 py-2 hover:bg-blue-100">Seleccionar Todos</label>
-                        </div>
-                        <li v-for="dato in datos" class="flex gap-3" @click="añadirDato(dato)">
-                            <input v-model="excel.opciones" :value="dato" type="checkbox" :id="dato" />
-                            <label>{{ dato }}</label>
-                        </li>
-                    </ul> -->
-                    <SelectMultiple  v-model="excel.opciones" :options="datos"
-                        name="campos" id="campos" placeholder="Seleccione los campos que deseas" />
+                    <SelectMultiple  v-model="excel.opciones" :Propiedades="{
+                            placeholder: 'Seleccione los campos que deseas',
+                            id: 'campos',
+                            name: 'campos',
+                            options: datos,
+                            opciones: [{text: '', value:''}]
+                        }" />
                 </div>
             </div>
             <div class="flex ">

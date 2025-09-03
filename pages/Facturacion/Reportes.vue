@@ -1,6 +1,6 @@
 <script setup>
-import CrearTabla from '~/components/Tables/CrearTabla.vue';
-import Tabla from '~/components/Tables/Tabla.vue';
+import CrearTabla from '~/components/organism/Table/CrearTabla.vue';
+import Tabla from '~/components/organism/Table/Tabla.vue';
 const varView = useVarView();
 const tablaConfigurada = ref(null);
 const datosTabla = ref([])
@@ -24,13 +24,7 @@ function recibirTabla(tabla) {
             <button @click="crearTabla" class="p-3 bg-blue-500 rounded-2xl text-white hover:bg-blue-600">Crear Tabla</button>
         </div>
         <div class="w-full px-10 my-5">
-        <Tabla v-if="tablaConfigurada" :columnas="tablaConfigurada.columnas" 
-        :headerTabla="{
-            titulo: tablaConfigurada.headerTabla.titulo,
-            descripcion: tablaConfigurada.headerTabla.descripcion,
-            color: tablaConfigurada.headerTabla.color,
-            accionAgregar: tablaConfigurada.accionAgregar
-        }" :acciones="tablaConfigurada.acciones" :datos="{ content: datosTabla }" />
+        <Tabla v-if="tablaConfigurada" :Propiedades="tablaConfigurada" />
     </div>
     </div>
     <CrearTabla v-if="varView.showCrearTabla" @tabla-creada="recibirTabla"/>

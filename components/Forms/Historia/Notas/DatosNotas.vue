@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import Label from "~/components/Labels/Label.vue";
 import Input from "~/components/Inputs/Input.vue";
@@ -158,4 +158,4 @@ function seleccionarPaciente(paciente) {
         <Textarea :disabled="props.verNota" v-model="props.formData.Nota.nota" type="number" id="nota" name="nota"
             placeholder="Nota" tamaño="w-full"></Textarea>
     </Section>
-</template>
+</template> -->

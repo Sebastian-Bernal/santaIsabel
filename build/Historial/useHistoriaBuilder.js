@@ -92,7 +92,7 @@ export function useHistoriaBuilder({
         // --- Nombre Acompañante ---
         .addCampo({
             component: 'Input',
-            vmodel: 'item.nombre',
+            vmodel: 'Analisis.acompañante',
             type: 'text',
             id: 'nombreAcompañante',
             name: 'nombreAcompañante',
@@ -103,7 +103,7 @@ export function useHistoriaBuilder({
         // --- Parentesco Acompañante ---
         .addCampo({
             component: 'Select',
-            vmodel: 'item.parentesco',
+            vmodel: 'Analisis.acompañante',
             id: 'parentesco',
             name: 'parentesco',
             placeholder: 'Seleccione el parentesco',

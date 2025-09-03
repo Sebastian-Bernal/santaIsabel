@@ -1,4 +1,4 @@
-<script setup>
+<!-- <script setup>
 // Componentes
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import Formulario from '../../components/Forms/Formulario.vue';
@@ -110,4 +110,4 @@ const cerrarModal = () => {
         </Formulario>
     </ModalFormXS>
     </FondoDefault>
-</template>
+</template> -->
