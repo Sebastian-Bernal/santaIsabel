@@ -1,5 +1,5 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 
 export function useFormularioCitaBuilder({
   storeId,

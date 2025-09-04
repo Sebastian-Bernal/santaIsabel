@@ -46,7 +46,7 @@ const emit = defineEmits(['update:modelValue']);
             @blur="Propiedades.events?.onBlur"
             @keyup.enter="Propiedades.events?.onKeyUp"
             :disabled="Propiedades.disabled"
-            :class="{ 'inputIcon': Propiedades.icon, 'inputSlot': Propiedades.slot }" 
+            :class="[{ 'inputIcon': Propiedades.icon, 'inputSlot': Propiedades.slot }, Propiedades.estilo]" 
             class="mt-1 w-full block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
 

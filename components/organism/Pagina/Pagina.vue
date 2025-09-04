@@ -3,6 +3,7 @@ import Tabla from '~/components/organism/Table/Tabla.vue'
 import Form from '~/components/organism/Forms/Form.vue';
 import Calendario from '~/components/molecules/Calendario/Calendario.vue';
 import Citas from '~/components/molecules/Calendario/Citas.vue';
+import Card from '~/components/molecules/Cards/Card.vue';
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 
@@ -22,6 +23,7 @@ const components = {
     Form,
     Calendario,
     Citas,
+    Card,
 }
 
 </script>

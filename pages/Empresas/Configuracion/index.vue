@@ -5,7 +5,7 @@ import { useDatosEmpresaBuilder } from '~/build/Empresa/useDatosEmpresaBuilder';
 import { useDatosSofwareBuilder } from '~/build/Empresa/useDatosSoftwareBuilder';
 import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
 import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 
 
 // Formularios Configuracion Empresa

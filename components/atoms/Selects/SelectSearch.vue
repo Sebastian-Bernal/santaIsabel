@@ -27,9 +27,9 @@ watch(() => props.modelValue, (nuevoValor) => {
         return;
     }
 
-    opcionesFiltradas.value = opciones.filter(item =>
+    opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item =>
         item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
-    ).slice(0,20);
+    ).slice(0,20) : [];
 });
 
 function seleccionar(item) {

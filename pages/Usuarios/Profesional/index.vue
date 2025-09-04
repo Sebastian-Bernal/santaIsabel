@@ -5,8 +5,8 @@ import { ref, onMounted } from 'vue';
 import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
-import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';

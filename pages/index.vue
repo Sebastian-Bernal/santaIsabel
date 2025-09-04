@@ -3,7 +3,7 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { ref, onMounted } from 'vue';
 import { useVarView } from '~/stores/varview';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario'
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario'
 import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
 import { useCambiarContraseñaBuilder } from '~/build/Login/useCambiarContraseñaBuilder';

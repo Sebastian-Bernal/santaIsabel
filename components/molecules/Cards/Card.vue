@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-    Contenido: {
+    Propiedades: {
         type: Object,
         required: true,
     },
@@ -8,53 +8,66 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="space-y-4">
-        <div class="w-full max-w-md p-4 rounded-2xl shadow-md bg-white dark:bg-gray-800 flex flex-col gap-4">
-            <!-- HEADER -->
-            <div class="flex items-center gap-3" v-if="Contenido.header">
-                <!-- Icono -->
-                <div v-if="Contenido.header.icon" class="w-10 h-10 flex items-center justify-center rounded-full"
-                    :class="Contenido.header.iconBg || 'bg-blue-100 dark:bg-blue-900'">
-                    <i :class="Contenido.header.icon" class="text-xl"></i>
+    <div class="flex flex-col" :class="Propiedades.contenedor">
+        <div v-if="Propiedades.header && Propiedades.header.title" class="py-5 flex justify-between">
+            <div>
+                <h3 class="text-xl font-bold">{{ Propiedades.header.title }}</h3>
+                <p>{{ Propiedades.header.subtitle }}</p>
+            </div>
+            <div>
+                <span v-html="Propiedades.header.html"></span>
+            </div>
+        </div>
+        <div class="space-y-4" :class="Propiedades.contenedorCards">
+            <div v-for="card in unref(props.Propiedades.cards)"
+                class="w-full p-4 shadow-md bg-white dark:bg-gray-700 flex flex-col gap-4" :class="Propiedades.tamaño">
+                <!-- HEADER -->
+                <div class="flex items-center gap-3" v-if="card.header">
+                    <!-- Icono -->
+                    <div v-if="card.header.icon" class="w-10 h-10 flex items-center justify-center rounded-full"
+                        :class="card.header.iconBg || 'bg-blue-100 dark:bg-blue-900'">
+                        <i :class="card.header.icon" class="text-xl"></i>
+                    </div>
+
+                    <span v-html="card.header.html"></span>
+                    <!-- Imagen -->
+                    <img v-if="card.header.img" :src="card.header.img" alt="imagen"
+                        class="w-12 h-12 rounded-full object-cover" />
+
+                    <div v-if="card.header.title">
+                        <h3 class="font-semibold text-gray-900 dark:text-white" :class="card.header.titleClass">
+                            {{ card.header.title }}
+                        </h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-300" :class="card.header.subtitleClass">
+                            {{ card.header.subtitle }}
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Imagen -->
-                <img v-if="Contenido.header.img" :src="Contenido.header.img" alt="imagen"
-                    class="w-12 h-12 rounded-full object-cover" />
-
-                <div>
-                    <h3 class="font-semibold text-gray-900 dark:text-white">
-                        {{ Contenido.header.title }}
-                    </h3>
-                    <p class="text-sm text-gray-500 dark:text-gray-300">
-                        {{ Contenido.header.subtitle }}
+                <!-- BODY -->
+                <div v-if="card.body">
+                    <p class="text-sm text-gray-700 dark:text-gray-200" v-if="card.body.text">
+                        {{ card.body.text }}
                     </p>
+
+                    <div v-if="card.body.html" v-html="card.body.html"></div>
                 </div>
-            </div>
 
-            <!-- BODY -->
-            <div v-if="Contenido.body">
-                <p class="text-sm text-gray-700 dark:text-gray-200" v-if="Contenido.body.text">
-                    {{ Contenido.body.text }}
-                </p>
+                <!-- FOOTER -->
+                <div class="flex items-center justify-between pt-2" v-if="card.footer">
+                    <!-- Estado -->
+                    <span v-if="card.footer.status" class="px-3 py-1 text-xs font-medium rounded-full"
+                        :class="card.footer.statusClass">
+                        {{ card.footer.status }}
+                    </span>
 
-                <div v-if="Contenido.body.custom" v-html="Contenido.body.custom"></div>
-            </div>
-
-            <!-- FOOTER -->
-            <div class="flex items-center justify-between border-t pt-2" v-if="Contenido.footer">
-                <!-- Estado -->
-                <span v-if="Contenido.footer.status" class="px-3 py-1 text-xs font-medium rounded-full"
-                    :class="Contenido.footer.statusClass">
-                    {{ Contenido.footer.status }}
-                </span>
-
-                <!-- Botones -->
-                <div class="flex gap-2" v-if="Contenido.footer.buttons">
-                    <button v-for="(btn, i) in Contenido.footer.buttons" :key="i" :class="btn.class">
-                        <i v-if="btn.icon" :class="btn.icon"></i>
-                        {{ btn.text }}
-                    </button>
+                    <!-- Botones -->
+                    <div class="flex gap-2" v-if="card.footer.buttons">
+                        <button v-for="(btn, i) in card.footer.buttons" :key="i" :class="btn.class">
+                            <i v-if="btn.icon" :class="btn.icon"></i>
+                            {{ btn.text }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

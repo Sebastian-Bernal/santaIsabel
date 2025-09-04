@@ -1,20 +1,13 @@
 export class CardBuilder {
     constructor() {
         this.propiedades = {
+            cards: [],
+            contenedorCards: '',
+            contenedor: '',
             header: {
-                icon: '',
-                iconBG: '',
                 title: '',
-                subtitle: ''
-            },
-            body: {
-                text: '',
+                subtitle: '',
                 html: ''
-            },
-            footer: {
-                status: '',
-                statusClass: '',
-                buttons: []
             },
             tamaño: '',
             estilos: '',
@@ -22,8 +15,23 @@ export class CardBuilder {
         }
     }
 
+    setCards(cards) {
+        this.propiedades.cards = cards
+        return this
+    }
+
     setTamaño(tamaño) {
         this.propiedades.tamaño = tamaño
+        return this
+    }
+
+    setContenedor(contenedor) {
+        this.propiedades.contenedor = contenedor
+        return this
+    }
+
+    setcontenedorCards(contenedorCards) {
+        this.propiedades.contenedorCards = contenedorCards
         return this
     }
 
@@ -32,13 +40,8 @@ export class CardBuilder {
         return this
     }
 
-    setheaderIcon(icon) {
-        this.propiedades.header.icon = icon
-        return this
-    }
-
-    setheaderIconBG(iconBG) {
-        this.propiedades.header.iconBG = iconBG
+    setheaderHtml(html) {
+        this.propiedades.header.html = html
         return this
     }
 
@@ -47,28 +50,8 @@ export class CardBuilder {
         return this
     }
 
-    setbodyText(text) {
-        this.propiedades.body.text = text
-        return this
-    }
-
-    setbodyHtml(html) {
-        this.propiedades.body.html = html
-        return this
-    }
-
-    setfooterStatus(status) {
-        this.propiedades.footer.status = status
-        return this
-    }
-
-    setfooterStatusClass(statusClass) {
-        this.propiedades.footer.statusClass = statusClass
-        return this
-    }
-
-    setfooterButtons(buttons) {
-        this.propiedades.footer.buttons = buttons
+    setheaderSubTitle(subtitle) {
+        this.propiedades.header.subtitle = subtitle
         return this
     }
 

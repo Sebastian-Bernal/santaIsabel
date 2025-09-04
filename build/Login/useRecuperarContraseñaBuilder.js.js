@@ -1,5 +1,5 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 import CrossImg from '~/assets/img/cross.png'
 
 export function useRecuperarContraseñaBuilder({

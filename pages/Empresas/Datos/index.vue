@@ -3,8 +3,8 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { useEpsBuilder } from '~/build/Empresa/useEpsBuilder'
 import { useProfesionesBuilder } from '~/build/Empresa/useProfesionesBuilder'
-import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+import { TablaBuilder } from '~/build/Constructores/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 
 import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion';
 import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS';

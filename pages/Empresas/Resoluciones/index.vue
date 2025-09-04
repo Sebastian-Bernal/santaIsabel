@@ -2,8 +2,8 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { useDatosResolucionBuilder } from '~/build/Empresa/useDatosResolucionBuilder';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
-import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion';
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';

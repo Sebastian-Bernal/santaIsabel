@@ -33,17 +33,14 @@ export const validarYEnviarLogin = async (datos) => {
     // dato guardado Temporal por indexedDB
     sessionStorage.setItem('Nombre', usuarioValido.name)
 
-    let home = ''
     // Extraer permisos desde profesion
     if (usuarioValido.rol === 'Administrativo') {
         sessionStorage.setItem('Permisos', JSON.stringify(secciones));
         sessionStorage.setItem('Rol', 'Admin');
-        home = 'Dashboard'
     } else if(usuarioValido.rol === 'Paciente') {
         sessionStorage.setItem('Permisos', JSON.stringify(['Historia']));
         sessionStorage.setItem('Rol', 'Paciente');
         sessionStorage.setItem('Paciente', JSON.stringify(usuarioValido));
-        home = 'Historia'
     } else {
         const medicos = await profeionales.listMedicos
         const profesional = medicos.filter(p => p.No_document === usuarioValido.No_document)?.[0];
@@ -55,14 +52,12 @@ export const validarYEnviarLogin = async (datos) => {
 
         sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion));
         sessionStorage.setItem('Rol', 'Profesional');
-        home = 'Citas'
     }
 
 
     const estado = await enviarFormulario(datos.Usuario)
     return {
         estado,
-        home
     };
 };
 
@@ -77,26 +72,27 @@ const enviarFormulario = async (datos) => {
         try {
             console.log(datos.correo, datos.contraseña)
             // mandar a api
-            let options = {
-                metodo: 'POST',
-                url: config.public.login,
-                // head: {
-                //     'X-Company': 'store_one'
-                // },
-                body: {
-                    email: datos.correo,
-                    password: datos.contraseña
-                },
-            }
-            const respuesta = await api.functionCall(options)
-            if (respuesta) {
-                sessionStorage.setItem('token', respuesta.access_token)
-                sessionStorage.setItem('name', respuesta.user_name)
-                sessionStorage.setItem('Usuario', datos.correo)
-                return true
-            } else {
-                return false
-            }
+            // let options = {
+            //     metodo: 'POST',
+            //     url: config.public.login,
+            //     // head: {
+            //     //     'X-Company': 'store_one'
+            //     // },
+            //     body: {
+            //         email: datos.correo,
+            //         password: datos.contraseña
+            //     },
+            // }
+            // const respuesta = await api.functionCall(options)
+            // if (respuesta) {
+            //     sessionStorage.setItem('token', respuesta.access_token)
+            //     sessionStorage.setItem('name', respuesta.user_name)
+            //     sessionStorage.setItem('Usuario', datos.correo)
+            //     return true
+            // } else {
+            //     return false
+            // }
+            return true
         } catch (error) {
             console.error('Fallo al enviar. Intenta en otro momento', error);
         }

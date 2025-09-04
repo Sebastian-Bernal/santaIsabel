@@ -1,5 +1,5 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/composables/Formulario/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 import CrossImg from '~/assets/img/cross.png'
 
 export function useLoginBuilder({
@@ -41,7 +41,8 @@ export function useLoginBuilder({
         type: 'email',
         id: 'correo-user',
         name: 'correo-user',
-        tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center text-white!',
+        tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
+        estilo: 'text-white!',
         vmodel: 'Usuario.correo',
       })
       .addCampo({
@@ -51,6 +52,7 @@ export function useLoginBuilder({
         id: 'contraseña',
         name: 'contraseña',
         tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
+        estilo: 'text-white!',
         vmodel: 'Usuario.contraseña',
       })
       .addCampo({

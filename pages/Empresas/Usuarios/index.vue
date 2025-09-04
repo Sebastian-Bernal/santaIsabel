@@ -3,9 +3,9 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { municipios } from '~/data/municipios';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
-import { ComponenteBuilder } from '~/composables/Formulario/ClassFormulario';
+import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
-import { TablaBuilder } from '~/composables/Formulario/ClassTablas';
+import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { storeToRefs } from 'pinia';
 
 const varView = useVarView();

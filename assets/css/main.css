@@ -89,6 +89,37 @@
   }
 }
 
+.containerDashboard {
+    display: grid;
+    grid-template-areas: 
+    "status status status"
+    "Info Info actions"
+    "InfoCitas InfoCitas actions";
+}
+
+.area-status {
+  grid-area: status;
+}
+
+.area-info {
+  grid-area: Info;
+}
+
+.area-infoCitas {
+  grid-area: InfoCitas;
+}
+
+.area-actions {
+  grid-area: actions;
+}
+
+@media screen and (max-width: 1024px) {
+    .containerDashboard {
+    display: flex;
+    flex-direction: column;
+    }
+}
+
 
 .swal-dark {
   background-color: #1e293b !important; /* gris oscuro Tailwind slate-800 */

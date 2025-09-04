@@ -20,13 +20,7 @@ export const accionesFormularios = {
     Ingresar: async (data) => {
         const respuesta = await validarYEnviarLogin(data);
         if (respuesta.estado) {
-            if (respuesta.home === 'Dashboard') {
-                window.location.href = '/Home'
-            } else if (respuesta.home === 'Historia') {
-                window.location.href = '/Historia'
-            } else if (respuesta.home === 'Citas') {
-                window.location.href = '/Usuarios/Citas'
-            }
+            window.location.href = '/Home'
         }
         return respuesta;
     },
@@ -46,7 +40,7 @@ export const accionesFormularios = {
         await validarYEnviarModificarPaciente(data)
         return true;
     },
-    NuevoMedico: async (data) => {
+    NuevoProfesional: async (data) => {
         await validarYEnviarNuevoMedico(data)
         return true;
     },
