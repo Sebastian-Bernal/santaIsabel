@@ -60,6 +60,14 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarDatosSoftware(data)
         return respuesta
     },
+    DatosNomina: async (data) => {
+        const respuesta = await validarYEnviarDatosSoftware(data)
+        return respuesta
+    },
+    DatosEquivalentes: async (data) => {
+        const respuesta = await validarYEnviarDatosSoftware(data)
+        return respuesta
+    },
     DatosFacturacion: async (data) => {
         console.log('prueba')
         const respuesta = await validarYEnviarDatosFacturacion(data)

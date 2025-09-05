@@ -14,31 +14,32 @@ export function useDatosEmpresaBuilder({
         .setBotones([{
             type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
         }])
-        .setCamposRequeridos(['nombre',
-            'logo',
-            'logoLogin',
-            'JPG',
-            'no_identificacion',
-            'DV',
-            'registroMercantil',
-            'direccion',
-            'telefono',
-            'lenguaje',
-            'impuesto',
-            'pais',
-            'tipoDocumento',
-            'tipoOperacion',
-            'tipoEntorno',
-            'tipoMoneda',
-            'tipoOrganizacion',
-            'municipio',
-            'tipoResponsabilidad',
-            'tipoRegimen',])
+        .setCamposRequeridos(['Empresa.nombre',
+            'Empresa.logo',
+            'Empresa.logoLogin',
+            'Empresa.JPG',
+            'Empresa.no_identificacion',
+            'Empresa.DV',
+            'Empresa.registroMercantil',
+            'Empresa.direccion',
+            'Empresa.telefono',
+            'Empresa.lenguaje',
+            'Empresa.impuesto',
+            'Empresa.pais',
+            'Empresa.tipoDocumento',
+            'Empresa.tipoOperacion',
+            'Empresa.tipoEntorno',
+            'Empresa.tipoMoneda',
+            'Empresa.tipoOrganizacion',
+            'Empresa.municipio',
+            'Empresa.tipoResponsabilidad',
+            'Empresa.tipoRegimen',])
+        .setFormularioContenedorCampos('grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1')
         .nuevaSeccion('Datos Empresa')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-building text-blue-500 mr-1"></i>Datos de la Empresa',
-            tamaño: 'w-full col-span-4',
+            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-2',
             forLabel: 'nombre'
         })
         .addCampo({
@@ -47,9 +48,10 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Nombre Comercial',
             id: 'nombre',
             name: 'nombre',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             minlength: 3,
-            vmodel: 'Empresa.nombre'
+            vmodel: 'Empresa.nombre',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -57,7 +59,7 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Logo',
             id: 'logo',
             name: 'logo',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             vmodel: 'Empresa.logo',
             slot: {
                 label: '<label for="logoFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
@@ -76,7 +78,7 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Logo Login',
             id: 'logoLogin',
             name: 'logoLogin',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             vmodel: 'Empresa.logoLogin',
             slot: {
                 label: '<label for="logoLoginFile"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
@@ -95,7 +97,7 @@ export function useDatosEmpresaBuilder({
             placeholder: 'JPG firmas facturas',
             id: 'JPG',
             name: 'firmas',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             vmodel: 'Empresa.JPG',
             slot: {
                 label: '<label for="JPGfirmas"><i class="fa-solid fa-image text-blue-500 cursor-pointer hover:text-blue-600"></i></label>',
@@ -113,16 +115,16 @@ export function useDatosEmpresaBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-gear text-blue-500 mr-1"></i>Configuración de la Empresa',
-            tamaño: 'w-full col-span-4',
+            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-2',
             forLabel: 'IdEmpresa'
         })
         .addCampo({
             component: 'Input',
-            type: 'text',
+            type: 'number',
             placeholder: 'Número de identificación',
             id: 'IdEmpresa',
             name: 'IdEmpresa',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             vmodel: 'Empresa.no_identificacion'
         })
         .addCampo({
@@ -131,8 +133,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'DV',
             id: 'DV',
             name: 'DV',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.DV'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.DV',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -140,8 +143,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Registro Mercantil',
             id: 'registroMercantil',
             name: 'registroMercantil',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.registroMercantil'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.registroMercantil',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -149,8 +153,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Dirección',
             id: 'direccion',
             name: 'direccion',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.direccion'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.direccion',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -158,7 +163,7 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Teléfono',
             id: 'telefono',
             name: 'telefono',
-            tamaño: 'md:col-span-1 col-span-4',
+            tamaño: 'w-full',
             vmodel: 'Empresa.telefono'
         })
         .addCampo({
@@ -167,8 +172,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Lenguaje',
             id: 'lenguaje',
             name: 'lenguaje',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.lenguaje'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.lenguaje',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -176,8 +182,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Impuesto',
             id: 'impuesto',
             name: 'impuesto',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.impuesto'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.impuesto',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -185,8 +192,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'País',
             id: 'pais',
             name: 'pais',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.pais'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.pais',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -194,8 +202,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo de Documento',
             id: 'tipoDocumento',
             name: 'tipoDocumento',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoDocumento'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoDocumento',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -203,8 +212,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo de Operación',
             id: 'tipoOperacion',
             name: 'tipoOperacion',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoOperacion'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoOperacion',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -212,8 +222,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo Entorno',
             id: 'tipoEntorno',
             name: 'tipoEntorno',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoEntorno'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoEntorno',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -221,8 +232,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo Moneda',
             id: 'tipoMoneda',
             name: 'tipoMoneda',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoMoneda'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoMoneda',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -230,8 +242,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo de Organización',
             id: 'tipoOrganizacion',
             name: 'tipoOrganizacion',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoOrganizacion'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoOrganizacion',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -239,8 +252,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Municipio',
             id: 'municipio',
             name: 'municipio',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.municipio'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.municipio',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -248,8 +262,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo de Responsabilidad',
             id: 'tipoResponsabilidad',
             name: 'tipoResponsabilidad',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoResponsabilidad'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoResponsabilidad',
+            upperCase: true
         })
         .addCampo({
             component: 'Input',
@@ -257,8 +272,9 @@ export function useDatosEmpresaBuilder({
             placeholder: 'Tipo de Régimen',
             id: 'tipoRegimen',
             name: 'tipoRegimen',
-            tamaño: 'md:col-span-1 col-span-4',
-            vmodel: 'Empresa.tipoRegimen'
+            tamaño: 'w-full',
+            vmodel: 'Empresa.tipoRegimen',
+            upperCase: true
         })
         .build()
 }

@@ -89,7 +89,9 @@ export function useFormulario(props) {
 
     function camposRequeridos(formData) {
         const camposRequeridos = ref(props.Propiedades?.content?.camposRequeridos || []);
+
         const camposValidos = camposRequeridos.value.every((ruta) => {
+            console.log(formData, ruta)
             const valor = getValue(formData, ruta)
             return isValid(valor)
         });
@@ -103,6 +105,7 @@ export function useFormulario(props) {
 
     // Botones
     function manejarClick(item, formData, limpiar) {
+        console.log(formData)
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 guardarDatos(formData)

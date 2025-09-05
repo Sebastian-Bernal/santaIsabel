@@ -33,7 +33,7 @@ const propiedades = pagina
     .setHeaderPage({titulo: 'Configuracion de Resolucion', descripcion: 'Registra y configura segun los datos de tu Empresa.'})
     .setEstilos('')
     .setLayout('')
-    .setContenedor('w-full flex flex-col gap-3')
+    .setContenedor('w-full flex flex-col gap-5')
     .addComponente('Form', propiedadesResolucion)
     .addComponente('Tabla', builderTabla
         .setColumnas([

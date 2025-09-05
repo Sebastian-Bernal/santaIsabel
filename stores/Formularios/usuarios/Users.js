@@ -10,7 +10,7 @@ export const useUsersStore = defineStore('Users', {
                 id_empresa: '',
                 correo: '',
                 contraseña: '',
-                rol: '',
+                rol: 'Administrador',
                 estado: 'activo',
             },
             InformacionUser: {

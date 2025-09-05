@@ -1,11 +1,26 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
+import { useSoftwareStore } from '~/stores/Formularios/empresa/Software';
+import { useSoftwareDEStore } from '~/stores/Formularios/empresa/DocumentosEquivalentes';
 
 import { useDatosEmpresaBuilder } from '~/build/Empresa/useDatosEmpresaBuilder';
 import { useDatosSofwareBuilder } from '~/build/Empresa/useDatosSoftwareBuilder';
 import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
 import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { watch } from 'vue';
+
+const pinSoftware = ref(0)
+const storeSoftware = useSoftwareStore()
+
+watch(
+  () => storeSoftware.Formulario.Software.Dian.pin,
+  (nuevoValor) => {
+    pinSoftware.value = nuevoValor.length || 0
+    console.log(pinSoftware.value)
+  }
+);
+
 
 
 // Formularios Configuracion Empresa
@@ -16,17 +31,18 @@ const propiedadesEmpresa = useDatosEmpresaBuilder({
 
 const propiedadesSoftware = useDatosSofwareBuilder({
     storeId: 'DatosSoftware',
+    numeroLetras: pinSoftware? pinSoftware.value : 0,
     storePinia: 'Software'
 })
 
 const propiedadesNomina = useDatosNominaBuilder({
     storeId: 'DatosNomina',
-    storePinia: 'Software'
+    storePinia: 'Nomina'
 })
 
 const propiedadesEquivalente = useDatosEquivalentesBuilder({
     storeId: 'DatosEquivalentes',
-    storePinia: 'Software'
+    storePinia: 'DocumentosEquivalentes'
 })
 
 // Construccion de pagina
@@ -44,7 +60,7 @@ const propiedades = pagina
     .addComponente('Form', propiedadesEquivalente)
     .build()
 
-console.log(propiedades)
+// console.log(propiedades)
 </script>
 
 <template>

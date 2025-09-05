@@ -11,6 +11,13 @@ export function useDatosResolucionBuilder({
         .setStoreId(storeId)
         .setStorePinia(storePinia)
         .setFormularioFondo(false)
+        .setCamposRequeridos(['Facturacion.tipoDocumento',
+            'Facturacion.prefijo',
+            'Facturacion.no_resolucion',
+            'Facturacion.fechaResolucion',
+            'Facturacion.fechaInicial',
+            'Facturacion.fechaHasta',
+        ])
         .setBotones([{
             type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
         }])
@@ -70,7 +77,13 @@ export function useDatosResolucionBuilder({
             tamaño: 'md:col-span-1 col-span-2',
             vmodel: 'Facturacion.fechaResolucion',
             slot: {
-                label: `<input type="date" class="w-[20px] cursor-pointer">`
+                // label: `<label for="fechaResolucionDate" class="w-[20px] cursor-pointer" onclick="document.getElementById('fechaResolucionDate').showPicker()"><i class="fa-solid fa-calendar"></i></label>`,
+                input: {
+                    type: 'date',
+                    id: 'fechaResolucionDate',
+                    name: 'fechaResolucionDate',
+                },
+                inputClass: 'w-[20px] '
             }
         })
         .addCampo({
@@ -82,7 +95,12 @@ export function useDatosResolucionBuilder({
             tamaño: 'md:col-span-1 col-span-2',
             vmodel: 'Facturacion.fechaInicial',
             slot: {
-                label: `<input type="date" class="w-[20px] cursor-pointer">`
+                input: {
+                    type: 'date',
+                    id: 'fechaInicialDate',
+                    name: 'fechaInicialDate',
+                },
+                inputClass: 'w-[20px] '
             }
         })
         .addCampo({
@@ -94,7 +112,12 @@ export function useDatosResolucionBuilder({
             tamaño: 'md:col-span-1 col-span-2',
             vmodel: 'Facturacion.fechaHasta',
             slot: {
-                label: `<input type="date" class="w-[20px] cursor-pointer">`
+                input: {
+                    type: 'date',
+                    id: 'fechaHastaDate',
+                    name: 'fechaHastaDate',
+                },
+                inputClass: 'w-[20px] '
             }
         })
 

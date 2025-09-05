@@ -47,14 +47,14 @@ const emit = defineEmits(['update:modelValue']);
             @keyup.enter="Propiedades.events?.onKeyUp"
             :disabled="Propiedades.disabled"
             :class="[{ 'inputIcon': Propiedades.icon, 'inputSlot': Propiedades.slot }, Propiedades.estilo]" 
-            class="mt-1 w-full block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 w-full h-full block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
 
         <!-- Icono (opcional) -->
         <i v-if="Propiedades.icon" :class="Propiedades.icon"
             class="iconInput absolute left-[10px] top-[55%] text-gray-600 dark:text-gray-200"></i>
         <!-- Slot (opcional) -->
-        <div v-if="Propiedades.slot" class="absolute right-5 top-2">
+        <div v-if="Propiedades.slot" class="absolute right-5 top-3">
             <label v-html="Propiedades.slot.label"></label>
             <input v-if="Propiedades.slot.input"
                 :type="Propiedades.slot.input.type"
@@ -62,7 +62,7 @@ const emit = defineEmits(['update:modelValue']);
                 :id="Propiedades.slot.input.id"
                 :name="Propiedades.slot.input.name"
                 @input="handleInput($event)"
-                class="hidden"
+                :class="Propiedades.slot.inputClass || 'hidden'"
             />
         </div>
 

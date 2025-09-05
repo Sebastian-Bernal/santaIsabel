@@ -46,7 +46,7 @@ onMounted(async () => {
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
 const modificarMedico = (medico) => {
     mapCampos(medico, medicosStore.Formulario)
-    showVer = true;
+    showVer.value = true;
 };
 
 // Formulario

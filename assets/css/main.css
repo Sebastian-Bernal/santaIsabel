@@ -29,11 +29,6 @@
     font-family: Roboto Slab, sans-serif;
 }
 
-.scrollForm {
-    position: relative;
-    border-radius: 16px;
-}
-
 .scrollForm::-webkit-scrollbar {
     height: 7px;
     width: 4px;

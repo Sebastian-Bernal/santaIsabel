@@ -17,6 +17,7 @@ const tablaStore = await cargarStore(props.Propiedades.content.storePinia) || {}
 
 const {
     traerDatos,
+    guardarDatos,
     getValue,
     setValue,
     manejarClick,
@@ -30,6 +31,10 @@ const fondos = {
     false: 'div',
     FondoTransparent,
 };
+
+// watch(tablaStore.Formulario, (newValue) => {
+//     console.log(newValue)
+// }, {deep: true})
 
 // Traer datos del localStorage
 onMounted(() => {
@@ -66,7 +71,7 @@ function limpiar () {
                         <div
                             class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto" :class="{'h-[75%]!' : Propiedades.formulario.tipo === 'Wizard'}">
                             <!-- Contenido del formulario -->
-                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]">
+                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]" :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]" :Propiedades="{...item, disabled: props.Propiedades.formulario.soloVer}"
                                     :modelValue="getValue(tablaStore?.Formulario, item.vmodel)"
@@ -78,10 +83,10 @@ function limpiar () {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-2 w-full flex justify-center items-center gap-3">
+            <div class="mt-2 w-full flex justify-center items-center gap-3" role="button" tabindex="0" @keydown.enter="limpiar">
             <!-- <button @click="limpiar">Cerrar</button> -->
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
-                    @click="manejarClick(item, tablaStore?.Formulario, limpiar)" @keyup.enter="manejarClick(item, tablaStore?.Formulario, limpiar)"
+                    @click="manejarClick(item, tablaStore?.Formulario, limpiar)" 
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>

@@ -54,7 +54,7 @@ const props = defineProps({
                 </div>
 
                 <!-- FOOTER -->
-                <div class="flex items-center justify-between pt-2" v-if="card.footer">
+                <div class="flex flex-col items-center justify-between pt-2 gap-2" v-if="card.footer">
                     <!-- Estado -->
                     <span v-if="card.footer.status" class="px-3 py-1 text-xs font-medium rounded-full"
                         :class="card.footer.statusClass">

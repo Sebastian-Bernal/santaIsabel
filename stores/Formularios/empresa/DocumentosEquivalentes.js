@@ -4,7 +4,7 @@ import { createFormStore } from '../../createFormStore';
 // Estructura de datos de Citas
 const estructuraCita = {
     Software: {
-        Dian: {
+        Equivalentes: {
             id: '',
             pin: '',
             testID: '',
@@ -13,7 +13,7 @@ const estructuraCita = {
 }
 
 // Pinia Empresa
-export const useSoftwareStore = defineStore('Software', {
+export const useSoftwareDEStore = defineStore('SoftwareDE', {
     state: () => ({
         Formulario: estructuraCita,
         Software: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida

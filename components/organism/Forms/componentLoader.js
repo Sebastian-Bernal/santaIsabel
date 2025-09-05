@@ -82,6 +82,16 @@ export async function cargarStore(storeName) {
       tablaStore = useSoftwareStore();
       break;
     }
+    case 'Nomina': {
+      const { useNominaStore } = await import('~/stores/Formularios/empresa/Nomina');
+      tablaStore = useNominaStore();
+      break;
+    }
+    case 'DocumentosEquivalentes': {
+      const { useSoftwareDEStore } = await import('~/stores/Formularios/empresa/DocumentosEquivalentes');
+      tablaStore = useSoftwareDEStore();
+      break;
+    }
     default:
       console.warn(`Store "${storeName}" no reconocido.`);
       break;

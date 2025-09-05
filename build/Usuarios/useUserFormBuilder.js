@@ -18,6 +18,7 @@ export function useUserBuilder({
     tipoUsuario,
     verUser,
 }) {
+    console.log(tipoUsuario)
     const builder = new FormularioBuilder()
     builder
         .setStoreId(storeId)
@@ -29,12 +30,30 @@ export function useUserBuilder({
         .setFormularioTituloFormulario('Nuevo Paciente')
         .setFormularioShow(show)
         .setFormularioTipo(tipoFormulario)
+        .setFormularioContenedorCampos('flex flex-col')
         .setBotones([
             { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
             { text: 'Siguiente', color: 'bg-blue-500', type: 'enviar' },
         ])
         // 📌 Sección: Datos
         .nuevaSeccion('Datos usuarios')
+    if (tipoUsuario === 'Administrador') {
+        builder
+            .addCampo({
+                component: 'Select',
+                placeholder: 'Rol',
+                id: 'rol',
+                name: 'rol',
+                tamaño: 'w-full',
+                options: [
+                    { text: 'Paciente', value: 'Paciente' },
+                    { text: 'Profesional', value: 'Profesional' },
+                    { text: 'Administrador', value: 'Administrador' },
+                ],
+                vmodel: 'User.rol',
+            })
+    }
+    builder
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Datos usuario',
@@ -188,19 +207,6 @@ export function useUserBuilder({
             forLabel: 'documento'
         })
         .addCampo({
-            component: 'Select',
-            placeholder: 'Rol',
-            id: 'rol',
-            name: 'rol',
-            tamaño: 'w-full',
-            options: [
-                { text: 'Paciente', value: 'Paciente' },
-                { text: 'Profesional', value: 'Profesional' },
-                { text: 'Administrativo', value: 'Administrativo' },
-            ],
-            vmodel: 'User.rol',
-        })
-        .addCampo({
             component: 'Input',
             type: 'text',
             placeholder: 'Correo Electrónico',
@@ -211,16 +217,20 @@ export function useUserBuilder({
             mayuscula: false,
             vmodel: 'User.correo',
         })
-        .addCampo({
-            component: 'Input',
-            type: 'password',
-            placeholder: 'Crea una contraseña',
-            id: 'contraseña-usuario',
-            name: 'contraseña-usuario',
-            minLength: '5',
-            mayuscula: false,
-            vmodel: 'User.contraseña',
-        })
+
+    if (tipoUsuario === 'Administrador') {
+        builder
+            .addCampo({
+                component: 'Input',
+                type: 'password',
+                placeholder: 'Crea una contraseña',
+                id: 'contraseña-usuario',
+                name: 'contraseña-usuario',
+                minLength: '5',
+                mayuscula: false,
+                vmodel: 'User.contraseña',
+            })
+    }
 
     if (tipoUsuario === 'Paciente') {
         builder

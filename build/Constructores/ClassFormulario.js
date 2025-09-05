@@ -72,6 +72,7 @@ export class FormularioBuilder {
     this.propiedades = {
       formulario: {
         fondo: true,
+        contenedorCampos: '',
         estilos: '',
         botones: [],
         tamañoForm: '',
@@ -120,6 +121,11 @@ export class FormularioBuilder {
 
   setFormularioEstilos(estilos) {
     this.propiedades.formulario.estilos = estilos
+    return this
+  }
+
+  setFormularioContenedorCampos(estilos) {
+    this.propiedades.formulario.contenedorCampos = estilos
     return this
   }
 

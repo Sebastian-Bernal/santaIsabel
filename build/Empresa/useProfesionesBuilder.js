@@ -15,13 +15,17 @@ export function useProfesionesBuilder({
     .setBotones([{
       type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
     }])
+    .setCamposRequeridos(['Profesion.nombre',
+      'Profesion.codigo',
+      'Profesion.permisos',
+      'Profesion.tipo',])
     .nuevaSeccion('Agregar Nueva Profesion')
-      .addCampo({
-          component: 'Label',
-          text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',
-          tamaño: 'w-full col-span-2',
-          forLabel: 'eps'
-      })
+    .addCampo({
+      component: 'Label',
+      text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',
+      tamaño: 'w-full col-span-2',
+      forLabel: 'eps'
+    })
     .addCampo({
       component: 'Input',
       type: 'text',
@@ -30,7 +34,8 @@ export function useProfesionesBuilder({
       name: 'Profesion',
       minlength: 5,
       tamaño: 'col-span-1',
-      vmodel: 'Profesion.nombre'
+      vmodel: 'Profesion.nombre',
+      upperCase: true
     })
     .addCampo({
       component: 'Input',
@@ -40,16 +45,17 @@ export function useProfesionesBuilder({
       name: 'ProfesionCodigo',
       minlength: 2,
       tamaño: 'col-span-1',
-      vmodel: 'Profesion.codigo'
+      vmodel: 'Profesion.codigo',
+      upperCase: true
     })
     .addCampo({
       component: 'SelectMultiple',
       placeholder: 'Seleccione los permisos',
       id: 'permisos',
       name: 'permisos',
-      tamaño: 'col-span-2',
+      tamaño: 'w-full',
       vmodel: 'Profesion.permisos',
-      options: permisos
+      options: permisos,
     })
     .addCampo({
       component: 'Select',

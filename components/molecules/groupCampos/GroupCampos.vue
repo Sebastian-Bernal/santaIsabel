@@ -71,6 +71,9 @@ const emit = defineEmits(['update:modelValue']);
             <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
                 @click="() => removeItem(index)"></i>
         </div>
+        <div v-if="items.length < 1" class="flex justify-center py-3">
+            <p class="text-gray-500 text-base font-bold">No hay Datos, Agrega un campo.</p>
+        </div>
     </div>
 </template>
 
