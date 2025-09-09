@@ -105,7 +105,6 @@ export function useFormulario(props) {
 
     // Botones
     function manejarClick(item, formData, limpiar) {
-        console.log(formData)
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 guardarDatos(formData)
@@ -125,6 +124,8 @@ export function useFormulario(props) {
                 limpiar()
                 item.accion()
             }
+        } else {
+            item.accion(formData)
         }
     }
 

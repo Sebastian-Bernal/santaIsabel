@@ -82,6 +82,7 @@ export class FormularioBuilder {
         secciones: [],
         show: false,
         soloVer: false,
+        editarFormulario: false
       },
       content: {
         storeId: '',
@@ -106,6 +107,11 @@ export class FormularioBuilder {
 
   setSoloVer(estado) {
     this.propiedades.formulario.soloVer = estado
+    return this
+  }
+
+  setEditarFormulario(boolean) {
+    this.propiedades.formulario.editarFormulario = boolean
     return this
   }
 

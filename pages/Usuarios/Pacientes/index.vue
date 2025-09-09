@@ -63,6 +63,8 @@ const agregarPaciente = () => {
 
 const verPaciente = (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
+    pacientesStore.Formulario.Paciente.id = paciente.id_paciente
+    pacientesStore.Formulario.User.id = paciente.id
     showVer.value = true;
 };
 
@@ -88,6 +90,15 @@ function seleccionarCIE_10(item) {
     // });
 }
 
+const municipiosOptions = computed(() => {
+    const departamentoSeleccionado = pacientesStore.Formulario.InformacionUser.departamento;
+
+    const departamento = municipios.departamentos.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+
+    return departamento ? departamento.municipios : [];
+});
+
+
 const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
 
 const propiedadesUser = useUserBuilder({
@@ -100,8 +111,10 @@ const propiedadesUser = useUserBuilder({
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    municipios: municipiosOptions,
+    seleccionarMunicipio: () => {},
     EPS: opcionesEPS,
-    agregarDiagnostico: () => { },
+    agregarDiagnostico: () => {},
     seleccionarCIE_10,
     CIE10: CIE10,
     tipoUsuario: "Paciente",
@@ -117,6 +130,8 @@ const propiedadesVerUser = useUserBuilder({
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    municipios: municipiosOptions,
+    seleccionarMunicipio: () => {},
     EPS: opcionesEPS,
     agregarDiagnostico: () => { },
     seleccionarCIE_10,
@@ -127,45 +142,45 @@ const propiedadesVerUser = useUserBuilder({
 
 // Construccion de pagina
 
-const builderTabla = new TablaBuilder();
-const pagina = new ComponenteBuilder();
+const propiedades = computed(() => {
+    const builderTabla = new TablaBuilder();
+    const pagina = new ComponenteBuilder();
 
-const propiedades = pagina
-    .setFondo("FondoDefault")
-    .setEstilos("")
-    .setLayout("")
-    .setContenedor("w-full")
-    .addComponente(
-        "Tabla",
-        builderTabla
-            .setColumnas([
-                { titulo: "name", value: "Nombre", tamaño: 150, ordenar: true },
-                {
-                    titulo: "No_document",
-                    value: "Documento",
-                    tamaño: 100,
-                    ordenar: true,
-                },
-                { titulo: "municipio", value: "Ciudad", tamaño: 150 },
-                { titulo: "genero", value: "Genero", tamaño: 100 },
-                { titulo: "celular", value: "Celular", tamaño: 100 },
-                { titulo: "Eps", value: "EPS", tamaño: 150, ordenar: true },
-            ])
-            .setHeaderTabla({
-                titulo: "Gestion de Pacientes",
-                descripcion: "Administra y consulta información de pacientes",
-                color: "bg-[var(--color-default)] text-white",
-                accionAgregar: agregarPaciente,
-            })
-            .setAcciones({
-                icons: [{ icon: "ver", action: verPaciente }],
-                botones: true,
-            })
-            .setDatos(pacientes)
-    )
-    .addComponente("Form", propiedadesUser)
-    .addComponente("Form", propiedadesVerUser)
-    .build();
+    return pagina
+        .setFondo("FondoDefault")
+        .setEstilos("")
+        .setLayout("")
+        .setContenedor("w-full")
+        .addComponente(
+            "Tabla",
+            builderTabla
+                .setColumnas([
+                    { titulo: "name", value: "Nombre", tamaño: 150, ordenar: true },
+                    { titulo: "No_document", value: "Documento", tamaño: 100, ordenar: true },
+                    { titulo: "municipio", value: "Ciudad", tamaño: 150 },
+                    { titulo: "genero", value: "Genero", tamaño: 100 },
+                    { titulo: "celular", value: "Celular", tamaño: 100 },
+                    { titulo: "Eps", value: "EPS", tamaño: 150, ordenar: true },
+                ])
+                .setHeaderTabla({
+                    titulo: "Gestion de Pacientes",
+                    descripcion: "Administra y consulta información de pacientes",
+                    color: "bg-[var(--color-default)] text-white",
+                    accionAgregar: agregarPaciente,
+                })
+                .setAcciones({
+                    icons: [{ icon: "ver", action: verPaciente }],
+                    botones: true,
+                })
+                .setDatos(pacientes)
+        )
+        .addComponente("Form", propiedadesUser)
+        .addComponente("Form", propiedadesVerUser)
+        .build();
+});
+
+
+
 </script>
 
 <template>

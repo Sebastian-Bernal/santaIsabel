@@ -3,6 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 
 export function useDatosEquivalentesBuilder({
     storeId,
+    mostrarCantidadCaracteres,
     storePinia
 }) {
     const builder = new FormularioBuilder()
@@ -39,20 +40,22 @@ export function useDatosEquivalentesBuilder({
             type: 'text',
             maxLength: 5,
             min: 1,
-            placeholder: 'Pin Software Docuementos Equivalentes',
+            placeholder: 'Pin Software Documentos Equivalentes',
             id: 'pinEquivalentes',
             name: 'pinEquivalentes',
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Software.Equivalentes.pin',
             slot: {
-                label: '<div class="flex text-gray-500"><p>{{ formData.Equivalentes.pin.length }}</p>/<p>5</p></div>',
-
+                label: `<div class="flex text-gray-500"><p id="contador-pinEquivalentes">0</p>/<p>5</p></div>`,
+            },
+            events: {
+                onInput: mostrarCantidadCaracteres
             }
         })
         .addCampo({
             component: 'Input',
             type: 'text',
-            placeholder: 'Test Set ID Docuemntos Equivalentes',
+            placeholder: 'Test Set ID Documentos Equivalentes',
             id: 'testEquivalentes',
             name: 'testEquivalentes',
             tamaño: 'md:col-span-1 col-span-3',

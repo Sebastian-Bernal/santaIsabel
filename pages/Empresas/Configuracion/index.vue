@@ -1,26 +1,22 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import { useSoftwareStore } from '~/stores/Formularios/empresa/Software';
-import { useSoftwareDEStore } from '~/stores/Formularios/empresa/DocumentosEquivalentes';
 
 import { useDatosEmpresaBuilder } from '~/build/Empresa/useDatosEmpresaBuilder';
 import { useDatosSofwareBuilder } from '~/build/Empresa/useDatosSoftwareBuilder';
 import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
 import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
-import { watch } from 'vue';
 
-const pinSoftware = ref(0)
-const storeSoftware = useSoftwareStore()
 
-watch(
-  () => storeSoftware.Formulario.Software.Dian.pin,
-  (nuevoValor) => {
-    pinSoftware.value = nuevoValor.length || 0
-    console.log(pinSoftware.value)
-  }
-);
+function mostrarCantidadCaracteres(event) {
+    const { name, value } = event.target;
+    const cantidad = value.length;
 
+    const contadorDiv = document.getElementById(`contador-${name}`);
+    if (contadorDiv) {
+        contadorDiv.innerHTML = cantidad > 5 ? `<p style="color: red;">${cantidad}</p>` : `<p>${cantidad}</p>`;
+    }
+}
 
 
 // Formularios Configuracion Empresa
@@ -31,19 +27,22 @@ const propiedadesEmpresa = useDatosEmpresaBuilder({
 
 const propiedadesSoftware = useDatosSofwareBuilder({
     storeId: 'DatosSoftware',
-    numeroLetras: pinSoftware? pinSoftware.value : 0,
+    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'Software'
 })
 
 const propiedadesNomina = useDatosNominaBuilder({
     storeId: 'DatosNomina',
+    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'Nomina'
 })
 
 const propiedadesEquivalente = useDatosEquivalentesBuilder({
     storeId: 'DatosEquivalentes',
+    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'DocumentosEquivalentes'
 })
+
 
 // Construccion de pagina
 const pagina = new ComponenteBuilder()

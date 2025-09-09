@@ -15,6 +15,7 @@ import { validarYEnviarDatosEPS } from '~/Core/Empresa/DatosEPS';
 import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
+import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     Ingresar: async (data) => {
@@ -25,7 +26,7 @@ export const accionesFormularios = {
         return respuesta;
     },
     RecuperarContraseña: async (data) => {
-        const respuesta = await validarYEnviarRecuperarContraseña(data);
+        const respuesta = await validarYEnviarCambiarContraseña(data);
         return respuesta
     },
     NuevaCita: async (data) => {
@@ -44,7 +45,7 @@ export const accionesFormularios = {
         await validarYEnviarNuevoMedico(data)
         return true;
     },
-    ModificarMedico: async (data) => {
+    ModificarProfesional: async (data) => {
         await validarYEnviarModificarMedico(data)
         return true;
     },

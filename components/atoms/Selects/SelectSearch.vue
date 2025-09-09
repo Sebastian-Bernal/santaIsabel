@@ -21,7 +21,7 @@ watch(() => props.modelValue, (nuevoValor) => {
     const propiedadFiltrar = unref(props.Propiedades.opciones?.[0]?.value ?? '');
     const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? [])
 
-    if (!nuevoValor) {
+    if (!nuevoValor || nuevoValor.length < 3) {
         opcionesFiltradas.value = [];
         mostrarLista.value = false;
         return;
@@ -30,6 +30,7 @@ watch(() => props.modelValue, (nuevoValor) => {
     opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item =>
         item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
     ).slice(0,20) : [];
+    mostrarLista.value = opcionesFiltradas.value.length > 0;
 });
 
 function seleccionar(item) {
@@ -40,29 +41,37 @@ function seleccionar(item) {
     emit('update:modelValue', primaryField ? item[primaryField] : item);
 };
 
-function showLista() {
-    mostrarLista.value = true;
-};
+function handleInput(event) {
+  let value = event.target.value;
+
+  // Aplica transformación solo si se especifica
+  if (props.Propiedades.upperCase === true) {
+    value = value.toUpperCase();
+  } else if (props.Propiedades.lowerCase === true) {
+    value = value.toLowerCase();
+  }
+
+  // Emitimos el valor transformado (o sin transformar)
+  emit('update:modelValue', value);
+}
 </script>
 
 <template>
     <div class="relative" :class="Propiedades.tamaño">
-        <input :value="modelValue" 
-        class="mt-1 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-        :class="Propiedades.tamaño" type="text" autocomplete="off"
-        :name="Propiedades.name" 
-        :id="Propiedades.id" 
-        :placeholder="Propiedades.placeholder"
-        @input="$emit('update:modelValue', $event.target.value); showLista()"
-        @click="Propiedades.events?.onClick"
-        @change="Propiedades.events?.onChange"
-        @blur="Propiedades.events?.onBlur"
-        @keyup.enter="Propiedades.events?.onKeyUp" />
+        <input :value="modelValue"
+            class="mt-1 h-[35px] text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
+            :placeholder="Propiedades.placeholder"
+            :disabled="Propiedades.disabled"
+            @input="handleInput($event)"
+            @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange"
+            @blur="Propiedades.events?.onBlur" @keyup.enter="Propiedades.events?.onKeyUp" />
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length"
-            class="autocomplete-list absolute! top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-9 p-0 mt-1">
+            class="autocomplete-list top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-9 p-0 mt-1">
             <li v-for="opcion in opcionesFiltradas" :key="opcion.documento"
-                class="px-3 py-2 hover:bg-blue-100 dark:hover:bg-gray-500 cursor-pointer" @mousedown.prevent="seleccionar(opcion)">
+                class="px-3 py-2 hover:bg-blue-100 dark:hover:bg-gray-500 cursor-pointer"
+                @mousedown.prevent="seleccionar(opcion)">
                 <div v-for="campo in Propiedades.opciones" :key="campo.value">
                     <strong v-if="!campo.text" class="text-base">{{ opcion[campo.value] }}</strong>
                     <div v-else class="text-sm">

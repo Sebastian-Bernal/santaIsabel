@@ -1,5 +1,6 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
+import { municipios } from '~/data/municipios'
 
 export function useUserBuilder({
     storeId,
@@ -10,6 +11,8 @@ export function useUserBuilder({
     buscarUsuario,
     departamentos,
     seleccionarDepartamento,
+    municipios,
+    seleccionarMunicipio,
     CIE10,
     seleccionarCIE_10,
     EPS,
@@ -18,16 +21,24 @@ export function useUserBuilder({
     tipoUsuario,
     verUser,
 }) {
-    console.log(tipoUsuario)
+
     const builder = new FormularioBuilder()
     builder
         .setStoreId(storeId)
         .setStorePinia(storePinia)
+        .setEditarFormulario(verUser)
         .setSoloVer(verUser)
         .setCamposRequeridos(camposRequeridos)
         .setFormulariotamaño('LG')
         .setFormularioTitulo('Datos Usuario')
-        .setFormularioTituloFormulario('Nuevo Paciente')
+        if(verUser){
+            builder
+            .setFormularioTituloFormulario('Modificar Usuario')
+        } else {
+            builder
+            .setFormularioTituloFormulario('Nuevo Usuario')
+        }
+        builder
         .setFormularioShow(show)
         .setFormularioTipo(tipoFormulario)
         .setFormularioContenedorCampos('flex flex-col')
@@ -126,15 +137,19 @@ export function useUserBuilder({
             name: 'departamento',
             tamaño: 'md:w-full w-full',
             vmodel: 'InformacionUser.departamento',
+            upperCase: true,
         })
         .addCampo({
-            component: 'Input',
-            type: 'text',
+            component: 'SelectSearch',
+            options: municipios,
+            opciones: [{ value: "nombre" }, { text: 'Codigo:', value: 'id' }],
+            seleccionarItem: seleccionarMunicipio,
             placeholder: 'Municipio',
             id: 'municipio',
             name: 'municipio',
             tamaño: 'md:w-full w-full',
             vmodel: 'InformacionUser.municipio',
+            upperCase: true,
         })
         .addCampo({
             component: 'Select',
@@ -157,6 +172,7 @@ export function useUserBuilder({
             tamaño: 'md:w-full w-full',
             minLength: '5',
             vmodel: 'InformacionUser.barrio',
+            upperCase: true,
         })
         .addCampo({
             component: 'Input',
@@ -167,6 +183,7 @@ export function useUserBuilder({
             tamaño: 'md:w-full w-full',
             minLength: '5',
             vmodel: 'InformacionUser.direccion',
+            upperCase: true,
         })
 
         // 📌 Sección: Contacto
@@ -327,7 +344,7 @@ export function useUserBuilder({
                 component: 'GroupCampos',
                 type: 'SelectSearch',
                 key: 'Diagnosticos',
-                label: 'Diagnosticos',
+                labelGroup: 'Diagnosticos',
                 buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
                 placeholder: 'CIE-10',
                 id: 'cie10',
@@ -338,6 +355,8 @@ export function useUserBuilder({
                 opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                 seleccionarItem: seleccionarCIE_10,
                 value: [],
+                addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' },
+                campo: 'descripcion'
             })
 
             // 📌 Sección: Antecedentes
@@ -345,14 +364,16 @@ export function useUserBuilder({
                 component: 'GroupCampos',
                 type: 'Input',
                 key: 'antecedentes',
-                label: 'Antecedentes',
+                labelGroup: 'Antecedentes',
                 buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
                 placeholder: 'Antecedente',
                 id: 'antecedente',
                 name: 'antecedente',
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Antecedentes',
-                value: []
+                value: [],
+                addItem: {descripcion: '', tipo: 'Personal'},
+                campo: 'descripcion'
             })
     }
 
@@ -374,8 +395,6 @@ export function useUserBuilder({
                 tamaño: 'w-full col-span-2',
                 options: opcionesProfesion,
                 vmodel: 'Medico.profesion',
-                disabled: 'props.verMedico',
-                required: true
             })
 
             // 📌 Sección: Ubicación Laboral

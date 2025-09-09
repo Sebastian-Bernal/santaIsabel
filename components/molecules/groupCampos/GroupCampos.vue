@@ -24,7 +24,7 @@ watch(() => props.modelValue, (newVal) => {
 
 // Funciones para manejar Inputs
 const addItem = () => {
-    items.value.push({ descripcion: '', codigoCIE10: '', id_paciente: '' })
+    items.value.push(props.Propiedades.addItem)
     emit('update:modelValue', items.value)
 }
 
@@ -51,11 +51,11 @@ const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
     <div class="flex justify-between col-span-2">
-        <label v-if="Propiedades.label" :for="Propiedades.name"
+        <label v-if="Propiedades.labelGroup" :for="Propiedades.name"
             class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
-            {{ Propiedades.label }}
+            {{ Propiedades.labelGroup }}
         </label>
-        <div v-if="Propiedades.buttons" class="flex gap-2 items-center">
+        <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
             <a v-for="button in Propiedades.buttons" @click="button.action">
                 <ButtonRounded :color="button.color">
                     <i :class="button.icon" @click="addItem"></i>
@@ -65,8 +65,8 @@ const emit = defineEmits(['update:modelValue']);
     </div>
     <div :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
         <div v-for="(input, index) in items" :key="index" class="relative my-2">
-            <component :is="campos[Propiedades.type]" :modelValue="input.descripcion"
-                :Propiedades="Propiedades" @input="e => updateField(index, 'descripcion', e.target.value)" />
+            <component :is="campos[Propiedades.type]" :modelValue="input[Propiedades.campo]"
+                :Propiedades="Propiedades" @input="e => updateField(index, Propiedades.campo, e.target.value)" />
 
             <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
                 @click="() => removeItem(index)"></i>

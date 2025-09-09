@@ -3,17 +3,17 @@ import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
-export const validarYEnviarCambiarContraseña = async (datos, correo) => {
+export const validarYEnviarCambiarContraseña = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     const usersStore = useUsersStore();
     const usuarios = await usersStore.listUsers
 
     const user = usuarios.find(
-        p => p.correo.toLowerCase() === correo.toLowerCase()
+        p => p.correo.toLowerCase() === datos.Usuario.correo.toLowerCase()
     )
 
-    const datosEnviar = { User: {...user, contraseña: datos.nuevacontraseña}};
+    const datosEnviar = { User: {...user, contraseña: datos.Usuario.contraseña}};
 
     return await enviarFormulario(datosEnviar);
 };

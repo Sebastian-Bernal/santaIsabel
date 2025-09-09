@@ -33,15 +33,14 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            // datos.codigoRecuperacion = generarCodigo()
-            // const response = await emailjs.send(
-            //     import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
-            //     import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
-            //     datos,
-            //     import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
-            // )
-            // console.log('Correo enviado con éxito:', response.status, response.text)
-            varView.showCambiarContraseña = true
+            datos.codigoRecuperacion = generarCodigo()
+            const response = await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
+                datos,
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
+            )
+            console.log('Correo enviado con éxito:', response.status, response.text)
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);

@@ -3,6 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 
 export function useDatosNominaBuilder({
     storeId,
+    mostrarCantidadCaracteres,
     storePinia
 }) {
     const builder = new FormularioBuilder()
@@ -45,7 +46,10 @@ export function useDatosNominaBuilder({
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Software.Nomina.pin',
             slot: {
-                label: '<div class="flex text-gray-500"><p>{{ formData.Nomina.pin.length }}</p>/<p>5</p></div>',
+                label: `<div class="flex text-gray-500"><p id="contador-pinNomina">0</p>/<p>5</p></div>`,
+            },
+            events: {
+                onInput: mostrarCantidadCaracteres
             }
         })
         .addCampo({

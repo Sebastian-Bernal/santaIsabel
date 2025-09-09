@@ -278,7 +278,7 @@ const propiedades = computed(() => {
             .addComponente('Card', cardsPacientes
                 .setCards(ultimosPacientes)
                 .setContenedor('area-info')
-                .setcontenedorCards('flex')
+                .setcontenedorCards('flex flex-col')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg')
                 .setheaderTitle('Pacientes Recientes')
                 .setheaderHtml(`<a href="Historial/Historias" class="text-xs text-blue-500">Ver Todos</a>`)
@@ -286,7 +286,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
-                .setcontenedorCards('flex')
+                .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas de Hoy')
@@ -314,7 +314,7 @@ const propiedades = computed(() => {
             .addComponente('Card', cardsPacientes
                 .setCards(ultimosPacientes)
                 .setContenedor('area-info')
-                .setcontenedorCards('flex')
+                .setcontenedorCards('flex flex-col')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg')
                 .setheaderTitle('Cosultas Recientes')
                 .setheaderHtml(`<a href="" class="text-xs text-blue-500">Ver Todos</a>`)
@@ -322,7 +322,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
-                .setcontenedorCards('flex')
+                .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas Proximas')

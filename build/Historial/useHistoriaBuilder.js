@@ -152,27 +152,31 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             type: 'Input',
             key: 'antecedentes',
-            label: 'Antecedentes',
-            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }, { icon: 'fa-solid fa-plus', color: 'bg-purple-700' }],
+            labelGroup: 'Antecedentes Personales',
+            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
             placeholder: 'Antecedente',
             id: 'antecedente',
             name: 'antecedente',
             tamaño: 'w-full col-span-2',
             vmodel: 'Antecedentes',
-            value: []
+            value: [],
+            addItem: { descripcion: '', tipo: 'Personal' },
+            campo: 'descripcion',
         })
         // .addCampo({
         //     component: 'GroupCampos',
         //     type: 'Input',
         //     key: 'antecedentes',
-        //     label: 'Antecedentes',
-        //     buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }, { icon: 'fa-solid fa-plus', color:'bg-blue-700'}],
+        //     labelGroup: 'Antecedentes Familiares',
+        //     buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-purple-700' }],
         //     placeholder: 'Antecedente',
         //     id: 'antecedente',
         //     name: 'antecedente',
         //     tamaño: 'w-full col-span-2',
-        //     vmodel: 'Antecedentes',
-        //     value: []
+        //     vmodel: 'AntecedentesF',
+        //     value: [],
+        //     addItem: { descripcion: '', tipo: 'Familiar' },
+        //     campo: 'descripcion',
         // })
         .nuevaSeccion('Examen Fisico')
         .addCampo({
@@ -191,9 +195,12 @@ export function useHistoriaBuilder({
             name: 'ta',
             placeholder: 'TA',
             tamaño: 'w-full',
+            slot: {
+                tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>` 
+            },
             events: {
                 onChange: validarCampo
-            }
+            },
         })
 
         // --- Input: FC ---
@@ -206,6 +213,9 @@ export function useHistoriaBuilder({
             placeholder: 'FC',
             max: 100,
             tamaño: 'w-full',
+            slot: {
+                tooltip: `<div id="error-fc" class="text-red-300 text-xs mt-1"></div>` 
+            },
             events: {
                 onChange: validarCampo
             }
@@ -221,6 +231,9 @@ export function useHistoriaBuilder({
             placeholder: 'FR',
             max: 250,
             tamaño: 'w-full',
+            slot: {
+                tooltip: `<div id="error-fr" class="text-red-300 text-xs mt-1"></div>` 
+            },
             events: {
                 onChange: validarCampo
             }
@@ -236,6 +249,9 @@ export function useHistoriaBuilder({
             placeholder: 'Tº',
             max: 50,
             tamaño: 'w-full',
+            slot: {
+                tooltip: `<div id="error-t" class="text-red-300 text-xs mt-1"></div>` 
+            },
             events: {
                 onChange: validarCampo
             }
@@ -250,7 +266,10 @@ export function useHistoriaBuilder({
             name: 'sat',
             placeholder: 'Sat O2',
             max: 100,
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full col-span-1',
+            slot: {
+                tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>` 
+            },
             events: {
                 onChange: validarCampo
             }
@@ -272,7 +291,7 @@ export function useHistoriaBuilder({
             id: 'peso',
             name: 'peso',
             placeholder: 'Peso (KG)',
-            tamaño: 'w-full'
+            tamaño: 'w-full col-span-1'
         })
 
         // --- Input: Altura ---
@@ -283,7 +302,7 @@ export function useHistoriaBuilder({
             id: 'altura',
             name: 'altura',
             placeholder: 'Altura (CM)',
-            tamaño: 'w-full'
+            tamaño: 'w-full col-span-1'
         })
 
         // --- Input: Otros ---
@@ -294,48 +313,50 @@ export function useHistoriaBuilder({
             id: 'otros',
             name: 'otros',
             placeholder: 'Otros (opcional)',
-            tamaño: 'w-full'
+            tamaño: 'w-full col-span-1'
         })
 
         // --- Label: Valores de Referencia ---
-        .addCampo({
-            component: 'Label',
-            forLabel: 'motivo',
-            text: '<i class="fa-solid fa-stethoscope text-blue-500 mr-1"></i>Valores de referencia',
-            tamaño: 'w-full col-span-2'
-        })
+        // .addCampo({
+        //     component: 'Label',
+        //     forLabel: 'motivo',
+        //     text: '<i class="fa-solid fa-stethoscope text-blue-500 mr-1"></i>Valores de referencia',
+        //     tamaño: 'w-full col-span-2'
+        // })
 
-        .addCampo({
-            component: 'Label',
-            text: `
-                    <div class="w-full flex md:flex-row flex-col justify-between gap-3 items-center text-orange-400">
-                        <span class="text-sm font-semibold">TA : 90-140/60-90 mmHg</span>
-                        <span class="text-sm font-semibold">FC : 60-100 lpm</span>
-                        <span class="text-sm font-semibold">FR : 12-20 rpm</span>
-                        <span class="text-sm font-semibold">Tº : 36.1-37.2°C</span>
-                        <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
-                    </div>
-                `,
-            tamaño: 'col-span-2 bg-orange-50 p-5'
-        })
+        // .addCampo({
+        //     component: 'Label',
+        //     text: `
+        //             <div class="w-full flex md:flex-row flex-col justify-between gap-3 items-center text-orange-400">
+        //                 <span class="text-sm font-semibold">TA : 90-140/60-90 mmHg</span>
+        //                 <span class="text-sm font-semibold">FC : 60-100 lpm</span>
+        //                 <span class="text-sm font-semibold">FR : 12-20 rpm</span>
+        //                 <span class="text-sm font-semibold">Tº : 36.1-37.2°C</span>
+        //                 <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
+        //             </div>
+        //         `,
+        //     tamaño: 'col-span-2 bg-orange-50 p-5'
+        // })
 
         .nuevaSeccion('Analisis')
         // 📌 Sección: Diagnósticos
         .addCampo({
             component: 'GroupCampos',
             type: 'SelectSearch',
-            key: 'Diagnosticos',
-            label: 'Diagnosticos',
+            labelGroup: 'Diagnosticos',
             buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
             placeholder: 'CIE-10',
             id: 'cie10',
             name: 'cie10',
             tamaño: 'w-full col-span-2',
             vmodel: 'Diagnosticos',
+            value: [],
+            addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' },
+            campo: 'descripcion',
+            // tipo Select Search
             options: CIE10,
             opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
             seleccionarItem: seleccionarCIE_10,
-            value: [],
         })
 
         // --- Select: Tipo de Análisis ---
@@ -399,40 +420,52 @@ export function useHistoriaBuilder({
         })
 
         // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
-        .addCampo({
-            component: 'Button',
-            text: 'Medicina',
-            color: 'bg-[var(--color-default-200)]',
-            accion: () => { varView.showMedicinas = true },
-            icon: 'fa-solid fa-plus'
-        })
-        .addCampo({
-            component: 'Button',
-            text: 'Servicios',
-            color: 'bg-[var(--color-default-300)]',
-            accion: () => { varView.showProcedimientos = true },
-            icon: 'fa-solid fa-plus'
-        })
-        .addCampo({
-            component: 'Button',
-            text: 'Insumos',
-            color: 'bg-[var(--color-default-500)]',
-            accion: () => { varView.showInsumos = true },
-            icon: 'fa-solid fa-plus'
-        })
-        .addCampo({
-            component: 'Button',
-            text: 'Equipos',
-            color: 'bg-[var(--color-default-600)]',
-            accion: () => { varView.showEquipos = true },
-            icon: 'fa-solid fa-plus'
-        })
-
-        // --- Label: Resumen de Historia ---
         // .addCampo({
         //     component: 'Label',
-        //     forLabel: 'motivo',
-        //     text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Enfermedad Actual'
+        //     text: 'Medicina',
+        //     color: 'bg-[var(--color-default-200)]',
+        //     accion: () => { varView.showMedicinas = true },
+        //     icon: 'fa-solid fa-plus'
         // })
+        // .addCampo({
+        //     component: 'Button',
+        //     text: 'Servicios',
+        //     color: 'bg-[var(--color-default-300)]',
+        //     accion: () => { varView.showProcedimientos = true },
+        //     icon: 'fa-solid fa-plus'
+        // })
+        // .addCampo({
+        //     component: 'Button',
+        //     text: 'Insumos',
+        //     color: 'bg-[var(--color-default-500)]',
+        //     accion: () => { varView.showInsumos = true },
+        //     icon: 'fa-solid fa-plus'
+        // })
+        // .addCampo({
+        //     component: 'Button',
+        //     text: 'Equipos',
+        //     color: 'bg-[var(--color-default-600)]',
+        //     accion: () => { varView.showEquipos = true },
+        //     icon: 'fa-solid fa-plus'
+        // })
+
+        .addCampo({
+            component: 'GroupCampos',
+            type: 'Input',
+            labelGroup: 'Medicamentos',
+            buttons: [{ icon: 'fa-solid fa-capsules', color: 'bg-blue-500' }],
+            placeholder: 'Nombre',
+            id: 'nombreMedicamento',
+            name: 'nombreMedicamento',
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Plan_manejo_medicamentos',
+            value: [],
+            addItem: { nombre: '', cantidad: '', id_paciente: '' },
+            campo: 'nombre',
+            // tipo Select Search
+            options: CIE10,
+            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+            seleccionarItem: seleccionarCIE_10,
+        })
     return builder.build()
 }

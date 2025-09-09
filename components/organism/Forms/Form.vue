@@ -58,7 +58,8 @@ function limpiar () {
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
-                    :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
+                    :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual" 
+                    :key="Propiedades.formulario.soloVer"
                     :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full px-6 pt-2">
@@ -73,7 +74,7 @@ function limpiar () {
                             <!-- Contenido del formulario -->
                             <div class="w-full px-10 grid grid-cols-2 gap-[15px]" :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
-                                    :is="componentInstances[item.component]" :Propiedades="{...item, disabled: props.Propiedades.formulario.soloVer}"
+                                    :is="componentInstances[item.component]" :Propiedades="{...item, disabled: Propiedades.formulario.soloVer}"
                                     :modelValue="getValue(tablaStore?.Formulario, item.vmodel)"
                                     @update:modelValue="val => setValue(tablaStore?.Formulario, item.vmodel, val)" />
                                 <slot></slot>
@@ -84,7 +85,6 @@ function limpiar () {
             </div>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3" role="button" tabindex="0" @keydown.enter="limpiar">
-            <!-- <button @click="limpiar">Cerrar</button> -->
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="manejarClick(item, tablaStore?.Formulario, limpiar)" 
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">

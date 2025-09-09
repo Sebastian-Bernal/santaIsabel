@@ -6,7 +6,7 @@ import { useVarView } from '~/stores/varview';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario'
 import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
-import { useCambiarContraseñaBuilder } from '~/build/Login/useCambiarContraseñaBuilder';
+import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 
 definePageMeta({
     layout: 'authentication'
@@ -28,7 +28,7 @@ const varView = useVarView();
 const selectEmpresa = ref(false)
 const opcionesCompañy = ref([])
 const show = ref(false)
-const showCambiarContraseña = ref(varView.showCambiarContraseña)
+const stateCodigo = ref(false)
 
 const cambiarMostrarContraseña = () => {
     mostrarContraseña.value = !mostrarContraseña.value;
@@ -50,10 +50,10 @@ async function validaUsuario() {
 
     let validacion = await api.functionCall(options)
 
-    if(validacion.data.length > 1){
+    if (validacion.data.length > 1) {
         selectEmpresa.value = true
         validacion.data.forEach((item) => {
-            opcionesCompañy.value.push({text: item.tenant_name, value: item.tenant_identifier}) 
+            opcionesCompañy.value.push({ text: item.tenant_name, value: item.tenant_identifier })
         })
         console.log(opcionesCompañy.value)
     }
@@ -66,55 +66,57 @@ function recuperarContraseña() {
     show.value = true
 }
 
-function cerrar(){
+function cerrar() {
     show.value = false
 }
 
-function cerrarCambiarContraseña(){
+function cerrarCambiarContraseña() {
     show.value = false
 }
 
 function validarCodigo() {
 
 }
+
+async function enviarCodigo(data) {
+    stateCodigo.value = await validarYEnviarRecuperarContraseña(data)
+    console.log(stateCodigo.value)
+}
+
+
 // Formulario 
-const propiedadesForm = useLoginBuilder({
-    storeId: 'Ingresar',
-    storePinia: 'Login',
-    recuperarcontraseña: recuperarContraseña
-});
 
-const propiedadesRecuperarContraseña = useRecuperarContraseñaBuilder({
-    storeId: 'RecuperarContraseña',
-    storePinia: 'Login',
-    cerrar: cerrar,
-    show: show,
-});
 
-const propiedadesCambiarContraseña = useCambiarContraseñaBuilder({
-    storeId: 'CambiarContraseña',
-    storePinia: 'Login',
-    validarCodigo: validarCodigo,
-    cerrar: cerrarCambiarContraseña,
-    show: showCambiarContraseña,
-});
 
 // Builder Pagina
-const pagina = new ComponenteBuilder()
 
-const propiedadesLogin = pagina
-    .setFondo('FondoBlur')
-    .setContenedor('w-1/3 flex justify-center')
+
+const propiedadesLogin = computed(() => {
+    const pagina = new ComponenteBuilder()
+    const propiedadesForm = useLoginBuilder({
+        storeId: 'Ingresar',
+        storePinia: 'Login',
+        recuperarcontraseña: recuperarContraseña
+    });
+
+    const propiedadesRecuperarContraseña = useRecuperarContraseñaBuilder({
+        storeId: 'RecuperarContraseña',
+        storePinia: 'Login',
+        cerrar: cerrar,
+        show: show,
+        enviarCodigo,
+        validarCodigo,
+        stateCodigo: stateCodigo.value
+    });
+    return pagina
+        .setFondo('FondoBlur')
+        .setContenedor('w-1/3 flex justify-center')
         .addComponente('Form', propiedadesForm)
         .addComponente('Form', propiedadesRecuperarContraseña)
-        .addComponente('Form', propiedadesCambiarContraseña)
-    .build()
-    console.log(propiedadesLogin)
-
+        .build()
+})
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedadesLogin"/>
-    <!-- <RecuperarContraseña v-if="varView.showRecuperarContraseña" />
-    <CambiarContraseña v-if="false" correo="camilojara" /> -->
+    <Pagina :Propiedades="propiedadesLogin" />
 </template>

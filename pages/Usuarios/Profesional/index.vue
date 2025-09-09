@@ -39,13 +39,18 @@ watch(()=> varView.showModificarProfesional, async()=>{
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
-    profesiones.value = await profesionStore.listProfesion
+    const listaProfesiones = await profesionStore.listProfesion
+    profesiones.value = listaProfesiones.map((profesion) => {
+        return {text: profesion.nombre, value: profesion.nombre}
+    })
     varView.cargando = false
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
 const modificarMedico = (medico) => {
     mapCampos(medico, medicosStore.Formulario)
+    medicosStore.Formulario.Medico.id = medico.id_profesional
+    medicosStore.Formulario.User.id = medico.id
     showVer.value = true;
 };
 
@@ -67,6 +72,14 @@ function seleccionarDepartamento (item) {
     // formData.InformacionUser.departamento = item.nombre;
 }
 
+const municipiosOptions = computed(() => {
+    const departamentoSeleccionado = medicosStore.Formulario.InformacionUser.departamento;
+
+    const departamento = municipios.departamentos.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+
+    return departamento ? departamento.municipios : [];
+});
+
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoProfesional',
     storePinia: 'Profesionales',
@@ -77,12 +90,14 @@ const propiedadesUser = useUserBuilder({
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    municipios: municipiosOptions,
+    seleccionarMunicipio: () => {},
     opcionesProfesion: profesiones,
     tipoUsuario: 'Profesional'
 });
 
 const propiedadesVerUser = useUserBuilder({
-    storeId: 'NuevoProfesional',
+    storeId: 'ModificarProfesional',
     storePinia: 'Profesionales',
     camposRequeridos: [],
     cerrarModal: cerrar,
@@ -91,6 +106,8 @@ const propiedadesVerUser = useUserBuilder({
     buscarUsuario,
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
+    municipios: municipiosOptions,
+    seleccionarMunicipio: () => {},
     tipoUsuario: 'Profesional',
     verUser: true
 });
@@ -119,7 +136,7 @@ const propiedades = pagina
     .addComponente('Form', propiedadesUser)
     .addComponente('Form', propiedadesVerUser)
     .build()
-    console.log(propiedades)
+    // console.log(propiedades)
 </script>
 <template>
     <Pagina :Propiedades="propiedades"/>

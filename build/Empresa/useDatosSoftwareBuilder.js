@@ -3,7 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 
 export function useDatosSofwareBuilder({
     storeId,
-    numeroLetras,
+    mostrarCantidadCaracteres,
     storePinia
 }) {
     const builder = new FormularioBuilder()
@@ -46,13 +46,16 @@ export function useDatosSofwareBuilder({
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Software.Dian.pin',
             slot: {
-                label: `<div class="flex text-gray-500"><p>${numeroLetras}</p>/<p>5</p></div>`,
+                label: `<div class="flex text-gray-500"><p id="contador-pinSoftware">0</p>/<p>5</p></div>`,
+            },
+            events: {
+                onInput: mostrarCantidadCaracteres
             }
         })
         .addCampo({
             component: 'Input',
             type: 'text',
-            placeholder: 'Introduzca el codigo del Set de pruebas para habilitacion',
+            placeholder: 'Introduzca el codigo del set de pruebas para habilitacion',
             id: 'testSoftware',
             name: 'testSoftware',
             tamaño: 'md:col-span-1 col-span-3',

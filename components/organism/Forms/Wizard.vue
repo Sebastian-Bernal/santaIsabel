@@ -13,7 +13,7 @@ const props = defineProps({
 });
 
 function editar () {
-    props.Propiedades.soloVer = false
+    props.Propiedades.soloVer = !props.Propiedades.soloVer
     console.log(props.Propiedades.soloVer)
 }
 </script>
@@ -29,8 +29,8 @@ function editar () {
                 </button>
                 <div v-if="index + 1 !== props.Propiedades.secciones.length" class="md:w-[30px] h-[5px] rounded-lg bg-gray-300"></div>
             </nuxtLink>
-            <i v-if="props.Propiedades?.soloVer" class="fa-solid fa-trash text-gray-100 hover:text-white pl-4 text-xl cursor-pointer ml-5"></i>
-            <i v-if="props.Propiedades?.soloVer" @click="editar" class="fa-solid fa-pencil text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
+            <i v-if="props.Propiedades?.editarFormulario" class="fa-solid fa-trash text-gray-100 hover:text-white pl-4 text-xl cursor-pointer ml-5"></i>
+            <i v-if="props.Propiedades?.editarFormulario" @click="editar" class="fa-solid fa-pencil text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
             <i @click="props.cerrar" class="fa-solid fa-close text-gray-100 hover:text-white pl-4 text-xl cursor-pointer"></i>
         </div>
     </div>

@@ -8,6 +8,7 @@ export const useUsuariosStore = defineStore('Usuario', {
             Usuario: {
                 correo: '',
                 contraseña: '',
+                codigo: '',
             },
         },
         Usuarios: [],

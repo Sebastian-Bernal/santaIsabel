@@ -40,7 +40,7 @@ const enviarFormulario = async (datos) => {
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
