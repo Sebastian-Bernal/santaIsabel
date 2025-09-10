@@ -5,7 +5,7 @@ import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
-import { validarYEnviarCancelarCita } from '~/Core/Cita/CancelarCita';
+import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 
 const props = defineProps({

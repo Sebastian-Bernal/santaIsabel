@@ -1,4 +1,6 @@
 import { createFormStore } from '../../createFormStore';
+import { traerdatos } from '~/Core/Empresa/Datos/DatosProfesion';
+import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
 // Creacion del store para nueva cita medica
 
 // Estructura de datos de Citas
@@ -7,7 +9,6 @@ const estructuraDatosProfesion = {
         nombre: '',
         codigo: '',
         permisos: [],
-        tipo: ''
     }
 }
 
@@ -36,6 +37,24 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
         createForm(storeId, estructura = estructuraDatosProfesion) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
-        }
+        },
+
+        async indexDBDatos() {
+            const profesiones = await traerdatos()
+
+            const ProfesionesIndexed = profesiones.map((profesion) => ({
+                Profesion: {
+                    id: profesion.profession_id, 
+                    nombre: profesion.profession_name, 
+                    codigo: profesion.profession_code,
+                    // links: profesion._links
+                }
+            }));
+
+            ProfesionesIndexed.map((item) => {
+                guardarEnDB(item)
+            })
+        },
+
     }
 });

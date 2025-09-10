@@ -70,29 +70,27 @@ const enviarFormulario = async (datos) => {
     const online = navigator.onLine;
     if (online) {
         try {
-            console.log(datos.correo, datos.contraseña)
             // mandar a api
-            // let options = {
-            //     metodo: 'POST',
-            //     url: config.public.login,
-            //     // head: {
-            //     //     'X-Company': 'store_one'
-            //     // },
-            //     body: {
-            //         email: datos.correo,
-            //         password: datos.contraseña
-            //     },
-            // }
-            // const respuesta = await api.functionCall(options)
-            // if (respuesta) {
-            //     sessionStorage.setItem('token', respuesta.access_token)
-            //     sessionStorage.setItem('name', respuesta.user_name)
-            //     sessionStorage.setItem('Usuario', datos.correo)
-            //     return true
-            // } else {
-            //     return false
-            // }
-            return true
+            let options = {
+                metodo: 'POST',
+                url: config.public.login,
+                head: {
+                    'X-Company': 'store_two'
+                },
+                body: {
+                    email: datos.correo,
+                    password: datos.contraseña
+                },
+            }
+            const respuesta = await api.functionCall(options)
+            if (respuesta) {
+                sessionStorage.setItem('token', respuesta.access_token)
+                sessionStorage.setItem('name', respuesta.user_name)
+                sessionStorage.setItem('Usuario', datos.correo)
+                return true
+            } else {
+                return false
+            }
         } catch (error) {
             console.error('Fallo al enviar. Intenta en otro momento', error);
         }

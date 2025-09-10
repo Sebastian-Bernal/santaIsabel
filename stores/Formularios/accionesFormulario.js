@@ -1,21 +1,34 @@
 // acciones validar y enviar fomularios
-import { validarYEnviarNuevaCita } from '~/Core/Cita/NuevaCita';
-import { validarYEnviarNuevoPaciente } from "~/Core/Paciente/NuevoPaciente";
-import { validarYEnviarModificarPaciente } from '~/Core/Paciente/ModificarPaciente';
-import { validarYEnviarNuevoMedico } from '~/Core/Profesional/NuevoMedico';
-import { validarYEnviarRegistrarHistoria } from '~/Core/RegistrarHistoria';
-import { validarYEnviarModificarMedico } from '~/Core/Profesional/ModificarMedico';
-import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/DatosEmpresa';
-import { validarYEnviarDatosSoftware } from '~/Core/Empresa/DatosSoftware';
+
+// Citas
+import { validarYEnviarNuevaCita } from '~/Core/Usuarios/Cita/NuevaCita';
+// Pacientes
+import { validarYEnviarNuevoPaciente } from "~/Core/Usuarios/Paciente/NuevoPaciente";
+import { validarYEnviarModificarPaciente } from '~/Core/Usuarios/Paciente/ModificarPaciente';
+// Historia
+import { validarYEnviarRegistrarHistoria } from '~/Core/Historial/RegistrarHistoria';
+// Profesionales
+import { validarYEnviarNuevoMedico } from '~/Core/Usuarios/Profesional/NuevoMedico';
+import { validarYEnviarModificarMedico } from '~/Core/Usuarios/Profesional/ModificarMedico';
+// Empresa
+import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/Configuracion/DatosEmpresa';
+import { validarYEnviarDatosSoftware } from '~/Core/Empresa/Configuracion/DatosSoftware';
 import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/DatosFacturacion';
-import { validarYEnviarNuevaNota } from '~/Core/Notas/NuevaNota';
-import { validarYEnviarNuevoUsuario } from '~/Core/Usuario/NuevoUsuario';
-import { validarYEnviarModificarUsuario } from '~/Core/Usuario/ModificarUsuario';
-import { validarYEnviarDatosEPS } from '~/Core/Empresa/DatosEPS';
-import { validarYEnviarDatosProfesion } from '~/Core/Empresa/DatosProfesion';
+// Nota
+import { validarYEnviarNuevaNota } from '~/Core/Historial/Notas/NuevaNota';
+// Usuarios
+import { validarYEnviarNuevoUsuario } from '~/Core/Empresa/Usuario/NuevoUsuario';
+import { validarYEnviarModificarUsuario } from '~/Core/Empresa/Usuario/ModificarUsuario';
+// EPS
+import { validarYEnviarDatosEPS } from '~/Core/Empresa/Datos/DatosEPS';
+// Profesion
+import { validarYEnviarDatosProfesion } from '~/Core/Empresa/Datos/DatosProfesion';
+import { validarYEnviarActualizarProfesion } from '~/Core/Empresa/Datos/ActualizarProfesion';
+// Login
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
-import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
+
+
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     Ingresar: async (data) => {
@@ -92,6 +105,10 @@ export const accionesFormularios = {
     },
     Profesion: async (data) => {
         const respuesta = await validarYEnviarDatosProfesion(data)
+        return respuesta
+    },
+    ActualizarProfesion: async (data) => {
+        const respuesta = await validarYEnviarActualizarProfesion(data)
         return respuesta
     },
 };

@@ -151,33 +151,19 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             type: 'Input',
-            key: 'antecedentes',
-            labelGroup: 'Antecedentes Personales',
-            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
-            placeholder: 'Antecedente',
-            id: 'antecedente',
-            name: 'antecedente',
+            labelGroup: 'Antecedentes',
+            buttons: [
+                { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: {descripcion: '', tipo: 'Personal'} },
+                { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: {descripcion: '', tipo: 'Familiar'} },
+            ],
             tamaño: 'w-full col-span-2',
             vmodel: 'Antecedentes',
             value: [],
-            addItem: { descripcion: '', tipo: 'Personal' },
-            campo: 'descripcion',
+            campos: [
+                { name: 'descripcion', id: 'antecedente', type: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
+            ],
+            containerCampos: 'w-full flex items-center'
         })
-        // .addCampo({
-        //     component: 'GroupCampos',
-        //     type: 'Input',
-        //     key: 'antecedentes',
-        //     labelGroup: 'Antecedentes Familiares',
-        //     buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-purple-700' }],
-        //     placeholder: 'Antecedente',
-        //     id: 'antecedente',
-        //     name: 'antecedente',
-        //     tamaño: 'w-full col-span-2',
-        //     vmodel: 'AntecedentesF',
-        //     value: [],
-        //     addItem: { descripcion: '', tipo: 'Familiar' },
-        //     campo: 'descripcion',
-        // })
         .nuevaSeccion('Examen Fisico')
         .addCampo({
             component: 'Label',

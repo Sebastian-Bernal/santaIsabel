@@ -23,8 +23,8 @@ watch(() => props.modelValue, (newVal) => {
 
 
 // Funciones para manejar Inputs
-const addItem = () => {
-    items.value.push(props.Propiedades.addItem)
+const addItem = (newItem = null) => {
+    items.value.push(newItem || props.Propiedades.addItem || {})
     emit('update:modelValue', items.value)
 }
 
@@ -56,21 +56,30 @@ const emit = defineEmits(['update:modelValue']);
             {{ Propiedades.labelGroup }}
         </label>
         <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
-            <a v-for="button in Propiedades.buttons" @click="button.action">
+            <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)" class="flex items-center">
                 <ButtonRounded :color="button.color">
-                    <i :class="button.icon" @click="addItem"></i>
+                    <i :class="button.icon"></i>
                 </ButtonRounded>
+                <span v-if="button.label" class="ml-1">{{ button.label }}</span>
             </a>
         </div>
     </div>
     <div :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
-        <div v-for="(input, index) in items" :key="index" class="relative my-2">
-            <component :is="campos[Propiedades.type]" :modelValue="input[Propiedades.campo]"
-                :Propiedades="Propiedades" @input="e => updateField(index, Propiedades.campo, e.target.value)" />
+
+        <div v-for="(input, index) in items" :key="index" class="relative my-2" :class="Propiedades.containerCampos">
+            <!-- <component :is="campos[Propiedades.type]" :modelValue="input[Propiedades.campo]"
+                :Propiedades="Propiedades" @input="e => updateField(index, Propiedades.campo, e.target.value)" /> -->
+            <div v-for="campoDef in Propiedades.campos" :key="campoDef.name" class="mb-2">
+                <component :is="campos[campoDef.type]" :modelValue="input[campoDef.name]" :Propiedades="campoDef"
+                    @input="e => updateField(index, campoDef.name, e.target.value)" />
+            </div>
+
 
             <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
                 @click="() => removeItem(index)"></i>
         </div>
+
+
         <div v-if="items.length < 1" class="flex justify-center py-3">
             <p class="text-gray-500 text-base font-bold">No hay Datos, Agrega un campo.</p>
         </div>

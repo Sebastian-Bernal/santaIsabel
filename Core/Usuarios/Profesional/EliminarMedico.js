@@ -4,7 +4,6 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarEliminarMedico = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
     const pacientesStore = usePacientesStore();
     const pacientes = await pacientesStore.listPacientes;
     const existePaciente = pacientes.some(paciente => paciente.id_usuario === datos.User.id);
@@ -21,8 +20,6 @@ export const validarYEnviarEliminarMedico = async (datos) => {
             }
         })
     };
-
-
 
     return await enviarFormulario(datosAEnviar);
 };

@@ -5,7 +5,6 @@ import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.
 
 
 export const validarYEnviarEliminarUsuario = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
     const pacientesStore = usePacientesStore();
     const pacientes = await pacientesStore.tablaPacientes;
 

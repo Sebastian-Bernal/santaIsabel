@@ -1,25 +1,25 @@
-import { guardarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
+import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
+import { guardarUsuarioEnIndexedDBID } from '~/composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
-// funcion para Validar campos del formulario Nueva Nota
-export const validarYEnviarNuevaNota = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
-
+// funcion para Validar campos del formulario Nuevo Paciente
+export const validarYEnviarNuevoUsuario = async (datos) => {
     return await enviarFormulario(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
-            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
-            return true
+            const respuesta = await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
+            return respuesta
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            const respuesta = await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -27,7 +27,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+        await guardarUsuarioEnIndexedDBID(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

@@ -28,7 +28,6 @@ export const useApiRest = defineStore('apiRest', {
             const headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'X-Company': 'store_two',
                 ...opcion.head
             }
 

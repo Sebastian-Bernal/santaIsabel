@@ -1,9 +1,8 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
-import { guardarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosSoftware = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
 
     // Filtra los objetos que tienen todos los campos completos
     const datosFiltrados = Object.entries(datos.Software)
@@ -28,11 +27,11 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarEnDB(JSON.parse(JSON.stringify(datos)));
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            // await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'

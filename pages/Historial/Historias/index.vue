@@ -163,5 +163,5 @@ const propiedades = pagina
 
 <template>
     <Pagina :Propiedades="propiedades" />
-    <VerHistoria v-if="varView.showVerHistoria" :historia="historia" />
+    <!-- <VerHistoria v-if="varView.showVerHistoria" :historia="historia" /> -->
 </template>

@@ -1,118 +1,86 @@
 import { useIndexedDBStore } from '@/stores/indexedDB.js';
 
-// Funcion para guardar formularios en IndexedDB 
-export async function guardarEnIndexedDB(data) {
+export async function guardarEnDB(data, contexto = "Generico", config = {}) {
     const store = useIndexedDBStore();
     await store.initialize();
 
+    let ids = {}; // Para guardar IDs generados dinámicamente (User, Paciente, Historia, etc.)
+
     for (const [almacen, contenido] of Object.entries(data)) {
         store.almacen = almacen;
-        console.log(almacen, contenido)
-        if (almacen === 'HistoriaClinica') {
-            // Si el almacen es Historia Clinica se guarda con id Null
-            await store.guardardatos({ ...contenido, id: null })
-        } else if (Array.isArray(contenido)) {
-            for (const item of contenido) {
-                await store.guardardatos({ ...item });
+
+        // ==== Reglas por contexto ====
+        if (contexto === "Paciente") {
+            if (almacen === "User") {
+                if (!contenido.id) {
+                    ids.User = await store.guardardatosID({ ...contenido });
+                } else {
+                    ids.User = contenido.id;
+                }
+            } else if (almacen === "InformacionUser") {
+                await store.guardardatos({ ...contenido, id_usuario: ids.User });
+            } else if (almacen === "Paciente") {
+                ids.Paciente = await store.guardardatosID({ ...contenido, id_usuario: ids.User });
+            } else {
+                await guardarRelacionado(store, almacen, contenido, "id_paciente", ids.Paciente);
             }
-        } else if (typeof contenido === 'object' && contenido !== null) {
-            await store.guardardatos({ ...contenido });
+        }
+
+        else if (contexto === "Profesional") {
+            if (almacen === "User") {
+                const usuarios = await store.leerdatos();
+                const existente = usuarios.find(u => u.id === contenido.id);
+                if (existente && existente.rol !== contenido.rol) {
+                    await store.actualiza({ ...contenido });
+                    ids.User = existente.id;
+                } else if (!existente) {
+                    ids.User = await store.guardardatosID({ ...contenido });
+                }
+            } else {
+                await store.guardardatos({ ...contenido, id_usuario: ids.User });
+            }
+        }
+
+        else if (contexto === "HistoriaClinica") {
+            if (almacen === "HistoriaClinica") {
+                const historias = await store.leerdatos();
+                const existente = historias.find(h => h.id_paciente === contenido.id_paciente);
+                ids.HistoriaClinica = existente 
+                    ? existente.id_temporal 
+                    : await store.guardardatosID({ ...contenido });
+            } else if (almacen === "Analisis") {
+                ids.Analisis = await store.guardardatosID({ ...contenido, id_historia: ids.HistoriaClinica });
+            } else if (almacen === "Cita") {
+                await store.actualiza({ ...contenido, id_analisis: ids.Analisis, estado: "Realizada" });
+            } else {
+                await guardarRelacionado(store, almacen, contenido, "id_temporal", ids.Analisis);
+            }
+        }
+
+        else {
+            // Contexto Generico
+            if (Array.isArray(contenido)) {
+                for (const item of contenido) await store.guardardatos({ ...item });
+            } else if (typeof contenido === "object" && contenido !== null) {
+                await store.guardardatos({ ...contenido });
+            }
         }
     }
-};
 
-export async function guardarPacienteEnIndexedDB(data) {
-    const store = useIndexedDBStore();
-    await store.initialize();
+    return ids;
+}
 
-    let idPaciente = null;
-    let idUser = data.User.id ? data.User.id : null;
-
-    for (const [almacen, contenido] of Object.entries(data)) {
-        store.almacen = almacen;
-
-        // Guardar Usuario y obtener ID generado
-        if (almacen === 'User' && idUser === null) {
-            const idGeneradoUsuario = await store.guardardatosID({ ...contenido });
-            idUser = idGeneradoUsuario; // Guardamos el ID para usar en otros almacenes
+// Helper para guardar arrays u objetos con relación
+async function guardarRelacionado(store, almacen, contenido, foreignKey, foreignValue) {
+    if (Array.isArray(contenido)) {
+        for (const item of contenido) {
+            await store.guardardatos({ ...item, [foreignKey]: foreignValue });
         }
-
-        if (almacen === 'InformacionUser') {
-            await store.guardardatos({ ...contenido, id_usuario: idUser, });
-        }
-
-        // Guardar Paciente y obtener ID generado
-        if (almacen === 'Paciente') {
-            const idGenerado = await store.guardardatosID({ ...contenido, id_usuario: idUser, });
-            idPaciente = idGenerado; // Guardamos el ID para usar en otros almacenes
-        }
-
-        // Guardar otros datos relacionados (como diagnóstico, antecedentes, etc.)
-        else if (Array.isArray(contenido) && almacen !== 'User' && almacen !== 'InformacionUser') {
-            for (const item of contenido) {
-                await store.guardardatos({
-                    ...item,
-                    id_paciente: idPaciente, // Relación con paciente
-                });
-            }
-        } else if (typeof contenido === 'object' && contenido !== null && almacen !== 'User' && almacen !== 'InformacionUser') {
-            await store.guardardatos({
-                ...contenido,
-                id_paciente: idPaciente, // Relación con paciente
-            });
-        }
-
+    } else if (typeof contenido === "object" && contenido !== null) {
+        await store.guardardatos({ ...contenido, [foreignKey]: foreignValue });
     }
 }
 
-export async function guardarProfesionalEnIndexedDB(data) {
-    const store = useIndexedDBStore();
-    store.almacen = 'User'
-    const usuarios = await store.leerdatos()
-
-    // Buscar si el usuario ya existe
-    const usuarioExistente = usuarios.find((usuario) => usuario.id === data.User.id);
-    const rolCambio = usuarioExistente && usuarioExistente.rol !== data.User.rol;
-
-    let idUser = data.User.id || null;
-
-    for (const [almacen, contenido] of Object.entries(data)) {
-        store.almacen = almacen;
-
-        // Guardar Usuario y obtener ID generado
-        if (almacen === 'User') {
-            if (rolCambio) {
-                await store.actualiza({ ...contenido });
-            } else if (!usuarioExistente) {
-                const idGeneradoUsuario = await store.guardardatosID({ ...contenido });
-                idUser = idGeneradoUsuario; // Guardamos el ID para usar en otros almacenes
-            }
-        } else if (almacen !== 'User') {
-            await store.guardardatos({
-                ...contenido,
-                id_usuario: idUser, // Relación con usuario
-            });
-        }
-
-    }
-}
-
-export async function guardarEnIndexedDBID(data) {
-    const store = useIndexedDBStore();
-    let idGenerado
-    for (const [almacen, contenido] of Object.entries(data)) {
-        store.almacen = almacen;
-
-        if (Array.isArray(contenido)) {
-            for (const item of contenido) {
-                await store.guardardatosID({ ...item });
-            }
-        } else if (typeof contenido === 'object' && contenido !== null) {
-            idGenerado = await store.guardardatosID({ ...contenido });
-        }
-    }
-    return idGenerado
-}
 
 export async function guardarUsuarioEnIndexedDBID(data) {
     const store = useIndexedDBStore();
@@ -130,65 +98,6 @@ export async function guardarUsuarioEnIndexedDBID(data) {
     }
 
     return idUsuario
-}
-
-export async function guardarHistoriaEnIndexedDB(data) {
-    const store = useIndexedDBStore();
-    await store.initialize();
-
-    // Buscar si ya existe la historia clínica
-    store.almacen = 'HistoriaClinica';
-    const historias = await store.leerdatos();
-
-    const historiaExistente = historias.find(
-        (historia) => historia.id_paciente === data.HistoriaClinica.id_paciente
-    );
-
-    let historiaID;
-
-    if (!historiaExistente) {
-        // Crear nueva historia clínica si no existe
-        historiaID = await store.guardardatosID({ ...data.HistoriaClinica });
-    } else {
-        // Usar el ID de la historia existente
-        historiaID = historiaExistente.id_temporal;
-    }
-
-    let id_temporal = null;
-    let id_examen = null;
-    // Guardar los demás datos relacionados
-    for (const [almacen, contenido] of Object.entries(data)) {
-        if (almacen === 'HistoriaClinica') continue; // Ya procesado
-
-        store.almacen = almacen;
-
-        if (almacen === 'Analisis') {
-            const idGenerado = await store.guardardatosID({
-                ...contenido,
-                id_historia: historiaID,
-            });
-            id_temporal = idGenerado;
-        } else if (almacen === 'Cita') {
-            await store.actualiza({
-                ...contenido,
-                id_analisis: id_temporal,
-                id_examen,
-                estado: 'Realizada'
-            })
-        } else if (Array.isArray(contenido)) {
-            for (const item of contenido) {
-                await store.guardardatos({
-                    ...item,
-                    id_temporal: id_temporal,
-                });
-            }
-        } else if (typeof contenido === 'object' && contenido !== null) {
-            await store.guardardatos({
-                ...contenido,
-                id_temporal: id_temporal,
-            });
-        }
-    }
 }
 
 // Función para actualizar datos en IndexedDB

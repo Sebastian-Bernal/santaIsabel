@@ -35,7 +35,7 @@ export function useRecuperarContraseñaBuilder({
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'w-1/6 logo mb-2 select-none invert drak:invert-0',
+      tamaño: 'w-1/6 logo mb-2 select-none invert dark:invert-0',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({

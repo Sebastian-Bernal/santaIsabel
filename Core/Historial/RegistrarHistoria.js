@@ -1,4 +1,4 @@
-import { guardarHistoriaEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
+import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { useCalendarioCitas } from '~/stores/Calendario.js';
 import { useVarView } from '~/stores/varview.js';
@@ -46,7 +46,7 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            await guardarHistoriaEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
@@ -57,7 +57,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await guardarHistoriaEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+        await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
         return true
     }
 };

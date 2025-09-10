@@ -1,8 +1,8 @@
-import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
-import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { useNotificacionesStore } from '~/stores/notificaciones.js'
 
-// funcion para Validar campos del formulario Modificar Usuario
-export const validarYEnviarModificarUsuario = async (datos) => {
+// funcion para Validar campos del formulario Nueva Cita
+export const validarYEnviarNuevaCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     return await enviarFormulario(datos);
@@ -15,11 +15,11 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarEnDB(JSON.parse(JSON.stringify(datos)));
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -27,7 +27,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+        await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

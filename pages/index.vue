@@ -40,12 +40,13 @@ const cambiarMostrarContraseña = () => {
     }
 };
 // Temporal idexedDB
-async function validaUsuario() {
+async function validaUsuario(event) {
+    const correo = event.target.value
     varView.cargando = true
 
     let options = {
         metodo: 'GET',
-        url: config.public.authentication + Usuario.correo,
+        url: config.public.authentication + correo,
     }
 
     let validacion = await api.functionCall(options)
@@ -55,7 +56,6 @@ async function validaUsuario() {
         validacion.data.forEach((item) => {
             opcionesCompañy.value.push({ text: item.tenant_name, value: item.tenant_identifier })
         })
-        console.log(opcionesCompañy.value)
     }
 
     varView.cargando = false
@@ -70,10 +70,6 @@ function cerrar() {
     show.value = false
 }
 
-function cerrarCambiarContraseña() {
-    show.value = false
-}
-
 function validarCodigo() {
 
 }
@@ -84,19 +80,17 @@ async function enviarCodigo(data) {
 }
 
 
-// Formulario 
-
-
-
 // Builder Pagina
-
 
 const propiedadesLogin = computed(() => {
     const pagina = new ComponenteBuilder()
     const propiedadesForm = useLoginBuilder({
         storeId: 'Ingresar',
         storePinia: 'Login',
-        recuperarcontraseña: recuperarContraseña
+        recuperarcontraseña: recuperarContraseña,
+        validaUsuario,
+        selectEmpresa: selectEmpresa,
+        opcionesCompañy: opcionesCompañy
     });
 
     const propiedadesRecuperarContraseña = useRecuperarContraseñaBuilder({

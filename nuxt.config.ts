@@ -8,6 +8,7 @@ export default defineNuxtConfig({
       login: 'api/v1/login',
       user: 'api/user',
       eps: 'api/v1/eps',
+      professions: 'api/v1/professions',
       authentication: 'api/email-addresses/',
     }
   },
