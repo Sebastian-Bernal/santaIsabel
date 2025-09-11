@@ -5,6 +5,7 @@ import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { onMounted, ref } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
+import Formularios from '~/components/Formularios.vue';
 
 const citasStore = useCitasStore();
 const historiaStore = useHistoriasStore();
@@ -17,6 +18,10 @@ const ultimosPacientes = ref();
 const cardPaciente = ref([])
 const actions = ref([])
 
+const showNuevoPaciente = ref(false)
+function nuevoPaciente () {
+    showNuevoPaciente.value = true
+}
 onMounted(async () => {
     varView.cargando = true;
     sessionStorage.removeItem('activeButton');
@@ -31,22 +36,31 @@ onMounted(async () => {
 
 function DashboardRol(rol, Historias, citas){
         if (rol === 'Admin') {
-        ultimosPacientes.value = Historias.map(card => {
-            return {
-                header: {
-                    icon: 'fa-solid fa-user',
-                    title: card.name_paciente,
-                    subtitle: card.No_document_paciente
-                },
-                body: {
-                    html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
-                },
-                footer: {
-                    status: 'completado',
-                    statusClass: 'bg-green-500'
-                }
+            if(Historias > 0){
+                ultimosPacientes.value = Historias.map(card => {
+                    return {
+                        header: {
+                            icon: 'fa-solid fa-user',
+                            title: card.name_paciente,
+                            subtitle: card.No_document_paciente
+                        },
+                        body: {
+                            html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
+                        },
+                        footer: {
+                            status: 'completado',
+                            statusClass: 'bg-green-500'
+                        }
+                    }
+                })
+            } else {
+                ultimosPacientes.value = [{
+                        header: {
+                            icon: 'fa-solid fa-user',
+                            title: 'No hay Pacientes Recientes',
+                        },
+                    }]
             }
-        })
 
         Citas.value = citas.map(card => {
             return {
@@ -78,6 +92,7 @@ function DashboardRol(rol, Historias, citas){
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
+                accion: nuevoPaciente
             },
             {
                 header: {
@@ -341,9 +356,10 @@ const propiedades = computed(() => {
     return paginaBase.build()
 })
 
-console.log(propiedades.value)
+
 </script>
 
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
+    <Formularios :showPaciente="showNuevoPaciente"></Formularios>
 </template>

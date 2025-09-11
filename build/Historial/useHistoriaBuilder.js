@@ -153,8 +153,8 @@ export function useHistoriaBuilder({
             type: 'Input',
             labelGroup: 'Antecedentes',
             buttons: [
-                { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: {descripcion: '', tipo: 'Personal'} },
-                { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: {descripcion: '', tipo: 'Familiar'} },
+                { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
+                { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
             ],
             tamaño: 'w-full col-span-2',
             vmodel: 'Antecedentes',
@@ -182,7 +182,7 @@ export function useHistoriaBuilder({
             placeholder: 'TA',
             tamaño: 'w-full',
             slot: {
-                tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>` 
+                tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
             },
             events: {
                 onChange: validarCampo
@@ -200,7 +200,7 @@ export function useHistoriaBuilder({
             max: 100,
             tamaño: 'w-full',
             slot: {
-                tooltip: `<div id="error-fc" class="text-red-300 text-xs mt-1"></div>` 
+                tooltip: `<div id="error-fc" class="text-red-300 text-xs mt-1"></div>`
             },
             events: {
                 onChange: validarCampo
@@ -218,7 +218,7 @@ export function useHistoriaBuilder({
             max: 250,
             tamaño: 'w-full',
             slot: {
-                tooltip: `<div id="error-fr" class="text-red-300 text-xs mt-1"></div>` 
+                tooltip: `<div id="error-fr" class="text-red-300 text-xs mt-1"></div>`
             },
             events: {
                 onChange: validarCampo
@@ -236,7 +236,7 @@ export function useHistoriaBuilder({
             max: 50,
             tamaño: 'w-full',
             slot: {
-                tooltip: `<div id="error-t" class="text-red-300 text-xs mt-1"></div>` 
+                tooltip: `<div id="error-t" class="text-red-300 text-xs mt-1"></div>`
             },
             events: {
                 onChange: validarCampo
@@ -254,7 +254,7 @@ export function useHistoriaBuilder({
             max: 100,
             tamaño: 'w-full col-span-1',
             slot: {
-                tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>` 
+                tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
             },
             events: {
                 onChange: validarCampo
@@ -326,23 +326,27 @@ export function useHistoriaBuilder({
 
         .nuevaSeccion('Analisis')
         // 📌 Sección: Diagnósticos
+
         .addCampo({
             component: 'GroupCampos',
-            type: 'SelectSearch',
             labelGroup: 'Diagnosticos',
-            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
-            placeholder: 'CIE-10',
-            id: 'cie10',
-            name: 'cie10',
+            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
             tamaño: 'w-full col-span-2',
             vmodel: 'Diagnosticos',
             value: [],
-            addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' },
-            campo: 'descripcion',
-            // tipo Select Search
-            options: CIE10,
-            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-            seleccionarItem: seleccionarCIE_10,
+            campos: [
+                {
+                    name: 'descripcion',
+                    id: 'cie-10',
+                    type: 'SelectSearch',
+                    placeholder: 'CIE-10',
+                    tamaño: 'w-full',
+                    options: CIE10,
+                    opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                    seleccionarItem: seleccionarCIE_10,
+                },
+
+            ]
         })
 
         // --- Select: Tipo de Análisis ---
@@ -439,19 +443,22 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             type: 'Input',
             labelGroup: 'Medicamentos',
-            buttons: [{ icon: 'fa-solid fa-capsules', color: 'bg-blue-500' }],
-            placeholder: 'Nombre',
-            id: 'nombreMedicamento',
-            name: 'nombreMedicamento',
+            buttons: [{ icon: 'fa-solid fa-capsules', color: 'bg-blue-500', addItem: { nombre: '', cantidad: '', id_paciente: '' }}, ],
             tamaño: 'w-full col-span-2',
             vmodel: 'Plan_manejo_medicamentos',
             value: [],
-            addItem: { nombre: '', cantidad: '', id_paciente: '' },
-            campo: 'nombre',
-            // tipo Select Search
-            options: CIE10,
-            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-            seleccionarItem: seleccionarCIE_10,
+            campos: [
+                {
+                    name: 'descripcion',
+                    id: 'cie-10',
+                    type: 'SelectSearch',
+                    placeholder: 'CIE-10',
+                    tamaño: 'w-full',
+                    options: CIE10,
+                    opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                    seleccionarItem: seleccionarCIE_10, 
+                }
+            ],
         })
     return builder.build()
 }

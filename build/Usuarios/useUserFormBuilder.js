@@ -342,38 +342,47 @@ export function useUserBuilder({
             // 📌 Sección: Diagnósticos
             .addCampo({
                 component: 'GroupCampos',
-                type: 'SelectSearch',
-                key: 'Diagnosticos',
                 labelGroup: 'Diagnosticos',
-                buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
-                placeholder: 'CIE-10',
-                id: 'cie10',
-                name: 'cie10',
+                buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
-                options: CIE10,
-                opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                seleccionarItem: seleccionarCIE_10,
                 value: [],
-                addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' },
-                campo: 'descripcion'
+                campos: [
+                    { 
+                        name: 'descripcion', 
+                        id: 'cie-10', 
+                        type: 'SelectSearch', 
+                        placeholder: 'CIE-10', 
+                        tamaño: 'w-full',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                        
+                ]
             })
 
             // 📌 Sección: Antecedentes
             .addCampo({
                 component: 'GroupCampos',
-                type: 'Input',
-                key: 'antecedentes',
                 labelGroup: 'Antecedentes',
-                buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500' }],
-                placeholder: 'Antecedente',
-                id: 'antecedente',
-                name: 'antecedente',
+                buttons: [
+                    { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: {descripcion: '', tipo: 'Personal'} },
+                    { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: {descripcion: '', tipo: 'Familiar'} },
+                ],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Antecedentes',
                 value: [],
-                addItem: {descripcion: '', tipo: 'Personal'},
-                campo: 'descripcion'
+                campos: [
+                    { 
+                        name: 'descripcion', 
+                        id: 'antecedente', 
+                        type: 'Input', 
+                        placeholder: 'Antecedente', 
+                        tamaño: 'w-full' 
+                    },
+                ],
+                containerCampos: 'w-full'
             })
     }
 

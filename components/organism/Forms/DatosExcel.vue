@@ -1,5 +1,5 @@
 <script setup>
-import ModalXS from '~/components/molecules/Modals/ModalXS.vue';
+import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
@@ -65,10 +65,10 @@ const jsonfields = computed(() => {
     }, {})
 })
 
-watch(tablaInsert, async(newValue) => {
+watch(tablaInsert, async (newValue) => {
     tablaInsert.value = newValue
 
-    if(newValue.tabla !== ''){
+    if (newValue.tabla !== '') {
         datosOptionsTabla.value = await storeExcel.obtenerCamposTabla(newValue.tabla)
     }
     // Validacion
@@ -76,10 +76,10 @@ watch(tablaInsert, async(newValue) => {
     showInsertar.value = camposValidos;
 });
 
-function agregarDB () {
+function agregarDB() {
     insertarTabla.value = !insertarTabla.value
     datosOptions.value = datos.value.map((dato) => {
-        return {text: dato, value: dato}
+        return { text: dato, value: dato }
     })
     console.log(datosOptions.value)
 }
@@ -109,89 +109,92 @@ function mostrar() {
 </script>
 
 <template>
-    <ModalXS>
-        <div class="py-5 h-full flex flex-col justify-between">
-            <h2 class="text-2xl font-semibold text-center py-2">Configuracion Datos a exportarr</h2>
-            <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
-                <div class="flex justify-between items-center">
-                    <p class="text-lg text-gray-600">{{ props.tabla }} <i class="fa-solid fa-gear"></i></p>
-                    <p class="text-lg text-blue-500 cursor-pointer" @click="agregarDB">
-                        <i v-if="showInsertar" class="fa-solid fa-download mr-3 text-green-700" @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>  
-                        <i class="fa-solid fa-plus"></i> <i
-                            class="fa-solid fa-database"></i></p>
-                </div>
-                <div v-if="insertarTabla" class="flex md:flex-row flex-col gap-3 pt-3">
-                    <Select v-model="tablaInsert.tabla" :Propiedades="{
+    <FondoBlur>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
+            <div class="py-5 h-full flex flex-col justify-between">
+                <h2 class="text-2xl font-semibold text-center py-2">Configuracion Datos a exportarr</h2>
+                <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
+                    <div class="flex justify-between items-center">
+                        <p class="text-lg text-gray-600">{{ props.tabla }} <i class="fa-solid fa-gear"></i></p>
+                        <p class="text-lg text-blue-500 cursor-pointer" @click="agregarDB">
+                            <i v-if="showInsertar" class="fa-solid fa-download mr-3 text-green-700"
+                                @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
+                            <i class="fa-solid fa-plus"></i> <i class="fa-solid fa-database"></i>
+                        </p>
+                    </div>
+                    <div v-if="insertarTabla" class="flex md:flex-row flex-col gap-3 pt-3">
+                        <Select v-model="tablaInsert.tabla" :Propiedades="{
                             placeholder: 'Tabla de datos',
                             id: 'datos',
                             name: 'datos',
                             options: Tablas,
-                        }"/>
-                    <Select v-model="tablaInsert.id_comparar" :Propiedades="{
+                        }" />
+                        <Select v-model="tablaInsert.id_comparar" :Propiedades="{
                             placeholder: 'Campo a comparar',
                             id: 'campoComparar',
                             name: 'campoComparar',
                             options: datosOptions,
                         }">
-                    </Select>
-                    <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
+                        </Select>
+                        <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
                             placeholder: 'Campo de Tabla a insertar',
                             id: 'campoCompararTabla',
                             name: 'campoCompararTabla',
                             options: datosOptionsTabla,
-                        }"/>
-                </div>   
-                <div class="flex md:flex-row flex-col gap-3 pt-3">
-                    <Input v-model="excel.nombreArchivo" :Propiedades="{
+                        }" />
+                    </div>
+                    <div class="flex md:flex-row flex-col gap-3 pt-3">
+                        <Input v-model="excel.nombreArchivo" :Propiedades="{
                             placeholder: 'Nombre Archivo',
                             id: 'nombre',
                             name: 'nombre',
                             type: 'text',
                         }" />
-                    <Select v-model="excel.tipoArchivo" :Propiedades="{
+                        <Select v-model="excel.tipoArchivo" :Propiedades="{
                             placeholder: 'Formato Hoja de calculo',
                             id: 'tipoArchivo',
                             name: 'tipoArchivo',
                             options: [{ text: 'xlsx', value: 'xlsx' }, { text: 'xls', value: 'xls' }, { text: 'csv', value: 'csv' }],
                         }">
-                    </Select>
-                    <Input v-model="excel.worksheet" :Propiedades="{
+                        </Select>
+                        <Input v-model="excel.worksheet" :Propiedades="{
                             placeholder: 'Worksheet',
                             id: 'worksheet',
                             name: 'worksheet',
                             type: 'text',
                         }" />
-                </div>
-                <div class="flex md:flex-row pt-5 relative">
-                    <SelectMultiple  v-model="excel.opciones" :Propiedades="{
+                    </div>
+                    <div class="flex md:flex-row pt-5 relative">
+                        <SelectMultiple v-model="excel.opciones" :Propiedades="{
                             placeholder: 'Seleccione los campos que deseas',
                             id: 'campos',
                             name: 'campos',
                             options: datos,
-                            opciones: [{text: '', value:''}]
+                            opciones: [{ text: '', value: '' }]
                         }" />
+                    </div>
                 </div>
-            </div>
-            <div class="flex ">
-                <div class="w-full flex justify-center items-center gap-3">
-                    <ButtonForm color="bg-gray-500 " @click="cerrar">
-                        Cancelar
-                    </ButtonForm>
+                <div class="flex ">
+                    <div class="w-full flex justify-center items-center gap-3">
+                        <ButtonForm color="bg-gray-500 " @click="cerrar">
+                            Cancelar
+                        </ButtonForm>
 
-                    <ButtonForm color="bg-blue-500" @click="validarform">
-                        <download-excel v-if="varView.formComplete" :data="datosAExportar" :name="excel.nombreArchivo"
-                            :type="excel.tipoArchivo" :fields="jsonfields" :worksheet="excel.worksheet"
-                            :before-finish="cerrar" :before-generate="mostrar">
-                            Generar
-                        </download-excel>
-                        <div v-if="!varView.formComplete">
-                            Generar
-                        </div>
-                    </ButtonForm>
+                        <ButtonForm color="bg-blue-500" @click="validarform">
+                            <download-excel v-if="varView.formComplete" :data="datosAExportar"
+                                :name="excel.nombreArchivo" :type="excel.tipoArchivo" :fields="jsonfields"
+                                :worksheet="excel.worksheet" :before-finish="cerrar" :before-generate="mostrar">
+                                Generar
+                            </download-excel>
+                            <div v-if="!varView.formComplete">
+                                Generar
+                            </div>
+                        </ButtonForm>
+                    </div>
                 </div>
             </div>
         </div>
-    </ModalXS>
+    </FondoBlur>
 </template>
 
 <style scoped>

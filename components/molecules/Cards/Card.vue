@@ -19,7 +19,7 @@ const props = defineProps({
             </div>
         </div>
         <div class="space-y-4" :class="Propiedades.contenedorCards">
-            <div v-for="card in unref(props.Propiedades.cards)"
+            <div v-for="(card, i) in unref(props.Propiedades.cards)" @click="card.accion"
                 class="w-full p-4 shadow-md bg-white dark:bg-gray-700 flex flex-col gap-4" :class="Propiedades.tamaño">
                 <!-- HEADER -->
                 <div class="flex items-center gap-3" v-if="card.header">
