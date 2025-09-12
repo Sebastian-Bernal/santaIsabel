@@ -22,7 +22,7 @@ const showModificarProfesion = ref(false)
 
 onMounted(async () => {
     varView.cargando = true
-    // await storeProfesion.indexDBDatos()
+    await storeProfesion.indexDBDatos()
     await storeEPS.indexDBDatos()
     EPSdata.value = await storeEPS.listEPS
     Profesiones.value = await storeProfesion.listProfesion

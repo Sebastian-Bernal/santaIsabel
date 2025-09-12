@@ -19,20 +19,25 @@ const cardPaciente = ref([])
 const actions = ref([])
 
 const showNuevoPaciente = ref(false)
-function nuevoPaciente () {
-    showNuevoPaciente.value = true
-}
+
 onMounted(async () => {
     varView.cargando = true;
     sessionStorage.removeItem('activeButton');
-
+    
     rol.value = sessionStorage.getItem('Rol')
     const Historias = await historiaStore.ultimasHistorias();
     const citas = await citasStore.listCitas();
-
+    
     DashboardRol(rol.value, Historias, citas)
     varView.cargando = false;
 });
+
+function nuevoPaciente () {
+    showNuevoPaciente.value = true
+}
+function buscarHistoria () {
+    location.href = 'Historial/Historias'
+}
 
 function DashboardRol(rol, Historias, citas){
         if (rol === 'Admin') {
@@ -103,6 +108,7 @@ function DashboardRol(rol, Historias, citas){
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
+                accion: buscarHistoria
             },
             {
                 header: {

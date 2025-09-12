@@ -32,9 +32,9 @@ const fondos = {
     FondoTransparent,
 };
 
-// watch(tablaStore.Formulario, (newValue) => {
-//     console.log(newValue)
-// }, {deep: true})
+watch(tablaStore.Formulario, (newValue) => {
+    console.log(newValue)
+}, {deep: true})
 
 // Traer datos del localStorage
 onMounted(() => {

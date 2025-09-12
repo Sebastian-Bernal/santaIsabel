@@ -9,7 +9,6 @@ export const usePacientesStore = defineStore('Pacientes', {
         Pacientes: [],
         Formulario: {
             User: {
-                id_empresa: '',
                 correo: '',
                 contraseña: null,
                 rol: 'Paciente',

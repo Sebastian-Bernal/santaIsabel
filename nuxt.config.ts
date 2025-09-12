@@ -6,10 +6,12 @@ export default defineNuxtConfig({
     public: {
       api: 'http://thesalus-api.zeus01one.com',
       login: 'api/v1/login',
-      user: 'api/user',
+      authentication: 'api/email-addresses/',
+      user: 'api/v1/users',
+      userProfile: 'api/v1/user-profiles',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
-      authentication: 'api/email-addresses/',
+
     }
   },
   app: {

@@ -76,9 +76,10 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             await historias.map((historia) => {
                 historiasPacientes.push(historia.id_paciente)
             })
+
             // Array que devuelve json con Pacientes con historia
             await pacientes.map((paciente) => {
-                datos.push({ id: paciente.id, paciente: paciente.name, cedula: paciente.No_document, estado: historiasPacientes.includes(paciente.id) ? 'Creada' : 'Nueva' })
+                datos.push({ id: paciente.id_paciente, paciente: paciente.name, cedula: paciente.No_document, estado: historiasPacientes.includes(paciente.id_paciente) ? 'Creada' : 'Nueva' })
             })
 
             return datos

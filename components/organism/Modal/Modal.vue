@@ -60,7 +60,7 @@ function cambiarAInicio() {
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="Propiedades.cerrarModal"></i>
                 </div>
                 <div v-if="seccionActual > 0" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i @click="cambiarAInicio" class="fa-solid fa-rotate-left hover:text-white"></i>
+                    <i @click="cambiarAInicio" class="fa-solid fa-rotate-left cursor-pointer hover:text-white"></i>
                 </div>
             </div>
 

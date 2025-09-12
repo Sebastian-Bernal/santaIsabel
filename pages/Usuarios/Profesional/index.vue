@@ -5,6 +5,7 @@ import { ref, onMounted } from 'vue';
 import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
+import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { storeToRefs } from 'pinia';
@@ -14,6 +15,7 @@ import { mapCampos } from '~/components/organism/Forms/useFormulario';
 const varView = useVarView();
 const medicosStore = useMedicosStore();
 const profesionStore = useDatosProfesionStore()
+const usuariosStore = useUsersStore()
 const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
 const profesiones = ref([]);
@@ -64,8 +66,18 @@ function cerrar() {
     showVer.value = false
 }
 
-function buscarUsuario () {
-    console.log('buscar usuario')
+async function buscarUsuario (event) {
+    const document = event.target.value
+    const usuarios = await usuariosStore.listUsers
+
+    const usuarioExistente = usuarios.filter((user) => {
+        return user.No_document === document
+    });
+
+    if(usuarioExistente[0]){
+        mapCampos(usuarioExistente[0], medicosStore.Formulario)
+    }
+
 }
 
 function seleccionarDepartamento (item) {

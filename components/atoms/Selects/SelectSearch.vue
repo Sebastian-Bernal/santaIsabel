@@ -30,7 +30,13 @@ watch(() => props.modelValue, (nuevoValor) => {
     opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item =>
         item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
     ).slice(0,20) : [];
-    mostrarLista.value = opcionesFiltradas.value.length > 0;
+
+    const filtradas = opcionesFiltradas.value
+    const coincidenciaExacta = filtradas.some(item =>
+        item?.[propiedadFiltrar]?.toLowerCase() === nuevoValor.toLowerCase()
+    );
+
+    mostrarLista.value = opcionesFiltradas.value.length > 0 && !coincidenciaExacta;
 });
 
 function seleccionar(item) {

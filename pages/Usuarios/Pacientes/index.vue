@@ -3,6 +3,7 @@ import Pagina from "~/components/organism/Pagina/Pagina.vue";
 
 import { ref, onMounted, watch } from "vue";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
+import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { useVarView } from "../../stores/varview.js";
 import { storeToRefs } from "pinia";
 import { ComponenteBuilder } from "~/build/Constructores/ClassFormulario.js";
@@ -15,6 +16,7 @@ import { CIE10 } from "~/data/CIE10";
 
 const varView = useVarView();
 const pacientesStore = usePacientesStore();
+const usuariosStore = useUsersStore()
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
 const { listPacientes } = storeToRefs(pacientesStore);
@@ -74,8 +76,18 @@ function cerrar() {
     showVer.value = false;
 }
 
-function buscarUsuario() {
-    console.log(pacientesStore.Formulario);
+async function buscarUsuario (event) {
+    const document = event.target.value
+    const usuarios = await usuariosStore.listUsers
+
+    const usuarioExistente = usuarios.filter((user) => {
+        return user.No_document === document
+    });
+
+    if(usuarioExistente[0]){
+        mapCampos(usuarioExistente[0], pacientesStore.Formulario)
+    }
+
 }
 
 function seleccionarDepartamento(item) {

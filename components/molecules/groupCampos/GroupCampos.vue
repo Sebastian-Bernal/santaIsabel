@@ -56,11 +56,11 @@ const emit = defineEmits(['update:modelValue']);
             {{ Propiedades.labelGroup }}
         </label>
         <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
-            <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)" class="flex items-center">
+            <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)" class="flex items-center cursor-pointer">
+                <span v-if="button.label" class="mr-1">{{ button.label }}</span>
                 <ButtonRounded :color="button.color">
                     <i :class="button.icon"></i>
                 </ButtonRounded>
-                <span v-if="button.label" class="ml-1">{{ button.label }}</span>
             </a>
         </div>
     </div>

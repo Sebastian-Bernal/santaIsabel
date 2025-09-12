@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
+import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 
 // Pinia Users
 export const useUsersStore = defineStore('Users', {
@@ -70,6 +71,25 @@ export const useUsersStore = defineStore('Users', {
         createForm(storeId, estructura = estructuraUser) {
             const useDynamicForm = createFormStore(storeId, estructura)
             return useDynamicForm() // devuelve instancia usable del formulario
+        },
+
+        async indexDBDatos() {
+            const config = useRuntimeConfig()
+            const usuarios = await getAll(config.public.user, 'store_one')
+
+            console.log(usuarios)
+            // const UsuariosIndexed = usuarios.map((profesion) => ({
+            //     Profesion: {
+            //         id: profesion.profession_id, 
+            //         nombre: profesion.profession_name, 
+            //         codigo: profesion.profession_code,
+            //         // links: profesion._links
+            //     }
+            // }));
+
+            // UsuariosIndexed.map((item) => {
+            //     guardarEnDB(item)
+            // })
         },
     }
 });

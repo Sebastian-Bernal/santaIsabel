@@ -24,7 +24,7 @@ function editar () {
         <h2 class="text-white font-bold text-2xl">{{ Propiedades.tituloFormulario }}</h2>
         <div class="flex items-center">
             <nuxtLink v-for="(seccion, index) in Propiedades.secciones" :key="index" class="flex items-center">
-                <button class="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full bg-gray-300" :class="{'bg-blue-500': index === props.SeccionActual}">
+                <button class="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full bg-gray-300 text-black" :class="{'bg-blue-500': index === props.SeccionActual}">
                     {{ index + 1 }}
                 </button>
                 <div v-if="index + 1 !== props.Propiedades.secciones.length" class="md:w-[30px] h-[5px] rounded-lg bg-gray-300"></div>

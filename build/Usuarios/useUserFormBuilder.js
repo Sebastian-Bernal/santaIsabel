@@ -48,22 +48,6 @@ export function useUserBuilder({
         ])
         // 📌 Sección: Datos
         .nuevaSeccion('Datos usuarios')
-    if (tipoUsuario === 'Administrador') {
-        builder
-            .addCampo({
-                component: 'Select',
-                placeholder: 'Rol',
-                id: 'rol',
-                name: 'rol',
-                tamaño: 'w-full',
-                options: [
-                    { text: 'Paciente', value: 'Paciente' },
-                    { text: 'Profesional', value: 'Profesional' },
-                    { text: 'Administrador', value: 'Administrador' },
-                ],
-                vmodel: 'User.rol',
-            })
-    }
     builder
         .addCampo({
             component: 'Label',
@@ -82,7 +66,7 @@ export function useUserBuilder({
             min: '1000000',
             vmodel: 'InformacionUser.No_document',
             events: {
-                onClick: buscarUsuario
+                onKeyUp: buscarUsuario
             },
         })
         .addCampo({
@@ -237,6 +221,19 @@ export function useUserBuilder({
 
     if (tipoUsuario === 'Administrador') {
         builder
+        .addCampo({
+            component: 'Select',
+            placeholder: 'Rol',
+            id: 'rol',
+            name: 'rol',
+            tamaño: 'w-full',
+            options: [
+                { text: 'Paciente', value: 'Paciente' },
+                { text: 'Profesional', value: 'Profesional' },
+                { text: 'Administrador', value: 'Administrador' },
+            ],
+            vmodel: 'User.rol',
+        })
             .addCampo({
                 component: 'Input',
                 type: 'password',
@@ -247,6 +244,7 @@ export function useUserBuilder({
                 mayuscula: false,
                 vmodel: 'User.contraseña',
             })
+
     }
 
     if (tipoUsuario === 'Paciente') {

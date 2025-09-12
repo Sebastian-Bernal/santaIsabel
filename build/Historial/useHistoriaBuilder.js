@@ -12,6 +12,7 @@ export function useHistoriaBuilder({
     seleccionarCIE_10,
     validarCampo,
     show,
+    id_paciente
 }) {
     const builder = new FormularioBuilder()
 
@@ -162,7 +163,7 @@ export function useHistoriaBuilder({
             campos: [
                 { name: 'descripcion', id: 'antecedente', type: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
             ],
-            containerCampos: 'w-full flex items-center'
+            containerCampos: 'w-full'
         })
         .nuevaSeccion('Examen Fisico')
         .addCampo({
@@ -243,30 +244,29 @@ export function useHistoriaBuilder({
             }
         })
 
-        // --- Input: Saturación O2 ---
-        .addCampo({
-            component: 'Input',
-            vmodel: 'ExamenFisico.signosVitales.SATo2',
-            type: 'number',
-            id: 'sat',
-            name: 'sat',
-            placeholder: 'Sat O2',
-            max: 100,
-            tamaño: 'w-full col-span-1',
-            slot: {
-                tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
-            },
-            events: {
-                onChange: validarCampo
-            }
-        })
-
-        // --- Label: Medidas Antropométricas ---
         .addCampo({
             component: 'Label',
-            forLabel: 'peso',
-            text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
-            tamaño: 'w-full col-span-2'
+            text: `
+                    <div class="w-full flex md:flex-row flex-col justify-between gap-3 items-center text-orange-400 dark:text-orange-50">
+                        <span class="text-sm font-semibold">TA : 90-140/60-90 mmHg</span>
+                        <span class="text-sm font-semibold">FC : 60-100 lpm</span>
+                        <span class="text-sm font-semibold">FR : 12-20 rpm</span>
+                        <span class="text-sm font-semibold">Tº : 36.1-37.2°C</span>
+                        <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
+                    </div>
+                `,
+            tamaño: 'col-span-2 bg-orange-50 dark:bg-orange-900 p-5'
+        })
+
+        // --- Input: Otros ---
+        .addCampo({
+            component: 'Input',
+            vmodel: 'ExamenFisico.otros',
+            type: 'text',
+            id: 'otros',
+            name: 'otros',
+            placeholder: 'Otros (opcional)',
+            tamaño: 'w-full col-span-1'
         })
 
         // --- Input: Peso ---
@@ -291,38 +291,32 @@ export function useHistoriaBuilder({
             tamaño: 'w-full col-span-1'
         })
 
-        // --- Input: Otros ---
+        // --- Label: Medidas Antropométricas ---
         .addCampo({
-            component: 'Input',
-            vmodel: 'ExamenFisico.otros',
-            type: 'text',
-            id: 'otros',
-            name: 'otros',
-            placeholder: 'Otros (opcional)',
-            tamaño: 'w-full col-span-1'
+            component: 'Label',
+            forLabel: 'peso',
+            text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
+            tamaño: 'w-full col-span-2'
         })
 
-        // --- Label: Valores de Referencia ---
-        // .addCampo({
-        //     component: 'Label',
-        //     forLabel: 'motivo',
-        //     text: '<i class="fa-solid fa-stethoscope text-blue-500 mr-1"></i>Valores de referencia',
-        //     tamaño: 'w-full col-span-2'
-        // })
 
-        // .addCampo({
-        //     component: 'Label',
-        //     text: `
-        //             <div class="w-full flex md:flex-row flex-col justify-between gap-3 items-center text-orange-400">
-        //                 <span class="text-sm font-semibold">TA : 90-140/60-90 mmHg</span>
-        //                 <span class="text-sm font-semibold">FC : 60-100 lpm</span>
-        //                 <span class="text-sm font-semibold">FR : 12-20 rpm</span>
-        //                 <span class="text-sm font-semibold">Tº : 36.1-37.2°C</span>
-        //                 <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
-        //             </div>
-        //         `,
-        //     tamaño: 'col-span-2 bg-orange-50 p-5'
-        // })
+        // --- Input: Saturación O2 ---
+        .addCampo({
+            component: 'Input',
+            vmodel: 'ExamenFisico.signosVitales.SATo2',
+            type: 'number',
+            id: 'sat',
+            name: 'sat',
+            placeholder: 'Sat O2',
+            max: 100,
+            tamaño: 'w-full col-span-1',
+            slot: {
+                tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
+            },
+            events: {
+                onChange: validarCampo
+            }
+        })
 
         .nuevaSeccion('Analisis')
         // 📌 Sección: Diagnósticos
@@ -330,7 +324,7 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Diagnosticos',
-            buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
             tamaño: 'w-full col-span-2',
             vmodel: 'Diagnosticos',
             value: [],
@@ -394,6 +388,126 @@ export function useHistoriaBuilder({
             text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento'
         })
 
+        // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
+
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Equipos (opcional)',
+            buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Plan_manejo_equipos',
+            value: [],
+            campos: [
+                {
+                    name: 'descripcion',
+                    id: 'descripcionEquipo',
+                    type: 'Input',
+                    placeholder: 'Descripcion',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'cantidad',
+                    id: 'cantidadEquipos',
+                    type: 'Input',
+                    placeholder: 'Cantidad',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'grid grid-cols-2 gap-2'
+        })
+
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Insumos (opcional)',
+            buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Plan_manejo_insumos',
+            value: [],
+            campos: [
+                {
+                    name: 'descripcion',
+                    id: 'descripcionInsumo',
+                    type: 'Input',
+                    placeholder: 'Descripcion',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'cantidad',
+                    id: 'cantidadInsumo',
+                    type: 'Input',
+                    placeholder: 'Cantidad',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'grid grid-cols-2 gap-2'
+        })
+
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Medicamentos (opcional)',
+            buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { nombre: '', presentacion: '', cantidad: '',  id_paciente: id_paciente }}, ],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Plan_manejo_medicamentos',
+            value: [],
+            campos: [
+                {
+                    name: 'nombre',
+                    id: 'Medicamento',
+                    type: 'Input',
+                    placeholder: 'Medicamento',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'presentacion',
+                    id: 'presentacion',
+                    type: 'Input',
+                    placeholder: 'Presentacion',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'cantidad',
+                    id: 'cantidad',
+                    type: 'Input',
+                    placeholder: 'Cantidad',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'grid grid-cols-3 gap-2'
+        })
+
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Procedimientos (opcional)',
+            buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { descripcion: '', cantidad: '', mes: '',  id_paciente: id_paciente }}, ],
+            tamaño: 'w-full col-span-2 mt-5',
+            vmodel: 'Plan_manejo_procedimientos',
+            value: [],
+            campos: [
+                {
+                    name: 'descripcion',
+                    id: 'descripcionProcedimiento',
+                    type: 'Input',
+                    placeholder: 'Descripcion',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'cantidad',
+                    id: 'cantidad',
+                    type: 'Input',
+                    placeholder: 'Cantidad',
+                    tamaño: 'w-full',
+                },
+                {
+                    name: 'mes',
+                    id: 'mes',
+                    type: 'Input',
+                    placeholder: 'Mes',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'grid grid-cols-3 gap-2'
+        })
+
         // --- Select: Condición de rehabilitación ---
         .addCampo({
             component: 'Select',
@@ -407,58 +521,6 @@ export function useHistoriaBuilder({
                 { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
                 { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
             ]
-        })
-
-        // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
-        // .addCampo({
-        //     component: 'Label',
-        //     text: 'Medicina',
-        //     color: 'bg-[var(--color-default-200)]',
-        //     accion: () => { varView.showMedicinas = true },
-        //     icon: 'fa-solid fa-plus'
-        // })
-        // .addCampo({
-        //     component: 'Button',
-        //     text: 'Servicios',
-        //     color: 'bg-[var(--color-default-300)]',
-        //     accion: () => { varView.showProcedimientos = true },
-        //     icon: 'fa-solid fa-plus'
-        // })
-        // .addCampo({
-        //     component: 'Button',
-        //     text: 'Insumos',
-        //     color: 'bg-[var(--color-default-500)]',
-        //     accion: () => { varView.showInsumos = true },
-        //     icon: 'fa-solid fa-plus'
-        // })
-        // .addCampo({
-        //     component: 'Button',
-        //     text: 'Equipos',
-        //     color: 'bg-[var(--color-default-600)]',
-        //     accion: () => { varView.showEquipos = true },
-        //     icon: 'fa-solid fa-plus'
-        // })
-
-        .addCampo({
-            component: 'GroupCampos',
-            type: 'Input',
-            labelGroup: 'Medicamentos',
-            buttons: [{ icon: 'fa-solid fa-capsules', color: 'bg-blue-500', addItem: { nombre: '', cantidad: '', id_paciente: '' }}, ],
-            tamaño: 'w-full col-span-2',
-            vmodel: 'Plan_manejo_medicamentos',
-            value: [],
-            campos: [
-                {
-                    name: 'descripcion',
-                    id: 'cie-10',
-                    type: 'SelectSearch',
-                    placeholder: 'CIE-10',
-                    tamaño: 'w-full',
-                    options: CIE10,
-                    opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                    seleccionarItem: seleccionarCIE_10, 
-                }
-            ],
         })
     return builder.build()
 }

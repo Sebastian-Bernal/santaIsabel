@@ -30,6 +30,7 @@ watch(() => varView.showNuevoUser, async () => {
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
+    await UsersStore.indexDBDatos()
     varView.cargando = false
 });
 
@@ -60,18 +61,13 @@ function seleccionarDepartamento() {
 
 }
 
-// const propiedadesUser = useUserBuilder({
-//     storeId: 'NuevoUser',
-//     storePinia: 'Usuarios',
-//     tipoUsuario: tipoUsuario,
-//     cerrarModal: cerrar,
-//     show: show,
-//     tipoFormulario: 'Wizard',
-//     buscarUsuario,
-//     departamentos: municipios.departamentos,
-//     seleccionarDepartamento,
-// });
+const municipiosOptions = computed(() => {
+    const departamentoSeleccionado = UsersStore.Formulario.InformacionUser.departamento;
 
+    const departamento = municipios.departamentos.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+
+    return departamento ? departamento.municipios : [];
+});
 
 
 // Construccion de pagina
@@ -84,13 +80,15 @@ const propiedades = computed(() => {
     const propiedadesUser = useUserBuilder({
         storeId: 'NuevoUser',
         storePinia: 'Usuarios',
-        tipoUsuario: tipoUsuario.value,
+        tipoUsuario: 'Administrador',
         cerrarModal: cerrar,
         show: show,
         tipoFormulario: 'Wizard',
         buscarUsuario,
         departamentos: municipios.departamentos,
-        seleccionarDepartamento
+        seleccionarDepartamento,
+        municipios: municipiosOptions,
+        seleccionarMunicipio: () => {},
     });
 
     return pagina
@@ -121,25 +119,7 @@ const propiedades = computed(() => {
         .addComponente('Form', propiedadesUser)
         .build();
 });
-// const propiedades = pagina
-//     .setFondo('FondoDefault')
-//     .setEstilos('')
-//     .setLayout('')
-//     .setContenedor('w-full')
-//     .addComponente('Tabla', builderTabla
-//         .setColumnas([
-//             { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
-//             { titulo: 'No_document', value: 'Documento', tamaño: 100 },
-//             { titulo: 'rol', value: 'Rol', tamaño: 100 },
-//             { titulo: 'celular', value: 'Celular', tamaño: 100 },
-//             { titulo: 'estado', value: 'Estado', tamaño: 150 },
-//         ])
-//         .setHeaderTabla({titulo: 'Gestion de Usuarios', descripcion: 'Administra y consulta información de Usuarios Admin', color: 'bg-[var(--color-default)] text-white', accionAgregar: nuevoUser})
-//         .setAcciones({ icons: [{ icon: 'ver', action: modificarUser }], botones: true })
-//         .setDatos(Users)
-//     )
-//     .addComponente('Form', unref(propiedadesUser))
-//     .build()
+
 </script>
 <template>
     <Pagina :Propiedades="propiedades" />
