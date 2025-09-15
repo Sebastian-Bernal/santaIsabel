@@ -48,11 +48,12 @@ watch(() => varView.showModificarPaciente,
 onMounted(async () => {
     varView.cargando = true;
     await llamadatos();
-
+    // await pacientesStore.indexDBDatos()
     const EPS = await epsStore.listEPS;
+
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
-        value: eps.nombre,
+        value: eps.id,
     }));
 
     varView.cargando = false;
@@ -74,9 +75,10 @@ const verPaciente = (paciente) => {
 function cerrar() {
     show.value = false;
     showVer.value = false;
+    varView.soloVer = true
 }
 
-async function buscarUsuario (event) {
+async function buscarUsuario(event) {
     const document = event.target.value
     const usuarios = await usuariosStore.listUsers
 
@@ -84,7 +86,7 @@ async function buscarUsuario (event) {
         return user.No_document === document
     });
 
-    if(usuarioExistente[0]){
+    if (usuarioExistente[0]) {
         mapCampos(usuarioExistente[0], pacientesStore.Formulario)
     }
 
@@ -124,31 +126,11 @@ const propiedadesUser = useUserBuilder({
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
     municipios: municipiosOptions,
-    seleccionarMunicipio: () => {},
-    EPS: opcionesEPS,
-    agregarDiagnostico: () => {},
-    seleccionarCIE_10,
-    CIE10: CIE10,
-    tipoUsuario: "Paciente",
-});
-
-const propiedadesVerUser = useUserBuilder({
-    storeId: "ModificarPaciente",
-    storePinia: "Pacientes",
-    camposRequeridos,
-    cerrarModal: cerrar,
-    show: showVer,
-    tipoFormulario: "Wizard",
-    buscarUsuario,
-    departamentos: municipios.departamentos,
-    seleccionarDepartamento,
-    municipios: municipiosOptions,
-    seleccionarMunicipio: () => {},
+    seleccionarMunicipio: () => { },
     EPS: opcionesEPS,
     agregarDiagnostico: () => { },
     seleccionarCIE_10,
     CIE10: CIE10,
-    verUser: true,
     tipoUsuario: "Paciente",
 });
 
@@ -157,6 +139,27 @@ const propiedadesVerUser = useUserBuilder({
 const propiedades = computed(() => {
     const builderTabla = new TablaBuilder();
     const pagina = new ComponenteBuilder();
+
+    const propiedadesVerUser = useUserBuilder({
+        storeId: "ModificarPaciente",
+        storePinia: "Pacientes",
+        camposRequeridos,
+        cerrarModal: cerrar,
+        show: showVer,
+        tipoFormulario: "Wizard",
+        buscarUsuario,
+        departamentos: municipios.departamentos,
+        seleccionarDepartamento,
+        municipios: municipiosOptions,
+        seleccionarMunicipio: () => { },
+        EPS: opcionesEPS,
+        agregarDiagnostico: () => { },
+        seleccionarCIE_10,
+        CIE10: CIE10,
+        verUser: true,
+        soloVer: varView.soloVer,
+        tipoUsuario: "Paciente",
+    });
 
     return pagina
         .setFondo("FondoDefault")

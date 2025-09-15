@@ -54,6 +54,7 @@ export const useVarView = defineStore('varView', {
         showRecuperarContraseña: false,
         showCambiarContraseña: false,
         // validacion de formularios
+        soloVer: true,
         formComplete: false,
         camposVacios: false,
     }),

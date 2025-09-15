@@ -30,7 +30,9 @@ const components = {
 const seccionActual = ref(0)
 
 function cambiarSeccion(tipo, key) {
-    seccionActual.value = key+1
+    if(tipo === 'Card'){
+        seccionActual.value = key+1
+    }
 }
 
 function cambiarAInicio() {

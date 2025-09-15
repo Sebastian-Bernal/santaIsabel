@@ -23,16 +23,16 @@ const refresh = ref(1);
 const show = ref(false)
 const showVer = ref(false)
 
-async function llamadatos () {
-    medicos.value= await listMedicos.value;
+async function llamadatos() {
+    medicos.value = await listMedicos.value;
 }
 
-watch(()=> varView.showNuevoProfesionalPaso2, async()=>{
+watch(() => varView.showNuevoProfesionalPaso2, async () => {
     llamadatos()
     refresh.value++
 })
 
-watch(()=> varView.showModificarProfesional, async()=>{
+watch(() => varView.showModificarProfesional, async () => {
     llamadatos()
     refresh.value++
 })
@@ -43,7 +43,7 @@ onMounted(async () => {
     await llamadatos()
     const listaProfesiones = await profesionStore.listProfesion
     profesiones.value = listaProfesiones.map((profesion) => {
-        return {text: profesion.nombre, value: profesion.nombre}
+        return { text: profesion.nombre, value: profesion.nombre }
     })
     varView.cargando = false
 });
@@ -64,9 +64,10 @@ const agregarMedico = () => {
 function cerrar() {
     show.value = false
     showVer.value = false
+    varView.soloVer = false
 }
 
-async function buscarUsuario (event) {
+async function buscarUsuario(event) {
     const document = event.target.value
     const usuarios = await usuariosStore.listUsers
 
@@ -74,13 +75,13 @@ async function buscarUsuario (event) {
         return user.No_document === document
     });
 
-    if(usuarioExistente[0]){
+    if (usuarioExistente[0]) {
         mapCampos(usuarioExistente[0], medicosStore.Formulario)
     }
 
 }
 
-function seleccionarDepartamento (item) {
+function seleccionarDepartamento(item) {
     // formData.InformacionUser.departamento = item.nombre;
 }
 
@@ -103,53 +104,59 @@ const propiedadesUser = useUserBuilder({
     departamentos: municipios.departamentos,
     seleccionarDepartamento,
     municipios: municipiosOptions,
-    seleccionarMunicipio: () => {},
+    seleccionarMunicipio: () => { },
     opcionesProfesion: profesiones,
     tipoUsuario: 'Profesional'
 });
 
-const propiedadesVerUser = useUserBuilder({
-    storeId: 'ModificarProfesional',
-    storePinia: 'Profesionales',
-    camposRequeridos: [],
-    cerrarModal: cerrar,
-    show: showVer,
-    tipoFormulario: 'Wizard',
-    buscarUsuario,
-    departamentos: municipios.departamentos,
-    seleccionarDepartamento,
-    municipios: municipiosOptions,
-    seleccionarMunicipio: () => {},
-    tipoUsuario: 'Profesional',
-    verUser: true
-});
-
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
-const pagina = new ComponenteBuilder()
 
-const propiedades = pagina
-    .setFondo('FondoDefault')
-    .setLayout('')
-    .setContenedor('w-full')
-    .addComponente('Tabla', builderTabla
-        .setColumnas([
-        { titulo: 'name', value: 'Nombre', tamaño: 200},
-        { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100},
-        { titulo: 'profesion', value: 'Profesión', tamaño: 100},
-        { titulo: 'celular', value: 'Celular', tamaño: 100},
-        { titulo: 'zona', value: 'Zona', tamaño: 50},
-        { titulo: 'municipio', value: 'Municipio', tamaño: 150}
-    ])
-        .setHeaderTabla({titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico})
-        .setAcciones({ icons: [{icon: 'ver', action: modificarMedico}], botones: true })
-        .setDatos(medicos)
-    )
-    .addComponente('Form', propiedadesUser)
-    .addComponente('Form', propiedadesVerUser)
-    .build()
-    // console.log(propiedades)
+
+const propiedades = computed(() => {
+    const pagina = new ComponenteBuilder()
+
+    const propiedadesVerUser = useUserBuilder({
+        storeId: 'ModificarProfesional',
+        storePinia: 'Profesionales',
+        camposRequeridos: [],
+        cerrarModal: cerrar,
+        show: showVer,
+        tipoFormulario: 'Wizard',
+        buscarUsuario,
+        departamentos: municipios.departamentos,
+        seleccionarDepartamento,
+        municipios: municipiosOptions,
+        seleccionarMunicipio: () => { },
+        tipoUsuario: 'Profesional',
+        verUser: true,
+        soloVer: varView.soloVer
+    });
+
+    pagina
+        .setFondo('FondoDefault')
+        .setLayout('')
+        .setContenedor('w-full')
+        .addComponente('Tabla', builderTabla
+            .setColumnas([
+                { titulo: 'name', value: 'Nombre', tamaño: 200 },
+                { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100 },
+                { titulo: 'profesion', value: 'Profesión', tamaño: 100 },
+                { titulo: 'celular', value: 'Celular', tamaño: 100 },
+                { titulo: 'zona', value: 'Zona', tamaño: 50 },
+                { titulo: 'municipio', value: 'Municipio', tamaño: 150 }
+            ])
+            .setHeaderTabla({ titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico })
+            .setAcciones({ icons: [{ icon: 'ver', action: modificarMedico }], botones: true })
+            .setDatos(medicos)
+        )
+        .addComponente('Form', propiedadesUser)
+        .addComponente('Form', propiedadesVerUser)
+
+    return pagina.build()
+})
+// console.log(propiedades)
 </script>
 <template>
-    <Pagina :Propiedades="propiedades"/>
+    <Pagina :Propiedades="propiedades" />
 </template>

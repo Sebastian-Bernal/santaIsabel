@@ -48,8 +48,8 @@ export async function cargarStore(storeName) {
       break;
     }
     case 'Notas': {
-      const { useUsuariosStore } = await import('~/stores/Formularios/historias/Notas');
-      tablaStore = useUsuariosStore();
+      const { useNotasStore } = await import('~/stores/Formularios/historias/Notas');
+      tablaStore = useNotasStore();
       break;
     }
     case 'Citas': {

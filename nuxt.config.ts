@@ -11,7 +11,7 @@ export default defineNuxtConfig({
       userProfile: 'api/v1/user-profiles',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
-
+      patients: 'api/v1/patients'
     }
   },
   app: {

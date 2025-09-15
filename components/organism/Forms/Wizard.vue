@@ -11,10 +11,10 @@ const props = defineProps({
         default: 0
     }
 });
+const varView = useVarView()
 
 function editar () {
-    props.Propiedades.soloVer = !props.Propiedades.soloVer
-    console.log(props.Propiedades.soloVer)
+    varView.soloVer = !varView.soloVer
 }
 </script>
 

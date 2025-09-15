@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
+import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -111,6 +112,27 @@ export const usePacientesStore = defineStore('Pacientes', {
             })
 
             return datos
+        },
+
+        async indexDBDatos() {
+            const config = useRuntimeConfig()
+            const usuarios = await getAll(config.public.patients, 'store_two')
+
+            console.log(usuarios)
+            const UsuariosIndexed = usuarios.map((data) => ({
+                Paciente: {
+                    id: data.patient_id, 
+                    sexo: data.patient_gender, 
+                    genero: data.patient_gender_identity,
+                    poblacionVulnerable: data.patient_vulnerability,
+                    Eps: data.patient_eps_id,
+                    user_profile: data.user_profile
+                },
+            }));
+
+            // UsuariosIndexed.map((item) => {
+            //     guardarEnDB(item)
+            // })
         },
 
     }

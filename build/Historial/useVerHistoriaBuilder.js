@@ -15,33 +15,16 @@ export function useVerHistoriaBuilder({
         .setStorePinia(storePinia)
         .setFormulariotamaño('XS')
         .setFormularioShow(show)
+        .setSoloVer(true)
         .setFormularioTipo('solo')
         .setBotones([
             { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
         ])
     // 📌 Sección: Datos
-    if (formularioItem === 'Medicamento') {
+    if (formularioItem.value === 'Medicamento') {
         builder
             // 📌 Sección: Diagnósticos
             .nuevaSeccion('Medicamento')
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Diagnosticos',
-                // buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Diagnosticos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'cie-10',
-                        type: 'Input',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full',
-                    },
-
-                ]
-            })
 
             // --- Select: Tipo de Análisis ---
             .addCampo({
@@ -80,73 +63,71 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full col-span-2',
                 minlength: 10
             })
+
             .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Medicamentos (opcional)',
-                // buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { nombre: '', presentacion: '', cantidad: '', } },],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Plan_manejo_medicamentos',
-                value: [],
-                campos: [
-                    {
-                        name: 'nombre',
-                        id: 'Medicamento',
-                        type: 'Input',
-                        placeholder: 'Medicamento',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'presentacion',
-                        id: 'presentacion',
-                        type: 'Input',
-                        placeholder: 'Presentacion',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'cantidad',
-                        id: 'cantidad',
-                        type: 'Input',
-                        placeholder: 'Cantidad',
-                        tamaño: 'w-full',
-                    },
-                ],
-                containerCampos: 'grid grid-cols-3 gap-2'
+                component: 'Label',
+                forLabel: 'Medicamento',
+                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Medicamento'
+            })
+
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Plan_manejo_medicamentos.nombre',
+                type: 'text',
+                id: 'nombre',
+                name: 'nombre',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Plan_manejo_medicamentos.presentacion',
+                type: 'text',
+                id: 'presetacion',
+                name: 'presetacion',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Plan_manejo_medicamentos.cantidad',
+                type: 'text',
+                id: 'cantidad',
+                name: 'cantidad',
+                tamaño: 'w-full',
+                minlength: 5
             })
     }
-    else if (formularioItem === 'Tratamientos') {
+    else if (formularioItem.value === 'Tratamientos') {
         builder
             .nuevaSeccion('Tratamientos')
+
             .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Procedimientos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { descripcion: '', cantidad: '', mes: '', id_paciente: id_paciente } },],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Plan_manejo_procedimientos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'descripcionProcedimiento',
-                        type: 'Input',
-                        placeholder: 'Descripcion',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'cantidad',
-                        id: 'cantidad',
-                        type: 'Input',
-                        placeholder: 'Cantidad',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'mes',
-                        id: 'mes',
-                        type: 'Input',
-                        placeholder: 'Mes',
-                        tamaño: 'w-full',
-                    },
-                ],
-                containerCampos: 'grid grid-cols-3 gap-2'
+                component: 'Input',
+                vmodel: 'Plan_manejo_procedimientos.descripcion',
+                type: 'text',
+                id: 'nombre',
+                name: 'nombre',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Plan_manejo_procedimientos.mes',
+                type: 'text',
+                id: 'presetacion',
+                name: 'presetacion',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Plan_manejo_procedimientos.cantidad',
+                type: 'text',
+                id: 'cantidad',
+                name: 'cantidad',
+                tamaño: 'w-full',
+                minlength: 5
             })
 
             // --- Select: Tipo de Análisis ---
@@ -210,17 +191,105 @@ export function useVerHistoriaBuilder({
             })
     }
 
-    else if (formularioItem === 'Consulta') {
+    else if (formularioItem.value === 'Consulta') {
         builder
             .nuevaSeccion('Consulta')
+            
+            .addCampo({
+                component: 'Label',
+                forLabel: 'nombre',
+                size: 'text-sm',
+                tamaño: 'w-full col-span-2',
+                text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
+            })
+            // --- Nombre Paciente ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'HistoriaClinica.name_paciente',
+                id: 'nombre',
+                name: 'nombre',
+                placeholder: 'Nombre del paciente',
+                tamaño: 'w-full'
+            })
+            
+            // --- Numero de documento ---
+            
+            
+            // --- Label Acompañante ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'tipo',
+                size: 'text-sm',
+                text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
+                tamaño: 'w-full col-span-2'
+            })
+            
+            // --- Nombre Acompañante ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.acompañante',
+                type: 'text',
+                id: 'nombreAcompañante',
+                name: 'nombreAcompañante',
+                placeholder: 'Nombre completo del acompañante',
+                tamaño: 'w-full'
+            })
+            
+            // --- Parentesco Acompañante ---
+            .addCampo({
+                component: 'Select',
+                vmodel: 'Analisis.acompañante',
+                id: 'parentesco',
+                name: 'parentesco',
+                placeholder: 'Seleccione el parentesco',
+                tamaño: 'w-full',
+                options: [
+                    { text: 'Padre', value: 'Padre' },
+                    { text: 'Madre', value: 'Madre' },
+                    { text: 'Hijo', value: 'Hijo' },
+                    { text: 'Conyuge', value: 'Conyuge' },
+                    { text: 'Hermano/a', value: 'Hermano/a' }
+                ]
+            })
+            
+            .addCampo({
+                component: 'Label',
+                forLabel: 'motivo',
+                size: 'text-sm',
+                tamaño: 'w-full col-span-2',
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Analisis.motivo',
+                id: 'motivo',
+                name: 'motivo',
+                placeholder: 'Describa el motivo principal de la consulta...',
+                tamaño: 'w-full col-span-2'
+            })
+            .addCampo({
+                component: 'Label',
+                forLabel: 'enfermedad',
+                size: 'text-sm',
+                tamaño: 'w-full col-span-2',
+                text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Enfermedad Actual'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Enfermedad.valor',
+                id: 'enfermedad',
+                name: 'enfermedad',
+                placeholder: 'Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes...',
+                tamaño: 'w-full col-span-2'
+            })
+            
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
                 text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
                 tamaño: 'w-full col-span-2'
             })
-
-            // --- Input: TA ---
+            
             .addCampo({
                 component: 'Input',
                 vmodel: 'ExamenFisico.signosVitales.ta',
@@ -322,115 +391,6 @@ export function useVerHistoriaBuilder({
                 placeholder: 'Sat O2',
                 max: 100,
                 tamaño: 'w-full col-span-1',
-            })
-
-            .addCampo({
-                component: 'Label',
-                forLabel: 'nombre',
-                size: 'text-sm',
-                tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
-            })
-            // --- Nombre Paciente ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'HistoriaClinica.name_paciente',
-                id: 'nombre',
-                name: 'nombre',
-                placeholder: 'Nombre del paciente',
-                tamaño: 'w-full'
-            })
-
-            // --- Numero de documento ---
-
-
-            // --- Label Acompañante ---
-            .addCampo({
-                component: 'Label',
-                forLabel: 'tipo',
-                size: 'text-sm',
-                text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
-                tamaño: 'w-full col-span-2'
-            })
-
-            // --- Nombre Acompañante ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Analisis.acompañante',
-                type: 'text',
-                id: 'nombreAcompañante',
-                name: 'nombreAcompañante',
-                placeholder: 'Nombre completo del acompañante',
-                tamaño: 'w-full'
-            })
-
-            // --- Parentesco Acompañante ---
-            .addCampo({
-                component: 'Select',
-                vmodel: 'Analisis.acompañante',
-                id: 'parentesco',
-                name: 'parentesco',
-                placeholder: 'Seleccione el parentesco',
-                tamaño: 'w-full',
-                options: [
-                    { text: 'Padre', value: 'Padre' },
-                    { text: 'Madre', value: 'Madre' },
-                    { text: 'Hijo', value: 'Hijo' },
-                    { text: 'Conyuge', value: 'Conyuge' },
-                    { text: 'Hermano/a', value: 'Hermano/a' }
-                ]
-            })
-
-            .addCampo({
-                component: 'Label',
-                forLabel: 'motivo',
-                size: 'text-sm',
-                tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
-            })
-            .addCampo({
-                component: 'Textarea',
-                vmodel: 'Analisis.motivo',
-                id: 'motivo',
-                name: 'motivo',
-                placeholder: 'Describa el motivo principal de la consulta...',
-                tamaño: 'w-full col-span-2'
-            })
-            .addCampo({
-                component: 'Label',
-                forLabel: 'enfermedad',
-                size: 'text-sm',
-                tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Enfermedad Actual'
-            })
-            .addCampo({
-                component: 'Textarea',
-                vmodel: 'Enfermedad.valor',
-                id: 'enfermedad',
-                name: 'enfermedad',
-                placeholder: 'Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes...',
-                tamaño: 'w-full col-span-2'
-            })
-
-            // 📌 Sección: Diagnósticos
-
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Diagnosticos',
-                // buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Diagnosticos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'cie-10',
-                        type: 'Input',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full',
-                    },
-
-                ]
             })
     }
     else {

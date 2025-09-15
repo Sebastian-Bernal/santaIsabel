@@ -23,69 +23,80 @@ const showNuevoPaciente = ref(false)
 onMounted(async () => {
     varView.cargando = true;
     sessionStorage.removeItem('activeButton');
-    
+
     rol.value = sessionStorage.getItem('Rol')
     const Historias = await historiaStore.ultimasHistorias();
     const citas = await citasStore.listCitas();
-    
     DashboardRol(rol.value, Historias, citas)
     varView.cargando = false;
 });
 
-function nuevoPaciente () {
+function nuevoPaciente() {
     showNuevoPaciente.value = true
 }
-function buscarHistoria () {
+
+function buscarHistoria() {
     location.href = 'Historial/Historias'
 }
 
-function DashboardRol(rol, Historias, citas){
-        if (rol === 'Admin') {
-            if(Historias > 0){
-                ultimosPacientes.value = Historias.map(card => {
-                    return {
-                        header: {
-                            icon: 'fa-solid fa-user',
-                            title: card.name_paciente,
-                            subtitle: card.No_document_paciente
-                        },
-                        body: {
-                            html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
-                        },
-                        footer: {
-                            status: 'completado',
-                            statusClass: 'bg-green-500'
-                        }
+function DashboardRol(rol, Historias, citas) {
+    if (rol === 'Admin') {
+        if (Historias.length > 0) {
+            ultimosPacientes.value = Historias.map(card => {
+                return {
+                    header: {
+                        icon: 'fa-solid fa-user',
+                        title: card.name_paciente,
+                        subtitle: card.No_document_paciente
+                    },
+                    body: {
+                        html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
+                    },
+                    footer: {
+                        status: 'completado',
+                        statusClass: 'bg-green-500'
                     }
-                })
-            } else {
-                ultimosPacientes.value = [{
-                        header: {
-                            icon: 'fa-solid fa-user',
-                            title: 'No hay Pacientes Recientes',
-                        },
-                    }]
-            }
-
-        Citas.value = citas.map(card => {
-            return {
+                }
+            })
+        } else {
+            ultimosPacientes.value = [{
                 header: {
-                    html: `<div class="flex flex-col items-center">
+                    icon: 'fa-solid fa-user',
+                    title: 'No hay Pacientes Recientes',
+                },
+            }]
+        }
+
+        if (citas.length > 0) {
+            Citas.value = citas.map(card => {
+                return {
+                    header: {
+                        html: `<div class="flex flex-col items-center">
                      <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
                      <p class="text-xs font-thin">Hoy</p>
                      <div/>`,
-                    title: card.name_paciente,
-                    subtitle: card.servicio,
-                },
-                // body: {
-                //     html: ``
-                // },
-                footer: {
-                    status: card.motivo,
-                    statusClass: 'bg-blue-500'
+                        title: card.name_paciente,
+                        subtitle: card.servicio,
+                    },
+                    // body: {
+                    //     html: ``
+                    // },
+                    footer: {
+                        status: card.motivo,
+                        statusClass: 'bg-blue-500'
+                    }
                 }
-            }
-        })
+            })
+        } else {
+            Citas.value = [
+                {
+                    header: {
+                        title: 'No se encontraron Citas.'
+                    }
+                }
+            ]
+        }
+
 
         actions.value = [
             {
@@ -367,5 +378,6 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
-    <Formularios :showPaciente="showNuevoPaciente"></Formularios>
+    <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false">
+    </Formularios>
 </template>

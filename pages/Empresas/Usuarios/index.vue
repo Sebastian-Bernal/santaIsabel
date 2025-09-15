@@ -78,7 +78,7 @@ const builderTabla = new TablaBuilder()
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const propiedadesUser = useUserBuilder({
-        storeId: 'NuevoUser',
+        storeId: 'NuevoUsuario',
         storePinia: 'Usuarios',
         tipoUsuario: 'Administrador',
         cerrarModal: cerrar,

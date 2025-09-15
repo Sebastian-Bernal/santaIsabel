@@ -15,6 +15,7 @@ const emit = defineEmits(['update:modelValue']);
     :id="Propiedades.id" 
     :name="Propiedades.name" 
     :placeholder="Propiedades.placeholder" 
+    :disabled="Propiedades.disabled"
     @input="$emit('update:modelValue', $event.target.value)" 
     :minlength="Propiedades.minlength" :maxlength="Propiedades.maxlength"
     @click="Propiedades.events?.onClick"
@@ -23,7 +24,7 @@ const emit = defineEmits(['update:modelValue']);
     @keyup.enter="Propiedades.events?.onKeyUp"
         rows="3"
         :class="Propiedades.tamaño"
-        class="w-full mt-1 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+        class="w-full mt-1 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
     </textarea>
 </template>
 

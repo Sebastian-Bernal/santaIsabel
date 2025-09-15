@@ -1,6 +1,5 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
-import { municipios } from '~/data/municipios'
 
 export function useUserBuilder({
     storeId,
@@ -20,25 +19,38 @@ export function useUserBuilder({
     show,
     tipoUsuario,
     verUser,
+    soloVer,
 }) {
+
+    const validarContraseña = (event) => {
+        const valor = event.target.value
+        // Al menos 3 letras (mayúsculas o minúsculas)
+        const letras = valor?.match(/[a-zA-Z]/g) || [];
+        // Al menos 2 números
+        const numeros = valor?.match(/[0-9]/g) || [];
+        // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
+        const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || [];
+
+        return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
+    }
 
     const builder = new FormularioBuilder()
     builder
         .setStoreId(storeId)
         .setStorePinia(storePinia)
         .setEditarFormulario(verUser)
-        .setSoloVer(verUser)
+        .setSoloVer(soloVer)
         .setCamposRequeridos(camposRequeridos)
         .setFormulariotamaño('LG')
         .setFormularioTitulo('Datos Usuario')
-        if(verUser){
-            builder
-            .setFormularioTituloFormulario('Modificar Usuario')
-        } else {
-            builder
-            .setFormularioTituloFormulario('Nuevo Usuario')
-        }
+    if (verUser) {
         builder
+            .setFormularioTituloFormulario('Modificar Usuario')
+    } else {
+        builder
+            .setFormularioTituloFormulario('Nuevo Usuario')
+    }
+    builder
         .setFormularioShow(show)
         .setFormularioTipo(tipoFormulario)
         .setFormularioContenedorCampos('flex flex-col')
@@ -221,19 +233,19 @@ export function useUserBuilder({
 
     if (tipoUsuario === 'Administrador') {
         builder
-        .addCampo({
-            component: 'Select',
-            placeholder: 'Rol',
-            id: 'rol',
-            name: 'rol',
-            tamaño: 'w-full',
-            options: [
-                { text: 'Paciente', value: 'Paciente' },
-                { text: 'Profesional', value: 'Profesional' },
-                { text: 'Administrador', value: 'Administrador' },
-            ],
-            vmodel: 'User.rol',
-        })
+            .addCampo({
+                component: 'Select',
+                placeholder: 'Rol',
+                id: 'rol',
+                name: 'rol',
+                tamaño: 'w-full',
+                options: [
+                    { text: 'Paciente', value: 'Paciente' },
+                    { text: 'Profesional', value: 'Profesional' },
+                    { text: 'Administrador', value: 'Administrador' },
+                ],
+                vmodel: 'User.rol',
+            })
             .addCampo({
                 component: 'Input',
                 type: 'password',
@@ -243,6 +255,9 @@ export function useUserBuilder({
                 minLength: '5',
                 mayuscula: false,
                 vmodel: 'User.contraseña',
+                events: {
+                    onInput: validarContraseña
+                }
             })
 
     }
@@ -346,17 +361,17 @@ export function useUserBuilder({
                 vmodel: 'Diagnosticos',
                 value: [],
                 campos: [
-                    { 
-                        name: 'descripcion', 
-                        id: 'cie-10', 
-                        type: 'SelectSearch', 
-                        placeholder: 'CIE-10', 
+                    {
+                        name: 'descripcion',
+                        id: 'cie-10',
+                        type: 'SelectSearch',
+                        placeholder: 'CIE-10',
                         tamaño: 'w-full',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
-                        
+
                 ]
             })
 
@@ -365,19 +380,19 @@ export function useUserBuilder({
                 component: 'GroupCampos',
                 labelGroup: 'Antecedentes',
                 buttons: [
-                    { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: {descripcion: '', tipo: 'Personal'} },
-                    { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: {descripcion: '', tipo: 'Familiar'} },
+                    { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
+                    { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
                 ],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Antecedentes',
                 value: [],
                 campos: [
-                    { 
-                        name: 'descripcion', 
-                        id: 'antecedente', 
-                        type: 'Input', 
-                        placeholder: 'Antecedente', 
-                        tamaño: 'w-full' 
+                    {
+                        name: 'descripcion',
+                        id: 'antecedente',
+                        type: 'Input',
+                        placeholder: 'Antecedente',
+                        tamaño: 'w-full'
                     },
                 ],
                 containerCampos: 'w-full'

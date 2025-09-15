@@ -70,7 +70,7 @@ function handleInput(event) {
             :placeholder="Propiedades.placeholder"
             :disabled="Propiedades.disabled"
             @input="handleInput($event)"
-            @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange"
+            @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)"
             @blur="Propiedades.events?.onBlur" @keyup.enter="Propiedades.events?.onKeyUp" />
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length"

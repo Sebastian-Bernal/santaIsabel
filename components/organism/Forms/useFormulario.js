@@ -151,7 +151,6 @@ export function useFormulario(props) {
     }
 
     async function mandarFormulario(data) {
-        console.log('mandado')
         const accion = accionesFormularios[props.Propiedades.content.storeId]
 
         if (typeof accion === 'function') {
@@ -167,15 +166,14 @@ export function useFormulario(props) {
                         limpiarLocal()
                         window.location.reload()
                     }
-                } else {
-                    notificaciones.options.icono = 'error'
-                    notificaciones.options.titulo = '¡Ha ocurrido un problema!'
-                    notificaciones.options.texto = 'No se pudo enviar formulario'
-                    notificaciones.options.tiempo = 2000
-                    notificaciones.simple()
                 }
                 return res
             } catch (err) {
+                notificaciones.options.icono = 'error'
+                notificaciones.options.titulo = '¡Ha ocurrido un problema!'
+                notificaciones.options.texto = 'No se pudo enviar formulario'
+                notificaciones.options.tiempo = 2000
+                notificaciones.simple()
                 console.error(`Error enviando formulario '${props.Propiedades.content.storeId}':`, err)
                 return false
             }

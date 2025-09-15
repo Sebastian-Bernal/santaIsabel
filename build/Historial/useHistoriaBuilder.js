@@ -12,6 +12,7 @@ export function useHistoriaBuilder({
     seleccionarCIE_10,
     validarCampo,
     show,
+    pacienteExiste,
     id_paciente
 }) {
     const builder = new FormularioBuilder()
@@ -50,7 +51,10 @@ export function useHistoriaBuilder({
                 { value: 'name' },
                 { text: 'Cedula', value: 'No_document' }
             ],
-            tamaño: 'w-full'
+            tamaño: 'w-full',
+            events: {
+                onChange: pacienteExiste
+            },
         })
 
         // --- Numero de documento ---

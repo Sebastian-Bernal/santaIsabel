@@ -1,5 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
+import Formularios from '~/components/Formularios.vue';
 
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -11,11 +12,13 @@ import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { ModalBuilder } from '~/build/Constructores/ModalBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
+import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useFormulario';
 import { CIE10 } from '~/data/CIE10';
+import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
+const notificaciones = useNotificacionesStore();
 
 const historiasList = ref([]);
 
@@ -28,11 +31,13 @@ const refresh = ref(1);
 const onlyWatch = ref(true);
 const show = ref(false);
 const showItem = ref(false)
+const showNota = ref(false)
 
 const pacientesStore = usePacientesStore();
 const pacientesList = ref([])
 const id_paciente = ref(null)
 const showVerHistorial = ref(false)
+const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
 
 async function llamadatos() {
@@ -61,7 +66,7 @@ const agregarHistoria = () => {
 };
 
 
-const verHistoria = async(his) => {
+const verHistoria = async (his) => {
     await cargaHistorial(his.id)
     historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
@@ -85,43 +90,43 @@ async function cargaHistorial(id) {
 
 
     // Notas
-        notas.value = await pacientesStore.listDatos(id, 'Nota') || []
+    notas.value = await pacientesStore.listDatos(id, 'Nota') || []
 
 
     // Tratamientos
-        tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || []
+    tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || []
 
-        const tratamientosConAnalisis = await Promise.all(
-            tratamientos.value.map(async (tratamiento) => {
-                const analisisTratamiento = await historiasStore.listDatos(tratamiento.id_temporal, 'Analisis', 'id')
-                // Aquí puedes agregar más valores del análisis si existen
-                return {
-                    ...tratamiento,
-                    ...analisisTratamiento[0],
-                }
-            })
-        )
-        
-        tratamientos.value = tratamientosConAnalisis   
+    const tratamientosConAnalisis = await Promise.all(
+        tratamientos.value.map(async (tratamiento) => {
+            const analisisTratamiento = await historiasStore.listDatos(tratamiento.id_temporal, 'Analisis', 'id')
+            // Aquí puedes agregar más valores del análisis si existen
+            return {
+                ...tratamiento,
+                ...analisisTratamiento[0],
+            }
+        })
+    )
+
+    tratamientos.value = tratamientosConAnalisis
 
 
     // Medicinas
-        medicinas.value = await pacientesStore.listDatos(id, 'Plan_manejo_medicamentos') || []
+    medicinas.value = await pacientesStore.listDatos(id, 'Plan_manejo_medicamentos') || []
 
-        const medicinasConAnalisis = await Promise.all(
-            medicinas.value.map(async (medicina) => {
-                const analisisMedicina = await historiasStore.listDatos(medicina.id_temporal, 'Analisis', 'id')
-                // Aquí puedes agregar más valores del análisis si existen
-                return {
-                    ...medicina,
-                    ...analisisMedicina[0],
-                }
-            })
-        )
-    
-        medicinas.value = medicinasConAnalisis
+    const medicinasConAnalisis = await Promise.all(
+        medicinas.value.map(async (medicina) => {
+            const analisisMedicina = await historiasStore.listDatos(medicina.id_temporal, 'Analisis', 'id')
+            // Aquí puedes agregar más valores del análisis si existen
+            return {
+                ...medicina,
+                ...analisisMedicina[0],
+            }
+        })
+    )
 
-        console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
+    medicinas.value = medicinasConAnalisis
+
+    console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
 
@@ -133,8 +138,36 @@ function cerrarModalVer() {
     showItem.value = false
 }
 
-function verItemHistoria() {
+function verItemMedicamentoHistoria(item) {
+    formularioItem.value = 'Medicamento'
+    mapCampos(item, historiasStore.Formulario)
+    historiasStore.Formulario.Plan_manejo_medicamentos.nombre = item.nombre
+    historiasStore.Formulario.Plan_manejo_medicamentos.presentacion = item.presentacion
+    historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
     showItem.value = true
+}
+
+function verItemTratamientoHistoria(item) {
+    formularioItem.value = 'Tratamientos'
+    mapCampos(item, historiasStore.Formulario)
+    historiasStore.Formulario.Plan_manejo_procedimientos.descripcion = item.descripcion
+    historiasStore.Formulario.Plan_manejo_procedimientos.mes = item.mes
+    historiasStore.Formulario.Plan_manejo_procedimientos.cantidad = item.cantidad
+    showItem.value = true
+}
+
+function verItemConsultasHistoria(item) {
+    formularioItem.value = 'Consulta'
+    mapCampos(item, historiasStore.Formulario)
+    showItem.value = true
+}
+
+function nuevaNota() {
+    showNota.value = true
+}
+
+function cerrarNota() {
+    showNota.value = false
 }
 
 function seleccionarPaciente(paciente) {
@@ -204,18 +237,38 @@ function validarCampo(event) {
 }
 
 function estadoSemaforo(fila) {
-    if(fila.tipoAnalisis === 'Estado clinico sin cambios'){
+    if (fila.tipoAnalisis === 'Estado clinico sin cambios') {
         return 'Verde'
-    } else if(fila.tipoAnalisis === 'Recomendaciones Adicionales') {
+    } else if (fila.tipoAnalisis === 'Recomendaciones Adicionales') {
         return 'Naranja'
     } else {
         return 'Rojo'
     }
 }
 
-function cerrarModal () {
+function cerrarModal() {
     mapCamposLimpios(historiasStore.Formulario)
     showVerHistorial.value = false
+}
+
+async function pacienteExiste(event) {
+    const nombre = event.target.value
+
+    const paciente = pacientesList.value.filter((pacient) => {
+        return pacient.name === nombre
+    });
+
+    if (paciente.length < 1) {
+        notificaciones.options.icono = 'warning'
+        notificaciones.options.title = 'Paciente no registrado'
+        notificaciones.options.html = '¿Deseas registrar <strong>Paciente</strong>?'
+        notificaciones.options.confirmtext = 'Si'
+        notificaciones.options.canceltext = 'No, continuar'
+        let resp = await notificaciones.alertRespuesta();
+        if (resp === 'confirmado') {
+            showNuevoPaciente.value = true
+        }
+    }
 }
 
 const propiedadesForm = useHistoriaBuilder({
@@ -229,12 +282,19 @@ const propiedadesForm = useHistoriaBuilder({
     CIE10: CIE10,
     validarCampo,
     seleccionarCIE_10: seleccionarCIE_10,
+    pacienteExiste,
     id_paciente: id_paciente,
 });
 
+    const propiedadesNota = useNotasBuilder({
+        storeId: 'NuevaNota',
+        storePinia: 'Notas',
+        cerrarModal: cerrarNota,
+        show: showNota,
+    })
+
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
-const modal = new ModalBuilder()
 
 const consultasCard = new CardBuilder()
 const evolucionesCard = new CardBuilder()
@@ -242,50 +302,52 @@ const notasCard = new CardBuilder()
 const tratamientosCard = new CardBuilder()
 const medicacionCard = new CardBuilder()
 
-const tablaConsultas = new TablaBuilder()
-const tablaEvoluciones = new TablaBuilder()
-const tablaNotas = new TablaBuilder()
-const tablaTratamientos = new TablaBuilder()
-const tablaMedicacion = new TablaBuilder()
-
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
+    const modal = new ModalBuilder()
+
+    const tablaConsultas = new TablaBuilder()
+    const tablaEvoluciones = new TablaBuilder()
+    const tablaNotas = new TablaBuilder()
+    const tablaTratamientos = new TablaBuilder()
+    const tablaMedicacion = new TablaBuilder()
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'Verhistoria',
         storePinia: 'Historias',
         cerrarModal: cerrarModalVer,
-        formularioItem: formularioItem.value,
+        formularioItem,
         show: showItem,
     })
 
     pagina
-    .setFondo('FondoDefault')
-    .setEstilos('')
-    .setContenedor('w-full')
-    .addComponente('Tabla', tablaBuilder
-        .setColumnas([
-            { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
-            { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
-            { titulo: 'estado', value: 'Estado', tamaño: 150 },
-        ])
-        .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria })
-        .setAcciones({ icons: [{ icon: 'ver', action: verHistoria }], botones: true, })
-        .setDatos(historiasList)
-    )
-    .addComponente('Form', propiedadesForm)
-    .addComponente('Modal', modal
-        .setFondo('FondoBlur')
-        .setShowModal(showVerHistorial)
-        .setCerrarModal(cerrarModal)
-        .setTamaño('LG')
-        .setContenedor('flex flex-col gap-3 w-full h-full py-5 px-8')
-        .setHeaderModal({titulo: 'Historial Medico', html: `
+        .setFondo('FondoDefault')
+        .setEstilos('')
+        .setContenedor('w-full')
+        .addComponente('Tabla', tablaBuilder
+            .setColumnas([
+                { titulo: 'cedula', value: 'Cédula', tamaño: 100, ordenar: true },
+                { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
+                { titulo: 'estado', value: 'Estado', tamaño: 150 },
+            ])
+            .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria })
+            .setAcciones({ icons: [{ icon: 'ver', action: verHistoria }], botones: true, })
+            .setDatos(historiasList)
+        )
+        .addComponente('Form', propiedadesForm)
+        .addComponente('Modal', modal
+            .setFondo('FondoBlur')
+            .setShowModal(showVerHistorial)
+            .setCerrarModal(cerrarModal)
+            .setTamaño('LG')
+            .setContenedor('flex flex-col gap-3 w-full h-full py-5 px-8')
+            .setHeaderModal({
+                titulo: 'Historial Medico', html: `
             <div class="flex gap-2">
                 <p>Paciente: ${historiasStore.Formulario.HistoriaClinica.name_paciente}</p> 
                 <p>CC: ${historiasStore.Formulario.HistoriaClinica.No_document_paciente}</p>
             </div>`})
-        .nuevaSeccion('Botones')
+            .nuevaSeccion('Botones')
             .addComponente('Card', consultasCard
                 .setCards([
                     {
@@ -378,27 +440,28 @@ const propiedades = computed(() => {
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
                 .build()
             )
-        .nuevaSeccion('Consultas')
+            .nuevaSeccion('Consultas')
             .addComponente('Tabla', tablaConsultas
                 .setColumnas([
                     { titulo: 'motivo', value: 'Motivo', tamaño: 250, ordenar: true },
                     { titulo: 'observacion', value: 'Observacion', tamaño: 250, ordenar: true },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
-                .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white',})
+                .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
                 .setDatos(analisis)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: ()=>{} }], botones: true, })
-            )  
-        .nuevaSeccion('evoluciones')
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }], botones: true, })
+            )
+            .addComponente('Form', propiedadesItemHistoria)
+            .nuevaSeccion('evoluciones')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
                     { titulo: 'id', value: 'Cédula', tamaño: 100, ordenar: true },
                     { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'estado', value: 'Estado', tamaño: 150 },
                 ])
-                .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white',})
-            )    
-        .nuevaSeccion('notas')
+                .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
+            )
+            .nuevaSeccion('notas')
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
                     { titulo: 'id', value: 'Cédula', tamaño: 100, ordenar: true },
@@ -406,9 +469,10 @@ const propiedades = computed(() => {
                     { titulo: 'estado', value: 'Estado', tamaño: 150 },
                 ])
                 .setDatos(notas)
-                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white',})
-            ) 
-        .nuevaSeccion('tratamientos')
+                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
+            )
+            .addComponente('Form', propiedadesNota)
+            .nuevaSeccion('tratamientos')
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
                     { titulo: 'descripcion', value: 'Descripcion', tamaño: 300, ordenar: true },
@@ -416,10 +480,11 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(tratamientos)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: ()=>{} }], botones: true, })
-                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white',})
-            ) 
-        .nuevaSeccion('medicinas')
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }], botones: true, })
+                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
+            )
+            .addComponente('Form', propiedadesItemHistoria)
+            .nuevaSeccion('medicinas')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
                     { titulo: 'nombre', value: 'Medicamento', tamaño: 200, ordenar: true },
@@ -428,13 +493,13 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(medicinas)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: ()=>{} }, {icon: 'ver', action: verItemHistoria}], botones: true, })
-                .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white',})
-            )  
-            .addComponente('Form', propiedadesItemHistoria) 
-    )
-    
-    return pagina .build()
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }], botones: true, })
+                .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', })
+            )
+            .addComponente('Form', propiedadesItemHistoria)
+        )
+
+    return pagina.build()
 })
 // console.log(propiedades)
 
@@ -442,4 +507,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" />
+    <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
 </template>

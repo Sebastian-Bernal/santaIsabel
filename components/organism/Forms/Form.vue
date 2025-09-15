@@ -32,9 +32,9 @@ const fondos = {
     FondoTransparent,
 };
 
-watch(tablaStore.Formulario, (newValue) => {
-    console.log(newValue)
-}, {deep: true})
+// watch(tablaStore.Formulario, (newValue) => {
+//    console.log(newValue)
+// }, {deep: true})
 
 // Traer datos del localStorage
 onMounted(() => {
@@ -42,25 +42,36 @@ onMounted(() => {
     if (datosGuardados) Object.assign(tablaStore?.Formulario, datosGuardados)
 });
 
-function limpiar () {
+function limpiar() {
     mapCamposLimpios(tablaStore?.Formulario)
     localStorage.removeItem(props.Propiedades.content.storeId)
-    props.Propiedades.formulario.show.value = false
+    
+    const show = props.Propiedades.formulario.show
+    if (unref(show)) {
+        // Para modificarlo, necesitas saber si es ref
+        if (show && typeof show === 'object' && 'value' in show) {
+            show.value = false
+        } else {
+            // Si no es ref, simplemente reasignas
+            props.Propiedades.formulario.show = false
+        }
+    }
+
 }
 
 </script>
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7" :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
+            :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%] rounded-2xl">
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
-                    :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual" 
-                    :key="Propiedades.formulario.soloVer"
-                    :cerrar="limpiar" />
+                    :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
+                    :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full px-6 pt-2">
                     <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined"
@@ -69,12 +80,14 @@ function limpiar () {
                     </h1>
                     <!-- Formulario -->
                     <form autocomplete="off" class="w-full h-full flex justify-center">
-                        <div
-                            class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto" :class="{'h-[75%]!' : Propiedades.formulario.tipo === 'Wizard'}">
+                        <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto"
+                            :class="{ 'h-[75%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
-                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]" :class="Propiedades.formulario.contenedorCampos">
+                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]"
+                                :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
-                                    :is="componentInstances[item.component]" :Propiedades="{...item, disabled: Propiedades.formulario.soloVer}"
+                                    :is="componentInstances[item.component]"
+                                    :Propiedades="{ ...item, disabled: Propiedades.formulario.soloVer }"
                                     :modelValue="getValue(tablaStore?.Formulario, item.vmodel)"
                                     @update:modelValue="val => setValue(tablaStore?.Formulario, item.vmodel, val)" />
                                 <slot></slot>
@@ -84,9 +97,10 @@ function limpiar () {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-2 w-full flex justify-center items-center gap-3" role="button" tabindex="0" @keydown.enter="limpiar">
+            <div class="mt-2 w-full flex justify-center items-center gap-3" role="button" tabindex="0"
+                @keydown.enter="limpiar">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
-                    @click="manejarClick(item, tablaStore?.Formulario, limpiar)" 
+                    @click="manejarClick(item, tablaStore?.Formulario, limpiar)"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
