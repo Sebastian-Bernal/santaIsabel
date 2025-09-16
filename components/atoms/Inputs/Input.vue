@@ -28,7 +28,7 @@ const emit = defineEmits(['update:modelValue']);
     <div :class="[{ 'relative': props.Propiedades.icon || Propiedades.slot }, Propiedades.tamaño]">
         <!-- Label (opcional) -->
         <label v-if="Propiedades.label" :for="Propiedades.name"
-            class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
+            class="block font-medium text-xs text-gray-700 dark:text-gray-200 w-fit mb-1">
             {{ Propiedades.label }}
         </label>
 

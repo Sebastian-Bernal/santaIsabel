@@ -17,6 +17,7 @@ export function useNotasBuilder({
         .setFormularioTipo('solo')
         .setBotones([
             { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
+            { text: 'Enviar', color: 'bg-blue-500', type: 'enviar' },
         ])
     // 📌 Sección: Datos
 
@@ -32,7 +33,7 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Input',
-            vModel: 'Nota.name_paciente',
+            vmodel: 'Nota.name_paciente',
             type: 'text',
             id: 'nombre',
             name: 'nombre',
@@ -43,7 +44,7 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Input',
-            vModel: 'Nota.No_document_paciente',
+            vmodel: 'Nota.No_document_paciente',
             type: 'number',
             id: 'documento',
             name: 'documento',
@@ -59,8 +60,8 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Input',
-            vModel: 'Nota.fecha_nota',
-            type: 'text',
+            vmodel: 'Nota.fecha_nota',
+            type: 'date',
             id: 'fecha_nota',
             name: 'fecha_nota',
             placeholder: 'Fecha',
@@ -69,8 +70,8 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Input',
-            vModel: 'Nota.hora_nota',
-            type: 'text',
+            vmodel: 'Nota.hora_nota',
+            type: 'time',
             id: 'hora_nota',
             name: 'hora_nota',
             placeholder: 'Hora (00:00)',
@@ -79,7 +80,7 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Input',
-            vModel: 'Nota.direccion',
+            vmodel: 'Nota.direccion',
             type: 'text',
             id: 'direccion',
             name: 'direccion',
@@ -96,11 +97,11 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Select',
-            vModel: 'Nota.tipoAnalisis',
+            vmodel: 'Nota.tipoAnalisis',
             id: 'rehabilitacion',
             name: 'rehabilitacion',
             placeholder: 'Tipo de Análisis',
-            tamaño: 'w-full',
+            tamaño: 'w-full col-span-2',
             options: [
                 { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
                 { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
@@ -117,11 +118,11 @@ export function useNotasBuilder({
         })
         .addCampo({
             component: 'Textarea',
-            vModel: 'Nota.nota',
+            vmodel: 'Nota.nota',
             id: 'nota',
             name: 'nota',
             placeholder: 'Nota',
-            tamaño: 'w-full',
+            tamaño: 'w-full col-span-2',
             disabled: 'props.verNota'
         })
 

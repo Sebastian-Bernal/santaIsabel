@@ -1,5 +1,5 @@
 <script setup>
-import ModalLG from '~/components/molecules/Modals/ModalLG.vue';
+import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import Label from '~/components/atoms/Labels/Label.vue';
@@ -146,7 +146,7 @@ function construirTabla() {
         color: tabla.color,
         accionAgregar: () => console.log(tabla.accionAgregar),
         acciones: tabla.acciones,
-        datos: datosTabla.value
+        datos: datosTabla
     });
 
     console.log('Tabla construida:', tablaFinal);
@@ -164,7 +164,8 @@ const colores = ref([
 </script>
 
 <template>
-    <ModalLG>
+    <FondoBlur>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
         <div class="py-5 h-full flex flex-col justify-between">
             <h2 class="text-2xl font-semibold text-center py-2">Configuracion Tabla</h2>
             <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
@@ -340,7 +341,8 @@ const colores = ref([
                 </div>
             </div>
         </div>
-    </ModalLG>
+        </div>
+    </FondoBlur>
 </template>
 
 <style scoped>

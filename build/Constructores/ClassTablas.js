@@ -41,12 +41,12 @@ export class TablaDirector {
     construirDesdeFormulario(formData) {
         return this.builder
             .setColumnas(formData.columnas)
-            .setHeaderTabla(
-                formData.titulo,
-                formData.descripcion,
-                formData.color,
-                formData.accionAgregar
-            )
+            .setHeaderTabla({
+                titulo: formData.titulo,
+                descripcion: formData.descripcion,
+                color: formData.color,
+                accionAgregar: formData.accionAgregar
+            })
             .setAcciones(formData.acciones.icons, formData.acciones.botones)
             .setDatos(formData.datos)
             .build();

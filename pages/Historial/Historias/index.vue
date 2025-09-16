@@ -15,9 +15,13 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useFormulario';
 import { CIE10 } from '~/data/CIE10';
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
+import { useNotasStore } from '~/stores/Formularios/historias/Notas';
+import { usePDFNotasBuilder } from '~/build/Historial/PDFNotaBuilder';
+import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
+const notasStore = useNotasStore();
 const notificaciones = useNotificacionesStore();
 
 const historiasList = ref([]);
@@ -39,6 +43,7 @@ const id_paciente = ref(null)
 const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
+const propiedadesNotaPDF = ref({})
 
 async function llamadatos() {
     const datos = await historiasStore.datosHistoria
@@ -70,6 +75,7 @@ const verHistoria = async (his) => {
     await cargaHistorial(his.id)
     historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
+    historiasStore.Formulario.HistoriaClinica.id_paciente = his.id
     showVerHistorial.value = true
 };
 
@@ -163,7 +169,34 @@ function verItemConsultasHistoria(item) {
 }
 
 function nuevaNota() {
+    notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
+    notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
+    notasStore.Formulario.Nota.id_paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
     showNota.value = true
+}
+
+function exportarPDF(data) {
+    mapCampos(data, notasStore.Formulario)
+    const builder = new PdfBuilder()
+
+    builder
+        .setElementId('Nota')
+        .setDataPinia('Notas')
+
+        .addComponente('Titulo', {
+            texto: 'Nota Medica'
+        })
+        .addComponente('Texto', {
+            texto: 'Paciente: ',
+            vmodel: 'Nota.name_paciente',
+        })
+        .addComponente('Tabla', {
+            columnas: ['Fecha', 'Hora', 'Nota'],
+            filas: [[data.fecha, data.hora, data.nota]]
+        })
+
+    propiedadesNotaPDF.value = builder.build
+    console.log()
 }
 
 function cerrarNota() {
@@ -286,12 +319,16 @@ const propiedadesForm = useHistoriaBuilder({
     id_paciente: id_paciente,
 });
 
-    const propiedadesNota = useNotasBuilder({
-        storeId: 'NuevaNota',
-        storePinia: 'Notas',
-        cerrarModal: cerrarNota,
-        show: showNota,
-    })
+const propiedadesNota = useNotasBuilder({
+    storeId: 'NuevaNota',
+    storePinia: 'Notas',
+    cerrarModal: cerrarNota,
+    show: showNota,
+})
+
+const propiedadesPDFNota = usePDFNotasBuilder({
+    storePinia: 'Notas'
+});
 
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
@@ -347,6 +384,7 @@ const propiedades = computed(() => {
                 <p>Paciente: ${historiasStore.Formulario.HistoriaClinica.name_paciente}</p> 
                 <p>CC: ${historiasStore.Formulario.HistoriaClinica.No_document_paciente}</p>
             </div>`})
+
             .nuevaSeccion('Botones')
             .addComponente('Card', consultasCard
                 .setCards([
@@ -440,6 +478,7 @@ const propiedades = computed(() => {
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
                 .build()
             )
+
             .nuevaSeccion('Consultas')
             .addComponente('Tabla', tablaConsultas
                 .setColumnas([
@@ -452,6 +491,7 @@ const propiedades = computed(() => {
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }], botones: true, })
             )
             .addComponente('Form', propiedadesItemHistoria)
+
             .nuevaSeccion('evoluciones')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
@@ -461,17 +501,22 @@ const propiedades = computed(() => {
                 ])
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
+
             .nuevaSeccion('notas')
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
-                    { titulo: 'id', value: 'Cédula', tamaño: 100, ordenar: true },
-                    { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
-                    { titulo: 'estado', value: 'Estado', tamaño: 150 },
+                    { titulo: 'name_paciente', value: 'Paciente', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'hora_nota', value: 'Hora', tamaño: 150 },
+                    { titulo: 'nota', value: 'Nota', tamaño: 300 },
                 ])
                 .setDatos(notas)
+                .setAcciones({ icons: [{ icon: 'download', action: exportarPDF }], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
             )
             .addComponente('Form', propiedadesNota)
+            .addComponente('PDFTemplate', propiedadesNotaPDF.value)
+
             .nuevaSeccion('tratamientos')
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
@@ -484,6 +529,7 @@ const propiedades = computed(() => {
                 .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('Form', propiedadesItemHistoria)
+
             .nuevaSeccion('medicinas')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([

@@ -15,21 +15,6 @@ const btnAcciones = ref(null)
 const varView = useVarView()
 // funciones
 const props = defineProps({
-    columnas: {
-        type: [Object, String],
-        default: ''
-    },
-    acciones: {
-        type: [Object, String],
-        default: ''
-    },
-    datos: {
-        type: [Object],
-        dafault: []
-    },
-    headerTabla: {
-        type: [Object],
-    },
     Propiedades: {
         type: [Object, Array],
         requiered: true,
@@ -156,7 +141,7 @@ const estiloColumnas = computed(() => {
                 </div>
 
                 <!-- Body tabla -->
-                <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] even:bg-[var(--color-default-claro-100)] even:hover:bg-[var(--color-default-claro)] dark:even:bg-gray-800 dark:hover:bg-gray-700 dark:even:hover:bg-gray-700"
+                <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
                     :style="estiloColumnas">
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"

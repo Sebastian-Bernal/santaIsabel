@@ -67,7 +67,8 @@ export function useVerHistoriaBuilder({
             .addCampo({
                 component: 'Label',
                 forLabel: 'Medicamento',
-                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Medicamento'
+                text: '<i class="fa-solid fa-prescription-bottle-medical text-blue-500 mr-1"></i>Medicamento',
+                tamaño: 'col-span-2 w-full'
             })
 
             .addCampo({
@@ -101,34 +102,6 @@ export function useVerHistoriaBuilder({
     else if (formularioItem.value === 'Tratamientos') {
         builder
             .nuevaSeccion('Tratamientos')
-
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Plan_manejo_procedimientos.descripcion',
-                type: 'text',
-                id: 'nombre',
-                name: 'nombre',
-                tamaño: 'w-full',
-                minlength: 5
-            })
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Plan_manejo_procedimientos.mes',
-                type: 'text',
-                id: 'presetacion',
-                name: 'presetacion',
-                tamaño: 'w-full',
-                minlength: 5
-            })
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Plan_manejo_procedimientos.cantidad',
-                type: 'text',
-                id: 'cantidad',
-                name: 'cantidad',
-                tamaño: 'w-full',
-                minlength: 5
-            })
 
             // --- Select: Tipo de Análisis ---
             .addCampo({
@@ -168,11 +141,42 @@ export function useVerHistoriaBuilder({
                 minlength: 10
             })
 
-            // --- Label: Tratamiento ---
             .addCampo({
                 component: 'Label',
                 forLabel: 'rehabilitacion',
-                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento'
+                text: '<i class="fa-solid fa-kit-medical text-blue-500 mr-1"></i>Tratamiento',
+                tamaño: 'col-span-2 w-full'
+            })
+
+            .addCampo({
+                component: 'Input',
+                label: 'Descripcion',
+                vmodel: 'Plan_manejo_procedimientos.descripcion',
+                type: 'text',
+                id: 'nombre',
+                name: 'nombre',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                label: 'Mes',
+                vmodel: 'Plan_manejo_procedimientos.mes',
+                type: 'text',
+                id: 'presetacion',
+                name: 'presetacion',
+                tamaño: 'w-full',
+                minlength: 5
+            })
+            .addCampo({
+                component: 'Input',
+                label: 'Cantidad',
+                vmodel: 'Plan_manejo_procedimientos.cantidad',
+                type: 'text',
+                id: 'cantidad',
+                name: 'cantidad',
+                tamaño: 'w-full',
+                minlength: 5
             })
 
             // --- Select: Condición de rehabilitación ---
@@ -194,7 +198,7 @@ export function useVerHistoriaBuilder({
     else if (formularioItem.value === 'Consulta') {
         builder
             .nuevaSeccion('Consulta')
-            
+
             .addCampo({
                 component: 'Label',
                 forLabel: 'nombre',
@@ -211,10 +215,10 @@ export function useVerHistoriaBuilder({
                 placeholder: 'Nombre del paciente',
                 tamaño: 'w-full'
             })
-            
+
             // --- Numero de documento ---
-            
-            
+
+
             // --- Label Acompañante ---
             .addCampo({
                 component: 'Label',
@@ -223,7 +227,7 @@ export function useVerHistoriaBuilder({
                 text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
                 tamaño: 'w-full col-span-2'
             })
-            
+
             // --- Nombre Acompañante ---
             .addCampo({
                 component: 'Input',
@@ -234,7 +238,7 @@ export function useVerHistoriaBuilder({
                 placeholder: 'Nombre completo del acompañante',
                 tamaño: 'w-full'
             })
-            
+
             // --- Parentesco Acompañante ---
             .addCampo({
                 component: 'Select',
@@ -251,7 +255,7 @@ export function useVerHistoriaBuilder({
                     { text: 'Hermano/a', value: 'Hermano/a' }
                 ]
             })
-            
+
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
@@ -282,14 +286,14 @@ export function useVerHistoriaBuilder({
                 placeholder: 'Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes...',
                 tamaño: 'w-full col-span-2'
             })
-            
+
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
                 text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
                 tamaño: 'w-full col-span-2'
             })
-            
+
             .addCampo({
                 component: 'Input',
                 vmodel: 'ExamenFisico.signosVitales.ta',
