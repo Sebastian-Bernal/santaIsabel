@@ -13,6 +13,7 @@ import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { mapCampos } from "~/components/organism/Forms/useFormulario.js";
 import { CIE10 } from "~/data/CIE10";
+import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
 
 const varView = useVarView();
 const pacientesStore = usePacientesStore();
@@ -22,6 +23,8 @@ const opcionesEPS = ref([]);
 const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
 const refresh = ref(1);
+const activePdfPaciente = ref(false)
+const propiedadesPDF = ref({})
 
 const show = ref(false);
 const showVer = ref(false);
@@ -31,13 +34,7 @@ async function llamadatos() {
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
-watch(() => varView.showNuevoPacientePaso2,
-    async () => {
-        await llamadatos();
-        refresh.value++;
-    }
-);
-watch(() => varView.showModificarPaciente,
+watch(() => show.value,
     async () => {
         await llamadatos();
         refresh.value++;
@@ -92,10 +89,6 @@ async function buscarUsuario(event) {
 
 }
 
-function seleccionarDepartamento(item) {
-    // formData.InformacionUser.departamento = item.nombre;
-}
-
 function seleccionarCIE_10(item) {
     // formData.Diagnosticos.push({
     //     id: '',
@@ -112,6 +105,10 @@ const municipiosOptions = computed(() => {
     return departamento ? departamento.municipios : [];
 });
 
+function exportarPDF(data) {
+    propiedadesPDF.value = { ...data, }
+    activePdfPaciente.value = true
+}
 
 const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
 
@@ -124,7 +121,7 @@ const propiedadesUser = useUserBuilder({
     tipoFormulario: "Wizard",
     buscarUsuario,
     departamentos: municipios.departamentos,
-    seleccionarDepartamento,
+    seleccionarDepartamento: () => {},
     municipios: municipiosOptions,
     seleccionarMunicipio: () => { },
     EPS: opcionesEPS,
@@ -139,6 +136,7 @@ const propiedadesUser = useUserBuilder({
 const propiedades = computed(() => {
     const builderTabla = new TablaBuilder();
     const pagina = new ComponenteBuilder();
+    const pacientePDF = new PdfBuilder();
 
     const propiedadesVerUser = useUserBuilder({
         storeId: "ModificarPaciente",
@@ -149,12 +147,12 @@ const propiedades = computed(() => {
         tipoFormulario: "Wizard",
         buscarUsuario,
         departamentos: municipios.departamentos,
-        seleccionarDepartamento,
+        seleccionarDepartamento: () => {},
         municipios: municipiosOptions,
-        seleccionarMunicipio: () => { },
+        seleccionarMunicipio: () => {},
         EPS: opcionesEPS,
         agregarDiagnostico: () => { },
-        seleccionarCIE_10,
+        seleccionarCIE_10: () => {},
         CIE10: CIE10,
         verUser: true,
         soloVer: varView.soloVer,
@@ -184,13 +182,57 @@ const propiedades = computed(() => {
                     accionAgregar: agregarPaciente,
                 })
                 .setAcciones({
-                    icons: [{ icon: "ver", action: verPaciente }],
+                    icons: [{ icon: "ver", action: verPaciente }, { icon: "download", action: exportarPDF }],
                     botones: true,
                 })
                 .setDatos(pacientes)
         )
         .addComponente("Form", propiedadesUser)
         .addComponente("Form", propiedadesVerUser)
+        .addComponente("PDFTemplate", pacientePDF
+            .setElementId('Paciente')
+            .setIsActive(activePdfPaciente)
+            .setFileName(`paciente_${propiedadesPDF.value.name}`)
+            .addComponente('Titulo', {
+                texto: 'Paciente'
+            })
+            .addComponente('Tabla', {
+                columnas: ['Nombre y Apellidos', 'Fecha de nacimiento', 'Edad', 'Sexo', 'Tipo de documento', 'No. Documento'],
+                filas: [
+                    [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.nacimiento}`,
+                    `${propiedadesPDF.value.nacimiento}`, `${propiedadesPDF.value.sexo}`,
+                    `${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`,],
+                ],
+            })
+            .addComponente('Tabla', {
+                columnas: ['Direccion', 'Barrio'],
+                filas: [
+                    [`${propiedadesPDF.value.direccion}`, `${propiedadesPDF.value.barrio}`,],
+                ],
+            })
+            .addComponente('Tabla', {
+                columnas: ['Municipio', 'Zona', 'Celular', 'Telefono'],
+                filas: [
+                    [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.zona}`, `${propiedadesPDF.value.celular}`, `${propiedadesPDF.value.telefono}`],
+                ],
+            })
+            .addComponente('Tabla', {
+                columnas: ['EPS', 'Regimen', 'Poblacion Vulnerable',],
+                filas: [
+                    [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`],
+                ],
+            })
+            .addComponente('Espacio', {
+                alto: 24
+            })
+            .addComponente('Imagen', {
+                src: 'https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd',
+                tamaño: 'w-[35px]'
+            })
+            .addComponente('Firma', {
+                nombre: 'Camilo Jaramillo'
+            })
+        )
         .build();
 });
 

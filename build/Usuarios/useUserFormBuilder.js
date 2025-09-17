@@ -64,7 +64,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Datos usuario',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
         .addCampo({
@@ -120,7 +120,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Ubicacion',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
         .addCampo({
@@ -186,7 +186,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-phone text-blue-500 mr-1"></i>Datos usuario',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
         .addCampo({
@@ -216,7 +216,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user-secret text-blue-500 mr-1"></i>Datos usuario',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
         .addCampo({
@@ -268,7 +268,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 forLabel: 'nombre'
             })
             .addCampo({
@@ -303,7 +303,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Datos Adicionales',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 forLabel: 'eps'
             })
             .addCampo({
@@ -333,7 +333,7 @@ export function useUserBuilder({
                 placeholder: 'Población Vulnerable',
                 id: 'poblacionVulnerable',
                 name: 'poblacionVulnerable',
-                tamaño: 'col-span-2 w-full',
+                tamaño: 'md:col-span-2 w-full',
                 options: [
                     { text: 'Ninguno', value: 'Ninguno' },
                     { text: 'Adultos Mayores', value: 'Adultos Mayores' },
@@ -357,7 +357,7 @@ export function useUserBuilder({
                 component: 'GroupCampos',
                 labelGroup: 'Diagnosticos',
                 buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 vmodel: 'Diagnosticos',
                 value: [],
                 campos: [
@@ -383,7 +383,7 @@ export function useUserBuilder({
                     { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
                     { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
                 ],
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 vmodel: 'Antecedentes',
                 value: [],
                 campos: [
@@ -406,7 +406,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Medico',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 forLabel: 'nombre'
             })
             .addCampo({
@@ -414,7 +414,7 @@ export function useUserBuilder({
                 placeholder: 'Profesión',
                 id: 'profesion',
                 name: 'profesion',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 options: opcionesProfesion,
                 vmodel: 'Medico.profesion',
             })
@@ -423,7 +423,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Ubicación Laboral',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 forLabel: 'departamento'
             })
             .addCampo({

@@ -2,6 +2,7 @@ export class PdfBuilder {
     constructor() {
         this.config = {
             elementId: null,
+            isActive: false,
             storePinia: '',
             margin: 10,
             orientation: "p",
@@ -14,6 +15,11 @@ export class PdfBuilder {
 
     setElementId(id) {
         this.config.elementId = id
+        return this
+    }
+
+    setIsActive(id) {
+        this.config.isActive = id
         return this
     }
 

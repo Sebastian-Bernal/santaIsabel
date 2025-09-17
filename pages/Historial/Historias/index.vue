@@ -1,6 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import Formularios from '~/components/Formularios.vue';
+import Formularios from '~/components/Paciente.vue';
 
 import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -16,7 +16,6 @@ import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useForm
 import { CIE10 } from '~/data/CIE10';
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
-import { usePDFNotasBuilder } from '~/build/Historial/PDFNotaBuilder';
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
 
 const varView = useVarView();
@@ -31,7 +30,6 @@ const notas = ref([])
 const tratamientos = ref([])
 const medicinas = ref([]);
 
-const refresh = ref(1);
 const onlyWatch = ref(true);
 const show = ref(false);
 const showItem = ref(false)
@@ -44,16 +42,12 @@ const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
 const propiedadesNotaPDF = ref({})
+const activePdfNotas = ref(false)
 
 async function llamadatos() {
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
 }
-
-watch(() => varView.showPaso4, async () => {
-    await llamadatos()
-    refresh.value++
-})
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
@@ -175,28 +169,16 @@ function nuevaNota() {
     showNota.value = true
 }
 
-function exportarPDF(data) {
-    mapCampos(data, notasStore.Formulario)
-    const builder = new PdfBuilder()
+async function exportarPDF(data) {
+    // mapCampos(data, notasStore.Formulario)
+    const pacientes = await pacientesStore.listPacientes
 
-    builder
-        .setElementId('Nota')
-        .setDataPinia('Notas')
+    const dataPaciente = pacientes.filter(user => {
+        return user.id_paciente === data.id_paciente
+    })
 
-        .addComponente('Titulo', {
-            texto: 'Nota Medica'
-        })
-        .addComponente('Texto', {
-            texto: 'Paciente: ',
-            vmodel: 'Nota.name_paciente',
-        })
-        .addComponente('Tabla', {
-            columnas: ['Fecha', 'Hora', 'Nota'],
-            filas: [[data.fecha, data.hora, data.nota]]
-        })
-
-    propiedadesNotaPDF.value = builder.build
-    console.log()
+    propiedadesNotaPDF.value = { ...data, ...dataPaciente[0] }
+    activePdfNotas.value = true
 }
 
 function cerrarNota() {
@@ -326,10 +308,6 @@ const propiedadesNota = useNotasBuilder({
     show: showNota,
 })
 
-const propiedadesPDFNota = usePDFNotasBuilder({
-    storePinia: 'Notas'
-});
-
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
 
@@ -348,6 +326,8 @@ const propiedades = computed(() => {
     const tablaNotas = new TablaBuilder()
     const tablaTratamientos = new TablaBuilder()
     const tablaMedicacion = new TablaBuilder()
+
+    const pdfNotas = new PdfBuilder()
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'Verhistoria',
@@ -515,7 +495,39 @@ const propiedades = computed(() => {
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
             )
             .addComponente('Form', propiedadesNota)
-            .addComponente('PDFTemplate', propiedadesNotaPDF.value)
+            .addComponente('PDFTemplate', pdfNotas
+                .setElementId('Nota')
+                .setIsActive(activePdfNotas)
+                .setFileName(`Nota_${propiedadesNotaPDF.value.name_paciente}`)
+                .addComponente('Titulo', {
+                    texto: 'Nota Medica'
+                })
+                .addComponente('Texto', {
+                    texto: `Nota de enfermeria de atencion Domiciliaria`,
+                    vmodel: ''
+                })
+                .addComponente('Tabla', {
+                    filas: [
+                        [`Nombre Completo: ${propiedadesNotaPDF.value.name_paciente}`, `Edad: ${propiedadesNotaPDF.value.nacimiento}`],
+                        [`Tipo de Identidficacion: ${propiedadesNotaPDF.value.type_doc}`, `No. Documento: ${propiedadesNotaPDF.value.No_document_paciente}`],
+                    ],
+                })
+                .addComponente('Tabla', {
+                    filas: [
+                        [`Direccion: ${propiedadesNotaPDF.value.direccion}`, `Barrio: ${propiedadesNotaPDF.value.barrio}`, `Telefono: ${propiedadesNotaPDF.value.celular}`],
+                    ],
+                })
+                .addComponente('Tabla', {
+                    columnas: ['Diagnosticos'],
+                    filas: [
+                        [`${propiedadesNotaPDF.value.tipoAnalisis}`,],
+                    ],
+                })
+                .addComponente('Tabla', {
+                    columnas: ['Fecha', 'Hora', 'Nota'],
+                    filas: [[propiedadesNotaPDF.value.fecha_nota, propiedadesNotaPDF.value.hora_nota, propiedadesNotaPDF.value.nota],]
+                })
+            )
 
             .nuevaSeccion('tratamientos')
             .addComponente('Tabla', tablaTratamientos
@@ -544,7 +556,6 @@ const propiedades = computed(() => {
             )
             .addComponente('Form', propiedadesItemHistoria)
         )
-
     return pagina.build()
 })
 // console.log(propiedades)

@@ -1,11 +1,13 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
+import Paciente from '~/components/Paciente.vue';
+import Historia from '~/components/Historia.vue';
+
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { onMounted, ref } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
-import Formularios from '~/components/Formularios.vue';
 
 const citasStore = useCitasStore();
 const historiaStore = useHistoriasStore();
@@ -19,6 +21,7 @@ const cardPaciente = ref([])
 const actions = ref([])
 
 const showNuevoPaciente = ref(false)
+const showNuevaHistoria = ref(false)
 
 onMounted(async () => {
     varView.cargando = true;
@@ -33,6 +36,10 @@ onMounted(async () => {
 
 function nuevoPaciente() {
     showNuevoPaciente.value = true
+}
+
+function nuevaHistoria() {
+    showNuevaHistoria.value = true
 }
 
 function buscarHistoria() {
@@ -130,6 +137,7 @@ function DashboardRol(rol, Historias, citas) {
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
+                accion: nuevaHistoria
             },
             {
                 header: {
@@ -378,6 +386,6 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
-    <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false">
-    </Formularios>
+    <Paciente v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false"/>
+    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria"  @ocultar="showNuevaHistoria = false"/>
 </template>

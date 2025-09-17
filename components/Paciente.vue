@@ -47,7 +47,6 @@ function cerrar() {
   emit('ocultar')
 }
 
-
 async function buscarUsuario (event) {
     const document = event.target.value
     const usuarios = await usuariosStore.listUsers
@@ -60,18 +59,6 @@ async function buscarUsuario (event) {
         mapCampos(usuarioExistente[0], pacientesStore.Formulario)
     }
 
-}
-
-function seleccionarDepartamento(item) {
-    // formData.InformacionUser.departamento = item.nombre;
-}
-
-function seleccionarCIE_10(item) {
-    // formData.Diagnosticos.push({
-    //     id: '',
-    //     CIE_10: item.description,
-    //     codigo: item.code
-    // });
 }
 
 const municipiosOptions = computed(() => {
@@ -99,12 +86,12 @@ const propiedades = computed(() => {
         tipoFormulario: "Wizard",
         buscarUsuario,
         departamentos: municipios.departamentos,
-        seleccionarDepartamento,
+        seleccionarDepartamento: () => {},
         municipios: municipiosOptions,
         seleccionarMunicipio: () => { },
         EPS: opcionesEPS,
         agregarDiagnostico: () => { },
-        seleccionarCIE_10,
+        seleccionarCIE_10: () => {},
         CIE10: CIE10,
         tipoUsuario: "Paciente",
     });

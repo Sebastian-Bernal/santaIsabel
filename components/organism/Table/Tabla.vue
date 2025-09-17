@@ -165,8 +165,8 @@ const estiloColumnas = computed(() => {
                         </button>
                         <!-- Acciones porp props Responsive -->
                         <button @click="mostrarAcciones(id)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
-                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+                            class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer">
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600 absolute"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
@@ -181,7 +181,7 @@ const estiloColumnas = computed(() => {
                         <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
                             <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
                                 <p
-                                    class="text-[var(--color-primary)] text-xs font-bold border-t-gray-200 mb-2 truncate">
+                                    class="text-[var(--color-default-700)] text-xs font-bold border-t-gray-200 mb-2 truncate">
                                     {{ col.titulo }}</p>
                                 {{ fila[col.titulo] }}
                             </h2>
@@ -287,8 +287,9 @@ const estiloColumnas = computed(() => {
 
 .acciones {
     position: relative;
-    left: -10px;
-    top: 100%;
+    z-index: 99;
+    left: 0px;
+    top: 160%;
     display: flex;
     flex-direction: column;
     border-radius: 5px;
@@ -296,13 +297,17 @@ const estiloColumnas = computed(() => {
 }
 
 .acciones button {
-    width: 50px;
+    width: 30px;
     height: 25px;
     border-radius: 0;
 }
 
 .acciones button:hover {
     opacity: 1;
+}
+
+.acciones:hover .btn-accionesOcultas {
+    border-radius: 0;
 }
 
 /* Paginador css */

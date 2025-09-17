@@ -19,13 +19,13 @@ const props = defineProps({
   }
 });
 
-const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const Citas = ref(props.Propiedades.citas);
 const paciente = ref({});
 const citaSeleccionada = ref({});
 const notificacionesStore = useNotificacionesStore();
+const showNuevaHistoria = ref(false)
 
 const {
     fechaActual,
@@ -117,7 +117,7 @@ async function showObservacion(cita) {
 async function activarCita(cita) {
     paciente.value = cita.id_paciente
     citaSeleccionada.value = cita
-    varView.showNuevaHistoria = true
+    showNuevaHistoria.value = true
 }
 
 </script>
@@ -163,4 +163,6 @@ async function activarCita(cita) {
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
+
+    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria"  @ocultar="showNuevaHistoria = false"/>
 </template>

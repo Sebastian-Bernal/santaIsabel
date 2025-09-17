@@ -35,7 +35,7 @@ export function useHistoriaBuilder({
             component: 'Label',
             forLabel: 'nombre',
             size: 'text-sm',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
         })
         // --- Nombre Paciente ---
@@ -91,7 +91,7 @@ export function useHistoriaBuilder({
             forLabel: 'tipo',
             size: 'text-sm',
             text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
-            tamaño: 'w-full col-span-2'
+            tamaño: 'w-full md:col-span-2'
         })
 
         // --- Nombre Acompañante ---
@@ -174,7 +174,7 @@ export function useHistoriaBuilder({
             component: 'Label',
             forLabel: 'motivo',
             text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
-            tamaño: 'w-full col-span-2'
+            tamaño: 'w-full md:col-span-2'
         })
 
         // --- Input: TA ---
@@ -259,7 +259,7 @@ export function useHistoriaBuilder({
                         <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
                     </div>
                 `,
-            tamaño: 'col-span-2 bg-orange-50 dark:bg-orange-900 p-5'
+            tamaño: 'md:col-span-2 bg-orange-50 dark:bg-orange-900 p-5'
         })
 
         // --- Input: Otros ---
@@ -300,7 +300,7 @@ export function useHistoriaBuilder({
             component: 'Label',
             forLabel: 'peso',
             text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
-            tamaño: 'w-full col-span-2'
+            tamaño: 'w-full md:col-span-2'
         })
 
 
@@ -329,7 +329,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Diagnosticos',
             buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             vmodel: 'Diagnosticos',
             value: [],
             campos: [
@@ -381,7 +381,7 @@ export function useHistoriaBuilder({
             id: 'analisis',
             name: 'analisis',
             placeholder: 'Análisis',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             minlength: 10
         })
 
@@ -398,7 +398,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Equipos (opcional)',
             buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_equipos',
             value: [],
             campos: [
@@ -424,7 +424,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Insumos (opcional)',
             buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_insumos',
             value: [],
             campos: [
@@ -450,7 +450,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Medicamentos (opcional)',
             buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { nombre: '', presentacion: '', cantidad: '',  id_paciente: id_paciente }}, ],
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_medicamentos',
             value: [],
             campos: [
@@ -483,7 +483,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Procedimientos (opcional)',
             buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { descripcion: '', cantidad: '', mes: '',  id_paciente: id_paciente }}, ],
-            tamaño: 'w-full col-span-2 mt-5',
+            tamaño: 'w-full md:col-span-2 mt-5',
             vmodel: 'Plan_manejo_procedimientos',
             value: [],
             campos: [
@@ -519,7 +519,7 @@ export function useHistoriaBuilder({
             id: 'rehabilitacion',
             name: 'rehabilitacion',
             placeholder: 'Condición de rehabilitación',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             options: [
                 { text: 'Total o Parcial', value: 'Total o Parcial' },
                 { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },

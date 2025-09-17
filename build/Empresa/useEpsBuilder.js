@@ -24,7 +24,7 @@ export function useEpsBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Agregar Nueva EPS',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             forLabel: 'eps'
         })
         .addCampo({

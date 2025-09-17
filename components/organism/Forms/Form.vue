@@ -73,9 +73,9 @@ function limpiar() {
                     :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
-                <div class="w-full h-full px-6 pt-2">
+                <div class="w-full h-full md:px-6 px-2 pt-2">
                     <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined"
-                        class="text-3xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">
+                        class="md:text-3xl text-xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                     </h1>
                     <!-- Formulario -->
@@ -83,7 +83,7 @@ function limpiar() {
                         <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto"
                             :class="{ 'h-[75%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
-                            <div class="w-full px-10 grid grid-cols-2 gap-[15px]"
+                            <div class="w-full md:px-10 px-3 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
                                 :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]"

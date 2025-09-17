@@ -29,7 +29,7 @@ export function useNotasBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
             forLabel: 'nombre',
-            tamaño: 'col-span-2 w-full'
+            tamaño: 'md:col-span-2 w-full'
         })
         .addCampo({
             component: 'Input',
@@ -56,7 +56,7 @@ export function useNotasBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Fecha y Ubicacion',
             forLabel: 'departamento',
-            tamaño: 'col-span-2 w-full'
+            tamaño: 'md:col-span-2 w-full'
         })
         .addCampo({
             component: 'Input',
@@ -93,7 +93,7 @@ export function useNotasBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnosticos',
             forLabel: 'tipo',
-            tamaño: 'col-span-2 w-full'
+            tamaño: 'md:col-span-2 w-full'
         })
         .addCampo({
             component: 'Select',
@@ -101,7 +101,7 @@ export function useNotasBuilder({
             id: 'rehabilitacion',
             name: 'rehabilitacion',
             placeholder: 'Tipo de Análisis',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             options: [
                 { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
                 { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
@@ -114,7 +114,7 @@ export function useNotasBuilder({
             icon: 'fa-solid fa-comment text-blue-500',
             text: 'Nota',
             forLabel: 'departamento',
-            tamaño: 'col-span-2 w-full'
+            tamaño: 'md:col-span-2 w-full'
         })
         .addCampo({
             component: 'Textarea',
@@ -122,7 +122,7 @@ export function useNotasBuilder({
             id: 'nota',
             name: 'nota',
             placeholder: 'Nota',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-2',
             disabled: 'props.verNota'
         })
 

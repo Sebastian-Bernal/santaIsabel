@@ -37,7 +37,7 @@ export function useProfesionesBuilder({
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       forLabel: 'eps'
     })
     .addCampo({
@@ -67,7 +67,7 @@ export function useProfesionesBuilder({
       placeholder: 'Seleccione los permisos',
       id: 'permisos',
       name: 'permisos',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       vmodel: 'Profesion.permisos',
       options: permisos,
     })

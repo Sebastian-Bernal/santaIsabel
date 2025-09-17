@@ -1,25 +1,5 @@
 <script setup>
 const props = defineProps({
-    // color: {
-    //     type: String,
-    //     default: 'bg-blue-500'
-    // },
-    // icon: {
-    //     type: String,
-    //     default: 'fa-file'
-    // },
-    // title : {
-    //     type: String,
-    //     default: 'Accion'
-    // },
-    // description: {
-    //     type: String,
-    //     default: 'descripcion'
-    // },
-    // action: {
-    //     type: Function,
-    //     dafault: () => {}
-    // },
     Propiedades: {
         default: {}
     }

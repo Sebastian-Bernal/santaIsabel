@@ -56,8 +56,7 @@ export function useLoginBuilder({
         .addCampo({
           component: 'Select',
           placeholder: 'Seleccione la Empresa',
-          tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
-          estilo: 'text-white!',
+          tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center text-white!',
           options: opcionesCompañy
         })
     } else {

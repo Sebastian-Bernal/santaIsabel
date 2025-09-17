@@ -34,12 +34,12 @@ export function useDatosEmpresaBuilder({
             'Empresa.municipio',
             'Empresa.tipoResponsabilidad',
             'Empresa.tipoRegimen',])
-        .setFormularioContenedorCampos('grid lg:grid-cols-4 md:grid-cols-3 grid-cols-1')
+        .setFormularioContenedorCampos('grid lg:grid-cols-4 md:grid-cols-3 !grid-cols-1')
         .nuevaSeccion('Datos Empresa')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-building text-blue-500 mr-1"></i>Datos de la Empresa',
-            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-2',
+            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-1',
             forLabel: 'nombre'
         })
         .addCampo({
@@ -115,7 +115,7 @@ export function useDatosEmpresaBuilder({
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-gear text-blue-500 mr-1"></i>Configuración de la Empresa',
-            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-2',
+            tamaño: 'w-full lg:col-span-4 md:col-span-3 col-span-1',
             forLabel: 'IdEmpresa'
         })
         .addCampo({
