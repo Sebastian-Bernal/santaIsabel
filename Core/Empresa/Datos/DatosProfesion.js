@@ -20,9 +20,6 @@ const enviarFormulario = async (datos) => {
             let options = {
                 metodo: 'POST',
                 url: config.public.professions,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 token: token,
                 body: {
                     profession_code: datos.Profesion.codigo,

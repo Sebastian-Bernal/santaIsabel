@@ -67,6 +67,7 @@ const enviarFormulario = async (datos) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
 
+    sessionStorage.setItem('Empresa', datos.empresa)
     const online = navigator.onLine;
     if (online) {
         try {
@@ -74,9 +75,6 @@ const enviarFormulario = async (datos) => {
             let options = {
                 metodo: 'POST',
                 url: config.public.login,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 body: {
                     email: datos.correo,
                     password: datos.contraseña

@@ -11,6 +11,7 @@ export const useApiRest = defineStore('apiRest', {
         async functionCall(opcion) {
             const config = useRuntimeConfig()
             this.baseUrl = config.public.api // URL API
+            
 
             if (!opcion || !opcion.metodo) {
                 throw new Error('Debes definir el método y la tabla antes de llamar a functionCall')
@@ -24,10 +25,12 @@ export const useApiRest = defineStore('apiRest', {
                     url.searchParams.append(key, value)
                 })
             }*/
+           const empresa = sessionStorage.getItem('Empresa')
 
             const headers = {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
+                ...(empresa ? {'X-Company': empresa} : {}),
                 ...opcion.head
             }
 

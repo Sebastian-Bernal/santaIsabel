@@ -34,6 +34,8 @@ const tabla = reactive({
     titulo: '',
     descripcion: '',
     color: '',
+    buscador: false,
+    excel: false,
     accionAgregar: '', // puede ser una función o nombre de acción
     acciones: {
         icons: [{
@@ -167,7 +169,7 @@ const colores = ref([
     <FondoBlur>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
         <div class="py-5 h-full flex flex-col justify-between">
-            <h2 class="text-2xl font-semibold text-center py-2">Configuracion Tabla</h2>
+            <h2 class="text-2xl font-semibold text-center text-black dark:text-white py-2">Configuracion Tabla</h2>
             <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
 
                 <div class="flex justify-between items-center">
@@ -288,6 +290,21 @@ const colores = ref([
                             options: colores,
                             modelValue: tabla.color,
                             name: 'color',
+                            tamaño: 'w-full'
+                        }" />
+                    </div>
+
+                    <div class="flex md:flex-row flex-col gap-3 pt-3">
+                        <Checkbox v-model="tabla.buscador" :Propiedades="{
+                            placeholder: 'Mostrar botones',
+                            name: 'botones',
+                            modelValue: tabla.buscador,
+                            tamaño: 'w-full'
+                        }" />
+                        <Checkbox v-model="tabla.excel" :Propiedades="{
+                            placeholder: 'Mostrar botones',
+                            name: 'botones',
+                            modelValue: tabla.excel,
                             tamaño: 'w-full'
                         }" />
                     </div>

@@ -121,7 +121,7 @@ const propiedadesUser = useUserBuilder({
     tipoFormulario: "Wizard",
     buscarUsuario,
     departamentos: municipios.departamentos,
-    seleccionarDepartamento: () => {},
+    seleccionarDepartamento: () => { },
     municipios: municipiosOptions,
     seleccionarMunicipio: () => { },
     EPS: opcionesEPS,
@@ -147,12 +147,12 @@ const propiedades = computed(() => {
         tipoFormulario: "Wizard",
         buscarUsuario,
         departamentos: municipios.departamentos,
-        seleccionarDepartamento: () => {},
+        seleccionarDepartamento: () => { },
         municipios: municipiosOptions,
-        seleccionarMunicipio: () => {},
+        seleccionarMunicipio: () => { },
         EPS: opcionesEPS,
         agregarDiagnostico: () => { },
-        seleccionarCIE_10: () => {},
+        seleccionarCIE_10: () => { },
         CIE10: CIE10,
         verUser: true,
         soloVer: varView.soloVer,
@@ -180,6 +180,12 @@ const propiedades = computed(() => {
                     descripcion: "Administra y consulta información de pacientes",
                     color: "bg-[var(--color-default)] text-white",
                     accionAgregar: agregarPaciente,
+                    buscador: true,
+                    excel: true,
+                    filtros: [
+                        { columna: 'municipio', placeholder: 'Ciudad', },
+                        { columna: 'Eps', placeholder: 'EPS', },
+                    ]
                 })
                 .setAcciones({
                     icons: [{ icon: "ver", action: verPaciente }, { icon: "download", action: exportarPDF }],

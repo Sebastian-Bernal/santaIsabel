@@ -146,7 +146,18 @@ const propiedades = computed(() => {
                 { titulo: 'zona', value: 'Zona', tamaño: 50 },
                 { titulo: 'municipio', value: 'Municipio', tamaño: 150 }
             ])
-            .setHeaderTabla({ titulo: 'Gestion de Profesionales de Medicina', descripcion: 'Administra y consulta información de Medicos', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarMedico })
+            .setHeaderTabla({
+                titulo: 'Gestion de Profesionales de Medicina',
+                descripcion: 'Administra y consulta información de Medicos',
+                color: 'bg-[var(--color-default)] text-white',
+                accionAgregar: agregarMedico,
+                buscador: true,
+                excel: true,
+                filtros: [
+                    { columna: 'municipio', placeholder: 'Ciudad', datos: [{ text: 'Palmira', value: 'Palmira' }, { text: 'Cali', value: 'Cali' }] },
+                    { columna: 'zona', placeholder: 'Zona', datos: [{ text: 'Urbana', value: 'urbana' }, { text: 'Rural', value: 'rural' }] },
+                ]
+            })
             .setAcciones({ icons: [{ icon: 'ver', action: modificarMedico }], botones: true })
             .setDatos(medicos)
         )

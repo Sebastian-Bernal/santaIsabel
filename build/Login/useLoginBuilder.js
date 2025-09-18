@@ -57,6 +57,7 @@ export function useLoginBuilder({
           component: 'Select',
           placeholder: 'Seleccione la Empresa',
           tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center text-white!',
+          vmodel: 'Usuario.empresa',
           options: opcionesCompañy
         })
     } else {

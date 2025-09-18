@@ -81,7 +81,7 @@ async function guardarRelacionado(store, almacen, contenido, foreignKey, foreign
     }
 }
 
-export async function getAll (url, company) {
+export async function getAll (url) {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const token = sessionStorage.getItem('token')
@@ -93,9 +93,6 @@ export async function getAll (url, company) {
             let options = {
                 metodo: 'GET',
                 url: url,
-                head: {
-                    'X-Company': company
-                },
                 token: token
             }
             const respuesta = await api.functionCall(options)

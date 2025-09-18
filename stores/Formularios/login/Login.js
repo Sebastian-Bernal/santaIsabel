@@ -9,6 +9,7 @@ export const useUsuariosStore = defineStore('Usuario', {
                 correo: '',
                 contraseña: '',
                 codigo: '',
+                empresa: ''
             },
         },
         Usuarios: [],

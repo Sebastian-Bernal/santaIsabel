@@ -21,9 +21,6 @@ const enviarFormulario = async (datos) => {
             let options = {
                 metodo: 'POST',
                 url: config.public.eps,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 token: token,
                 body: {
                     eps_code: datos.EPS.codigo,

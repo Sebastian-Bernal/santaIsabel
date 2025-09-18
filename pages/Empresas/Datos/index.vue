@@ -68,7 +68,7 @@ const builderTabla = new TablaBuilder()
 
 const propiedades = pagina
     .setFondo('FondoDefault')
-    .setHeaderPage({titulo: 'Datos Asociados a la Empresa', descripcion: 'Registra y configura segun los datos de tu Empresa.'})
+    .setHeaderPage({titulo: 'Datos Asociados a la Empresa', descripcion: 'Registra y configura segun los datos de tu Empresa.',})
     .setEstilos('')
     .setLayout('')
     .setContenedor('w-full flex flex-col gap-5')
@@ -87,8 +87,13 @@ const propiedades = pagina
             { titulo: 'nombre', value: 'Nombre', tamaño: 500, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },
         ])
-        .setHeaderTabla({ titulo: 'Profesiones Registradas', color: 'bg-[var(--color-default)] text-white', })
-        .setAcciones({ icons: [{icon: 'ver', action: actualizarProfesion}], botones: true })
+        .setHeaderTabla({ 
+            titulo: 'Profesiones Registradas', 
+            color: 'bg-[var(--color-default)] text-white',
+            buscador: true, 
+            excel: true,  
+        })
+        .setAcciones({ icons: [{icon: 'ver', action: actualizarProfesion}], botones: true, })
         .setDatos(Profesiones)
     )
     .addComponente('Form', propiedadesVerProfesion)

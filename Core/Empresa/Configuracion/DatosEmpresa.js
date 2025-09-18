@@ -14,7 +14,6 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            await 
             await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         return true
         } catch (error) {

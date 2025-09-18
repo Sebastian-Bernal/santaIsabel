@@ -1,10 +1,8 @@
 import { ref, computed } from 'vue';
-import { usePaginacion } from './usePaginacion';
 
-const paginaActual = usePaginacion();
-
-export function useOrdenamiento(datos = ref([])) {
+export function useOrdenamiento(datos = ref([]), columnas = []) {
     const busqueda = ref('');
+    const filtros = ref({});
     const menorAMayor = ref(true);
     const columnaOrden = ref('');
 
@@ -19,6 +17,7 @@ export function useOrdenamiento(datos = ref([])) {
 
     const datosOrdenados = computed(() => {
         let resultado = [...unref(datos)];
+        // Datos por busqueda Global de datos
         if (busqueda.value.trim() !== '') {
             const termino = busqueda.value.trim().toLowerCase();
             resultado = resultado.filter(item =>
@@ -27,7 +26,15 @@ export function useOrdenamiento(datos = ref([])) {
                 )
             );
         }
-
+        // Datos por filtros en columnas
+        for (const [columna, valorFiltro] of Object.entries(filtros.value)) {
+            if (valorFiltro && valorFiltro !== '') {
+                resultado = resultado.filter(item =>
+                    String(item[columna]).toLowerCase().includes(String(valorFiltro).toLowerCase())
+                );
+            }
+        }
+        // Datos menor a mayor - mayor a menor
         if (columnaOrden.value) {
             resultado.sort((a, b) => {
                 const valorA = a[columnaOrden.value];
@@ -45,8 +52,23 @@ export function useOrdenamiento(datos = ref([])) {
         return resultado;
     });
 
+    // Generar ociones por datos no repetidos de columna a filtrar
+    const filtrosConOpciones = computed(() => {
+        return columnas.map(col => {
+            const valoresUnicos = [
+                ...new Set(unref(datos).map(d => d[col.columna]).filter(v => v !== null && v !== undefined))
+            ];
+            return {
+                ...col,
+                datos: valoresUnicos.map(v => ({ text: v, value: v }))
+            };
+        });
+    });
+
     return {
         busqueda,
+        filtros,
+        filtrosConOpciones,
         sortedItems,
         datosOrdenados,
         columnaOrden,

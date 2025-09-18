@@ -12,6 +12,7 @@ const emit = defineEmits(['update:modelValue']);
 
 </script>
 <template>
+    <!-- <label class="text-sm text-gray-500">{{ Propiedades.label }}</label> -->
     <select :value="modelValue" 
         :name="Propiedades.name" 
         :id="Propiedades.id" 
@@ -29,6 +30,7 @@ const emit = defineEmits(['update:modelValue']);
                 {{ option.text }}
             </option>
     </select>
+
 </template>
 
 <style scoped>

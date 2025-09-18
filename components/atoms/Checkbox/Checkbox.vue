@@ -17,7 +17,7 @@ function onChange(event) {
 }
 </script>
 <template>
-  <label class="flex items-center gap-2 cursor-pointer select-none w-fit" :class="tamaño">
+  <label class="flex items-center gap-2 cursor-pointer select-none w-fit" :class="Propiedades.tamaño">
     <div class="relative">
       <input
         type="checkbox"
@@ -42,6 +42,6 @@ function onChange(event) {
         :class="modelValue ? 'translate-x-3' : 'translate-x-0'"
       ></div>
     </div>
-    <span>{{ Propiedades.placeholder }}</span>
+    <span class="text-black dark:text-white">{{ Propiedades.placeholder }}</span>
     </label>
 </template>

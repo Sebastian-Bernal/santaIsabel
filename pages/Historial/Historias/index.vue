@@ -347,7 +347,16 @@ const propiedades = computed(() => {
                 { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                 { titulo: 'estado', value: 'Estado', tamaño: 150 },
             ])
-            .setHeaderTabla({ titulo: 'Gestion de Historias Clinicas', descripcion: 'Administra y consulta información sobre historias clinicas', color: 'bg-[var(--color-default)] text-white', accionAgregar: agregarHistoria })
+            .setHeaderTabla({
+                titulo: 'Gestion de Historias Clinicas',
+                descripcion: 'Administra y consulta información sobre historias clinicas',
+                color: 'bg-[var(--color-default)] text-white',
+                accionAgregar: agregarHistoria,
+                buscador: true,
+                filtros: [
+                    { columna: 'estado', placeholder: 'Estado', datos: [{ text: 'Creada', value: 'Creada' }, { text: 'Nueva', value: 'Nueva' }] },
+                ]
+            })
             .setAcciones({ icons: [{ icon: 'ver', action: verHistoria }], botones: true, })
             .setDatos(historiasList)
         )

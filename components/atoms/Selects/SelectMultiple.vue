@@ -61,7 +61,7 @@ function seleccionarTodos() {
       class="autocomplete-list top-full left-0 right-0 max-h-[180px] overflow-y-auto scrollForm bg-white border border-[#d0d7de] dark:bg-gray-900 rounded-lg z-9 px-3 mt-1"
     >
       <div class="flex gap-3 cursor-pointer" @click="seleccionarTodos">
-        <label class="font-semibold w-full px-3 py-2 hover:bg-blue-100 dark:hover:bg-blue-950">Seleccionar Todos</label>
+        <label class="font-semibold w-full px-3 py-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-950">Seleccionar Todos</label>
       </div>
       <li
         v-for="dato in Propiedades.options"
@@ -76,7 +76,7 @@ function seleccionarTodos() {
           :id="dato"
           readonly
         />
-        <label>{{ dato }}</label>
+        <label class="text-black dark:text-white">{{ dato }}</label>
       </li>
     </ul>
   </div>

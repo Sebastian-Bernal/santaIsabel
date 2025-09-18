@@ -21,9 +21,6 @@ const enviarFormulario = async (datos) => {
             let options = {
                 metodo: 'POST',
                 url: config.public.user,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 token: token,
                 body: {
                     user_name: datos.InformacionUser.name,
@@ -43,9 +40,6 @@ const enviarFormulario = async (datos) => {
             let optionsUser_profile = {
                 metodo: 'POST',
                 url: config.public.userProfile,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 token: token,
                 body: {
                     user_id: id_user,

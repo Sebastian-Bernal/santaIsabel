@@ -39,9 +39,6 @@ const enviarFormulario = async (datos) => {
             let options = {
                 metodo: 'POST',
                 url: config.public.patients,
-                head: {
-                    'X-Company': 'store_two'
-                },
                 token: token,
                 body: {
                     patient_eps_id: datos.Paciente.Eps,

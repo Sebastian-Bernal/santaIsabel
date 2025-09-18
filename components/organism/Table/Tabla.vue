@@ -3,6 +3,7 @@
 import { defineProps, computed, ref, watch } from 'vue';
 import BotonAccion from './BotonAccion.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import DatosExcel from '~/components/organism/Forms/DatosExcel.vue';
 
@@ -12,6 +13,7 @@ import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 
 // Variables
 const btnAcciones = ref(null)
+const showFiltros = ref(false)
 const varView = useVarView()
 // funciones
 const props = defineProps({
@@ -35,9 +37,11 @@ const {
 // Acomodar datos de menor a mayor segun columna
 const {
     busqueda,
+    filtros,
+    filtrosConOpciones,
     sortedItems,
     datosOrdenados
-}  = useOrdenamiento(props.Propiedades.datos.content || ref([]));
+} = useOrdenamiento(props.Propiedades.datos.content || ref([]), props.Propiedades.headerTabla.filtros);
 
 
 // Paginador
@@ -92,15 +96,18 @@ const estiloColumnas = computed(() => {
                 <p>{{ props.Propiedades.headerTabla?.descripcion }}</p>
             </div>
             <div class="flex gap-3 md:w-[45%] justify-end">
-                <Input :Propiedades="{
-                    placeholder: 'Buscar por datos...',
-                    icon: 'fa-solid fa-search',
-                    modelValue: busqueda
-                }" v-model="busqueda" />
 
-                <client-only>
+                <div v-if="Propiedades.headerTabla.filtros?.length > 0" class="flex items-center gap-1 cursor-pointer" @click="showFiltros = !showFiltros">
+                    <ButtonRounded color="bg-blue-700">
+                        <i class="fa-solid fa-filter"></i>
+                    </ButtonRounded>
+                    <h4>Filtrar Datos</h4>
+                </div>
+
+                <client-only v-if="Propiedades.headerTabla.excel">
                     <div class="flex relative dropdown cursor-pointer">
-                        <download-excel class="flex gap-1 items-center" :data="Array.isArray(props.Propiedades?.datos?.content) ? props.Propiedades.datos.content : []"
+                        <download-excel class="flex gap-1 items-center"
+                            :data="Array.isArray(props.Propiedades?.datos?.content) ? props.Propiedades.datos.content : []"
                             :name="props.Propiedades.headerTabla.titulo" type="xls">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
@@ -108,20 +115,44 @@ const estiloColumnas = computed(() => {
                             <h4>Exportar</h4>
                         </download-excel>
                         <div @click="varView.showDatosExcel = true"
-                            class="configExcel flex absolute top-[100%] bg-[var(--color-default-700)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
+                            class="configExcel flex absolute top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
                             <i class="fa-solid fa-gear"></i>
                             <p class="text-xs">Configurar</p>
                         </div>
                     </div>
                 </client-only>
 
-                <nuxt-link v-if="props.Propiedades.headerTabla?.accionAgregar" @click="props.Propiedades.headerTabla.accionAgregar"
-                    class="flex gap-1 items-center cursor-pointer">
+                <nuxt-link v-if="props.Propiedades.headerTabla?.accionAgregar"
+                    @click="props.Propiedades.headerTabla.accionAgregar" class="flex gap-1 items-center cursor-pointer">
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </ButtonRounded>
                     <h4>Agregar</h4>
                 </nuxt-link>
+            </div>
+        </div>
+
+        <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
+            v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
+            <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
+            <div class="flex items-center justify-between gap-5">
+                <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
+                    placeholder: 'Buscar dato en la Tabla...',
+                    icon: 'fa-solid fa-search',
+                    modelValue: busqueda,
+                    tamaño: 'w-2/5',
+                    upperCase: true
+                }" v-model="busqueda" />
+
+                <div class="w-3/4 flex justify-end gap-5">
+                    <Select v-for="(filtro, key) in filtrosConOpciones" :key="key" :Propiedades="{
+                        placeholder: filtro.placeholder,
+                        label: filtro.placeholder,
+                        modelValue: busqueda,
+                        tamaño: 'w-1/4',
+                        options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
+                    }" v-model="filtros[filtro.columna]" />
+                </div>
             </div>
         </div>
 
@@ -135,13 +166,15 @@ const estiloColumnas = computed(() => {
                     <h2 v-for="col in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         {{ col.value }}
-                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)" class="fa-solid fa-angle-down cursor-pointer"></i>
+                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)"
+                            class="fa-solid fa-sort cursor-pointer"></i>
                     </h2>
                     <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
                 </div>
 
                 <!-- Body tabla -->
-                <div v-for="(fila, id) in datosPaginados" class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
+                <div v-for="(fila, id) in datosPaginados"
+                    class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
                     :style="estiloColumnas">
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"
@@ -189,8 +222,8 @@ const estiloColumnas = computed(() => {
                     </div>
                 </div>
 
-                <div>
-                    <p v-if="datosPaginados?.length === 0" class="text-gray-500 text-center mt-10">No se encontraron
+                <div v-if="datosPaginados?.length === 0">
+                    <p class="text-gray-500 text-center my-10">No se encontraron
                         resultados.</p>
                 </div>
 
@@ -238,7 +271,8 @@ const estiloColumnas = computed(() => {
             </div>
         </div>
     </div>
-    <DatosExcel v-if="varView.showDatosExcel" :datos="props.Propiedades.datos.content" :tabla="props.Propiedades.headerTabla.titulo" />
+    <DatosExcel v-if="varView.showDatosExcel" :datos="props.Propiedades.datos.content"
+        :tabla="props.Propiedades.headerTabla.titulo" />
 </template>
 
 
