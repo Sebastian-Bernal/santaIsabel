@@ -59,8 +59,7 @@ function cambiarAInicio() {
 
                 </div>
                 <div v-if="seccionActual === 0" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i class="fa-solid fa-print hover:text-white cursor-pointer"></i>
-                    <i class="fa-solid fa-download hover:text-white cursor-pointer"></i>
+                    <i v-for="icono in Propiedades.headerModal.acciones" class="hover:text-white cursor-pointer" :class="icono.icon" @click="icono.accion?.()"></i>
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="Propiedades.cerrarModal"></i>
                 </div>
                 <div v-if="seccionActual > 0" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">

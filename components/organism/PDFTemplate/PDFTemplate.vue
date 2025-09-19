@@ -58,27 +58,29 @@ const cerrar = () => {
 
 <template>
     <FondoBlur v-if="unref(props.Propiedades.isActive)">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[80%] w-[90%] h-[90%]">
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
-                    <h2 class="text-white font-bold text-2xl">Vista Previa</h2>
+                    <h2 class="text-white font-bold text-2xl">Vista Previa PDF</h2>
                 </div>
-                <div
-                    class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
+                <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
                     <i class="fa-solid fa-download hover:text-white cursor-pointer" @click="exportPdf"></i>
                     <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrar"></i>
                 </div>
             </div>
             <!-- Contenido HTML -->
-            <div :id="props.Propiedades.elementId" class="p-6 bg-white text-black shadow-md rounded-lg">
+            <div class="scrollForm w-full gap-[15px] h-[100%] overflow-y-auto">
+                <div :id="props.Propiedades.elementId" class="p-6 bg-white text-black shadow-md">
 
-                <component v-for="component in Propiedades.components" :is="componentes[component.tipo]" :Propiedades="{
-                    ...component,
-                    disabled: true,
-                    ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
-                }" />
+                    <component v-for="component in Propiedades.components" :is="componentes[component.tipo]"
+                        :Propiedades="{
+                            ...component,
+                            disabled: true,
+                            ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
+                        }" />
 
+                </div>
             </div>
 
         </div>

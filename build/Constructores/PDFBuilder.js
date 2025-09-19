@@ -59,7 +59,7 @@ export class PdfBuilder {
         if (!element) throw new Error(`No existe el elemento con id: ${this.config.elementId}`)
 
         // Render con html2canvas
-        const canvas = await $html2canvas(element, { scale: 2 })
+        const canvas = await $html2canvas(element, { scale: 2, useCORS: true })
         const imgData = canvas.toDataURL("image/png")
 
         // Crear PDF

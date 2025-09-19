@@ -107,6 +107,7 @@ const municipiosOptions = computed(() => {
 
 function exportarPDF(data) {
     propiedadesPDF.value = { ...data, }
+
     activePdfPaciente.value = true
 }
 
@@ -199,41 +200,47 @@ const propiedades = computed(() => {
             .setElementId('Paciente')
             .setIsActive(activePdfPaciente)
             .setFileName(`paciente_${propiedadesPDF.value.name}`)
-            .addComponente('Titulo', {
-                texto: 'Paciente'
-            })
             .addComponente('Tabla', {
-                columnas: ['Nombre y Apellidos', 'Fecha de nacimiento', 'Edad', 'Sexo', 'Tipo de documento', 'No. Documento'],
+                container: 'border-b-2 pb-3',
+                columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
                 filas: [
-                    [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.nacimiento}`,
-                    `${propiedadesPDF.value.nacimiento}`, `${propiedadesPDF.value.sexo}`,
-                    `${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`,],
+                    [`Sistema de Historias Clinicas`, `<p class="w-full text-end">19/009/2025</p>`],
                 ],
             })
-            .addComponente('Tabla', {
-                columnas: ['Direccion', 'Barrio'],
-                filas: [
-                    [`${propiedadesPDF.value.direccion}`, `${propiedadesPDF.value.barrio}`,],
-                ],
+            .addComponente('Texto', {
+                texto: 'Informacion del Paciente'
             })
             .addComponente('Tabla', {
-                columnas: ['Municipio', 'Zona', 'Celular', 'Telefono'],
+                container: 'space-y-2 rounded py-3',
+                styles: {
+                    backgroundColor: '#DBEAFE',
+                },
                 filas: [
-                    [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.zona}`, `${propiedadesPDF.value.celular}`, `${propiedadesPDF.value.telefono}`],
+                    ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                    [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.correo}`, `${propiedadesPDF.value.nacimiento}`,],
+                    ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
+                    [`${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`, `${propiedadesPDF.value.sexo}`,],
+                    ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
+                    [`${propiedadesPDF.value.direccion}`, `${propiedadesPDF.value.barrio}`, `${propiedadesPDF.value.zona}`,]
                 ],
             })
+            .addComponente('Texto', {
+                texto: 'Datos Adicionales'
+            })
             .addComponente('Tabla', {
-                columnas: ['EPS', 'Regimen', 'Poblacion Vulnerable',],
+                container: 'space-y-2 rounded py-3',
+                styles: {
+                    backgroundColor: '#DBEAFE',
+                },
                 filas: [
-                    [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`],
+                    ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
+                    [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.celular}`,],
+                    ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Regimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
+                    [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`,],
                 ],
             })
             .addComponente('Espacio', {
                 alto: 24
-            })
-            .addComponente('Imagen', {
-                src: 'https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd',
-                tamaño: 'w-[35px]'
             })
             .addComponente('Firma', {
                 nombre: 'Camilo Jaramillo'
