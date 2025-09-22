@@ -157,15 +157,18 @@ export function useFormulario(props) {
             try {
                 const res = await accion(data)
                 if (res) {
-                    notificaciones.options.icono = 'success'
-                    notificaciones.options.titulo = '¡Se ha enviado correctamente!'
-                    notificaciones.options.texto = 'Formulario enviado con éxito'
+                    // notificaciones.options.icono = 'success'
+                    notificaciones.options.background = '#22c55e'
+                    notificaciones.options.position = 'top-end'
+                    notificaciones.options.texto = '¡Se ha enviado correctamente!'
                     notificaciones.options.tiempo = 3000
-                    const respuesta = await notificaciones.simple()
-                    if (respuesta.isConfirmed || respuesta.dismiss) {
-                        limpiarLocal()
-                        window.location.reload()
-                    }
+                    notificaciones.mensaje()
+                    limpiarLocal()
+                    window.location.reload()
+                    // if (respuesta.isConfirmed || respuesta.dismiss) {
+                    //     limpiarLocal()
+                    //     window.location.reload()
+                    // }
                 }
                 return res
             } catch (err) {

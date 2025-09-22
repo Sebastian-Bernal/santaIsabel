@@ -48,15 +48,13 @@ function limpiar() {
     
     const show = props.Propiedades.formulario.show
     if (unref(show)) {
-        // Para modificarlo, necesitas saber si es ref
+        // Si es ref
         if (show && typeof show === 'object' && 'value' in show) {
             show.value = false
         } else {
-            // Si no es ref, simplemente reasignas
             props.Propiedades.formulario.show = false
         }
     }
-
 }
 
 </script>

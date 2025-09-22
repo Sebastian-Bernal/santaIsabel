@@ -45,10 +45,23 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
             if (almacen === "HistoriaClinica") {
                 const historias = await store.leerdatos();
                 const existente = historias.find(h => h.id_paciente === contenido.id_paciente);
-                ids.HistoriaClinica = existente 
-                    ? existente.id_temporal 
+
+                ids.HistoriaClinica = existente
+                    ? existente.id_temporal
                     : await store.guardardatosID({ ...contenido });
             } else if (almacen === "Analisis") {
+                if (!ids.HistoriaClinica) {
+                    store.almacen = 'HistoriaClinica'
+                    const historias = await store.leerdatos();
+                    const existente = historias.find(h => h.id_paciente === data.HistoriaClinica.id_paciente);
+
+                    ids.HistoriaClinica = existente
+                        ? existente.id_temporal
+                        : await store.guardardatosID({ ...data.HistoriaClinica });
+
+                    store.almacen = almacen
+                }
+
                 ids.Analisis = await store.guardardatosID({ ...contenido, id_historia: ids.HistoriaClinica });
             } else if (almacen === "Cita") {
                 await store.actualiza({ ...contenido, id_analisis: ids.Analisis, estado: "Realizada" });
@@ -81,7 +94,7 @@ async function guardarRelacionado(store, almacen, contenido, foreignKey, foreign
     }
 }
 
-export async function getAll (url) {
+export async function getAll(url) {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const token = sessionStorage.getItem('token')
@@ -97,7 +110,7 @@ export async function getAll (url) {
             }
             const respuesta = await api.functionCall(options)
 
-            if(respuesta.success){
+            if (respuesta.success) {
                 return respuesta.data
             }
         } catch (error) {

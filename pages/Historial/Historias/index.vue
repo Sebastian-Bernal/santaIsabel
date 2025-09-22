@@ -81,9 +81,19 @@ async function cargaHistorial(id) {
     // Consultas
     analisis.value = []
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica')
+    console.log(historia)
     // Cambiar id por id_historia
     if (Array.isArray(historia) && historia.length > 0 && historia[0].id_temporal) {
-        analisis.value = await historiasStore.listDatos(historia[0].id_temporal, 'Analisis', 'id') || []
+        const idTemporal = historia[0].id_temporal;
+
+        // Obtener datos existentes
+        const analisisDatos = await historiasStore.listDatos(idTemporal, 'Analisis', 'id_historia') || [];
+        for (const item of analisisDatos) {
+            const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_temporal') || [];
+
+            analisis.value.push({ ...item, ...examenFisico[0] })
+        }
+
     } else {
         analisis.value = []
     }
@@ -128,7 +138,7 @@ async function cargaHistorial(id) {
     )
 
     medicinas.value = medicinasConAnalisis
-
+    console.log(historiasStore.Formulario)
     // console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
@@ -193,12 +203,7 @@ async function exportarHistoriaPDF() {
         return user.id_paciente === paciente
     })
 
-    // const historia = pacientesStore.listDatos(paciente, 'HistoriaClinica')
-
-    // const consultas = historiasStore.listDatos(historia[0].id_temporal, 'Analisis', 'id')
-
     propiedadesHistoriaPDF.value = { ...dataPaciente[0], consultas: [...analisis.value] }
-    console.log(propiedadesHistoriaPDF.value.consultas)
     activePdfHistoria.value = true
 }
 
@@ -307,6 +312,16 @@ async function pacienteExiste(event) {
     }
 }
 
+const fechaFormateada = () => {
+    const fecha = new Date()
+    const dia = String(fecha.getDate()).padStart(2, '0');
+    const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11
+    const año = fecha.getFullYear();
+    const fechaActual = `${dia}/${mes}/${año}`
+
+    return fechaActual
+}
+
 const propiedadesForm = useHistoriaBuilder({
     storeId: 'RegistrarHistoria',
     storePinia: 'Historias',
@@ -351,24 +366,16 @@ const propiedades = computed(() => {
     const pdfNotas = new PdfBuilder()
     const pdfHistorial = new PdfBuilder()
 
-    console.log(unref(analisis))
     const filasConsultas = (unref(analisis) || []).map(consulta => {
-        return [
-            [
-                `<p class="w-full text-start text-xs">Motivo:</p>`,
-                `<p class="w-full text-start text-xs">${consulta.motivo}</p>`,
-                [`<p class="w-full text-start text-xs">Analisis:</p>`],
-                [`<p class="w-full text-start text-xs">${consulta.analisis || ''}</p>`],
-                [`<p class="w-full text-start text-xs">Observacion:</p>`],
-                [`<p class="w-full text-start text-xs">${consulta.observacion || ''}</p>`],
-                [`<p class="w-full text-start text-xs">Tipo analisis:</p>`],
-                [`<p class="w-full text-start text-xs">${consulta.tipoAnalisis || ''}</p>`],
-                [`<p class="w-full text-start text-xs">Tratamiento:</p>`],
-                [`<p class="w-full text-start text-xs">${consulta.tratamiento || ''}</p>`],
-            ],
-            ['hola']
-        ]
-
+        const contenido = `
+        <p class="text-start text-xs py-2"><strong>Motivo:</strong> ${consulta.motivo}</p>
+        <p class="text-start text-xs py-2"><strong>Analisis:</strong> ${consulta.analisis || ''}</p>
+        <p class="text-start text-xs py-2"><strong>Observacion:</strong> ${consulta.observacion || ''}</p>
+        <p class="text-start text-xs py-2"><strong>Tipo analisis:</strong> ${consulta.tipoAnalisis || ''}</p>
+        <p class="text-start text-xs py-2"><strong>Tratamiento:</strong> ${consulta.tratamiento || ''}</p>
+        <hr class="w-full h-5"/>
+        `
+        return [contenido]
     })
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
@@ -520,7 +527,7 @@ const propiedades = computed(() => {
                     container: 'border-b-2 pb-3',
                     columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
                     filas: [
-                        [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> 19/09/2025 </p>`],
+                        [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> ${fechaFormateada()} </p>`],
                     ],
                 })
                 .addComponente('Texto', {
@@ -562,7 +569,7 @@ const propiedades = computed(() => {
                     texto: 'Resumen de Historias Clinicas'
                 })
                 .addComponente('Tabla', {
-                    container: 'space-y-2 rounded-xl py-3! px-2 flex flex-col',
+                    container: 'w-full space-y-2 rounded-xl py-3! px-2 flex flex-col',
                     styles: {
                         border: '1px solid #DBEAFE',
                     },
@@ -612,32 +619,32 @@ const propiedades = computed(() => {
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
                 .setFileName(`Nota_${propiedadesNotaPDF.value.name_paciente}`)
-                .addComponente('Titulo', {
-                    texto: 'Nota Medica'
+                .addComponente('Tabla', {
+                    container: 'border-b-2 pb-3',
+                    columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
+                    filas: [
+                        [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> ${fechaFormateada()} </p>`],
+                    ],
                 })
                 .addComponente('Texto', {
-                    texto: `Nota de enfermeria de atencion Domiciliaria`,
-                    vmodel: ''
+                    texto: 'Informacion del Paciente'
                 })
                 .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3',
+                    styles: {
+                        backgroundColor: '#EFF6FF',
+                    },
                     filas: [
-                        [`Nombre Completo: ${propiedadesNotaPDF.value.name_paciente}`, `Edad: ${propiedadesNotaPDF.value.nacimiento}`],
-                        [`Tipo de Identidficacion: ${propiedadesNotaPDF.value.type_doc}`, `No. Documento: ${propiedadesNotaPDF.value.No_document_paciente}`],
+                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                        [`${propiedadesNotaPDF.value.name_paciente}`, `${propiedadesNotaPDF.value.correo}`, `${propiedadesNotaPDF.value.nacimiento}`,],
+                        ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
+                        [`${propiedadesNotaPDF.value.type_doc}`, `${propiedadesNotaPDF.value.No_document}`, `${propiedadesNotaPDF.value.sexo}`,],
+                        ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
+                        [`${propiedadesNotaPDF.value.direccion}`, `${propiedadesNotaPDF.value.barrio}`, `${propiedadesNotaPDF.value.zona}`,]
                     ],
                 })
                 .addComponente('Tabla', {
-                    filas: [
-                        [`Direccion: ${propiedadesNotaPDF.value.direccion}`, `Barrio: ${propiedadesNotaPDF.value.barrio}`, `Telefono: ${propiedadesNotaPDF.value.celular}`],
-                    ],
-                })
-                .addComponente('Tabla', {
-                    columnas: ['Diagnosticos'],
-                    filas: [
-                        [`${propiedadesNotaPDF.value.tipoAnalisis}`,],
-                    ],
-                })
-                .addComponente('Tabla', {
-                    columnas: ['Fecha', 'Hora', 'Nota'],
+                    columnas: [`<p class="text-start">Fecha:</p>`, `<p class="text-start">Hora:</p>`, `<p class="text-start">Nota:</p>`],
                     filas: [[propiedadesNotaPDF.value.fecha_nota, propiedadesNotaPDF.value.hora_nota, propiedadesNotaPDF.value.nota],]
                 })
             )

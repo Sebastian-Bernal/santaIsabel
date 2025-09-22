@@ -122,12 +122,13 @@ function mostrar() {
                             <i class="fa-solid fa-plus"></i> <i class="fa-solid fa-database"></i>
                         </p>
                     </div>
-                    <div v-if="insertarTabla" class="flex md:flex-row flex-col gap-3 pt-3">
+                    <div v-if="insertarTabla" class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
                         <Select v-model="tablaInsert.tabla" :Propiedades="{
                             placeholder: 'Tabla de datos',
                             id: 'datos',
                             name: 'datos',
                             options: Tablas,
+                            tamaño: 'w-full'
                         }" />
                         <Select v-model="tablaInsert.id_comparar" :Propiedades="{
                             placeholder: 'Campo a comparar',
@@ -143,7 +144,7 @@ function mostrar() {
                             options: datosOptionsTabla,
                         }" />
                     </div>
-                    <div class="flex md:flex-row flex-col gap-3 pt-3">
+                    <div class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
                         <Input v-model="excel.nombreArchivo" :Propiedades="{
                             placeholder: 'Nombre Archivo',
                             id: 'nombre',
@@ -170,7 +171,8 @@ function mostrar() {
                             id: 'campos',
                             name: 'campos',
                             options: datos,
-                            opciones: [{ text: '', value: '' }]
+                            opciones: [{ text: '', value: '' }],
+                            tamaño: 'w-full'
                         }" />
                     </div>
                 </div>

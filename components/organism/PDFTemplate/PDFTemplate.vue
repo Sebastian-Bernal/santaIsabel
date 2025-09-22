@@ -41,6 +41,8 @@ const exportPdf = async () => {
         .setFileName(props.Propiedades.filename)
 
     await pdfBuilder.export()
+
+
     props.Propiedades.isActive.value = false
 }
 
@@ -82,7 +84,15 @@ const cerrar = () => {
 
                 </div>
             </div>
-
         </div>
     </FondoBlur>
+    <!-- <div :id="props.Propiedades.elementId" class="p-6 bg-white text-black shadow-md" style="width: 800px; height: 1100px; visibility: hidden; position: absolute; z-index: -1; top: 0; left: 0;">
+
+        <component v-for="component in Propiedades.components" :is="componentes[component.tipo]" :Propiedades="{
+            ...component,
+            disabled: true,
+            ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
+        }" />
+
+    </div> -->
 </template>

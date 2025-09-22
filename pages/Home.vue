@@ -42,6 +42,10 @@ function nuevaHistoria() {
     showNuevaHistoria.value = true
 }
 
+function cerrarHistoria() {
+    showNuevaHistoria.value = false
+}
+
 function buscarHistoria() {
     location.href = 'Historial/Historias'
 }
@@ -387,5 +391,5 @@ const propiedades = computed(() => {
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
     <Paciente v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false"/>
-    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria"  @ocultar="showNuevaHistoria = false"/>
+    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria"  @ocultar="cerrarHistoria"/>
 </template>

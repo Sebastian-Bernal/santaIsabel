@@ -110,7 +110,6 @@ const propiedadesCita = useFormularioCitaBuilder({
     validarHora,
 });
 
-
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
 const builderCitas = new CitasBuilder()

@@ -7,14 +7,15 @@ import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { storeToRefs } from 'pinia';
+import { mapCampos } from '~/components/organism/Forms/useFormulario';
 
 const varView = useVarView();
 const UsersStore = useUsersStore();
 const { listUsers } = storeToRefs(UsersStore);
 const Users = ref([]);
-const datosUser = ref()
 const refresh = ref(1)
 const show = ref(false)
+const showVer = ref(false)
 const tipoUsuario = ref('Administrador')
 
 async function llamadatos() {
@@ -34,22 +35,22 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-
-const modificarUser = (user) => {
-    varView.showModificarUser = true
-    datosUser.value = user;
-}
-
 const nuevoUser = () => {
     show.value = true
 }
 
 function cerrar() {
     show.value = false
+    showVer.value = false
+    varView.soloVer = true
+}
+
+const verUser = (usuario) => {
+    mapCampos(usuario, UsersStore.Formulario)
+    showVer.value = true
 }
 
 watch(() => UsersStore.Formulario.User.rol, (newValue) => {
-    console.log(newValue)
     tipoUsuario.value = newValue
 })
 
@@ -91,6 +92,17 @@ const propiedades = computed(() => {
         seleccionarMunicipio: () => {},
     });
 
+    const propiedadesVerUser = useUserBuilder({
+        storeId: "modificar",
+        storePinia: "Usuarios",
+        cerrarModal: cerrar,
+        show: showVer,
+        tipoFormulario: "Wizard",
+        verUser: true,
+        soloVer: varView.soloVer,
+        tipoUsuario: "Administrador",
+    });
+
     return pagina
         .setFondo('FondoDefault')
         .setEstilos('')
@@ -111,12 +123,13 @@ const propiedades = computed(() => {
                 accionAgregar: nuevoUser
             })
             .setAcciones({
-                icons: [{ icon: 'ver', action: modificarUser }],
+                icons: [{ icon: 'ver', action: verUser }],
                 botones: true
             })
             .setDatos(Users)
         )
         .addComponente('Form', propiedadesUser)
+        .addComponente('Form', propiedadesVerUser)
         .build();
 });
 
