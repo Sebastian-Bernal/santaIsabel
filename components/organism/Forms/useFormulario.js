@@ -157,13 +157,14 @@ export function useFormulario(props) {
             try {
                 const res = await accion(data)
                 if (res) {
-                    // notificaciones.options.icono = 'success'
+                    notificaciones.options.icono = 'success'
                     notificaciones.options.background = '#22c55e'
                     notificaciones.options.position = 'top-end'
                     notificaciones.options.texto = '¡Se ha enviado correctamente!'
-                    notificaciones.options.tiempo = 3000
+                    notificaciones.options.tiempo = 1500
                     notificaciones.mensaje()
                     limpiarLocal()
+
                     window.location.reload()
                     // if (respuesta.isConfirmed || respuesta.dismiss) {
                     //     limpiarLocal()

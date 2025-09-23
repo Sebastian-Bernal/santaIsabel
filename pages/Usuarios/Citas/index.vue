@@ -34,12 +34,12 @@ watch(() => calendarioCitasStore.fecha, (nuevaFecha) => {
 // Formulario
 function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
-    citasStore.Formulario.Cita.id_paciente = paciente.id
+    citasStore.Formulario.Cita.id_paciente = paciente.id_paciente
 }
 
 function seleccionarMedico(medico) {
     citasStore.Formulario.Cita.name_medico = medico.name
-    citasStore.Formulario.Cita.id_medico = medico.id
+    citasStore.Formulario.Cita.id_medico = medico.id_profesional
 }
 
 function validarFecha(event) {

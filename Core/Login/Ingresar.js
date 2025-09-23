@@ -50,8 +50,9 @@ export const validarYEnviarLogin = async (datos) => {
 
         usuarioStore.Permisos = permisosProfesion
 
-        sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion));
+        sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion) || JSON.stringify(secciones));
         sessionStorage.setItem('Rol', 'Profesional');
+        sessionStorage.setItem('Profesional', JSON.stringify(usuarioValido))
     }
 
 
@@ -89,6 +90,7 @@ const enviarFormulario = async (datos) => {
             } else {
                 return false
             }
+            return true
         } catch (error) {
             console.error('Fallo al enviar. Intenta en otro momento', error);
         }

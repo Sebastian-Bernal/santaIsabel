@@ -33,6 +33,7 @@ import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseñ
 export const accionesFormularios = {
     Ingresar: async (data) => {
         const respuesta = await validarYEnviarLogin(data);
+        console.log(respuesta)
         if (respuesta.estado) {
             window.location.href = '/Home'
         }

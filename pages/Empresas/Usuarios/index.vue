@@ -47,6 +47,7 @@ function cerrar() {
 
 const verUser = (usuario) => {
     mapCampos(usuario, UsersStore.Formulario)
+    UsersStore.Formulario.User.id = usuario.id
     showVer.value = true
 }
 
@@ -93,7 +94,7 @@ const propiedades = computed(() => {
     });
 
     const propiedadesVerUser = useUserBuilder({
-        storeId: "modificar",
+        storeId: "ModificarUsuario",
         storePinia: "Usuarios",
         cerrarModal: cerrar,
         show: showVer,

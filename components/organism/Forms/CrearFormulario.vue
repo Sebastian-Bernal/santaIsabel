@@ -2,25 +2,38 @@
 import { ref } from 'vue'
 import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue'
+import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
+import Checkbox from '~/components/atoms/Checkbox/Checkbox.vue';
+import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
 
-const emit = defineEmits(['form-creado']);
+const emit = defineEmits(['form-creado', 'ocultar']);
 // Opciones disponibles
 const tiposComponentes = [
-    { label: 'Campo de texto', value: 'Input' },
-    { label: 'Contraseña', value: 'Password' },
-    { label: 'Área de texto', value: 'TextArea' },
-    { label: 'Selector', value: 'Select' },
-    { label: 'Checkbox', value: 'Checkbox' },
-    { label: 'Radio', value: 'Radio' },
+    { text: 'Campo de texto', value: 'Input' },
+    { text: 'Contraseña', value: 'Password' },
+    { text: 'Área de texto', value: 'TextArea' },
+    { text: 'Selector', value: 'Select' },
+    { text: 'Checkbox', value: 'Checkbox' },
+    { text: 'Radio', value: 'Radio' },
 ]
 
-const tamaños = ['SM', 'MD', 'LG', 'XL']
-const stores = ['Notas', 'Pacientes', 'Profesionales']
+const tamaños = [
+    { text: 'SM', value: 'SM' },
+    { text: 'LG', value: 'LG' },
+    { text: 'XL', value: 'XL' },
+]
+
+const stores = [
+    { text: 'Notas', value: 'Notas' },
+    { text: 'Pacientes', value: 'Pacientes' },
+    { text: 'Profesionales', value: 'Profesionales' },
+]
 
 // Datos del formulario meta
 const metaForm = ref({
     tituloFormulario: '',
-    tamaño: 'MD',
+    tamaño: 'LG',
     fondo: false,
     secciones: [],
     store: '',
@@ -75,88 +88,117 @@ const generarFormulario = () => {
     const form = builder.build()
     emit('form-creado', form);
 }
+
+function cerrar() {
+    emit('ocultar')
+};
 </script>
 
 <template>
     <FondoBlur>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
-            <div class="p-6 bg-gray-100 rounded-xl shadow-md overflow-y-auto scrollForm flex flex-col gap-5">
-                <div class="h-[40vh] ">
-                <h2 class="text-xl font-bold">Creador de Formularios</h2>
+            <div class="p-6 overflow-y-auto scrollForm h-[90%]">
+                <div class="flex flex-col gap-5">
+                    <h2 class="text-xl text-center font-bold text-black dark:text-white">Creador de Formularios</h2>
 
-                <!-- Configuración básica -->
-                <div class="space-y-2">
-                    <label class="block font-semibold">Título del Formulario</label>
-                    <input v-model="metaForm.tituloFormulario" class="border rounded p-2 w-full"
-                        placeholder="Ej: Registro de usuario" />
+                    <!-- Configuración básica -->
+                    <div class="gap-2 py-2 grid md:grid-cols-3 grid-cols-1">
+                        <Input v-model="metaForm.tituloFormulario" :Propiedades="{
+                            placeholder: 'Ej: Registro de usuario',
+                            label: 'titulo del Formulario'
+                        }" />
 
-                    <label class="block font-semibold">Tamaño</label>
-                    <select v-model="metaForm.tamaño" class="border rounded p-2 w-full">
-                        <option v-for="t in tamaños" :key="t" :value="t">{{ t }}</option>
-                    </select>
+                        <div>
+                            <label class="block font-semibold text-xs text-black dark:text-white">Tamaño</label>
+                            <Select v-model="metaForm.tamaño" :Propiedades="{
+                                placeholder: 'Ej: Registro de usuario',
+                                label: 'Tamaño',
+                                options: tamaños,
+                                tamaño: 'w-full'
+                            }">
+                            </Select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-xs text-black dark:text-white">Store</label>
+                            <Select v-model="metaForm.store" :Propiedades="{
+                                placeholder: 'Ej: Registro de usuario',
+                                label: 'titulo del Formulario',
+                                options: stores,
+                                tamaño: 'w-full'
+                            }">
+                            </Select>
+                        </div>
 
-                    <label class="block font-semibold">Store</label>
-                    <select v-model="metaForm.store" class="border rounded p-2 w-full">
-                        <option v-for="t in stores" :key="t" :value="t">{{ t }}</option>
-                    </select>
-
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" v-model="metaForm.fondo" />
-                        Fondo activado
-                    </label>
-                </div>
-
-                <!-- Sección -->
-                <div class="space-y-2">
-                    <h3 class="font-bold">Nueva Sección</h3>
-                    <input v-model="nuevaSeccion.nombre" class="border rounded p-2 w-full"
-                        placeholder="Nombre de la sección" />
-                    <input v-model="nuevaSeccion.descripcion" class="border rounded p-2 w-full"
-                        placeholder="Descripción" />
-                    <button @click="agregarSeccion" class="bg-green-600 text-white px-4 py-2 rounded">Agregar
-                        Sección</button>
-                </div>
-
-                <!-- Campos -->
-                <div class="space-y-2">
-                    <h3 class="font-bold">Nuevo Campo</h3>
-                    <label class="block">Tipo de componente</label>
-                    <select v-model="nuevoCampo.component" class="border rounded p-2 w-full">
-                        <option v-for="c in tiposComponentes" :key="c.value" :value="c.value">{{ c.label }}</option>
-                    </select>
-
-                    <input v-model="nuevoCampo.key" class="border rounded p-2 w-full" placeholder="Key (ej: correo)" />
-                    <input v-model="nuevoCampo.label" class="border rounded p-2 w-full"
-                        placeholder="Label (ej: Correo electrónico)" />
-                    <input v-model="nuevoCampo.placeholder" class="border rounded p-2 w-full"
-                        placeholder="Placeholder" />
-                    <input v-model="nuevoCampo.vmodel" class="border rounded p-2 w-full"
-                        placeholder="V-Model" />
-
-                    <label class="flex items-center gap-2">
-                        <input type="checkbox" v-model="nuevoCampo.required" />
-                        Requerido
-                    </label>
-
-                    <!-- Opciones (para Select/Radio/Checkbox) -->
-                    <div v-if="['Select', 'Radio', 'Checkbox'].includes(nuevoCampo.component)" class="space-y-2">
-                        <label class="block">Opciones (separadas por coma)</label>
-                        <input @blur="nuevoCampo.options = $event.target.value.split(',').map(o => o.trim())"
-                            class="border rounded p-2 w-full" placeholder="Ej: Hombre,Mujer,Otro" />
+                        <Checkbox v-model="metaForm.fondo" :Propiedades="{
+                            placeholder: 'Fondo Activado',
+                        }" />
                     </div>
 
-                    <button @click="agregarCampo" class="bg-blue-600 text-white px-4 py-2 rounded">Agregar
-                        Campo</button>
-                </div>
+                    <!-- Sección -->
+                    <div class="gap-2 grid md:grid-cols-3 grid-cols-1 items-center py-2">
+                        <Input v-model="nuevaSeccion.nombre" :Propiedades="{
+                            placeholder: 'Titulo',
+                            label: 'Nueva Seccion'
+                        }" />
+                        <Input v-model="nuevaSeccion.descripcion" :Propiedades="{
+                            placeholder: 'Descripcion',
+                            label: 'Subtitulo'
+                        }" />
+                        <button @click="agregarSeccion" class="bg-blue-600 text-white h-1/2 rounded">Agregar
+                            Sección</button>
+                    </div>
 
+                    <!-- Campos -->
+                    <div class="space-y-2 py-2">
+                        <h3 class="font-bold text-black dark:text-white">Nuevo Campo</h3>
+                        <label class="block text-black dark:text-white">Tipo de componente</label>
+                        <Select v-model="nuevoCampo.component" :Propiedades="{
+                            placeholder: 'Ej: Registro de usuario',
+                            label: 'Tipo de componente',
+                            options: tiposComponentes,
+                            tamaño: 'w-full'
+                        }" />
 
-                <!-- Botón generar -->
-                <div class="pt-4">
-                    <button @click="generarFormulario" class="bg-purple-600 text-white px-6 py-2 rounded-lg">
-                        Generar Formulario JSON
-                    </button>
+                        <Input v-model="nuevoCampo.key" :Propiedades="{
+                            placeholder: 'Key (ej. correo)',
+                        }" />
+                        <Input v-model="nuevoCampo.label" :Propiedades="{
+                            placeholder: 'Label (ej: Correo electrónico)',
+                        }" />
+                        <Input v-model="nuevoCampo.placeholder" :Propiedades="{
+                            placeholder: 'Placeholder',
+                        }" />
+                        <Input v-model="nuevoCampo.vmodel" :Propiedades="{
+                            placeholder: 'Vmodel',
+                        }" />
+
+                        <Checkbox v-model="nuevoCampo.required" :Propiedades="{
+                            placeholder: 'Requerido',
+                        }" />
+
+                        <!-- Opciones (para Select/Radio/Checkbox) -->
+                        <div v-if="['Select', 'Radio', 'Checkbox'].includes(nuevoCampo.component)" class="space-y-2">
+                            <label class="block">Opciones (separadas por coma)</label>
+                            <Input @blur="nuevoCampo.options = $event.target.value.split(',').map(o => o.trim())"
+                                class="border rounded p-2 w-full" placeholder="Ej: Hombre,Mujer,Otro" />
+                        </div>
+
+                        <button @click="agregarCampo" class="bg-blue-600 text-white px-4 py-2 rounded">Agregar
+                            Campo</button>
+                    </div>
+
                 </div>
-                                </div>
+            </div>
+            <div class="flex ">
+                <div class="w-full flex justify-center items-center gap-3">
+                    <ButtonForm color="bg-gray-500 " @click="cerrar">
+                        Cancelar
+                    </ButtonForm>
+
+                    <ButtonForm color="bg-blue-500" @click="generarFormulario">
+                        Generar
+                    </ButtonForm>
+                </div>
             </div>
         </div>
     </FondoBlur>

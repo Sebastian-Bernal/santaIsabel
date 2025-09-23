@@ -32,8 +32,8 @@ const components = {
 const seccionActual = ref(0)
 
 function cambiarSeccion(tipo, key) {
-    if(tipo === 'Card'){
-        seccionActual.value = key+1
+    if (tipo === 'Card') {
+        seccionActual.value = key + 1
     }
 }
 
@@ -46,24 +46,33 @@ function cambiarAInicio() {
 <template>
     <component v-if="unref(Propiedades.show)" :is="fondos[Propiedades.fondo]">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
-        :class="[Propiedades.estilos, Propiedades.tamaño]">
+            :class="[Propiedades.estilos, Propiedades.tamaño]">
 
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
-                    <h2 class="text-white font-bold text-2xl">{{ Propiedades.headerModal.titulo}}</h2>
+                    <h2 class="text-white font-bold text-2xl">{{ Propiedades.headerModal.titulo }}</h2>
                     <div class="flex gap-8 text-gray-200 font-semibold">
-                        <span class="text-sm text-gray-300">{{ Propiedades.headerModal.subtitulo}}</span>
+                        <span class="text-sm text-gray-300">{{ Propiedades.headerModal.subtitulo }}</span>
                         <span class="text-sm text-gray-300" v-html="Propiedades.headerModal.html"></span>
                     </div>
 
                 </div>
-                <div v-if="seccionActual === 0" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i v-for="icono in Propiedades.headerModal.acciones" class="hover:text-white cursor-pointer" :class="icono.icon" @click="icono.accion?.()"></i>
-                    <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="Propiedades.cerrarModal"></i>
+                <div v-if="seccionActual === 0"
+                    class="flex h-full items-center justify-center text-xl text-gray-200">
+                    <div v-for="icono in Propiedades.headerModal.acciones" @click="icono.accion?.()"
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
+                        <i class="hover:text-white cursor-pointer" :class="icono.icon"></i>
+                    </div>
+                    <div @click="Propiedades.cerrarModal"
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
+
+                        <i class="fa-solid fa-close hover:text-white cursor-pointer"></i>
+                    </div>
                 </div>
-                <div v-if="seccionActual > 0" class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <i @click="cambiarAInicio" class="fa-solid fa-rotate-left cursor-pointer hover:text-white"></i>
+                <div v-if="seccionActual > 0" @click="cambiarAInicio"
+                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
+                    <i class="fa-solid fa-rotate-left cursor-pointer text-gray-200 hover:text-white"></i>
                 </div>
             </div>
 
@@ -88,7 +97,8 @@ function cambiarAInicio() {
             <div :class="Propiedades.contenedor">
 
                 <component v-for="(component, index) in Propiedades.secciones[seccionActual].componentes" :key="index"
-                    :is="components[component.tipo]"  :Propiedades="component" @click="cambiarSeccion(component.tipo, index)" />
+                    :is="components[component.tipo]" :Propiedades="component"
+                    @click="cambiarSeccion(component.tipo, index)" />
 
                 <slot></slot>
 

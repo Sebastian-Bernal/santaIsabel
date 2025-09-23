@@ -3,6 +3,7 @@ import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
@@ -21,9 +22,8 @@ const props = defineProps({
 
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
+const pacientesStore = usePacientesStore();
 const Citas = ref(props.Propiedades.citas);
-const paciente = ref({});
-const citaSeleccionada = ref({});
 const notificacionesStore = useNotificacionesStore();
 const showNuevaHistoria = ref(false)
 
@@ -115,8 +115,16 @@ async function showObservacion(cita) {
 }
 
 async function activarCita(cita) {
-    paciente.value = cita.id_paciente
-    citaSeleccionada.value = cita
+    const pacientes = await pacientesStore.listPacientes
+
+    const pacienteCita = pacientes.filter(data => {
+        return data.id_paciente === cita.id_paciente
+    })?.[0]; 
+
+    historiasStore.Formulario.HistoriaClinica.name_paciente = cita.name_paciente
+    historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
+    historiasStore.Formulario.HistoriaClinica.No_document_paciente = pacienteCita.No_document
+    historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
     showNuevaHistoria.value = true
 }
 
@@ -127,15 +135,15 @@ async function activarCita(cita) {
         <h2 class="text-xl font-semibold my-2 px-10">{{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
         <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
-            v-for="cita in citasFiltradas" :class="{ 'bg-red-50': cita.estado === 'cancelada' }">
+            v-for="cita in citasFiltradas" :class="{ 'bg-red-50 dark:bg-rose-800': cita.estado === 'cancelada' }">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora }}</h2>
-                    <p class="text-xs text-gray-500">{{ fechaCita }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-200">{{ fechaCita }}</p>
                 </div>
                 <div>
                     <p class="font-semibold">{{ cita.name_paciente }}</p>
-                    <p class="text-sm text-gray-700">{{ cita.servicio }}</p>
+                    <p class="text-sm text-gray-700 dark:text-gray-300">{{ cita.servicio }}</p>
                 </div>
             </div>
             <div class="flex flex-col gap-2">

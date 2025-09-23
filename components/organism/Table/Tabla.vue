@@ -141,7 +141,7 @@ const estiloColumnas = computed(() => {
                     icon: 'fa-solid fa-search',
                     modelValue: busqueda,
                     tamaño: 'w-2/5',
-                    upperCase: true
+                    upperCase: true,
                 }" v-model="busqueda" />
 
                 <div class="w-3/4 flex justify-end gap-5">

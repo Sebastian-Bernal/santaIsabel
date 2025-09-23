@@ -171,7 +171,8 @@ function verItemTratamientoHistoria(item) {
 
 function verItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
-    mapCampos(item, historiasStore.Formulario)
+    const datos = {...item, ...item.signosVitales}
+    mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
 }
 
