@@ -49,7 +49,30 @@ export const useCitasStore = defineStore('Citas', {
             return citas
         },
 
-        borrarFormulario(){
+        async listCitasHoy() {
+            const store = useIndexedDBStore();
+            store.almacen = 'Cita';
+            const citas = await store.leerdatos();
+
+            // Obtener la fecha actual en formato YYYY-MM-DD
+            const hoy = new Date().toISOString().split('T')[0];
+
+            // Filtrar solo las citas con fecha igual a hoy
+            const citasHoy = citas.filter(cita => cita.fecha === hoy);
+
+            // Ordenar por hora
+            citasHoy.sort((a, b) => {
+                const fechaA = new Date(`${a.fecha}T${a.hora}`);
+                const fechaB = new Date(`${b.fecha}T${b.hora}`);
+                return fechaA - fechaB;
+            });
+
+            this.Citas = citasHoy;
+            return citasHoy;
+        },
+
+
+        borrarFormulario() {
             this.Formulario = estructuraCita
         },
 

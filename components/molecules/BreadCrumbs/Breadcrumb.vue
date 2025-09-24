@@ -31,7 +31,7 @@ const breadCrumbs = computed(() => {
             <ol class="flex items-center">
                 <li class="flex items-center">
                     <a :href="props.usuarioRol === 'Admin' ? '/Home' : ''"
-                        class="flex items-center text-sm font-medium text-black hover:text-blue-600 md:text-gray-400 dark:hover:text-white">
+                        class="flex items-center text-sm font-medium text-black hover:text-white md:text-gray-400 dark:hover:text-white">
                         <i class="fa-solid fa-house me-2 text-xs"></i>
                         Inicio
                     </a>
@@ -40,7 +40,7 @@ const breadCrumbs = computed(() => {
                     <div class="flex items-center">
                         <i class="fa-solid fa-angle-right text-gray-500"></i>
                         <nuxt-link :to="crumb.to !== '/Usuarios' && crumb.to !== '/Empresas' && crumb.to !== '/Historial' && crumb.to !== '/Facturacion' ? crumb.to : ''" 
-                            class="text-sm ms-1 font-medium text-black md:text-gray-400 dark:hover:text-white">
+                            class="text-sm ms-1 font-medium text-black md:text-gray-400 hover:text-white">
                             {{ crumb.name }}
                         </nuxt-link>
                     </div>
@@ -70,13 +70,8 @@ li:hover .dropdown {
 }
 
 .dropdown li {
-    color: var(--color-blanco);
-    padding: 5px 10px;
+    padding: 5px 6px;
     cursor: pointer;
-}
-
-.dropdown li:hover {
-    background-color: var(--color-gris-oscuro);
 }
 
 .dropdown::after {

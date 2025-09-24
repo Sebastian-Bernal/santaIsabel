@@ -40,7 +40,8 @@ export class CitasBuilder {
         citas: [],
         tamaño: '',
         estilos: '',
-        show: false,
+        showTodas: false,
+        filtros: []
     }
   }
 
@@ -59,8 +60,13 @@ export class CitasBuilder {
     return this
   }
 
-  setShow(boolean) {
-    this.propiedades.show = boolean
+  setShowTodas(boolean) {
+    this.propiedades.showTodas = boolean
+    return this
+  }
+
+  setFiltros(filtros) {
+    this.propiedades.filtros = filtros
     return this
   }
 

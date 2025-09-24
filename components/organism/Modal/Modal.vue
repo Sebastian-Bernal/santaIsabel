@@ -52,9 +52,9 @@ function cambiarAInicio() {
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
                     <h2 class="text-white font-bold text-2xl">{{ Propiedades.headerModal.titulo }}</h2>
-                    <div class="flex gap-8 text-gray-200 font-semibold">
-                        <span class="text-sm text-gray-300">{{ Propiedades.headerModal.subtitulo }}</span>
-                        <span class="text-sm text-gray-300" v-html="Propiedades.headerModal.html"></span>
+                    <div class="flex text-gray-100 font-medium">
+                        <span class="text-sm text-gray-100">{{ Propiedades.headerModal.subtitulo }}</span>
+                        <span class="text-sm text-gray-100" v-html="Propiedades.headerModal.html"></span>
                     </div>
 
                 </div>

@@ -10,7 +10,7 @@ const props = defineProps({
     SeccionActual: {
         default: 0
     }
-});
+});console.log(props.SeccionActual)
 const varView = useVarView()
 
 function editar() {
@@ -21,16 +21,17 @@ function editar() {
 <template>
     <div
         class="relative w-full flex md:flex-row justify-between items-center gap-2 py-4 px-8 bg-[var(--color-default)] rounded-t-lg">
-        <h2 class="text-white font-bold text-2xl">{{ Propiedades.tituloFormulario }}</h2>
+        <div class="flex flex-col">
+            <h2 class="text-white font-bold text-2xl">{{ Propiedades.tituloFormulario }}</h2>
+            <div class="flex gap-3 pt-1">
+                <p class="flex items-center text-gray-200 text-sm gap-1" v-for="(seccion, index) in Propiedades.secciones"
+                :class="{ 'text-white font-medium': index === props.SeccionActual }">
+                    {{ seccion.nombre }}
+                    <i class="fa-solid fa-angle-right text-gray-300" v-if="index + 1 !== props.Propiedades.secciones.length"></i>
+                </p>
+            </div>
+        </div>
         <div class="flex items-center">
-            <nuxtLink v-for="(seccion, index) in Propiedades.secciones" :key="index" class="flex items-center">
-                <button class="md:w-[40px] md:h-[40px] w-[30px] h-[30px] rounded-full bg-gray-300 text-black"
-                    :class="{ 'bg-blue-500': index === props.SeccionActual }">
-                    {{ index + 1 }}
-                </button>
-                <div v-if="index + 1 !== props.Propiedades.secciones.length"
-                    class="md:w-[30px] w-[8px] h-[5px] rounded-lg bg-gray-300"></div>
-            </nuxtLink>
             <div class="flex items-center ml-5">
                 <div v-if="props.Propiedades?.editarFormulario"
                     class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">

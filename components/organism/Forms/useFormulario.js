@@ -165,11 +165,10 @@ export function useFormulario(props) {
                     notificaciones.mensaje()
                     limpiarLocal()
 
-                    window.location.reload()
-                    // if (respuesta.isConfirmed || respuesta.dismiss) {
-                    //     limpiarLocal()
-                    //     window.location.reload()
-                    // }
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500); // espera el tiempo de la notificación
+
                 }
                 return res
             } catch (err) {

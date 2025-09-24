@@ -6,9 +6,8 @@ export function usePaginacion(datos = ref([]), itemsPorPaginaDefault = 10) {
 
     const totalPaginas = computed(() => {
         const arrayDatos = datos?.value ?? [];
-        Math.ceil(arrayDatos.length / itemsPorPagina.value)
-    }
-    );
+        return Math.ceil(arrayDatos.length / itemsPorPagina.value)
+    });
 
     const cambiarItemsPorPagina = (nuevoValor) => {
         itemsPorPagina.value = parseInt(nuevoValor);

@@ -34,7 +34,7 @@ const {
 } = useColumnasResponsivas(ref(props.Propiedades?.columnas), props.Propiedades.datos?.espacioMargen);
 
 
-// Acomodar datos de menor a mayor segun columna
+// Acomodar datos de menor a mayor segun columna, filtros
 const {
     busqueda,
     filtros,
@@ -131,7 +131,7 @@ const estiloColumnas = computed(() => {
                 </nuxt-link>
             </div>
         </div>
-
+        <!-- Filtos -->
         <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>

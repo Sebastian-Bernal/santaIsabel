@@ -1,5 +1,7 @@
 <script setup>
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
+import Input from '~/components/atoms/Inputs/Input.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -8,16 +10,18 @@ import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
+import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
+import { usePaginacion } from '~/composables/Tabla/usePaginacion';
 
 const props = defineProps({
-  citas: {
-    type: Array,
-    default: () => []
-  },
-  Propiedades: {
-    type: [Array, Object],
-    default: () => []
-  }
+    citas: {
+        type: Array,
+        default: () => []
+    },
+    Propiedades: {
+        type: [Array, Object],
+        default: () => []
+    }
 });
 
 const calendarioCitasStore = useCalendarioCitas();
@@ -41,7 +45,24 @@ const {
     options
 } = notificacionesStore;
 
-const mesActual = ref(parseInt(meses.value) - 1)
+const {
+    busqueda,
+    filtros,
+    filtrosConOpciones,
+    datosOrdenados
+} = useOrdenamiento(props.Propiedades.citas || ref([]), props.Propiedades.filtros);
+
+const {
+    paginaActual,
+    itemsPorPagina,
+    totalPaginas,
+    ultimaPagina,
+    cambiarItemsPorPagina,
+    siguientePagina,
+    paginaAnterior,
+    irAPagina,
+    datosPaginados,
+} = usePaginacion(datosOrdenados);
 
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
@@ -119,7 +140,7 @@ async function activarCita(cita) {
 
     const pacienteCita = pacientes.filter(data => {
         return data.id_paciente === cita.id_paciente
-    })?.[0]; 
+    })?.[0];
 
     historiasStore.Formulario.HistoriaClinica.name_paciente = cita.name_paciente
     historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
@@ -131,15 +152,43 @@ async function activarCita(cita) {
 </script>
 
 <template>
-    <div class="py-5 flex flex-col gap-3 border border-gray-300 dark:border-gray-600 rounded-2xl h-110 overflow-y-auto bg-white dark:bg-gray-700 scrollForm">
-        <h2 class="text-xl font-semibold my-2 px-10">{{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
+    <!-- Header y filtros -->
+    <div v-if="props.Propiedades.showTodas"
+        class="flex justify-between px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
+        <div class="w-1/3">
+            <h2 class="text-xl font-semibold">Registro completo de Citas</h2>
+            <Input :Propiedades="{
+                placeholder: 'Buscar dato en citas...',
+                icon: 'fa-solid fa-search',
+                modelValue: busqueda,
+                tamaño: 'w-full',
+                upperCase: true,
+            }" v-model="busqueda" />
+        </div>
+        <div class="flex gap-3 w-1/3">
+            <Select v-for="(filtro, key) in filtrosConOpciones" :key="key" :Propiedades="{
+                placeholder: 'Todos',
+                label: filtro.placeholder,
+                modelValue: busqueda,
+                tamaño: 'w-full',
+                options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
+            }" v-model="filtros[filtro.columna]" />
+        </div>
+    </div>
+    <!--Citas  -->
+    <div
+        class="py-5 flex flex-col gap-3 border border-gray-300 dark:border-gray-600 rounded-2xl h-110 overflow-y-auto bg-white dark:bg-gray-700 scrollForm">
+        <h2 v-if="!props.Propiedades.showTodas" class="text-xl font-semibold my-2 px-10">{{
+            calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
         <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
-            v-for="cita in citasFiltradas" :class="{ 'bg-red-50 dark:bg-rose-800': cita.estado === 'cancelada' }">
+            v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
+            :class="{ 'bg-red-50 dark:bg-red-950': cita.estado === 'cancelada' }">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora }}</h2>
-                    <p class="text-xs text-gray-500 dark:text-gray-200">{{ fechaCita }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-200">{{ props.Propiedades.showTodas ? cita.fecha :
+                        fechaCita }}</p>
                 </div>
                 <div>
                     <p class="font-semibold">{{ cita.name_paciente }}</p>
@@ -167,10 +216,55 @@ async function activarCita(cita) {
             </div>
         </div>
 
-        <div v-if="citasFiltradas.length < 1" class="w-full py-8 flex justify-center">
+        <div v-if="citasFiltradas.length < 1 || datosOrdenados.length < 1" class="w-full py-8 flex justify-center">
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
+    <!-- Paginador -->
+    <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex justify-between items-center h-[30px] px-10">
+        <p class="text-sm text-gray-500">
+            Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
-    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria"  @ocultar="showNuevaHistoria = false"/>
+        <div class="btnsPagina flex items-center gap-3">
+            <button v-if="paginaActual > 1"
+                class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                @click="paginaAnterior()">
+                <i class="fa-solid fa-angle-left"></i>
+            </button>
+            <div class="flex gap-2 pagina">
+                <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
+                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    {{ paginaActual - 1 }}</h2>
+                <h2
+                    class="bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    {{ paginaActual }}</h2>
+                <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
+                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    {{ paginaActual + 1 }}</h2>
+            </div>
+            <button v-if="paginaActual != totalPaginas"
+                class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                @click="siguientePagina()">
+                <i class="fa-solid fa-angle-right"></i>
+            </button>
+        </div>
+
+        <div class="flex gap-2 items-center">
+            <p class="text-sm text-gray-500">Número de registros</p>
+            <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
+                @change="cambiarItemsPorPagina($event.target.value)">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+    </div>
+    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria" @ocultar="showNuevaHistoria = false" />
 </template>
+
+<style>
+.btnsPagina button {
+    background: linear-gradient(to left, var(--color-default), var(--color-default-700));
+}
+</style>

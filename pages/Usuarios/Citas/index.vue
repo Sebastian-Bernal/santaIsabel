@@ -18,6 +18,7 @@ const calendarioCitasStore = useCalendarioCitas();
 const medicosList = ref([]);
 const pacientesList = ref([]);
 const show = ref(false);
+const showEnFila = ref(false);
 
 onMounted(async () => {
     medicosList.value = await medicosStore.listMedicos;
@@ -97,6 +98,12 @@ function cerrar () {
     show.value = false
 }
 
+// Funciones para manejar visibilidad de Pagina
+const showFila = () => {
+    
+    showEnFila.value = !showEnFila.value
+};
+
 const propiedadesCita = useFormularioCitaBuilder({
     storeId: 'NuevaCita',
     storePinia: 'Citas',
@@ -112,25 +119,52 @@ const propiedadesCita = useFormularioCitaBuilder({
 
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
-const builderCitas = new CitasBuilder()
-const pagina = new ComponenteBuilder()
 
-const propiedades = pagina
+const propiedades = computed(() => {
+    const builderCitas = new CitasBuilder()
+    const pagina = new ComponenteBuilder()
+    pagina
     .setFondo('FondoDefault')
-    .setHeaderPage({
-        titulo: 'Calendario de Citas', 
-        descripcion: 'Visualiza y administra la agenda de citas.',
-        button: [{text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita}]
-    })
-    .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3')
+    .addComponente('Form', propiedadesCita)
+    if(!showEnFila.value){
+        pagina
+        .setHeaderPage({
+            titulo: 'Calendario de Citas', 
+            descripcion: 'Visualiza y administra la agenda de citas.',
+            button: [
+                {text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila},
+                {text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita},
+            ]
+        })
+        .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3')
         .addComponente('Citas', builderCitas
             .setCitas(citas)
+            .setShowTodas(false)
+            .setFiltros([{columna: 'motivo', placeholder: 'Motivo',}, {columna: 'estado', placeholder: 'Estado',}])
         )
         .addComponente('Calendario', builderCalendario
             .setCitas(citas)
         )
-        .addComponente('Form', propiedadesCita)
-    .build()
+    } else if(showEnFila.value){
+        pagina
+        .setHeaderPage({
+            titulo: 'Calendario de Citas', 
+            descripcion: 'Visualiza y administra la agenda de citas.',
+            button: [
+                {text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila},
+                {text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita},
+            ]
+        })
+        .setContenedor('grid grid-cols-1 gap-3')
+        .addComponente('Citas', builderCitas
+            .setCitas(citas)
+            .setShowTodas(true)
+            .setFiltros([{columna: 'motivo', placeholder: 'Motivo',}, {columna: 'estado', placeholder: 'Estado',}])
+        )
+    }
+
+    return pagina.build()
+})
     // console.log(propiedades)
 </script>
 

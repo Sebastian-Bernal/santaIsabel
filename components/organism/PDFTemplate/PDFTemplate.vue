@@ -86,15 +86,19 @@ const cerrar = () => {
                 <div>
                     <h2 class="text-white font-bold text-2xl">Vista Previa PDF</h2>
                 </div>
-                <div class="flex h-full items-center justify-center gap-5 text-xl text-gray-200">
-                    <div class="relative drop">
-                        <i class="fa-solid fa-download hover:text-white cursor-pointer" @click="exportPdf"></i>
-                        <div class="dropdownAjuste absolute left-[-150%] top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
-                            <p class="text-xs" @click="toggleDropdown">Configurar</p>
+                <div class="flex h-full items-center justify-center text-xl text-gray-200">
+                    <div class="relative drop" @mouseleave="cerrarDropdown">
+                        <div @click="exportPdf"
+                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
+                            <i class="fa-solid fa-download hover:text-white cursor-pointer"></i>
+                        </div>
+                        <div
+                            class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300  z-9 gap-2 items-center justify-center rounded-b-lg">
+                            <p class="text-xs px-3 py-3" v-if="!showDropdown" @click="toggleDropdown">Configurar</p>
                             <div v-if="showDropdown"
-                                class="absolute top-8 left-0 w-56 bg-white shadow-lg rounded-lg p-3 z-50 text-gray-700">
+                                class=" w-56 bg-white shadow-lg rounded-lg p-4 z-50 text-gray-700">
                                 <h3 class="font-semibold text-sm mb-2">Configuración PDF</h3>
-        
+
                                 <!-- Formato -->
                                 <label class="flex items-center justify-between mb-2 text-sm">
                                     Formato:
@@ -103,7 +107,7 @@ const cerrar = () => {
                                         <option value="letter">Letter</option>
                                     </select>
                                 </label>
-        
+
                                 <!-- Orientación -->
                                 <label class="flex items-center justify-between mb-2 text-sm">
                                     Orientación:
@@ -112,20 +116,20 @@ const cerrar = () => {
                                         <option value="l">Horizontal</option>
                                     </select>
                                 </label>
-        
+
                                 <!-- Márgenes -->
                                 <label class="flex items-center justify-between mb-2 text-sm">
                                     Márgenes:
                                     <input type="number" v-model="config.margin"
                                         class="border rounded px-1 py-0.5 w-16 text-sm" min="0" /> mm
                                 </label>
-        
+
                                 <!-- Incluir fondo -->
                                 <label class="flex items-center mb-2 text-sm">
                                     <input type="checkbox" v-model="config.background" class="mr-2">
                                     Incluir fondo
                                 </label>
-        
+
                                 <!-- Botón exportar -->
                                 <button class="w-full bg-blue-600 text-white text-sm py-1.5 rounded hover:bg-blue-700"
                                     @click="exportPdf">
@@ -134,7 +138,10 @@ const cerrar = () => {
                             </div>
                         </div>
                     </div>
-                    <i class="fa-solid fa-close hover:text-white cursor-pointer" @click="cerrar"></i>
+                    <div @click="cerrar"
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
+                        <i class="fa-solid fa-close hover:text-white cursor-pointer"></i>
+                    </div>
                 </div>
             </div>
             <!-- Contenido HTML -->

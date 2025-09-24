@@ -5,6 +5,7 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
     const filtros = ref({});
     const menorAMayor = ref(true);
     const columnaOrden = ref('');
+    // const indicePorColumna = ref({});
 
     const sortedItems = (nombreColumna) => {
         if (columnaOrden.value === nombreColumna) {

@@ -42,7 +42,7 @@ onMounted(async () => {
 
     rol.value = sessionStorage.getItem('Rol')
     const Historias = await historiaStore.ultimasHistorias();
-    const citas = await citasStore.listCitas();
+    const citas = await citasStore.listCitasHoy();
     DashboardRol(rol.value, Historias, citas)
     varView.cargando = false;
 });

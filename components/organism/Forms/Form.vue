@@ -72,14 +72,14 @@ function limpiar() {
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full md:px-6 px-2 pt-2">
-                    <h1 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined"
-                        class="md:text-3xl text-xl text-[var(--color-default)] dark:text-white font-bold mb-3 text-center pt-5">
+                    <h2 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined && Propiedades.formulario.tipo !== 'Wizard'"
+                        class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center py-2">
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
-                    </h1>
+                    </h2>
                     <!-- Formulario -->
                     <form autocomplete="off" class="w-full h-full flex justify-center">
                         <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto"
-                            :class="{ 'h-[75%]!': Propiedades.formulario.tipo === 'Wizard' }">
+                            :class="{ 'h-[80%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
                             <div class="w-full md:px-10 px-3 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
                                 :class="Propiedades.formulario.contenedorCampos">
