@@ -109,9 +109,13 @@ const siguienteMes = () => {
     <div class="flex flex-col gap-5 border border-gray-300 rounded-2xl p-5 h-110 overflow-y-auto scrollForm bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white">
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">{{ nombreMes }}</h2>
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-angle-left text-blue-500 cursor-pointer" @click="anteriorMes"></i>
-                <i class="fa-solid fa-angle-right text-blue-500 cursor-pointer" @click="siguienteMes"></i>
+            <div class="flex items-center">
+                <div @click="anteriorMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 cursor-pointer">
+                    <i class="fa-solid fa-angle-left text-blue-500"></i>
+                </div>
+                <div @click="siguienteMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 cursor-pointer">
+                    <i class="fa-solid fa-angle-right text-blue-500"></i>
+                </div>
             </div>
         </div>
         <div class="grid grid-cols-7 gap-3 text-center">

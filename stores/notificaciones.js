@@ -53,6 +53,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 showConfirmButton: false,
                 timer: this.options.tiempo,
                 background: this.options.background,
+                timerProgressBar: true,
                 color: '#fff'
             });
         },

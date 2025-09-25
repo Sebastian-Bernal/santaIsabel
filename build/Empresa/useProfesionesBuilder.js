@@ -38,7 +38,7 @@ export function useProfesionesBuilder({
       component: 'Label',
       text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',
       tamaño: 'w-full md:col-span-2',
-      forLabel: 'eps'
+      forLabel: 'Profesion'
     })
     .addCampo({
       component: 'Input',

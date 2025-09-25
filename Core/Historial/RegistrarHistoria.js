@@ -9,6 +9,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
     datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
+    datos.Analisis.fecha = calendarioStore.fechaActual;
+    
     // Validacion si no se registran medicamentos
     if (datos.Plan_manejo_medicamentos?.length < 1) {
         notificacionesStore.options.icono = 'warning'

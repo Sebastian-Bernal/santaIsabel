@@ -89,8 +89,8 @@ const cerrar = () => {
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div class="relative drop" @mouseleave="cerrarDropdown">
                         <div @click="exportPdf"
-                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-                            <i class="fa-solid fa-download hover:text-white cursor-pointer"></i>
+                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                            <i class="fa-solid fa-download hover:text-white"></i>
                         </div>
                         <div
                             class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300  z-9 gap-2 items-center justify-center rounded-b-lg">
@@ -139,8 +139,8 @@ const cerrar = () => {
                         </div>
                     </div>
                     <div @click="cerrar"
-                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-                        <i class="fa-solid fa-close hover:text-white cursor-pointer"></i>
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                        <i class="fa-solid fa-close hover:text-white"></i>
                     </div>
                 </div>
             </div>

@@ -17,6 +17,8 @@ const campos = { Input, SelectSearch };
 // Variable reactiva array
 const items = ref([...props.modelValue])
 
+const showCampos = ref(false)
+
 watch(() => props.modelValue, (newVal) => {
     items.value = [...newVal]
 })
@@ -24,6 +26,7 @@ watch(() => props.modelValue, (newVal) => {
 
 // Funciones para manejar Inputs
 const addItem = (newItem = null) => {
+    showCampos.value = true
     items.value.push(newItem || props.Propiedades.addItem || {})
     emit('update:modelValue', items.value)
 }
@@ -50,10 +53,12 @@ const updateField = (index, field, value) => {
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
-    <div class="flex justify-between col-span-2">
-        <label v-if="Propiedades.labelGroup" :for="Propiedades.name"
+    <div class="flex flex-col col-span-2 bg-gray-100 p-3 rounded-xl">
+    <div class="flex justify-between">
+        <label v-if="Propiedades.labelGroup" :for="Propiedades.name" @click="showCampos = !showCampos"
             class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
             {{ Propiedades.labelGroup }}
+            <i class="fa-solid text-blue-700 font-bold" :class="{'fa-angle-up':showCampos, 'fa-angle-down': !showCampos}"></i>
         </label>
         <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
             <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)" class="flex items-center cursor-pointer">
@@ -64,25 +69,23 @@ const emit = defineEmits(['update:modelValue']);
             </a>
         </div>
     </div>
-    <div :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
-
+    <div v-if="showCampos  || items.length > 0" :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
         <div v-for="(input, index) in items" :key="index" class="relative my-2" :class="Propiedades.containerCampos">
-            <!-- <component :is="campos[Propiedades.type]" :modelValue="input[Propiedades.campo]"
-                :Propiedades="Propiedades" @input="e => updateField(index, Propiedades.campo, e.target.value)" /> -->
+
             <div v-for="campoDef in Propiedades.campos" :key="campoDef.name" class="mb-2">
                 <component :is="campos[campoDef.type]" :modelValue="input[campoDef.name]" :Propiedades="campoDef"
                     @input="e => updateField(index, campoDef.name, e.target.value)" />
             </div>
-
 
             <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
                 @click="() => removeItem(index)"></i>
         </div>
 
 
-        <div v-if="items.length < 1" class="flex justify-center py-3">
-            <p class="text-gray-500 text-base font-bold">No hay Datos, Agrega un campo.</p>
+        <div v-if="items.length < 1" class="flex justify-center pb-4">
+            <p class="text-gray-400 dark:text-gray-600 text-base font-medium">No hay Datos, Agrega un campo.</p>
         </div>
+    </div>
     </div>
 </template>
 

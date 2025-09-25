@@ -10,7 +10,7 @@ const props = defineProps({
     SeccionActual: {
         default: 0
     }
-});console.log(props.SeccionActual)
+});
 const varView = useVarView()
 
 function editar() {
@@ -33,19 +33,18 @@ function editar() {
         </div>
         <div class="flex items-center">
             <div class="flex items-center ml-5">
-                <div v-if="props.Propiedades?.editarFormulario"
-                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-                    <i class="fa-solid fa-trash text-gray-100 text-xl cursor-pointer"></i>
+                <div v-if="props.Propiedades?.eliminar" @click="props.Propiedades.eliminar?.()"
+                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                    <i class="fa-solid fa-trash text-gray-100 text-xl"></i>
                 </div>
                 <div v-if="props.Propiedades?.editarFormulario" @click="editar"
-                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-
-                    <i class="fa-solid fa-pencil text-gray-100 text-xl cursor-pointer"></i>
+                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
+                    :class="{'bg-[rgba(0,0,0,0.1)] text-white' : !varView.soloVer}">
+                    <i class="fa-solid fa-pencil text-gray-100 text-xl"></i>
                 </div>
                 <div @click="props.cerrar"
-                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-
-                    <i class="fa-solid fa-close text-gray-100 hover:text-white text-xl cursor-pointer"></i>
+                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                    <i class="fa-solid fa-close text-gray-100 hover:text-white text-xl "></i>
                 </div>
             </div>
         </div>

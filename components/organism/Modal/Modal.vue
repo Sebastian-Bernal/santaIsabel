@@ -61,18 +61,17 @@ function cambiarAInicio() {
                 <div v-if="seccionActual === 0"
                     class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div v-for="icono in Propiedades.headerModal.acciones" @click="icono.accion?.()"
-                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-                        <i class="hover:text-white cursor-pointer" :class="icono.icon"></i>
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                        <i class="hover:text-white" :class="icono.icon"></i>
                     </div>
                     <div @click="Propiedades.cerrarModal"
-                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-
-                        <i class="fa-solid fa-close hover:text-white cursor-pointer"></i>
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                        <i class="fa-solid fa-close hover:text-white"></i>
                     </div>
                 </div>
                 <div v-if="seccionActual > 0" @click="cambiarAInicio"
-                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)]">
-                    <i class="fa-solid fa-rotate-left cursor-pointer text-gray-200 hover:text-white"></i>
+                    class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                    <i class="fa-solid fa-rotate-left text-gray-200 hover:text-white"></i>
                 </div>
             </div>
 

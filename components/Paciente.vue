@@ -40,11 +40,8 @@ onMounted(async () => {
     varView.cargando = false;
 });
 
-// Formulario
-const emit = defineEmits(['ocultar'])
-
 function cerrar() {
-  emit('ocultar')
+  varView.showNuevoPaciente = false
 }
 
 async function buscarUsuario (event) {
@@ -82,7 +79,7 @@ const propiedades = computed(() => {
         storePinia: "Pacientes",
         camposRequeridos,
         cerrarModal: cerrar,
-        show: props.showPaciente,
+        show: varView.showNuevoPaciente,
         tipoFormulario: "Wizard",
         buscarUsuario,
         departamentos: municipios.departamentos,

@@ -14,8 +14,10 @@ import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { mapCampos } from "~/components/organism/Forms/useFormulario.js";
 import { CIE10 } from "~/data/CIE10";
 import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
+import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/EliminarPaciente.js";
 
 const varView = useVarView();
+const notificaciones = useNotificacionesStore();
 const pacientesStore = usePacientesStore();
 const usuariosStore = useUsersStore()
 const epsStore = useDatosEPSStore();
@@ -111,6 +113,28 @@ function exportarPDF(data) {
     activePdfPaciente.value = true
 }
 
+async function eliminarPaciente() {
+    const paciente = pacientesStore.Formulario
+
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar Paciente?';
+    notificaciones.options.html = `Se eliminará el paciente: <span>${paciente.InformacionUser.name}</span>`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+    if (respuestaAlert.estado === 'confirmado') {
+        const res = await validarYEnviarEliminarPaciente(paciente)
+        if (res) {
+            options.position = 'top-end';
+            options.texto = "Paciente eliminado con exito.";
+            options.background = '#6bc517'
+            options.tiempo = 1500
+            mensaje()
+            options.background = '#d33'
+        }
+    }
+}
+
 const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
 
 const propiedadesUser = useUserBuilder({
@@ -157,6 +181,7 @@ const propiedades = computed(() => {
         CIE10: CIE10,
         verUser: true,
         soloVer: varView.soloVer,
+        eliminar: eliminarPaciente,
         tipoUsuario: "Paciente",
     });
 

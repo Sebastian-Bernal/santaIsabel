@@ -135,7 +135,7 @@ const estiloColumnas = computed(() => {
         <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
-            <div class="flex items-center justify-between gap-5">
+            <div class="flex items-end justify-between gap-5">
                 <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
                     placeholder: 'Buscar dato en la Tabla...',
                     icon: 'fa-solid fa-search',

@@ -184,7 +184,7 @@ export function useHistoriaBuilder({
             type: 'text',
             id: 'ta',
             name: 'ta',
-            placeholder: 'TA',
+            placeholder: 'TA (90-140/60-90 mmHg)',
             tamaño: 'w-full',
             slot: {
                 tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
@@ -201,7 +201,7 @@ export function useHistoriaBuilder({
             type: 'number',
             id: 'fc',
             name: 'fc',
-            placeholder: 'FC',
+            placeholder: 'FC (60-100 lpm)',
             max: 100,
             tamaño: 'w-full',
             slot: {
@@ -219,7 +219,7 @@ export function useHistoriaBuilder({
             type: 'number',
             id: 'fr',
             name: 'fr',
-            placeholder: 'FR',
+            placeholder: 'FR (12-20 rpm)',
             max: 250,
             tamaño: 'w-full',
             slot: {
@@ -237,7 +237,7 @@ export function useHistoriaBuilder({
             type: 'number',
             id: 't',
             name: 't',
-            placeholder: 'Tº',
+            placeholder: 'Tº (36.1-37.2°C)',
             max: 50,
             tamaño: 'w-full',
             slot: {
@@ -246,20 +246,6 @@ export function useHistoriaBuilder({
             events: {
                 onChange: validarCampo
             }
-        })
-
-        .addCampo({
-            component: 'Label',
-            text: `
-                    <div class="w-full flex md:flex-row flex-col justify-between gap-3 items-center text-orange-400 dark:text-orange-50">
-                        <span class="text-sm font-semibold">TA : 90-140/60-90 mmHg</span>
-                        <span class="text-sm font-semibold">FC : 60-100 lpm</span>
-                        <span class="text-sm font-semibold">FR : 12-20 rpm</span>
-                        <span class="text-sm font-semibold">Tº : 36.1-37.2°C</span>
-                        <span class="text-sm font-semibold">SAT o2 : 90% - 100%</span>
-                    </div>
-                `,
-            tamaño: 'md:col-span-2 bg-orange-50 dark:bg-orange-900 p-5'
         })
 
         // --- Input: Otros ---
@@ -311,7 +297,7 @@ export function useHistoriaBuilder({
             type: 'number',
             id: 'sat',
             name: 'sat',
-            placeholder: 'Sat O2',
+            placeholder: 'Sat O2 (90% - 100%)',
             max: 100,
             tamaño: 'w-full col-span-1',
             slot: {
@@ -483,7 +469,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Procedimientos (opcional)',
             buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { descripcion: '', cantidad: '', mes: '',  id_paciente: id_paciente }}, ],
-            tamaño: 'w-full md:col-span-2 mt-5',
+            tamaño: 'w-full md:col-span-2 mb-5',
             vmodel: 'Plan_manejo_procedimientos',
             value: [],
             campos: [
@@ -525,6 +511,12 @@ export function useHistoriaBuilder({
                 { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
                 { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
             ]
+        })
+
+        .addCampo({
+            component: 'Label',
+            forLabel: 'rehabilitacion',
+            text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo'
         })
     return builder.build()
 }

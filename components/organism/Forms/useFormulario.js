@@ -161,13 +161,13 @@ export function useFormulario(props) {
                     notificaciones.options.background = '#22c55e'
                     notificaciones.options.position = 'top-end'
                     notificaciones.options.texto = '¡Se ha enviado correctamente!'
-                    notificaciones.options.tiempo = 1500
+                    notificaciones.options.tiempo = 1000
                     notificaciones.mensaje()
                     limpiarLocal()
 
                     setTimeout(() => {
                         window.location.reload();
-                    }, 1500); // espera el tiempo de la notificación
+                    }, 1000); // espera el tiempo de la notificación
 
                 }
                 return res

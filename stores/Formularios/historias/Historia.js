@@ -46,7 +46,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             Plan_manejo_procedimientos: [],
             Plan_manejo_insumos: [],
             Plan_manejo_equipos: [],
-            // Cita: {}
+            Cita: {},
         },
         Historias: [],
 

@@ -20,6 +20,7 @@ export function useUserBuilder({
     tipoUsuario,
     verUser,
     soloVer,
+    eliminar
 }) {
 
     const validarContraseña = (event) => {
@@ -40,6 +41,7 @@ export function useUserBuilder({
         .setStorePinia(storePinia)
         .setEditarFormulario(verUser)
         .setSoloVer(soloVer)
+        .setEliminarFormulario(eliminar)
         .setCamposRequeridos(camposRequeridos)
         .setFormulariotamaño('LG')
         .setFormularioTitulo('Datos Usuario')
@@ -119,7 +121,7 @@ export function useUserBuilder({
         // 📌 Sección: Ubicación
         .addCampo({
             component: 'Label',
-            text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Ubicacion',
+            text: '<i class="fa-solid fa-location-dot text-blue-700 mr-1"></i>Ubicacion',
             tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
@@ -185,7 +187,7 @@ export function useUserBuilder({
         // 📌 Sección: Contacto
         .addCampo({
             component: 'Label',
-            text: '<i class="fa-solid fa-phone text-blue-500 mr-1"></i>Datos usuario',
+            text: '<i class="fa-solid fa-phone text-blue-500 mr-1"></i>Contacto',
             tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })
@@ -215,7 +217,7 @@ export function useUserBuilder({
         // 📌 Sección: Usuario
         .addCampo({
             component: 'Label',
-            text: '<i class="fa-solid fa-user-secret text-blue-500 mr-1"></i>Datos usuario',
+            text: '<i class="fa-solid fa-user-secret text-sky-600 mr-1"></i>Datos usuario',
             tamaño: 'w-full md:col-span-2',
             forLabel: 'documento'
         })

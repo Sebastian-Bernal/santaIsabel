@@ -32,12 +32,12 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                 const existente = usuarios.find(u => u.id === contenido.id);
                 if (existente && existente.rol !== contenido.rol) {
                     await store.actualiza({ ...contenido });
-                    ids.User = existente.id;
+                    ids.UserP = existente.id;
                 } else if (!existente) {
-                    ids.User = await store.guardardatosID({ ...contenido });
+                    ids.UserP = await store.guardardatosID({ ...contenido });
                 }
             } else {
-                await store.guardardatos({ ...contenido, id_usuario: ids.User });
+                await store.guardardatos({ ...contenido, id_usuario: ids.UserP });
             }
         }
 

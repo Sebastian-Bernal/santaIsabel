@@ -24,12 +24,12 @@ const props = defineProps({
     }
 });
 
+const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
-const showNuevaHistoria = ref(false)
 
 const {
     fechaActual,
@@ -63,6 +63,13 @@ const {
     irAPagina,
     datosPaginados,
 } = usePaginacion(datosOrdenados);
+
+// Al buscar cambia a primera pagina
+watch(busqueda, (nuevoValor, anteriorValor) => {
+    if (nuevoValor !== anteriorValor) {
+        paginaActual.value = 1;
+    }
+});
 
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
@@ -146,7 +153,9 @@ async function activarCita(cita) {
     historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = pacienteCita.No_document
     historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
-    showNuevaHistoria.value = true
+
+    historiasStore.Formulario.Cita = cita
+    varView.showNuevaHistoria = true
 }
 
 </script>
@@ -154,7 +163,7 @@ async function activarCita(cita) {
 <template>
     <!-- Header y filtros -->
     <div v-if="props.Propiedades.showTodas"
-        class="flex justify-between px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
+        class="flex justify-between items-end px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
         <div class="w-1/3">
             <h2 class="text-xl font-semibold">Registro completo de Citas</h2>
             <Input :Propiedades="{
@@ -216,7 +225,7 @@ async function activarCita(cita) {
             </div>
         </div>
 
-        <div v-if="citasFiltradas.length < 1 || datosOrdenados.length < 1" class="w-full py-8 flex justify-center">
+        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1" class="w-full py-8 flex justify-center">
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
@@ -260,7 +269,7 @@ async function activarCita(cita) {
             </select>
         </div>
     </div>
-    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria" @ocultar="showNuevaHistoria = false" />
+    <Historia v-if="varView.showNuevaHistoria"/>
 </template>
 
 <style>

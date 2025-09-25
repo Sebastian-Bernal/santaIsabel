@@ -1,22 +1,3 @@
-<script setup>
-// import CardRips from '~/components/molecules/Cards/CardRips.vue';
-const { $html2canvas, $jsPDF } = useNuxtApp()
-
-const generatePDF = async () => {
-    const element = document.getElementById('pdf-content')
-    const canvas = await $html2canvas(element, { scale: 2, useCORS: true })
-    const imgData = canvas.toDataURL('image/png')
-    const pdf = new $jsPDF('p', 'mm', 'a4')
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width
-
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
-    pdf.save('documento.pdf')
-}
-
-
-</script>
-
 <template>
     <div class="bg-gray-100 h-[100%] py-8 px-12">
         <div class="flex justify-between items-center mb-8">
@@ -36,14 +17,5 @@ const generatePDF = async () => {
             </div>
         </div>
         
-        <div>
-            <div id="pdf-content">
-                <h1>Hola Nuxt</h1>
-                <p>Este contenido se exportará como PDF.</p>
-            </div>
-            <button @click="generatePDF">Exportar a PDF</button>
-        </div>
-
-        <!-- <CardRips /> -->
     </div>
 </template>

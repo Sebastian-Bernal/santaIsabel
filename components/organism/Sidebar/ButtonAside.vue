@@ -33,9 +33,9 @@ onMounted(() => {
 
             <!-- Desplegable submenu, "down" -->
             <div id="data.id"
-                class="down overflow-y-auto absolute top-full left-[-10%] flex flex-col justify-center items-center z-1 p-[10px] w-[150px] rounded-br-3xl "
+                class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] w-[150px] rounded-br-3xl "
                 :class="[data.tamaño, { 'up': data.showUp }]">
-                <h3 class="p-[5px_10px] cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
+                <h3 class="cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
                     v-for="seccion in data.secciones">
                     <a :href="`/${data.nombre}/${seccion.titulo}`"
                         @click="footer.cambiarSecciones(seccion.subSecciones)">
@@ -62,6 +62,7 @@ button {
     opacity: 0;
     transform: translateX(-10px) translateY(-50%);
     transition: all 0.3s ease;
+    overflow: visible;
 }
 
 .right h3 {
@@ -86,8 +87,6 @@ button {
     background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     transition: all 0.3s ease;
-    /* scrollbar-color: var(--color-default-600) var(--color-gray-300); */
-    /* scrollbar-width: thin; */
     overflow-x: hidden;
 }
 
@@ -101,14 +100,6 @@ button {
 .right:hover .down {
     opacity: 1;
 }
-
-/* .right:hover {
-    border-radius: 0 30px 0 0;
-} */
-
-/* .show-navbar {
-    pointer-events: none;
-} */
 
 .down::-webkit-scrollbar {
     width: 2px;
@@ -167,7 +158,6 @@ button {
         top: 100%;
         bottom: auto;
         border-radius: 0 0 16px 16px;
-        /* ajusta bordes si quieres */
     }
 }
 </style>

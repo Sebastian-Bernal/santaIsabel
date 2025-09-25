@@ -9,6 +9,7 @@ import { useVarView } from "~/stores/varview.js";
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { CIE10 } from '~/data/CIE10';
+import { CUPS } from '~/data/CUPS';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -20,7 +21,6 @@ const onlyWatch = ref(true);
 const pacientesStore = usePacientesStore();
 const pacientesList = ref([])
 const id_paciente = ref(null)
-const showNuevoPaciente = ref(false)
 
 async function llamadatos() {
     const datos = await historiasStore.datosHistoria
@@ -37,11 +37,8 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-const props = defineProps(['showHistoria']);
-const emit = defineEmits(['ocultar'])
-
 function cerrar() {
-  emit('ocultar')
+    varView.showNuevaHistoria = false
 }
 
 function seleccionarPaciente(paciente) {
@@ -125,29 +122,28 @@ async function pacienteExiste(event) {
         notificaciones.options.canceltext = 'No, continuar'
         let resp = await notificaciones.alertRespuesta();
         if (resp === 'confirmado') {
-            showNuevoPaciente.value = true
+            varView.showNuevoPaciente = true
         }
     }
 }
 
-const propiedadesForm = useHistoriaBuilder({
-    storeId: 'RegistrarHistoria',
-    storePinia: 'Historias',
-    cerrarModal: cerrar,
-    show: props.showHistoria,
-    tipoFormulario: 'Wizard',
-    PacientesList: pacientesList,
-    seleccionarPaciente: seleccionarPaciente,
-    CIE10: CIE10,
-    validarCampo,
-    seleccionarCIE_10: seleccionarCIE_10,
-    pacienteExiste,
-    id_paciente: id_paciente,
-});
-
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
 
+    const propiedadesForm = useHistoriaBuilder({
+        storeId: 'RegistrarHistoria',
+        storePinia: 'Historias',
+        cerrarModal: cerrar,
+        show: varView.showNuevaHistoria,
+        tipoFormulario: 'Wizard',
+        PacientesList: pacientesList,
+        seleccionarPaciente: seleccionarPaciente,
+        CIE10: CIE10,
+        validarCampo,
+        seleccionarCIE_10: seleccionarCIE_10,
+        pacienteExiste,
+        id_paciente: id_paciente,
+    });
     pagina
         .setFondo('FondoDefault')
         .addComponente('Form', propiedadesForm)
@@ -159,5 +155,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" />
-    <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
+    <Formularios v-if="varView.showNuevoPaciente" />
 </template>

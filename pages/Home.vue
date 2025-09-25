@@ -33,9 +33,6 @@ const tratamientos = ref([])
 const medicinas = ref([]);
 const showVerHistorial = ref(false)
 
-const showNuevoPaciente = ref(false)
-const showNuevaHistoria = ref(false)
-
 onMounted(async () => {
     varView.cargando = true;
     sessionStorage.removeItem('activeButton');
@@ -48,15 +45,11 @@ onMounted(async () => {
 });
 
 function nuevoPaciente() {
-    showNuevoPaciente.value = true
+    varView.showNuevoPaciente = true
 }
 
 function nuevaHistoria() {
-    showNuevaHistoria.value = true
-}
-
-function cerrarHistoria() {
-    showNuevaHistoria.value = false
+    varView.showNuevaHistoria = true
 }
 
 async function verHistorial() {
@@ -918,6 +911,6 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
-    <Paciente v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
-    <Historia v-if="showNuevaHistoria" :showHistoria="showNuevaHistoria" @ocultar="cerrarHistoria" />
+    <Paciente v-if="varView.showNuevoPaciente"/>
+    <Historia v-if="varView.showNuevaHistoria" />
 </template>

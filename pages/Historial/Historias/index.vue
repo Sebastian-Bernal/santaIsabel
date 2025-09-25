@@ -81,7 +81,6 @@ async function cargaHistorial(id) {
     // Consultas
     analisis.value = []
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica')
-    console.log(historia)
     // Cambiar id por id_historia
     if (Array.isArray(historia) && historia.length > 0 && historia[0].id_temporal) {
         const idTemporal = historia[0].id_temporal;
@@ -138,7 +137,6 @@ async function cargaHistorial(id) {
     )
 
     medicinas.value = medicinasConAnalisis
-    console.log(historiasStore.Formulario)
     // console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
@@ -369,6 +367,7 @@ const propiedades = computed(() => {
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
         const contenido = `
+        <p class="text-start text-base py-2"><strong>Fecha:</strong> ${consulta.fecha}</p>
         <p class="text-start text-xs py-2"><strong>Motivo:</strong> ${consulta.motivo}</p>
         <p class="text-start text-xs py-2"><strong>Analisis:</strong> ${consulta.analisis || ''}</p>
         <p class="text-start text-xs py-2"><strong>Observacion:</strong> ${consulta.observacion || ''}</p>
@@ -377,7 +376,7 @@ const propiedades = computed(() => {
         <hr class="w-full h-5"/>
         `
         return [contenido]
-    })
+    });
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'Verhistoria',
@@ -612,7 +611,7 @@ const propiedades = computed(() => {
                     { titulo: 'nota', value: 'Nota', tamaño: 300 },
                 ])
                 .setDatos(notas)
-                .setAcciones({ icons: [{ icon: 'download', action: exportarNotaPDF }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNotaPDF }], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
             )
             .addComponente('Form', propiedadesNota)

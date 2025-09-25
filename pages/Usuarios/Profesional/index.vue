@@ -11,8 +11,10 @@ import { TablaBuilder } from '~/build/Constructores/ClassTablas';
 import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
+import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/EliminarMedico';
 
 const varView = useVarView();
+const notificaciones = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 const profesionStore = useDatosProfesionStore()
 const usuariosStore = useUsersStore()
@@ -85,6 +87,31 @@ function seleccionarDepartamento(item) {
     // formData.InformacionUser.departamento = item.nombre;
 }
 
+async function eliminarProfesional() {
+    const profesional = medicosStore.Formulario
+
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar Profesional?';
+    notificaciones.options.html = `Se eliminará el profesional: <span>${profesional.InformacionUser.name}</span>`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+    console.log(respuestaAlert)
+    if (respuestaAlert.estado === 'confirmado') {
+        const res = await validarYEnviarEliminarMedico(profesional)
+        console.log(res)
+        if (res) {
+            options.position = 'top-end';
+            options.texto = "Profesional eliminado con exito.";
+            options.background = '#6bc517'
+            options.tiempo = 1500
+            mensaje()
+            options.background = '#d33'
+            window.location.reload()
+        }
+    }
+}
+
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = medicosStore.Formulario.InformacionUser.departamento;
 
@@ -130,7 +157,8 @@ const propiedades = computed(() => {
         seleccionarMunicipio: () => { },
         tipoUsuario: 'Profesional',
         verUser: true,
-        soloVer: varView.soloVer
+        eliminar: eliminarProfesional,
+        soloVer: varView.soloVer,
     });
 
     pagina
