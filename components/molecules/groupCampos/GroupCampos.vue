@@ -53,7 +53,7 @@ const updateField = (index, field, value) => {
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
-    <div class="flex flex-col col-span-2 bg-gray-100 p-3 rounded-xl">
+    <div class="flex flex-col col-span-2 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl">
     <div class="flex justify-between">
         <label v-if="Propiedades.labelGroup" :for="Propiedades.name" @click="showCampos = !showCampos"
             class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">

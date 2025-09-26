@@ -21,7 +21,7 @@ const cambiarEstadoFalse = () => {
 </script>
 
 <template>
-    <div class="section-asidebar m-[10px] ml-[15px] flex items-center">
+    <div v-if="buttons.length > 0" class="section-asidebar m-[10px] ml-[15px] flex items-center">
         <div class="section-asidebar__content flex flex-col items-center rounded-2xl h-[60%]">
 
             <div class="left" @click="cambiarEstadoFalse()">

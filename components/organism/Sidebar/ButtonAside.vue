@@ -33,7 +33,7 @@ onMounted(() => {
 
             <!-- Desplegable submenu, "down" -->
             <div id="data.id"
-                class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] w-[150px] rounded-br-3xl "
+                class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] py-[15px] w-[150px] rounded-br-3xl "
                 :class="[data.tamaño, { 'up': data.showUp }]">
                 <h3 class="cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
                     v-for="seccion in data.secciones">

@@ -20,7 +20,8 @@ export function useUserBuilder({
     tipoUsuario,
     verUser,
     soloVer,
-    eliminar
+    eliminar,
+    validarFecha = () => { }
 }) {
 
     const validarContraseña = (event) => {
@@ -116,6 +117,12 @@ export function useUserBuilder({
             name: 'nacimiento',
             tamaño: 'w-full text-gray-500',
             vmodel: 'InformacionUser.nacimiento',
+            slot: {
+                tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
+            },
+            events: {
+                onChange: validarFecha
+            }
         })
 
         // 📌 Sección: Ubicación
@@ -123,7 +130,7 @@ export function useUserBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-location-dot text-blue-700 mr-1"></i>Ubicacion',
             tamaño: 'w-full md:col-span-2',
-            forLabel: 'documento'
+            forLabel: 'departamento'
         })
         .addCampo({
             component: 'SelectSearch',
@@ -189,7 +196,7 @@ export function useUserBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-phone text-blue-500 mr-1"></i>Contacto',
             tamaño: 'w-full md:col-span-2',
-            forLabel: 'documento'
+            forLabel: 'celular'
         })
         .addCampo({
             component: 'Input',
@@ -219,7 +226,7 @@ export function useUserBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-user-secret text-sky-600 mr-1"></i>Datos usuario',
             tamaño: 'w-full md:col-span-2',
-            forLabel: 'documento'
+            forLabel: 'correo-secret'
         })
         .addCampo({
             component: 'Input',
@@ -271,7 +278,7 @@ export function useUserBuilder({
                 component: 'Label',
                 text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
                 tamaño: 'w-full md:col-span-2',
-                forLabel: 'nombre'
+                forLabel: 'Sexo'
             })
             .addCampo({
                 component: 'Select',
@@ -409,7 +416,7 @@ export function useUserBuilder({
                 component: 'Label',
                 text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Medico',
                 tamaño: 'w-full md:col-span-2',
-                forLabel: 'nombre'
+                forLabel: 'profesion'
             })
             .addCampo({
                 component: 'Select',
@@ -426,7 +433,7 @@ export function useUserBuilder({
                 component: 'Label',
                 text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Ubicación Laboral',
                 tamaño: 'w-full md:col-span-2',
-                forLabel: 'departamento'
+                forLabel: 'listDepartamento'
             })
             .addCampo({
                 component: 'SelectSearch',

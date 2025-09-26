@@ -63,6 +63,41 @@ function seleccionarDepartamento() {
 
 }
 
+function validarFecha(event) {
+    const fecha = new Date(event.target.value);
+    const hoy = new Date();
+
+    let mensajeError = '' 
+    // Calcular edad
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const mes = hoy.getMonth() - fecha.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) {
+        edad--;
+    }
+
+    if (edad < 0 || edad > 100) {
+        mensajeError = "La edad debe estar entre 0 y 100 años";
+    }
+
+    // Validación según tipo de documento
+    if (UsersStore.Formulario.InformacionUser.type_doc === "cedula" && edad < 18) {
+        mensajeError = "Para cédula, la edad mínima es 18 años";
+    }
+
+    if (UsersStore.Formulario.InformacionUser.type_doc === "Tarjeta de identidad" && edad > 17) {
+        mensajeError = "Para tarjeta de identidad, la edad máxima es 17 años";
+    }
+
+    const errorDiv = document.getElementById(`error-fecha`);
+    if (errorDiv) {
+        if (mensajeError) {
+            errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+        } else {
+            errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
+        }
+    }
+}
+
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = UsersStore.Formulario.InformacionUser.departamento;
 
@@ -91,6 +126,7 @@ const propiedades = computed(() => {
         seleccionarDepartamento,
         municipios: municipiosOptions,
         seleccionarMunicipio: () => {},
+        validarFecha,
     });
 
     const propiedadesVerUser = useUserBuilder({
@@ -102,6 +138,7 @@ const propiedades = computed(() => {
         verUser: true,
         soloVer: varView.soloVer,
         tipoUsuario: "Administrador",
+        validarFecha,
     });
 
     return pagina

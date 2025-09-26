@@ -6,7 +6,7 @@ export const validarYEnviarEliminarPaciente = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     const datosAEnviar = { Paciente: {...datos.Paciente, estado: 'inactivo'}, }
-
+console.log(datosAEnviar)
     return await enviarFormulario(datosAEnviar);
 };
 

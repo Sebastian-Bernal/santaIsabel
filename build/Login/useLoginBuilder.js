@@ -25,7 +25,7 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'w-1/6 logo mb-2 select-none',
+      tamaño: 'w-1/5 logo mb-2 select-none',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({
@@ -48,24 +48,24 @@ export function useLoginBuilder({
       vmodel: 'Usuario.correo',
       events: {
         onChange: validaUsuario
-      }
+      },
     })
-    if (selectEmpresa.value) {
-      builder
-        .setFormularioEstilos('bg-inherit! h-[75vh]!')
-        .addCampo({
-          component: 'Select',
-          placeholder: 'Seleccione la Empresa',
-          tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
-          estilo: 'text-white!',
-          vmodel: 'Usuario.empresa',
-          options: opcionesCompañy
-        })
-    } else {
-      builder
-        .setFormularioEstilos('bg-inherit!')
-    }
+  if (selectEmpresa.value) {
     builder
+      .setFormularioEstilos('bg-inherit! h-[75vh]!')
+      .addCampo({
+        component: 'Select',
+        placeholder: 'Seleccione la Empresa',
+        tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
+        estilo: 'text-white!',
+        vmodel: 'Usuario.empresa',
+        options: opcionesCompañy
+      })
+  } else {
+    builder
+      .setFormularioEstilos('bg-inherit! h-[70vh]!')
+  }
+  builder
     .addCampo({
       component: 'Input',
       placeholder: 'Contraseña',

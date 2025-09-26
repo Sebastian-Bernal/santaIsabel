@@ -112,7 +112,7 @@ export function useFormulario(props) {
             } else {
                 const validacion = camposRequeridos(formData)
                 if (validacion) {
-                    mandarFormulario(formData)
+                    mandarFormulario(formData, limpiar)
                 } else {
                     validarform()
                 }
@@ -150,7 +150,7 @@ export function useFormulario(props) {
         notificaciones.mensaje()
     }
 
-    async function mandarFormulario(data) {
+    async function mandarFormulario(data, limpiar) {
         const accion = accionesFormularios[props.Propiedades.content.storeId]
 
         if (typeof accion === 'function') {
@@ -161,14 +161,15 @@ export function useFormulario(props) {
                     notificaciones.options.background = '#22c55e'
                     notificaciones.options.position = 'top-end'
                     notificaciones.options.texto = '¡Se ha enviado correctamente!'
-                    notificaciones.options.tiempo = 1000
+                    notificaciones.options.tiempo = 1500
                     notificaciones.mensaje()
                     limpiarLocal()
 
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000); // espera el tiempo de la notificación
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 1500);
 
+                    limpiar()
                 }
                 return res
             } catch (err) {

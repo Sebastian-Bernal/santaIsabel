@@ -43,6 +43,13 @@ watch(() => show.value,
     }
 );
 
+watch(() => showVer.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true;
@@ -99,6 +106,41 @@ function seleccionarCIE_10(item) {
     // });
 }
 
+function validarFecha(event) {
+    const fecha = new Date(event.target.value);
+    const hoy = new Date();
+
+    let mensajeError = '' 
+    // Calcular edad
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const mes = hoy.getMonth() - fecha.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) {
+        edad--;
+    }
+
+    if (edad < 0 || edad > 100) {
+        mensajeError = "La edad debe estar entre 0 y 100 años";
+    }
+
+    // Validación según tipo de documento
+    if (pacientesStore.Formulario.InformacionUser.type_doc === "cedula" && edad < 18) {
+        mensajeError = "Para cédula, la edad mínima es 18 años";
+    }
+
+    if (pacientesStore.Formulario.InformacionUser.type_doc === "Tarjeta de identidad" && edad > 17) {
+        mensajeError = "Para tarjeta de identidad, la edad máxima es 17 años";
+    }
+
+    const errorDiv = document.getElementById(`error-fecha`);
+    if (errorDiv) {
+        if (mensajeError) {
+            errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+        } else {
+            errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
+        }
+    }
+}
+
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = pacientesStore.Formulario.InformacionUser.departamento;
 
@@ -122,15 +164,20 @@ async function eliminarPaciente() {
     notificaciones.options.confirmtext = 'Si, Eliminar'
     notificaciones.options.canceltext = 'Atras'
     const respuestaAlert = await notificaciones.alertRespuesta()
-    if (respuestaAlert.estado === 'confirmado') {
+    console.log(respuestaAlert)
+    if (respuestaAlert === 'confirmado') {
         const res = await validarYEnviarEliminarPaciente(paciente)
         if (res) {
-            options.position = 'top-end';
-            options.texto = "Paciente eliminado con exito.";
-            options.background = '#6bc517'
-            options.tiempo = 1500
-            mensaje()
-            options.background = '#d33'
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Paciente eliminado con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
+
+            cerrar()
+            await llamadatos();
+            refresh.value++;
         }
     }
 }
@@ -154,6 +201,7 @@ const propiedadesUser = useUserBuilder({
     seleccionarCIE_10,
     CIE10: CIE10,
     tipoUsuario: "Paciente",
+    validarFecha,
 });
 
 // Construccion de pagina
@@ -183,6 +231,7 @@ const propiedades = computed(() => {
         soloVer: varView.soloVer,
         eliminar: eliminarPaciente,
         tipoUsuario: "Paciente",
+        validarFecha,
     });
 
     return pagina
@@ -268,16 +317,14 @@ const propiedades = computed(() => {
                 alto: 24
             })
             .addComponente('Firma', {
-                nombre: 'Camilo Jaramillo'
+                nombre: 'Profesional Medico'
             })
         )
         .build();
 });
 
-
-
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades" />
+    <Pagina :Propiedades="propiedades" :key="refresh" />
 </template>

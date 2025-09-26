@@ -5,7 +5,7 @@ import { useNotificacionesStore } from '~/stores/notificaciones.js'
 export const validarYEnviarNuevaCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
-    return await enviarFormulario(datos);
+    return await enviarFormulario({...datos, estado: 'Inactiva'});
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB

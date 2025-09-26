@@ -34,6 +34,7 @@ const onlyWatch = ref(true);
 const show = ref(false);
 const showItem = ref(false)
 const showNota = ref(false)
+const refresh = ref(1);
 
 const pacientesStore = usePacientesStore();
 const pacientesList = ref([])
@@ -51,6 +52,23 @@ async function llamadatos() {
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
 }
+
+watch(() => show.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
+watch(() => showNota.value,
+    async (nuevoValor) => {
+        if(nuevoValor === false){
+            await llamadatos();
+            refresh.value++;
+            window.location.reload()
+        }
+    }
+);
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
@@ -683,6 +701,6 @@ const propiedades = computed(() => {
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades" />
+    <Pagina :Propiedades="propiedades" :key="refresh"/>
     <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
 </template>

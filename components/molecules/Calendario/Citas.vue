@@ -172,6 +172,7 @@ async function activarCita(cita) {
                 modelValue: busqueda,
                 tamaño: 'w-full',
                 upperCase: true,
+                estilo: 'bg-white dark:bg-gray-900'
             }" v-model="busqueda" />
         </div>
         <div class="flex gap-3 w-1/3">
@@ -180,6 +181,7 @@ async function activarCita(cita) {
                 label: filtro.placeholder,
                 modelValue: busqueda,
                 tamaño: 'w-full',
+                estilo: 'bg-white dark:bg-gray-900',
                 options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
             }" v-model="filtros[filtro.columna]" />
         </div>
@@ -192,7 +194,7 @@ async function activarCita(cita) {
         <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
             v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
-            :class="{ 'bg-red-50 dark:bg-red-950': cita.estado === 'cancelada' }">
+            :class="{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora }}</h2>

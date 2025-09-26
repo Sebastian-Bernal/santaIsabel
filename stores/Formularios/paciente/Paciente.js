@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
+import { useDatosEPSStore } from "../empresa/EPS";
 import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 
 // Pinia Pacientes
@@ -47,11 +48,19 @@ export const usePacientesStore = defineStore('Pacientes', {
         async listPacientes(state) {
             const store = useIndexedDBStore()
             const usersStore = useUsersStore()
+            const epsStore = useDatosEPSStore()
 
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
 
             const usuarios = await usersStore.listUsers
+            const EPSs = await epsStore.listEPS
+
+            const mapaEPS = EPSs.reduce((acc, eps) => {
+                acc[eps.id] = eps.nombre;
+                return acc;
+            }, {});
+
 
             const pacientesActivos = pacientes.filter((paciente) => {
                 return paciente.estado === 'activo'
@@ -65,11 +74,13 @@ export const usePacientesStore = defineStore('Pacientes', {
                     return {
                         ...paciente,
                         ...usuario,
+                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
                         id_paciente: paciente.id // renombramos el id del paciente
                     }
                 } else {
                     return {
                         ...paciente,
+                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
                         usuario: null
                     }
                 }
@@ -121,8 +132,8 @@ export const usePacientesStore = defineStore('Pacientes', {
             console.log(usuarios)
             const UsuariosIndexed = usuarios.map((data) => ({
                 Paciente: {
-                    id: data.patient_id, 
-                    sexo: data.patient_gender, 
+                    id: data.patient_id,
+                    sexo: data.patient_gender,
                     genero: data.patient_gender_identity,
                     poblacionVulnerable: data.patient_vulnerability,
                     Eps: data.patient_eps_id,

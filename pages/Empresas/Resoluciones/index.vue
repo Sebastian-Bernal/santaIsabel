@@ -12,6 +12,12 @@ import { storeToRefs } from 'pinia';
 const storeFacturacion = useFacturacionStore();
 const { listResoluciones } = storeToRefs(storeFacturacion);
 const Resoluciones = ref([]);
+const refresh = ref(1)
+
+async function llamaDatos () {
+    Resoluciones.value = await listResoluciones.value
+    refresh.value++
+}
 
 onMounted(async() => {
     Resoluciones.value = await listResoluciones.value
@@ -54,5 +60,5 @@ console.log(propiedades)
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades"/>
+    <Pagina :Propiedades="propiedades" :key="refresh"/>
 </template>

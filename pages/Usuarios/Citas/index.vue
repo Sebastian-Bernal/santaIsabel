@@ -19,6 +19,18 @@ const medicosList = ref([]);
 const pacientesList = ref([]);
 const show = ref(false);
 const showEnFila = ref(false);
+const refresh = ref(1);
+
+async function llamadatos() {
+    citas.value = await citasStore.listCitas();
+}
+
+watch(() => show.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
 
 onMounted(async () => {
     medicosList.value = await medicosStore.listMedicos;
@@ -169,5 +181,5 @@ const propiedades = computed(() => {
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades"/>
+    <Pagina :Propiedades="propiedades" :key="refresh"/>
 </template>

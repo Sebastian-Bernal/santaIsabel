@@ -13,7 +13,7 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
         if (contexto === "Paciente") {
             if (almacen === "User") {
                 if (!contenido.id) {
-                    ids.User = await store.guardardatosID({ ...contenido });
+                    ids.User = await store.guardardatosID({ ...contenido, estado: 'activo', rol: 'Paciente' });
                 } else {
                     ids.User = contenido.id;
                 }
@@ -34,7 +34,7 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                     await store.actualiza({ ...contenido });
                     ids.UserP = existente.id;
                 } else if (!existente) {
-                    ids.UserP = await store.guardardatosID({ ...contenido });
+                    ids.UserP = await store.guardardatosID({ ...contenido, estado: 'activo', rol: 'Profesional' });
                 }
             } else {
                 await store.guardardatos({ ...contenido, id_usuario: ids.UserP });

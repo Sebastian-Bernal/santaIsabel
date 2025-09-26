@@ -39,7 +39,20 @@ onMounted(async () => {
 
     rol.value = sessionStorage.getItem('Rol')
     const Historias = await historiaStore.ultimasHistorias();
-    const citas = await citasStore.listCitasHoy();
+    let citas = []
+    if(rol.value === 'Admin'){
+        citas = await citasStore.listCitasHoy();
+    } else if (rol.value === 'Profesional'){
+        const listCitas = await citasStore.listCitas();
+        citas = listCitas.filter((cita) => {
+            return cita.name_medico === 'LAURA GARCIA'
+        })
+    } else if (rol.value === 'Paciente'){
+        const listCitas = await citasStore.listCitas();
+        citas = listCitas.filter((cita) => {
+            return cita.name_paciente === 'CAMILO JARAMILLO'
+        })
+    }
     DashboardRol(rol.value, Historias, citas)
     varView.cargando = false;
 });
@@ -54,7 +67,7 @@ function nuevaHistoria() {
 
 async function verHistorial() {
     const usuario = JSON.parse(sessionStorage.getItem('Paciente'))
-
+console.log(usuario)
     const pacientes = await pacienteStore.listPacientes
     const paciente = pacientes.filter((dato) => {
         return dato.id_usuario === usuario.id_usuario
@@ -63,6 +76,7 @@ async function verHistorial() {
     historiaStore.Formulario.HistoriaClinica.name_paciente = paciente.name
     historiaStore.Formulario.HistoriaClinica.No_document_paciente = paciente.No_document
     historiaStore.Formulario.HistoriaClinica.id_paciente = paciente.id_paciente
+
     await cargaHistorial(paciente.id_paciente)
     showVerHistorial.value = true
 }
@@ -280,24 +294,6 @@ function DashboardRol(rol, Historias, citas) {
     } else if (rol === 'Paciente') {
         const paciente = JSON.parse(sessionStorage.getItem('Paciente'))
 
-        ultimosPacientes.value = Historias.map(card => {
-            return {
-                header: {
-                    icon: 'fa-solid fa-user',
-                    title: paciente.name,
-                    subtitle: card.No_document_paciente
-                },
-                body: {
-                    html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
-                },
-                footer: {
-                    status: 'Sin cambios Criticos',
-                    statusClass: 'bg-green-500 text-white font-bolder',
-                    buttons: [{ text: 'Descargar', icon: 'fa-solid fa-download', class: 'text-base bg-blue-100 px-3 rounded-xl' }]
-                }
-            }
-        })
-
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenido, ${paciente.name.toLowerCase()}</h2>
@@ -315,7 +311,7 @@ function DashboardRol(rol, Historias, citas) {
                 header: {
                     html: `<div class="flex flex-col items-center">
                      <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
-                     <p class="text-xs font-thin">Hoy</p>
+                     <p class="text-xs font-thin">${card.fecha}</p>
                      <div/>`,
                     title: paciente.name,
                     subtitle: card.servicio,
@@ -366,24 +362,6 @@ function DashboardRol(rol, Historias, citas) {
     } else if (rol === 'Profesional') {
         const profesional = JSON.parse(sessionStorage.getItem('Profesional'))
 
-        ultimosPacientes.value = Historias.map(card => {
-            return {
-                header: {
-                    icon: 'fa-solid fa-user',
-                    title: profesional.name,
-                    subtitle: card.No_document_paciente
-                },
-                body: {
-                    html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
-                },
-                footer: {
-                    status: 'Sin cambios Criticos',
-                    statusClass: 'bg-green-500 text-white font-bolder',
-                    buttons: [{ text: 'Descargar', icon: 'fa-solid fa-download', class: 'text-base bg-blue-100 px-3 rounded-xl' }]
-                }
-            }
-        })
-
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${profesional.name.toLowerCase()}</h2>
@@ -401,14 +379,14 @@ function DashboardRol(rol, Historias, citas) {
                 header: {
                     html: `<div class="flex flex-col items-center">
                      <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
-                     <p class="text-xs font-thin">Hoy</p>
+                     <p class="text-xs font-thin">${card.fecha}</p>
                      <div/>`,
                     title: card.name_paciente,
                     subtitle: card.servicio,
                 },
-                // body: {
-                //     html: ``
-                // },
+                body: {
+                    text: `${profesional.name}`
+                },
                 footer: {
                     status: card.motivo,
                     statusClass: 'bg-blue-500'
@@ -455,50 +433,50 @@ function DashboardRol(rol, Historias, citas) {
 const stats = [
     {
         header: {
-            title: 'Pacientes Totales',
-            subtitle: '1,234'
+            html: `<div>
+                    <p class="font-semibold">Pacientes totales</p>
+                    <p class="text-sm text-gray-700">1,234</p>
+                    <p class="text-sm py-2">+12% vs. mes anterior</p>
+                </div>`
         },
         body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-users dark:text-white text-gray-900 "></i></div>`
-        },
-        footer: {
-            status: '+12% vs. mes anterior'
+            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-users dark:text-white text-gray-900 text-xl "></i></div>`
         },
     },
     {
         header: {
-            title: 'Consultas Hoy',
-            subtitle: '28'
+            html: `<div>
+                    <p class="font-semibold">Consultas Hoy</p>
+                    <p class="text-sm text-gray-700">28</p>
+                    <p class="text-sm py-2">+8% vs. mes anterior</p>
+                </div>`
         },
         body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file dark:text-white text-gray-900 "></i></div>`
-        },
-        footer: {
-            status: '+8% vs. mes anterior'
+            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file dark:text-white text-gray-900 text-xl"></i></div>`
         },
     },
     {
         header: {
-            title: 'Citas Programadas',
-            subtitle: '45'
+            html: `<div>
+                    <p class="font-semibold">Citas Programadas</p>
+                    <p class="text-sm text-gray-700">45</p>
+                    <p class="text-sm py-2">+15% vs. mes anterior</p>
+                </div>`
         },
         body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-calendar dark:text-white text-gray-900 "></i></div>`
-        },
-        footer: {
-            status: '+15% vs. mes anterior'
+            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-calendar dark:text-white text-gray-900 text-xl"></i></div>`
         },
     },
     {
         header: {
-            title: 'Rips Pendientes',
-            subtitle: '7'
+            html: `<div>
+                    <p class="font-semibold">Rips Pendientes</p>
+                    <p class="text-sm text-gray-700">7</p>
+                    <p class="text-sm py-2">-6% vs. mes anterior</p>
+                </div>`
         },
         body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file dark:text-white text-gray-900 "></i></div>`
-        },
-        footer: {
-            status: '-6% vs. mes anterior'
+            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file-medical dark:text-white text-gray-900 text-xl"></i></div>`
         },
     }
 ];
@@ -562,7 +540,7 @@ const propiedades = computed(() => {
                 .setcontenedorCards('flex flex-col')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg')
                 .setheaderTitle('Pacientes Recientes')
-                .setheaderHtml(`<a href="Historial/Historias" class="text-xs text-blue-500">Ver Todos</a>`)
+                .setheaderHtml(`<a href="Historial/Historias" class="text-xs text-blue-500 hover:text-blue-700">Ver Todos</a>`)
                 .build()
             )
             .addComponente('Card', cardsCitas
@@ -571,7 +549,7 @@ const propiedades = computed(() => {
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas de Hoy')
-                .setheaderHtml(`<a href="Usuarios/Citas" class="text-xs text-blue-500">Ver Agenda</a>`)
+                .setheaderHtml(`<a href="Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )
             .addComponente('Card', cardsAcciones
@@ -595,10 +573,10 @@ const propiedades = computed(() => {
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
                 .setcontenedorCards('flex flex-col')
-                .setContenedor('area-infoCitas')
+                .setContenedor('area-info')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas Proximas')
-                .setheaderHtml(`<a href="" class="text-xs text-blue-500">Ver Agenda</a>`)
+                .setheaderHtml(`<a href="" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )
             .addComponente('Card', cardsAcciones
@@ -888,7 +866,7 @@ const propiedades = computed(() => {
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
                 .setcontenedorCards('flex flex-col')
-                .setContenedor('area-infoCitas')
+                .setContenedor('area-info')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas Proximas')
                 .setheaderHtml(`<a href="" class="text-xs text-blue-500">Ver Agenda</a>`)

@@ -35,6 +35,7 @@ const fechaActualFormateada = computed(() => {
 const removeStorage = () => {
     sessionStorage.removeItem('seccionesGuardadas')
 };
+
 </script>
 
 <template>
@@ -53,8 +54,8 @@ const removeStorage = () => {
             <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
-                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs">
-                        <i class="fa-solid fa-calendar text-gray-200"></i>
+                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs text-gray-100 hover:text-blue-500">
+                        <i class="fa-solid fa-calendar"></i>
                         <p class="text-black md:text-white">{{fechaActualFormateada }}</p>
                     </a>
                 </li>
@@ -66,7 +67,7 @@ const removeStorage = () => {
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
-                    <p class="text-xs ml-2 md:block hidden">{{ usuario }}</p>
+                    <p class="text-xs ml-1 font-semibold md:block hidden">{{ usuario }}</p>
                 </li>
             </ul>
 

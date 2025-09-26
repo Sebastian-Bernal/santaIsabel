@@ -142,6 +142,7 @@ const estiloColumnas = computed(() => {
                     modelValue: busqueda,
                     tamaño: 'w-2/5',
                     upperCase: true,
+                    estilo: 'bg-white dark:bg-gray-900'
                 }" v-model="busqueda" />
 
                 <div class="w-3/4 flex justify-end gap-5">
@@ -150,6 +151,7 @@ const estiloColumnas = computed(() => {
                         label: filtro.placeholder,
                         modelValue: busqueda,
                         tamaño: 'w-1/4',
+                        estilo: 'bg-white dark:bg-gray-900',
                         options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
                     }" v-model="filtros[filtro.columna]" />
                 </div>

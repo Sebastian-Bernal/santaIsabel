@@ -32,9 +32,9 @@ const fondos = {
     FondoTransparent,
 };
 
-// watch(tablaStore.Formulario, (newValue) => {
-//    console.log(newValue)
-// }, {deep: true})
+//  watch(tablaStore.Formulario, (newValue) => {
+//     console.log(newValue)
+//  }, {deep: true})
 
 // Traer datos del localStorage
 onMounted(() => {
@@ -66,7 +66,7 @@ function limpiar() {
 
 </script>
 <template>
-    <component :is="fondos[Propiedades.formulario.fondo]" @click="limpiar()"
+    <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
