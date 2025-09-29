@@ -21,7 +21,8 @@ export function useUserBuilder({
     verUser,
     soloVer,
     eliminar,
-    validarFecha = () => { }
+    validarFecha = () => { },
+    validarTipoDoc = ()=>{},
 }) {
 
     const validarContraseña = (event) => {
@@ -97,6 +98,9 @@ export function useUserBuilder({
                 { text: 'RC', value: 'RC' },
             ],
             vmodel: 'InformacionUser.type_doc',
+            events: {
+                onChange: validarTipoDoc
+            }
         })
         .addCampo({
             component: 'Input',

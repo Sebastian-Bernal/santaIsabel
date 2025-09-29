@@ -34,6 +34,7 @@ export const useSeccionFooter = defineStore('subSecciones', {
         },
         cambiarIdActivo (pagina) {
             this.idActivo = pagina
+            // sessionStorage.setItem('seccionId', this.idActivo)
         }
     }
 })

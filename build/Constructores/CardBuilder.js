@@ -11,6 +11,8 @@ export class CardBuilder {
             },
             tamaño: '',
             estilos: '',
+            showFiltros: false,
+            filtros: [],
             // show: false,
         }
     }
@@ -52,6 +54,16 @@ export class CardBuilder {
 
     setheaderSubTitle(subtitle) {
         this.propiedades.header.subtitle = subtitle
+        return this
+    }
+
+    setShowFiltros(boolean) {
+        this.propiedades.showFiltros = boolean
+        return this
+    }
+
+    setFiltros(filtros) {
+        this.propiedades.filtros = filtros
         return this
     }
 

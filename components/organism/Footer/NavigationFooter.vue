@@ -14,11 +14,11 @@ onMounted(() => {
 
 <template>
     <div class="containerNavFooter flex w-full items-center">
-        <h2 v-for="(pagina, key) in subSeccion"
+        <nuxt-link :to="pagina.ruta" v-for="(pagina, key) in subSeccion"
             class="subSeccion cursor-pointer text-gray-500 py-[10px] min-w-[200px] flex justify-center text-xs md:text-base hover:bg-[rgba(0,0,0,0.3)] hover:text-white"
-            :class="{ 'active': footer.idActivo == pagina }" @click="footer.cambiarIdActivo(pagina)">
-            <nuxt-link :to="pagina.ruta">{{ pagina.titulo }}</nuxt-link>
-        </h2>
+            :class="{ 'active': footer.idActivo === pagina }" @click="footer.cambiarIdActivo(pagina)">
+            {{ pagina.titulo }}
+        </nuxt-link>
     </div>
 </template>
 

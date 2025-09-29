@@ -129,7 +129,17 @@ export const buttons = ref([
         nombre: "Historial",
         secciones: [
             {
-                titulo: "Historias"
+                titulo: "Historias",
+                subSecciones: [
+                    {
+                        titulo: 'Historias',
+                        ruta: '/Historial/Historias'
+                    },
+                    {
+                        titulo: 'Consultas',
+                        ruta: '/Historial/Historias/Consultas'
+                    }
+                ]
             },
         ],
         icon: "fa-file",
