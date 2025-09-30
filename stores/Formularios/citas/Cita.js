@@ -35,19 +35,37 @@ export const useCitasStore = defineStore('Citas', {
         },
 
         async listCitas() {
-            const store = useIndexedDBStore()
-            store.almacen = 'Cita'
-            const citas = await store.leerdatos()
+            const store = useIndexedDBStore();
+            store.almacen = 'Cita';
+            let citas = await store.leerdatos();
 
+            // Ordenar por fecha y hora
             citas.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);
                 const fechaB = new Date(`${b.fecha}T${b.hora}`);
-                return fechaA - fechaB; // Orden descendente
+                return fechaA - fechaB;
             });
 
-            this.Citas = citas
-            return citas
+            // Filtrar por id_medico si el rol es Profesional
+            const rol = sessionStorage.getItem('Rol');
+            // Cambiar por ID
+            if (rol === 'Profesional') {
+                const idProfesional = JSON.parse(sessionStorage.getItem('Profesional')).name;
+                citas = citas.filter(cita => {
+                    return cita.name_medico === idProfesional
+                });
+            }
+            if (rol === 'Paciente') {
+                const idPaciente = JSON.parse(sessionStorage.getItem('Paciente')).name;
+                citas = citas.filter(cita => {
+                    return cita.name_paciente === idPaciente
+                });
+            }
+
+            this.Citas = citas;
+            return citas;
         },
+
 
         async listCitasHoy() {
             const store = useIndexedDBStore();
@@ -78,3 +96,4 @@ export const useCitasStore = defineStore('Citas', {
 
     }
 });
+

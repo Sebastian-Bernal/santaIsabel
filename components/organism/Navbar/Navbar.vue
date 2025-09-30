@@ -42,7 +42,7 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a :href="usuarioRol === 'Admin' ? '/Home' : ''" class="text-white text-xl font-extrabold ml-3">
+            <a :href="usuarioRol === 'Paciente' ? '' : '/Home'" class="text-white text-xl font-extrabold ml-3">
                 <i class="fa-solid fa-laptop-medical text-2xl"></i>
                 Thesalus
             </a>

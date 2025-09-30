@@ -35,13 +35,13 @@ onMounted(() => {
             <div id="data.id"
                 class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] py-[15px] w-[150px] rounded-br-3xl "
                 :class="[data.tamaño, { 'up': data.showUp }]">
-                <h3 class="cursor-pointer text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
-                    v-for="seccion in data.secciones">
-                    <a :href="`/${data.nombre}/${seccion.titulo}`"
+                <a class="cursor-pointer w-full text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
+                    v-for="seccion in data.secciones" :href="`/${data.nombre}/${seccion.titulo}`"
                         @click="footer.cambiarSecciones(seccion.subSecciones)">
+                    <span>
                         {{ seccion.titulo }}
-                    </a>
-                </h3>
+                    </span>
+                </a>
             </div>
 
         </div>
@@ -94,6 +94,7 @@ button {
     bottom: 100%;
     top: auto;
     border-radius: 0 16px 0 0;
+    padding-bottom: 10px;
     /* ajusta bordes si quieres */
 }
 

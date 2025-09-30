@@ -42,6 +42,7 @@ export function useFormularioCitaBuilder({
       options: pacientesList,
       opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
       seleccionarItem: seleccionarPaciente,
+      upperCase: true
     })
     .addCampo({
       component: 'Label',

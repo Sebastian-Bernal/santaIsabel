@@ -213,7 +213,7 @@ const propiedades = computed(() => {
                 descripcion: 'Visualiza y administra el historial de consultas.',
                 button: [
                     { text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: cambiarCard },
-                    { text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: cambiarCard },
+                    { text: 'Agregar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: ()=>{} },
                 ]
             })
             .addComponente('Tabla', tablaConsultas
@@ -247,7 +247,7 @@ const propiedades = computed(() => {
                 descripcion: 'Visualiza y administra el historial de consultas.',
                 button: [
                     { text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: cambiarCard },
-                    { text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: cambiarCard },
+                    { text: 'Agregar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: ()=>{} },
                 ]
             })
             .addComponente('Card', cardsConsultas

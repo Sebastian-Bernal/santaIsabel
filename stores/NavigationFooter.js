@@ -5,7 +5,7 @@ import { defineStore } from "pinia";
 export const useSeccionFooter = defineStore('subSecciones', {
     state: () => ({
         secciones: null,
-        idActivo: ''
+        idActivo: 1
     }),
     getters: {
         // Obtiene el primer valor de secciones
@@ -33,8 +33,8 @@ export const useSeccionFooter = defineStore('subSecciones', {
             sessionStorage.removeItem('seccionesGuardadas')
         },
         cambiarIdActivo (pagina) {
-            this.idActivo = pagina
-            // sessionStorage.setItem('seccionId', this.idActivo)
+            this.idActivo = parseInt(pagina)
+            sessionStorage.setItem('seccionIdActivo', this.idActivo)
         }
     }
 })

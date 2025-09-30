@@ -50,7 +50,7 @@ export const validarYEnviarLogin = async (datos) => {
 
         usuarioStore.Permisos = permisosProfesion
 
-        sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion) || JSON.stringify(secciones));
+        sessionStorage.setItem('Permisos', JSON.stringify(permisosProfesion) || JSON.stringify(['Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion','Pacientes','Citas']));
         sessionStorage.setItem('Rol', 'Profesional');
         sessionStorage.setItem('Profesional', JSON.stringify(usuarioValido))
     }
@@ -73,23 +73,23 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            let options = {
-                metodo: 'POST',
-                url: config.public.login,
-                body: {
-                    email: datos.correo,
-                    password: datos.contraseña
-                },
-            }
-            const respuesta = await api.functionCall(options)
-            if (respuesta) {
-                sessionStorage.setItem('token', respuesta.access_token)
-                sessionStorage.setItem('name', respuesta.user_name)
-                sessionStorage.setItem('Usuario', datos.correo)
-                return true
-            } else {
-                return false
-            }
+            // let options = {
+            //     metodo: 'POST',
+            //     url: config.public.login,
+            //     body: {
+            //         email: datos.correo,
+            //         password: datos.contraseña
+            //     },
+            // }
+            // const respuesta = await api.functionCall(options)
+            // if (respuesta) {
+            //     sessionStorage.setItem('token', respuesta.access_token)
+            //     sessionStorage.setItem('name', respuesta.user_name)
+            //     sessionStorage.setItem('Usuario', datos.correo)
+            //     return true
+            // } else {
+            //     return false
+            // }
             return true
         } catch (error) {
             console.error('Fallo al enviar. Intenta en otro momento', error);

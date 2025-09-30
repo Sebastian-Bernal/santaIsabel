@@ -110,10 +110,10 @@ const siguienteMes = () => {
         <div class="flex justify-between items-center">
             <h2 class="text-2xl font-semibold">{{ nombreMes }}</h2>
             <div class="flex items-center">
-                <div @click="anteriorMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 cursor-pointer">
+                <div @click="anteriorMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
                     <i class="fa-solid fa-angle-left text-blue-500"></i>
                 </div>
-                <div @click="siguienteMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 cursor-pointer">
+                <div @click="siguienteMes" class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer">
                     <i class="fa-solid fa-angle-right text-blue-500"></i>
                 </div>
             </div>

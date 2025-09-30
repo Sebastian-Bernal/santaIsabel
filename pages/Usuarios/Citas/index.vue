@@ -34,7 +34,12 @@ watch(() => show.value,
 
 onMounted(async () => {
     medicosList.value = await medicosStore.listMedicos;
-    pacientesList.value = await pacientesStore.listPacientes;
+    const rol = sessionStorage.getItem('Rol')
+    if(rol === 'Profesional'){
+        pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
+    } else {
+        pacientesList.value = await pacientesStore.listPacientes;
+    }
     citas.value = await citasStore.listCitas();
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 });

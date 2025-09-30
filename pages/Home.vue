@@ -2,6 +2,7 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
 import Historia from '~/components/Historia.vue';
+import Cita from '~/components/Cita.vue';
 
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
@@ -36,6 +37,7 @@ const showVerHistorial = ref(false)
 onMounted(async () => {
     varView.cargando = true;
     sessionStorage.removeItem('activeButton');
+    sessionStorage.removeItem('seccionIdActivo')
 
     rol.value = sessionStorage.getItem('Rol')
     const Historias = await historiaStore.ultimasHistorias();
@@ -67,7 +69,7 @@ function nuevaHistoria() {
 
 async function verHistorial() {
     const usuario = JSON.parse(sessionStorage.getItem('Paciente'))
-console.log(usuario)
+
     const pacientes = await pacienteStore.listPacientes
     const paciente = pacientes.filter((dato) => {
         return dato.id_usuario === usuario.id_usuario
@@ -185,6 +187,10 @@ async function exportarHistoriaPDF() {
 
 function buscarHistoria() {
     location.href = 'Historial/Historias'
+}
+
+function nuevaCita() {
+    varView.showNuevaCita = true
 }
 
 function DashboardRol(rol, Historias, citas) {
@@ -341,7 +347,7 @@ function DashboardRol(rol, Historias, citas) {
                 header: {
                     icon: 'fa-solid fa-search text-white',
                     iconBg: 'bg-inherit',
-                    title: 'Consultas',
+                    title: 'Historial',
                     subtitle: 'Visualiza tus consultas medicas',
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!',
@@ -365,12 +371,21 @@ function DashboardRol(rol, Historias, citas) {
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${profesional.name.toLowerCase()}</h2>
-                        <p class="text-base font-bold text-gray-200">Aqui encontraras informacion acerca tus citas y pacientes</p>`,
+                        <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca tus citas y pacientes</p>
+
+                    `,
                 title: ``,
             },
             footer: {
                 status: `Profesion: Odontologia`,
-                statusClass: 'bg-white text-blue-700 font-black!'
+                statusClass: 'bg-gray-100 text-blue-700 font-black!',
+                buttons: [
+                    {
+                        text: 'Actualizar Informacion',
+                        class: 'text-xs font-semibold bg-gray-100 dark:bg-gray-800 p-1 px-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 cursor.pointer',
+                        icon: 'fa-solid fa-file'
+                    }
+                ]
             }
         }]
 
@@ -404,6 +419,7 @@ function DashboardRol(rol, Historias, citas) {
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
+                accion: nuevaCita
             },
             {
                 header: {
@@ -414,7 +430,7 @@ function DashboardRol(rol, Historias, citas) {
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!',
                 },
-                accion: verHistorial
+                accion: buscarHistoria
             },
             {
                 header: {
@@ -563,25 +579,29 @@ const propiedades = computed(() => {
     }
     else if (rol.value === 'Paciente') {
         paginaBase
+            .setHeaderPage({
+                titulo: 'Dashboard',
+                descripcion: 'Resumen de actividad del sistema de historias clínicas.',
+            })
             .addComponente('Card', cardsState
                 .setCards(cardPaciente)
                 .setContenedor('area-status')
                 .setcontenedorCards('')
-                .setTamaño('flex flex-row justify-between h-[100px] bg-blue-600! rounded-lg')
+                .setTamaño('flex flex-row justify-between h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 rounded-lg')
                 .build()
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
                 .setcontenedorCards('flex flex-col')
-                .setContenedor('area-info')
+                .setContenedor('area-info bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas Proximas')
-                .setheaderHtml(`<a href="" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
+                .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )
             .addComponente('Card', cardsAcciones
                 .setCards(actions)
-                .setContenedor('area-actions')
+                .setContenedor('area-actions bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl h-fit')
                 .setcontenedorCards('flex flex-col area-actions')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
                 .setheaderTitle('Acciones Rapidas')
@@ -856,25 +876,29 @@ const propiedades = computed(() => {
     }
     else if (rol.value === 'Profesional') {
        paginaBase
+            .setHeaderPage({
+                titulo: 'Dashboard',
+                descripcion: 'Resumen de actividad del sistema de historias clínicas.',
+            })
             .addComponente('Card', cardsState
                 .setCards(cardPaciente)
                 .setContenedor('area-status')
                 .setcontenedorCards('')
-                .setTamaño('flex flex-row justify-between h-[100px] bg-blue-600! rounded-lg')
+                .setTamaño('flex flex-row justify-between h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 rounded-lg')
                 .build()
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
                 .setcontenedorCards('flex flex-col')
-                .setContenedor('area-info')
+                .setContenedor('area-info bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas Proximas')
-                .setheaderHtml(`<a href="" class="text-xs text-blue-500">Ver Agenda</a>`)
+                .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500">Ver Agenda</a>`)
                 .build()
             )
             .addComponente('Card', cardsAcciones
                 .setCards(actions)
-                .setContenedor('area-actions')
+                .setContenedor('area-actions bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl h-fit')
                 .setcontenedorCards('flex flex-col area-actions')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
                 .setheaderTitle('Acciones Rapidas')
@@ -891,4 +915,5 @@ const propiedades = computed(() => {
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
     <Paciente v-if="varView.showNuevoPaciente"/>
     <Historia v-if="varView.showNuevaHistoria" />
+    <Cita v-if="varView.showNuevaCita"/>
 </template>

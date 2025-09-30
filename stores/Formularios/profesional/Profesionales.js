@@ -59,6 +59,7 @@ export const useMedicosStore = defineStore('Medicos', {
                 return {
                     ...medico,
                     ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
+                    id_profesional: medico.id
                 }
             })
 

@@ -4,6 +4,7 @@ import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
 import { useDatosEPSStore } from "../empresa/EPS";
 import { getAll } from "~/composables/Formulario/useIndexedDBManager";
+import { useCitasStore } from "../citas/Cita";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -46,6 +47,11 @@ export const usePacientesStore = defineStore('Pacientes', {
 
     getters: {
         async listPacientes(state) {
+            const rol = sessionStorage.getItem('Rol')
+            if (rol === 'Profesional') {
+                return await this.listPacientesAtendidos()
+            }
+
             const store = useIndexedDBStore()
             const usersStore = useUsersStore()
             const epsStore = useDatosEPSStore()
@@ -61,10 +67,10 @@ export const usePacientesStore = defineStore('Pacientes', {
                 return acc;
             }, {});
 
-
             const pacientesActivos = pacientes.filter((paciente) => {
                 return paciente.estado === 'activo'
             })
+
 
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientesActivos.map((paciente) => {
@@ -144,6 +150,71 @@ export const usePacientesStore = defineStore('Pacientes', {
             // UsuariosIndexed.map((item) => {
             //     guardarEnDB(item)
             // })
+        },
+
+        async listPacientesAtendidos(filtrar = true) {
+            const store = useIndexedDBStore()
+            const usersStore = useUsersStore()
+            const epsStore = useDatosEPSStore()
+
+            store.almacen = 'Paciente'
+            const pacientes = await store.leerdatos()
+
+            const usuarios = await usersStore.listUsers
+            const EPSs = await epsStore.listEPS
+
+            const mapaEPS = EPSs.reduce((acc, eps) => {
+                acc[eps.id] = eps.nombre;
+                return acc;
+            }, {});
+
+            const pacientesActivos = pacientes.filter((paciente) => {
+                return paciente.estado === 'activo'
+            })
+
+            let pacientesFiltrados = pacientesActivos;
+
+            const rol = sessionStorage.getItem('Rol')
+            if (rol === 'Profesional' && filtrar) {
+                const citasStore = useCitasStore();
+                // Asegúrate de que listCitas sea una función async
+                const citas = await citasStore.listCitas();
+
+                const pacientesAtendidos = [
+                    ...new Set(
+                        citas
+                            .filter(cita => cita.name_medico === 'LAURA GARCIA')
+                            .map(cita => cita.id_paciente)
+                    )
+                ];
+
+                pacientesFiltrados = pacientesActivos.filter(paciente =>
+                    pacientesAtendidos.includes(paciente.id)
+                );
+            }
+
+            // Asociar cada paciente con su usuario correspondiente
+            const usuariosPacientes = pacientesFiltrados.map((paciente) => {
+                const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
+
+                if (usuario) {
+                    return {
+                        ...paciente,
+                        ...usuario,
+                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        id_paciente: paciente.id // renombramos el id del paciente
+                    }
+                } else {
+                    return {
+                        ...paciente,
+                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        usuario: null
+                    }
+                }
+            })
+
+            this.Pacientes = usuariosPacientes
+            return usuariosPacientes
         },
 
     }
