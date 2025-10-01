@@ -1,4 +1,3 @@
-import { createFormStore } from '../../createFormStore';
 import { useIndexedDBStore } from '~/stores/indexedDB';
 import { traerdatosEPS } from '~/Core/Empresa/Datos/DatosEPS';
 import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
@@ -36,12 +35,6 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
     },
 
     actions: {
-
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraDatosEPS) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
         async indexDBDatos() {
             const eps = await traerdatosEPS()

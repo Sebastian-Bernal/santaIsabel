@@ -187,14 +187,14 @@ async function activarCita(cita) {
         </div>
     </div>
     <!--Citas  -->
-    <div
+    <div :class="props.Propiedades.estilos"
         class="py-5 flex flex-col gap-3 border border-gray-300 dark:border-gray-600 rounded-2xl h-110 overflow-y-auto bg-white dark:bg-gray-700 scrollForm">
         <h2 v-if="!props.Propiedades.showTodas" class="text-xl font-semibold my-2 px-10">{{
             calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
         <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
             v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
-            :class="{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }">
+            :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora }}</h2>

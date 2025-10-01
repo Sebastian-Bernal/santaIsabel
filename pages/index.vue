@@ -3,7 +3,7 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { ref, onMounted } from 'vue';
 import { useVarView } from '~/stores/varview';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario'
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
 import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
@@ -62,7 +62,6 @@ async function validaUsuario(event) {
 }
 
 function recuperarContraseña() {
-    // varView.showRecuperarContraseña = true
     show.value = true
 }
 
@@ -76,12 +75,10 @@ function validarCodigo() {
 
 async function enviarCodigo(data) {
     stateCodigo.value = await validarYEnviarRecuperarContraseña(data)
-    console.log(stateCodigo.value)
 }
 
 
 // Builder Pagina
-
 const propiedadesLogin = computed(() => {
     const pagina = new ComponenteBuilder()
     const propiedadesForm = useLoginBuilder({
@@ -114,3 +111,22 @@ const propiedadesLogin = computed(() => {
 <template>
     <Pagina :Propiedades="propiedadesLogin" />
 </template>
+
+<style>
+.logo {
+    animation: aparecerLogo 1s;
+}
+
+@keyframes aparecerLogo {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+}
+</style>

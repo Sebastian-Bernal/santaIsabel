@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { createFormStore } from '../../createFormStore'
 import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
 import { useDatosEPSStore } from "../empresa/EPS";
@@ -111,11 +110,6 @@ export const usePacientesStore = defineStore('Pacientes', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = []) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
         async listDatos(id, Tabla) {
             // Traer datos de indexedDB

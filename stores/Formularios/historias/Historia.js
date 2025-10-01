@@ -1,4 +1,3 @@
-import { createFormStore } from '../../createFormStore';
 import { usePacientesStore } from '../paciente/Paciente';
 import { useIndexedDBStore } from '~/stores/indexedDB';
 
@@ -87,12 +86,6 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraHistoria) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
-
         async cargarHistorias() {
             const store = useIndexedDBStore();
             store.almacen = 'HistoriaClinica';

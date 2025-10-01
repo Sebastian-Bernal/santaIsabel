@@ -1,8 +1,5 @@
-import { createFormStore } from '../../createFormStore';
-// Creacion del store para nueva cita medica
-
-// Estructura de datos de Citas
-const estructuraCita = {
+// Estructura de datos de Empresa
+const estructura = {
     Empresa: {
         nombre: '',
         logo: '',
@@ -30,8 +27,8 @@ const estructuraCita = {
 // Pinia Empresa
 export const useEmpresaStore = defineStore('Empresa', {
     state: () => ({
-        Formulario: estructuraCita,
-        Empresa: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
+        Formulario: estructura,
+        Empresa: JSON.parse(JSON.stringify(estructura)), // estructura base compartida
         EmpresaData: []
     }),
 
@@ -40,11 +37,5 @@ export const useEmpresaStore = defineStore('Empresa', {
     },
 
     actions: {
-
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraCita) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        }
     }
 });

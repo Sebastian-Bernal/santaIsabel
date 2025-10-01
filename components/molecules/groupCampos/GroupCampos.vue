@@ -1,6 +1,8 @@
 <script setup>
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
+import Select from '~/components/atoms/Selects/Select.vue';
+import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
 import SelectSearch from '~/components/atoms/Selects/SelectSearch.vue';
 // Propiedades
 const props = defineProps({
@@ -11,18 +13,13 @@ const props = defineProps({
     modelValue: [String, Number, Object]
 });
 
-// Distitntos tipos de Inputs
-const campos = { Input, SelectSearch };
-
-// Variable reactiva array
-const items = ref([...props.modelValue])
-
+const campos = { Input, SelectSearch, Select, SelectMultiple }; // Distitntos tipos de Inputs
+const items = ref([...props.modelValue]) // Variable reactiva array
 const showCampos = ref(false)
 
 watch(() => props.modelValue, (newVal) => {
     items.value = [...newVal]
 })
-
 
 // Funciones para manejar Inputs
 const addItem = (newItem = null) => {
@@ -54,6 +51,7 @@ const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
     <div class="flex flex-col col-span-2 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl">
+    <!-- Header -->
     <div class="flex justify-between">
         <label v-if="Propiedades.labelGroup" :for="Propiedades.name" @click="showCampos = !showCampos"
             class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
@@ -69,6 +67,8 @@ const emit = defineEmits(['update:modelValue']);
             </a>
         </div>
     </div>
+    
+    <!-- Campos -->
     <div v-if="showCampos  || items.length > 0" :class="[{ relative: !!props.Propiedades.icon }, Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
         <div v-for="(input, index) in items" :key="index" class="relative my-2" :class="Propiedades.containerCampos">
 
@@ -77,7 +77,7 @@ const emit = defineEmits(['update:modelValue']);
                     @input="e => updateField(index, campoDef.name, e.target.value)" />
             </div>
 
-            <i class="fa-solid fa-close absolute right-2 top-2 text-red-500 hover:text-red-700"
+            <i class="fa-solid fa-close absolute right-2 top-3 text-red-500 hover:text-red-700 cursor-pointer"
                 @click="() => removeItem(index)"></i>
         </div>
 
@@ -86,6 +86,7 @@ const emit = defineEmits(['update:modelValue']);
             <p class="text-gray-400 dark:text-gray-600 text-base font-medium">No hay Datos, Agrega un campo.</p>
         </div>
     </div>
+
     </div>
 </template>
 

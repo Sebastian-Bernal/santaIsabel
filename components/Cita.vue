@@ -2,7 +2,7 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue'
 
 import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder'
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario'
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';

@@ -1,4 +1,3 @@
-import { createFormStore } from '../../createFormStore';
 import { useUsersStore } from "../usuarios/Users";
 
 // Pinia Medicos
@@ -81,10 +80,5 @@ export const useMedicosStore = defineStore('Medicos', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraMedico) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        }
     }
 });

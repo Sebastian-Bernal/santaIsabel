@@ -1,4 +1,3 @@
-import { createFormStore } from '../../createFormStore';
 import { useIndexedDBStore } from '~/stores/indexedDB';
 
 // Pinia NotasClinicas
@@ -33,11 +32,6 @@ export const useNotasStore = defineStore('Notas', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraNota) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
     }
 });

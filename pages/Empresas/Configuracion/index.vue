@@ -5,7 +5,7 @@ import { useDatosEmpresaBuilder } from '~/build/Empresa/useDatosEmpresaBuilder';
 import { useDatosSofwareBuilder } from '~/build/Empresa/useDatosSoftwareBuilder';
 import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
 import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 
 
 function mostrarCantidadCaracteres(event) {
@@ -59,7 +59,7 @@ const propiedades = pagina
     .addComponente('Form', propiedadesEquivalente)
     .build()
 
-// console.log(propiedades)
+
 </script>
 
 <template>

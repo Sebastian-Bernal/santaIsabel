@@ -1,6 +1,5 @@
 <template>
     <a href="#" class=" items-center text-sm font-medium hidden md:block">
-        <!-- <img :src="icon" class="w-5 h-5 me-2.5"> -->
         <i class="fa-solid text-xl" :class="icon"></i>
     </a>
     <ul class="dropdown absolute top-[50px] ml-[-60px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999">

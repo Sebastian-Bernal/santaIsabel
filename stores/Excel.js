@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { useIndexedDBStore } from "~/stores/indexedDB";
-import { usePacientesStore } from "./Formularios/paciente/Paciente";
 
 // Store para loader
 export const useExcelExport = defineStore('exportExcel', {

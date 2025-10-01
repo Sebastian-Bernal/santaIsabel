@@ -6,7 +6,7 @@ import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
 import { useHistoriaBuilder } from '~/build/Historial/useHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { CIE10 } from '~/data/CIE10';
 import { CUPS } from '~/data/CUPS';

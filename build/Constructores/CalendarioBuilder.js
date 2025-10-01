@@ -2,10 +2,8 @@
 export class CalendarioBuilder {
   constructor() {
     this.propiedades = {
-        citas: [],
-        tamaño: '',
-        estilos: '',
-        show: false,
+        citas: [], // Lista de Citas
+        estilos: '', // CSS Componente
     }
   }
 
@@ -14,18 +12,8 @@ export class CalendarioBuilder {
     return this
   }
 
-  setTamaño(tamaño) {
-    this.propiedades.tamaño = tamaño
-    return this
-  }
-
   setEstilos(estilos) {
     this.propiedades.estilos = estilos
-    return this
-  }
-
-  setShow(boolean) {
-    this.propiedades.show = boolean
     return this
   }
 
@@ -37,11 +25,11 @@ export class CalendarioBuilder {
 export class CitasBuilder {
   constructor() {
     this.propiedades = {
-        citas: [],
-        tamaño: '',
-        estilos: '',
-        showTodas: false,
-        filtros: []
+        citas: [], // Lista de citas
+        tamaño: '', // CSS cita
+        estilos: '', // CSS contenedor
+        showTodas: false, // Mostrar Todas las Citas
+        filtros: [] // Filtros por valor
     }
   }
 

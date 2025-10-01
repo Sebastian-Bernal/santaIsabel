@@ -6,8 +6,8 @@ import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { useVarView } from "../../stores/varview.js";
 import { storeToRefs } from "pinia";
-import { ComponenteBuilder } from "~/build/Constructores/ClassFormulario.js";
-import { TablaBuilder } from "~/build/Constructores/ClassTablas.js";
+import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
+import { TablaBuilder } from "~/build/Constructores/TablaBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
@@ -70,6 +70,7 @@ const agregarPaciente = () => {
     show.value = true;
 };
 
+// Visibilidad modal ver Paciente
 const verPaciente = (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
     pacientesStore.Formulario.Paciente.id = paciente.id_paciente
@@ -84,6 +85,7 @@ function cerrar() {
     varView.soloVer = true
 }
 
+// Funciones del formulario paciente
 async function buscarUsuario(event) {
     const document = event.target.value
     const usuarios = await usuariosStore.listUsers
@@ -98,12 +100,7 @@ async function buscarUsuario(event) {
 
 }
 
-function seleccionarCIE_10(item) {
-    // formData.Diagnosticos.push({
-    //     id: '',
-    //     CIE_10: item.description,
-    //     codigo: item.code
-    // });
+function seleccionarCIE_10() {
 }
 
 function validarFecha(event) {
@@ -188,6 +185,7 @@ const municipiosOptions = computed(() => {
     return departamento ? departamento.municipios : [];
 });
 
+// Funciones dle formulario ver paciente
 function exportarPDF(data) {
     propiedadesPDF.value = { ...data, }
 
@@ -245,7 +243,6 @@ const propiedadesUser = useUserBuilder({
 });
 
 // Construccion de pagina
-
 const propiedades = computed(() => {
     const builderTabla = new TablaBuilder();
     const pagina = new ComponenteBuilder();

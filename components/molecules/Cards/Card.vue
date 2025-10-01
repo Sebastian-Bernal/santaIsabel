@@ -9,6 +9,7 @@ const props = defineProps({
 
 <template>
     <div class="flex flex-col" :class="Propiedades.contenedor">
+        <!-- Header -->
         <div v-if="Propiedades.header && Propiedades.header.title" class="py-5 flex justify-between">
             <div>
                 <h3 class="text-xl font-bold">{{ Propiedades.header.title }}</h3>
@@ -18,6 +19,7 @@ const props = defineProps({
                 <span v-html="Propiedades.header.html"></span>
             </div>
         </div>
+        <!-- Card -->
         <div class="space-y-4" :class="Propiedades.contenedorCards">
             <div v-for="(card, i) in unref(props.Propiedades.cards)" @click="card.accion"
                 class="w-full p-4 shadow-md bg-white dark:bg-gray-700 flex flex-col gap-4" :class="Propiedades.tamaño">

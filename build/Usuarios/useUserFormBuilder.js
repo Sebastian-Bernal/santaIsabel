@@ -1,5 +1,5 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 
 export function useUserBuilder({
     storeId,
@@ -21,7 +21,7 @@ export function useUserBuilder({
     verUser,
     soloVer,
     eliminar,
-    validarFecha = () => { },
+    validarFecha = () => {},
     validarTipoDoc = ()=>{},
 }) {
 
@@ -46,7 +46,6 @@ export function useUserBuilder({
         .setEliminarFormulario(eliminar)
         .setCamposRequeridos(camposRequeridos)
         .setFormulariotamaño('LG')
-        .setFormularioTitulo('Datos Usuario')
     if (verUser) {
         builder
             .setFormularioTituloFormulario('Modificar Usuario')

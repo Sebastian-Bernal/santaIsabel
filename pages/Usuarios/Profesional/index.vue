@@ -6,8 +6,8 @@ import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
-import { TablaBuilder } from '~/build/Constructores/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
@@ -28,7 +28,7 @@ const showVer = ref(false)
 async function llamadatos() {
     medicos.value = await listMedicos.value;
 }
-
+// Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async () => {
     llamadatos()
     refresh.value++
@@ -58,16 +58,16 @@ const modificarMedico = (medico) => {
     showVer.value = true;
 };
 
-// Formulario
-const agregarMedico = () => {
-    show.value = true;
-};
-
 function cerrar() {
     show.value = false
     showVer.value = false
     varView.soloVer = false
 }
+
+// Funciones de formularios
+const agregarMedico = () => {
+    show.value = true;
+};
 
 async function buscarUsuario(event) {
     const document = event.target.value
@@ -174,7 +174,6 @@ const propiedadesUser = useUserBuilder({
 
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
-
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()

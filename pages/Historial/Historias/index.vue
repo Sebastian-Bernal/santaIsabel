@@ -7,8 +7,8 @@ import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
 import { useHistoriaBuilder } from '~/build/Historial/useHistoriaBuilder';
 import { useVerHistoriaBuilder } from '~/build/Historial/useVerHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
-import { TablaBuilder } from '~/build/Constructores/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { ModalBuilder } from '~/build/Constructores/ModalBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
@@ -52,7 +52,7 @@ async function llamadatos() {
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
 }
-
+// Watchers para actualizar informacion
 watch(() => show.value,
     async () => {
         await llamadatos();
@@ -80,12 +80,12 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-// funcion para controlar la visibilidad del formulario de nueva historia clinica
+// visibilidad nueva historia clinica
 const agregarHistoria = () => {
     show.value = true
 };
 
-
+// visibilidad ver Historial
 const verHistoria = async (his) => {
     await cargaHistorial(his.id)
     historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
@@ -158,7 +158,7 @@ async function cargaHistorial(id) {
     // console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
-
+// Funciones cerrar modales
 function cerrar() {
     show.value = false
 }
@@ -167,6 +167,11 @@ function cerrarModalVer() {
     showItem.value = false
 }
 
+function cerrarModal() {
+    mapCamposLimpios(historiasStore.Formulario)
+    showVerHistorial.value = false
+}
+// Visibilidad modal items
 function verItemMedicamentoHistoria(item) {
     formularioItem.value = 'Medicamento'
     mapCampos(item, historiasStore.Formulario)
@@ -191,7 +196,7 @@ function verItemConsultasHistoria(item) {
     mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
 }
-
+// Visibilidad notas
 function nuevaNota() {
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
     notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
@@ -199,6 +204,10 @@ function nuevaNota() {
     showNota.value = true
 }
 
+function cerrarNota() {
+    showNota.value = false
+}
+// PDF
 async function exportarNotaPDF(data) {
     // mapCampos(data, notasStore.Formulario)
     const pacientes = await pacientesStore.listPacientes
@@ -224,10 +233,7 @@ async function exportarHistoriaPDF() {
     activePdfHistoria.value = true
 }
 
-function cerrarNota() {
-    showNota.value = false
-}
-
+// Funciones Formulario historia
 function seleccionarPaciente(paciente) {
     historiasStore.Formulario.HistoriaClinica.type_doc_paciente = paciente.type_doc
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = paciente.No_document
@@ -294,21 +300,6 @@ function validarCampo(event) {
     }
 }
 
-function estadoSemaforo(fila) {
-    if (fila.tipoAnalisis === 'Estado clinico sin cambios') {
-        return 'Verde'
-    } else if (fila.tipoAnalisis === 'Recomendaciones Adicionales') {
-        return 'Naranja'
-    } else {
-        return 'Rojo'
-    }
-}
-
-function cerrarModal() {
-    mapCamposLimpios(historiasStore.Formulario)
-    showVerHistorial.value = false
-}
-
 async function pacienteExiste(event) {
     const nombre = event.target.value
 
@@ -337,6 +328,16 @@ const fechaFormateada = () => {
     const fechaActual = `${dia}/${mes}/${año}`
 
     return fechaActual
+}
+
+function estadoSemaforo(fila) {
+    if (fila.tipoAnalisis === 'Estado clinico sin cambios') {
+        return 'Verde'
+    } else if (fila.tipoAnalisis === 'Recomendaciones Adicionales') {
+        return 'Naranja'
+    } else {
+        return 'Rojo'
+    }
 }
 
 const propiedadesForm = useHistoriaBuilder({

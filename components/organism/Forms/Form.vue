@@ -79,7 +79,7 @@ function limpiar() {
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full md:px-6 py-4">
-                    <h2 v-if="Propiedades.formulario && Propiedades.formulario.titulo !== undefined && Propiedades.formulario.tipo !== 'Wizard'"
+                    <h2 v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
                         class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center py-2">
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                     </h2>

@@ -3,8 +3,8 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { useEpsBuilder } from '~/build/Empresa/useEpsBuilder'
 import { useProfesionesBuilder } from '~/build/Empresa/useProfesionesBuilder'
-import { TablaBuilder } from '~/build/Constructores/ClassTablas';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { secciones } from '~/data/Buttons';
@@ -17,7 +17,6 @@ const varView = useVarView();
 
 const EPSdata = ref([]);
 const Profesiones = ref([]);
-
 const showModificarProfesion = ref(false)
 
 onMounted(async () => {
@@ -51,6 +50,7 @@ const propiedadesVerProfesion = useProfesionesBuilder({
     cerrar
 })
 
+// Funciones Actualizar Profesion
 function actualizarProfesion (profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id

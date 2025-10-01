@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue'
 import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';

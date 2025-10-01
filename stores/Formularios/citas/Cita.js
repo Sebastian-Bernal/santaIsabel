@@ -1,6 +1,3 @@
-import { createFormStore } from '../../createFormStore';
-// Creacion del store para nueva cita medica
-
 // Estructura de datos de Citas
 const estructuraCita = {
     Cita: {
@@ -28,11 +25,6 @@ export const useCitasStore = defineStore('Citas', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraCita) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
         async listCitas() {
             const store = useIndexedDBStore();

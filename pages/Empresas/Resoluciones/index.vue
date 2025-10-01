@@ -2,12 +2,11 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { useDatosResolucionBuilder } from '~/build/Empresa/useDatosResolucionBuilder';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
-import { TablaBuilder } from '~/build/Constructores/ClassTablas';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useFacturacionStore } from '~/stores/Formularios/empresa/Facturacion';
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-
 
 const storeFacturacion = useFacturacionStore();
 const { listResoluciones } = storeToRefs(storeFacturacion);
@@ -22,7 +21,6 @@ async function llamaDatos () {
 onMounted(async() => {
     Resoluciones.value = await listResoluciones.value
 });
-
 
 // Formularios Configuracion Empresa
 const propiedadesResolucion = useDatosResolucionBuilder({
@@ -56,7 +54,7 @@ const propiedades = pagina
     )
     .build()
 
-console.log(propiedades)
+// console.log(propiedades)
 </script>
 
 <template>

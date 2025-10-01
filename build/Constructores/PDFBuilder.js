@@ -1,8 +1,8 @@
 export class PdfBuilder {
     constructor() {
         this.config = {
-            elementId: null,
-            isActive: false,
+            elementId: null, // ID Componente padre html
+            isActive: false, 
             storePinia: '',
             margin: 10,
             orientation: "p",

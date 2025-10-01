@@ -4,7 +4,7 @@ import Pagina from "~/components/organism/Pagina/Pagina.vue";
 import { ref, onMounted, } from "vue";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
 import { storeToRefs } from "pinia";
-import { ComponenteBuilder } from "~/build/Constructores/ClassFormulario.js";
+import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";

@@ -1,5 +1,5 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 
 export function useFormularioCitaBuilder({
   storeId,
@@ -20,7 +20,6 @@ export function useFormularioCitaBuilder({
     .setStorePinia(storePinia)
     .setFormularioShow(show)
     .setFormulariotamaño('XS')
-    .setFormularioTitulo('Agendar Cita')
     .setBotones([
       { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
       { text: 'Guardar', color: 'bg-blue-500', type: 'enviar' },

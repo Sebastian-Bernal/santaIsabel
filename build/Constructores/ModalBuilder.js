@@ -1,21 +1,20 @@
 export class ModalBuilder {
     constructor() {
         this.propiedades = {
-            componentes: [],
-            secciones: [],
+            componentes: [], // Componentes ej. (Tabla, Form)
+            secciones: [], // // Secciones o páginas del model; debe inicializarse con al menos una
             seccionActual: [],
-            fondo: '',
-            tamaño: '',
-            estilos: '',
-            layout: '',
-            show: '',
-            cerrarModal: '',
+            fondo: '', // Componente fondo ej. "FondoBlur"
+            tamaño: '', // "LG", "XS", "SM"
+            estilos: '', // CSS
+            show: '', // Visibilidad Formulario 
+            cerrarModal: '', // Funcion cerrar modal
             header: {
                 titulo: '',
                 descripcion: '',
                 button: [],
             },
-            headerModal: {},
+            headerModal: {}, // Header del Modal
             contenedor: '',
         };
     }
@@ -49,11 +48,6 @@ export class ModalBuilder {
 
     setHeaderModal(header) {
         this.propiedades.headerModal = header
-        return this
-    }
-
-    setLayout(layout) {
-        this.propiedades.layout = layout
         return this
     }
 

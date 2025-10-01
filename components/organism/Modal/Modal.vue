@@ -47,7 +47,7 @@ function cambiarAInicio() {
     <component v-if="unref(Propiedades.show)" :is="fondos[Propiedades.fondo]">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
             :class="[Propiedades.estilos, Propiedades.tamaño]">
-
+            <!-- Header Modal -->
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
@@ -74,7 +74,7 @@ function cambiarAInicio() {
                     <i class="fa-solid fa-rotate-left text-gray-200 hover:text-white"></i>
                 </div>
             </div>
-
+            <!-- Titulos -->
             <div v-if="Propiedades.header.titulo !== ''" class="md:pb-8 pb-4 flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-semibold">{{ Propiedades.header.titulo }}</h2>
@@ -92,7 +92,7 @@ function cambiarAInicio() {
 
                 </div>
             </div>
-
+            <!-- Componentes -->
             <div :class="Propiedades.contenedor">
 
                 <component v-for="(component, index) in Propiedades.secciones[seccionActual].componentes" :key="index"

@@ -1,96 +1,25 @@
-export class ComponenteBuilder {
-  constructor() {
-    this.propiedades = {
-      fondo: '',
-      estilos: '',
-      layout: '',
-      header: {
-        titulo: '',
-        descripcion: '',
-        button: [],
-      },
-      contenedor: '',
-      componentes: [],
-    }
-  }
-
-  setFondo(fondo = 'FondoDefault') {
-    this.propiedades.fondo = fondo
-    return this
-  }
-
-  setEstilos(estilos) {
-    this.propiedades.estilos = estilos
-    return this
-  }
-
-  setLayout(layout) {
-    this.propiedades.layout = layout
-    return this
-  }
-
-  setHeaderPage(header) {
-    this.propiedades.header = header
-    return this
-  }
-
-  setContenedor(contenedor) {
-    this.propiedades.contenedor = contenedor
-    return this
-  }
-
-  addComponente(tipo, input) {
-    let componente;
-
-    // Si el input tiene un método build, asumimos que es un builder
-    if (input && typeof input.build === 'function') {
-      componente = input.build();
-    } else if (input && typeof input === 'object') {
-      // Si ya es un objeto, lo usamos directamente
-      componente = input;
-    } else {
-      throw new Error('El componente debe ser un objeto o tener un método build()');
-    }
-
-    componente.tipo = tipo;
-    this.propiedades.componentes.push(componente);
-    return this;
-
-  }
-
-  build() {
-    return this.propiedades
-  }
-
-
-}
-
-
 // Clase base para construir formularios completos
 export class FormularioBuilder {
   constructor() {
     this.propiedades = {
       formulario: {
-        fondo: true,
-        contenedorCampos: '',
-        estilos: '',
-        botones: [],
-        tamañoForm: '',
-        titulo: '',
-        tipo: '',
-        tituloFormulario: '',
-        secciones: [],
-        show: false,
-        soloVer: false,
-        editarFormulario: false,
-        eliminar: null,
+        fondo: true,  // Fondo Blur por defecto
+        contenedorCampos: '', // class Contenedor de campos
+        estilos: '', // class Modal
+        botones: [], // Lista de botones que se mostrarán en el formulario
+        tamañoForm: '', // "LG", "XS", "SM"
+        tipo: '', // "Wizard"
+        tituloFormulario: '', // Titulo en formulario Wizard
+        secciones: [], // Secciones o páginas del formulario; debe inicializarse con al menos una
+        show: false, // Visibilidad del formulario
+        soloVer: false, // Campos disabled (no se pueden editar)
+        editarFormulario: false, // Campos editables (disabled cambiable)
+        eliminar: null, // Funcion de eliminar
       },
       content: {
-        storeId: '',
-        storePinia: '',
-        camposRequeridos: '',
-        modelValue: null,
-        formulario: '',
+        storeId: '', // Identificador de la acción en el módulo accionesFormulario
+        storePinia: '', // Nombre del store de pinia asociado
+        camposRequeridos: '', // Lista de campos requeridos
       },
       seccionActual: []
     }
@@ -153,11 +82,6 @@ export class FormularioBuilder {
     return this
   }
 
-  setFormularioTitulo(titulo) {
-    this.propiedades.formulario.titulo = titulo
-    return this
-  }
-
   setFormularioShow(show) {
     this.propiedades.formulario.show = show
     return this
@@ -175,16 +99,6 @@ export class FormularioBuilder {
 
   setFormularioSecciones(secciones) {
     this.propiedades.formulario.secciones = secciones
-    return this
-  }
-
-  setContentModelValue(value) {
-    this.propiedades.content.modelValue = value
-    return this
-  }
-
-  setContentFormulario(nombre) {
-    this.propiedades.content.formulario = nombre
     return this
   }
 
@@ -208,12 +122,10 @@ export class FormularioBuilder {
     return this;
   }
 
-
   build() {
     return this.propiedades
   }
 }
-
 
 
 const tamañosDisponibles = {

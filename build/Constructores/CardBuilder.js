@@ -1,19 +1,15 @@
 export class CardBuilder {
     constructor() {
         this.propiedades = {
-            cards: [],
-            contenedorCards: '',
-            contenedor: '',
-            header: {
+            cards: [], // Lista de Cards
+            contenedorCards: '', // CSS
+            contenedor: '', // CSS
+            header: { // Header carta
                 title: '',
                 subtitle: '',
                 html: ''
             },
-            tamaño: '',
-            estilos: '',
-            showFiltros: false,
-            filtros: [],
-            // show: false,
+            tamaño: '', // CSS card
         }
     }
 
@@ -37,11 +33,6 @@ export class CardBuilder {
         return this
     }
 
-    setEstilos(estilos) {
-        this.propiedades.estilos = estilos
-        return this
-    }
-
     setheaderHtml(html) {
         this.propiedades.header.html = html
         return this
@@ -54,16 +45,6 @@ export class CardBuilder {
 
     setheaderSubTitle(subtitle) {
         this.propiedades.header.subtitle = subtitle
-        return this
-    }
-
-    setShowFiltros(boolean) {
-        this.propiedades.showFiltros = boolean
-        return this
-    }
-
-    setFiltros(filtros) {
-        this.propiedades.filtros = filtros
         return this
     }
 

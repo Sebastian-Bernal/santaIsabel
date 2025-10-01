@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
-import { createFormStore } from '../../createFormStore'
 
-// Pinia Usuarios
+// Pinia Usuario
 export const useUsuariosStore = defineStore('Usuario', {
     state: () => ({
         Formulario: {
@@ -21,11 +20,6 @@ export const useUsuariosStore = defineStore('Usuario', {
     },
 
     actions: {
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraUsuario) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
         async getUsuario() {
             if (typeof window === 'undefined') {

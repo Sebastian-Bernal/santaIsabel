@@ -3,9 +3,9 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { municipios } from '~/data/municipios';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario';
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
-import { TablaBuilder } from '~/build/Constructores/ClassTablas';
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { storeToRefs } from 'pinia';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
 
@@ -21,7 +21,7 @@ const tipoUsuario = ref('Administrador')
 async function llamadatos() {
     Users.value = await listUsers.value;
 }
-
+// Actualizar pagina cunso se agrega Nuevo Usuario
 watch(() => varView.showNuevoUser, async () => {
     await llamadatos()
     refresh.value++
@@ -35,6 +35,7 @@ onMounted(async () => {
     varView.cargando = false
 });
 
+// Visibilidad Formulario
 const nuevoUser = () => {
     show.value = true
 }
@@ -45,6 +46,7 @@ function cerrar() {
     varView.soloVer = true
 }
 
+// Funciones Formulario
 const verUser = (usuario) => {
     mapCampos(usuario, UsersStore.Formulario)
     UsersStore.Formulario.User.id = usuario.id
@@ -98,6 +100,45 @@ function validarFecha(event) {
     }
 }
 
+function validarTipoDoc(event) {
+    const tipoDoc = event.target.value
+
+    if(!UsersStore.Formulario.InformacionUser.nacimiento) return
+
+    const fecha = new Date(UsersStore.Formulario.InformacionUser.fecha);
+    const hoy = new Date();
+
+    let mensajeError = ''
+    // Calcular edad
+    let edad = hoy.getFullYear() - fecha.getFullYear();
+    const mes = hoy.getMonth() - fecha.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) {
+        edad--;
+    }
+
+    if (edad < 0 || edad > 100) {
+        mensajeError = "La edad debe estar entre 0 y 100 años";
+    }
+
+    // Validación según tipo de documento
+    if (tipoDoc === "cedula" && edad < 18) {
+        mensajeError = "Para cédula, la edad mínima es 18 años";
+    }
+
+    if (tipoDoc === "Tarjeta de identidad" && edad > 17) {
+        mensajeError = "Para tarjeta de identidad, la edad máxima es 17 años";
+    }
+
+    const errorDiv = document.getElementById(`error-fecha`);
+    if (errorDiv) {
+        if (mensajeError) {
+            errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+        } else {
+            errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
+        }
+    }
+}
+
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = UsersStore.Formulario.InformacionUser.departamento;
 
@@ -127,6 +168,7 @@ const propiedades = computed(() => {
         municipios: municipiosOptions,
         seleccionarMunicipio: () => {},
         validarFecha,
+        validarTipoDoc,
     });
 
     const propiedadesVerUser = useUserBuilder({
@@ -139,12 +181,12 @@ const propiedades = computed(() => {
         soloVer: varView.soloVer,
         tipoUsuario: "Administrador",
         validarFecha,
+        validarTipoDoc
     });
 
     return pagina
         .setFondo('FondoDefault')
         .setEstilos('')
-        .setLayout('')
         .setContenedor('w-full')
         .addComponente('Tabla', builderTabla
             .setColumnas([

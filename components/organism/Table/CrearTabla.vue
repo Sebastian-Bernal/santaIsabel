@@ -8,7 +8,7 @@ import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue'
 import Checkbox from '~/components/atoms/Checkbox/Checkbox.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';
-import { TablaBuilder, TablaDirector } from '~/build/Constructores/ClassTablas';
+import { TablaBuilder, TablaDirector } from '~/build/Constructores/TablaBuilder';
 
 const varView = useVarView()
 const notificacionesStore = useNotificacionesStore();

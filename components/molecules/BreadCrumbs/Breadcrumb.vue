@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 
-const props = defineProps(['usuarioRol'])
 // Rutas actuales
 const route = useRoute();
 // Retorna array con cada ruta
@@ -23,10 +22,13 @@ const breadCrumbs = computed(() => {
 </script>
 
 <template>
+    <!-- Icono navbar -->
     <a href="/Home" class="hidden md:block">
         <i class="fa-solid fa-house"></i>
     </a>
-    <div class="dropdown absolute top-[50px] ml-[-35px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999 max-w-[200px] overflow-x-auto select-none">
+    <!-- Dropdown -->
+    <div
+        class="dropdown absolute top-[50px] ml-[-35px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999 max-w-[200px] overflow-x-auto select-none">
         <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="flex items-center">
                 <li class="flex items-center">
@@ -39,7 +41,8 @@ const breadCrumbs = computed(() => {
                 <li v-for="(crumb, index) in breadCrumbs">
                     <div class="flex items-center">
                         <i class="fa-solid fa-angle-right text-gray-500"></i>
-                        <nuxt-link :to="crumb.to !== '/Usuarios' && crumb.to !== '/Empresas' && crumb.to !== '/Historial' && crumb.to !== '/Facturacion' ? crumb.to : ''" 
+                        <nuxt-link
+                            :to="crumb.to !== '/Usuarios' && crumb.to !== '/Empresas' && crumb.to !== '/Historial' && crumb.to !== '/Facturacion' ? crumb.to : ''"
                             class="text-sm ms-1 font-medium text-black md:text-gray-400 hover:text-white">
                             {{ crumb.name }}
                         </nuxt-link>

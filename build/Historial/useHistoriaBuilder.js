@@ -1,5 +1,7 @@
 // builders/useFormularioCitaBuilder.js
-import { FormularioBuilder } from '~/build/Constructores/ClassFormulario'
+import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
+import { CUPS } from '~/data/CUPS'
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 
 export function useHistoriaBuilder({
     storeId,
@@ -15,6 +17,7 @@ export function useHistoriaBuilder({
     pacienteExiste,
     id_paciente
 }) {
+    const historiaStore = useHistoriasStore()
     const builder = new FormularioBuilder()
 
     builder
@@ -88,7 +91,7 @@ export function useHistoriaBuilder({
         // --- Label Acompañante ---
         .addCampo({
             component: 'Label',
-            forLabel: 'tipo',
+            forLabel: 'nombreAcompañante',
             size: 'text-sm',
             text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
             tamaño: 'w-full md:col-span-2'
@@ -172,7 +175,7 @@ export function useHistoriaBuilder({
         .nuevaSeccion('Examen Fisico')
         .addCampo({
             component: 'Label',
-            forLabel: 'motivo',
+            forLabel: 'ta',
             text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
             tamaño: 'w-full md:col-span-2'
         })
@@ -284,7 +287,7 @@ export function useHistoriaBuilder({
         // --- Label: Medidas Antropométricas ---
         .addCampo({
             component: 'Label',
-            forLabel: 'peso',
+            forLabel: 'altura',
             text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
             tamaño: 'w-full md:col-span-2'
         })
@@ -337,8 +340,8 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'Select',
             vmodel: 'Analisis.tipoAnalisis',
-            id: 'rehabilitacion',
-            name: 'rehabilitacion',
+            id: 'tipoAnalisis',
+            name: 'tipoAnalisis',
             placeholder: 'Tipo de Análisis',
             tamaño: 'w-full',
             options: [
@@ -476,9 +479,13 @@ export function useHistoriaBuilder({
                 {
                     name: 'descripcion',
                     id: 'descripcionProcedimiento',
-                    type: 'Input',
+                    type: 'SelectSearch',
                     placeholder: 'Descripcion',
                     tamaño: 'w-full',
+                    UpperCase: true,
+                    options: CUPS,
+                    opciones: [{ value: 'nombreProcedimiento' }, { text: 'Codigo', value: 'codigoCups' }],
+                    seleccionarItem: (item) => {historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).descripcion = item.nombreProcedimiento},
                 },
                 {
                     name: 'cantidad',
@@ -515,7 +522,7 @@ export function useHistoriaBuilder({
 
         .addCampo({
             component: 'Label',
-            forLabel: 'rehabilitacion',
+            forLabel: '',
             text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo'
         })
     return builder.build()

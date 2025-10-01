@@ -2,8 +2,8 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue'
 
 import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder'
-import { ComponenteBuilder } from '~/build/Constructores/ClassFormulario'
-import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/ClassCalendario'
+import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
+import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/CalendarioBuilder'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
@@ -24,7 +24,7 @@ const refresh = ref(1);
 async function llamadatos() {
     citas.value = await citasStore.listCitas();
 }
-
+// Watch para actualizar citas al agregar nueva
 watch(() => show.value,
     async () => {
         await llamadatos();
@@ -49,7 +49,7 @@ watch(() => calendarioCitasStore.fecha, (nuevaFecha) => {
 })
 
 
-// Formulario
+// Funciones de Formulario nueva cita
 function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
     citasStore.Formulario.Cita.id_paciente = paciente.id_paciente
@@ -117,7 +117,6 @@ function cerrar () {
 
 // Funciones para manejar visibilidad de Pagina
 const showFila = () => {
-    
     showEnFila.value = !showEnFila.value
 };
 
@@ -149,7 +148,7 @@ const propiedades = computed(() => {
             titulo: 'Calendario de Citas', 
             descripcion: 'Visualiza y administra la agenda de citas.',
             button: [
-                {text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila},
+                {text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila},
                 {text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita},
             ]
         })
@@ -168,7 +167,7 @@ const propiedades = computed(() => {
             titulo: 'Calendario de Citas', 
             descripcion: 'Visualiza y administra la agenda de citas.',
             button: [
-                {text: 'En Fila', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila},
+                {text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila},
                 {text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita},
             ]
         })

@@ -1,10 +1,10 @@
 export class TablaBuilder {
     constructor() {
         this.tabla = {
-            columnas: [],
+            columnas: [], // Lista de columnas
             headerTabla: {},
-            acciones: {},
-            datos: {}
+            acciones: {}, // Lista de acciones por fila
+            datos: {} // Datos de la tabla
         };
     }
 

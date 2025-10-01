@@ -1,9 +1,7 @@
-import { createFormStore } from '../../createFormStore';
 import { traerdatos } from '~/Core/Empresa/Datos/DatosProfesion';
 import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
-// Creacion del store para nueva cita medica
 
-// Estructura de datos de Citas
+// Estructura de datos de Profesion
 const estructuraDatosProfesion = {
     Profesion: {
         nombre: '',
@@ -32,12 +30,6 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     },
 
     actions: {
-
-        // Acción para crear nuevas instancias de formulario
-        createForm(storeId, estructura = estructuraDatosProfesion) {
-            const useDynamicForm = createFormStore(storeId, estructura)
-            return useDynamicForm() // devuelve instancia usable del formulario
-        },
 
         async indexDBDatos() {
             const profesiones = await traerdatos()

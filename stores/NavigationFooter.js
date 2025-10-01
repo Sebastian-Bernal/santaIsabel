@@ -1,4 +1,3 @@
-
 import { defineStore } from "pinia";
 
 // Store para manejar secciones del footer

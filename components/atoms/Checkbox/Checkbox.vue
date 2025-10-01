@@ -1,9 +1,7 @@
 <script setup>
 const props = defineProps({
     Propiedades: {
-        default: {
-            tamaño: 'w-full'
-        }
+        default: {}
     },
     modelValue: {
         type: String,
