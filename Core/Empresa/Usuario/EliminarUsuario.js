@@ -44,6 +44,22 @@ const enviarFormulario = async (datos) => {
     if (online) {
         try {
             // mandar a api
+            let options = {
+                metodo: 'DELETE',
+                url: config.public.users,
+                token: token,
+                body: {
+                    id: datos.Software.id,
+                    pin: datos.Software.pin,
+                    testID: datos.Software.testID
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                await guardarEnDB(JSON.parse(JSON.stringify(datos)));
+                return true
+            }
             await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
             return true
         } catch (error) {

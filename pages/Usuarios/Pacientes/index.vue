@@ -14,7 +14,7 @@ import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { mapCampos } from "~/components/organism/Forms/useFormulario.js";
 import { CIE10 } from "~/data/CIE10";
 import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
-import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/EliminarPaciente.js";
+import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/DELETEPaciente.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -54,14 +54,13 @@ watch(() => showVer.value,
 onMounted(async () => {
     varView.cargando = true;
     await llamadatos();
-    // await pacientesStore.indexDBDatos()
     const EPS = await epsStore.listEPS;
 
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
         value: eps.id,
     }));
-
+    await pacientesStore.indexDBDatos()
     varView.cargando = false;
 });
 
@@ -74,7 +73,7 @@ const agregarPaciente = () => {
 const verPaciente = (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
     pacientesStore.Formulario.Paciente.id = paciente.id_paciente
-    pacientesStore.Formulario.User.id = paciente.id
+    pacientesStore.Formulario.InformacionUser.id = paciente.id_usuario
     showVer.value = true;
 };
 

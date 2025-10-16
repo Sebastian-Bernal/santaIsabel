@@ -13,7 +13,6 @@ import { ModalBuilder } from '~/build/Constructores/ModalBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useFormulario';
-import { CIE10 } from '~/data/CIE10';
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
@@ -21,7 +20,6 @@ import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
 const notasStore = useNotasStore();
-const notificaciones = useNotificacionesStore();
 
 const historiasList = ref([]);
 
@@ -37,8 +35,6 @@ const showNota = ref(false)
 const refresh = ref(1);
 
 const pacientesStore = usePacientesStore();
-const pacientesList = ref([])
-const id_paciente = ref(null)
 const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
@@ -73,7 +69,7 @@ watch(() => showNota.value,
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
-    pacientesList.value = await pacientesStore.listPacientes;
+    await historiasStore.indexDBDatos()
     const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
     onlyWatch.value = permisosStore.includes('Historia')
     await llamadatos()
@@ -96,17 +92,20 @@ const verHistoria = async (his) => {
 
 async function cargaHistorial(id) {
 
-    // Consultas
+    const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
+    const allAnalisis = await historiasStore.listDatos(historia[0].id, 'Analisis', 'id_historia')
+
+// Consultas
     analisis.value = []
-    const historia = await pacientesStore.listDatos(id, 'HistoriaClinica')
+
     // Cambiar id por id_historia
-    if (Array.isArray(historia) && historia.length > 0 && historia[0].id_temporal) {
-        const idTemporal = historia[0].id_temporal;
+    if (Array.isArray(historia) && historia.length > 0 && historia[0].id) {
+        const idHistoria = historia[0].id;
 
         // Obtener datos existentes
-        const analisisDatos = await historiasStore.listDatos(idTemporal, 'Analisis', 'id_historia') || [];
+        const analisisDatos = await historiasStore.listDatos(idHistoria, 'Analisis', 'id_historia') || [];
         for (const item of analisisDatos) {
-            const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_temporal') || [];
+            const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
 
             analisis.value.push({ ...item, ...examenFisico[0] })
         }
@@ -116,45 +115,68 @@ async function cargaHistorial(id) {
     }
 
 
-    // Evoluciones
+// Evoluciones
 
 
-    // Notas
+// Notas
     notas.value = await pacientesStore.listDatos(id, 'Nota') || []
 
 
-    // Tratamientos
-    tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || []
+// Tratamientos
 
-    const tratamientosConAnalisis = await Promise.all(
-        tratamientos.value.map(async (tratamiento) => {
-            const analisisTratamiento = await historiasStore.listDatos(tratamiento.id_temporal, 'Analisis', 'id')
-            // Aquí puedes agregar más valores del análisis si existen
-            return {
-                ...tratamiento,
-                ...analisisTratamiento[0],
-            }
-        })
-    )
+    if (allAnalisis || allAnalisis.length > 0) {
+        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
+        const tratamientosPorAnalisis = await Promise.all(
+            allAnalisis.map(async (h) => {
 
-    tratamientos.value = tratamientosConAnalisis
+                const tratamientos = await historiasStore.listDatos(h.id, 'Plan_manejo_procedimientos', 'id_analisis') || []
+    
+                // Enriquecer cada tratamiento con su análisis correspondiente
+                const tratamientosConAnalisis = tratamientos.map((tratamiento) => {
+                        return {
+                            ...tratamiento,
+                            ...h,
+                        }
+                    })
+
+                return tratamientosConAnalisis
+            })
+        )
+
+        // Unificar todos los tratamientos en un solo array
+        tratamientos.value = tratamientosPorAnalisis.flat()
+    } else {
+        tratamientos.value = []
+    }
+    
 
 
-    // Medicinas
-    medicinas.value = await pacientesStore.listDatos(id, 'Plan_manejo_medicamentos') || []
+// Medicinas
+    if (allAnalisis || allAnalisis.length > 0) {
+        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
+        const medicamentosPorAnalisis = await Promise.all(
+            allAnalisis.map(async (h) => {
 
-    const medicinasConAnalisis = await Promise.all(
-        medicinas.value.map(async (medicina) => {
-            const analisisMedicina = await historiasStore.listDatos(medicina.id_temporal, 'Analisis', 'id')
-            // Aquí puedes agregar más valores del análisis si existen
-            return {
-                ...medicina,
-                ...analisisMedicina[0],
-            }
-        })
-    )
+                const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || []
+    
+                // Enriquecer cada tratamiento con su análisis correspondiente
+                const medicamentosConAnalisis = medicamentos.map((tratamiento) => {
+                        return {
+                            ...tratamiento,
+                            ...h,
+                        }
+                    })
 
-    medicinas.value = medicinasConAnalisis
+                return medicamentosConAnalisis
+            })
+        )
+
+        // Unificar todos los medicamentos en un solo array
+        medicinas.value = medicamentosPorAnalisis.flat()
+    } else {
+        medicinas.value = []
+    }
+
     // console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
@@ -175,8 +197,8 @@ function cerrarModal() {
 function verItemMedicamentoHistoria(item) {
     formularioItem.value = 'Medicamento'
     mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_medicamentos.nombre = item.nombre
-    historiasStore.Formulario.Plan_manejo_medicamentos.presentacion = item.presentacion
+    historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
+    historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
     historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
     showItem.value = true
 }
@@ -184,9 +206,9 @@ function verItemMedicamentoHistoria(item) {
 function verItemTratamientoHistoria(item) {
     formularioItem.value = 'Tratamientos'
     mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_procedimientos.descripcion = item.descripcion
-    historiasStore.Formulario.Plan_manejo_procedimientos.mes = item.mes
-    historiasStore.Formulario.Plan_manejo_procedimientos.cantidad = item.cantidad
+    historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
+    historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
+    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
     showItem.value = true
 }
 
@@ -234,91 +256,7 @@ async function exportarHistoriaPDF() {
 }
 
 // Funciones Formulario historia
-function seleccionarPaciente(paciente) {
-    historiasStore.Formulario.HistoriaClinica.type_doc_paciente = paciente.type_doc
-    historiasStore.Formulario.HistoriaClinica.No_document_paciente = paciente.No_document
-    historiasStore.Formulario.HistoriaClinica.id_paciente = paciente.id_paciente
-    id_paciente.value = paciente.id_paciente
-}
 
-function seleccionarCIE_10(code) {
-    historiasStore.Formulario.Diagnosticos.at(-1).descripcion = code.description
-    historiasStore.Formulario.Diagnosticos.at(-1).CIE_10 = code.code
-}
-
-function validarCampo(event) {
-    const { name, value } = event.target;
-    let mensajeError = '';
-
-    switch (name) {
-        case 'ta': // Presión arterial (TA)
-            // Se espera formato tipo "120/80"
-            if (!/^\d{2,3}\/\d{2,3}$/.test(value)) {
-                mensajeError = 'TA debe tener el formato "120/80"';
-            }
-            break;
-
-        case 'fc': // Frecuencia cardíaca
-            const fc = parseInt(value);
-            if (isNaN(fc) || fc < 30 || fc > 100) {
-                mensajeError = 'FC debe estar entre 30 y 100';
-            }
-            break;
-
-        case 'fr': // Frecuencia respiratoria
-            const fr = parseInt(value);
-            if (isNaN(fr) || fr < 10 || fr > 250) {
-                mensajeError = 'FR debe estar entre 10 y 250';
-            }
-            break;
-
-        case 't': // Temperatura
-            const t = parseFloat(value);
-            if (isNaN(t) || t < 30 || t > 45) {
-                mensajeError = 'Temperatura debe estar entre 30º y 45º';
-            }
-            break;
-
-        case 'sat': // Saturación de oxígeno
-            const sat = parseInt(value);
-            if (isNaN(sat) || sat < 70 || sat > 100) {
-                mensajeError = 'Sat O2 debe estar entre 70% y 100%';
-            }
-            break;
-
-        default:
-            console.warn(`No hay validación definida para el campo: ${name}`);
-    }
-
-    const errorDiv = document.getElementById(`error-${name}`);
-    if (errorDiv) {
-        if (mensajeError) {
-            errorDiv.innerHTML = `<p>${mensajeError}</p>`;
-        } else {
-            errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
-        }
-    }
-}
-
-async function pacienteExiste(event) {
-    const nombre = event.target.value
-
-    const paciente = pacientesList.value.filter((pacient) => {
-        return pacient.name === nombre
-    });
-
-    if (paciente.length < 1) {
-        notificaciones.options.icono = 'warning'
-        notificaciones.options.title = 'Paciente no registrado'
-        notificaciones.options.html = '¿Deseas registrar <strong>Paciente</strong>?'
-        notificaciones.options.confirmtext = 'Si'
-        notificaciones.options.canceltext = 'No, continuar'
-        let resp = await notificaciones.alertRespuesta();
-        if (resp === 'confirmado') {
-            showNuevoPaciente.value = true
-        }
-    }
-}
 
 const fechaFormateada = () => {
     const fecha = new Date()
@@ -340,19 +278,11 @@ function estadoSemaforo(fila) {
     }
 }
 
-const propiedadesForm = useHistoriaBuilder({
+const { builder, PacientesList, id_paciente } = useHistoriaBuilder({
     storeId: 'RegistrarHistoria',
     storePinia: 'Historias',
     cerrarModal: cerrar,
     show: show,
-    tipoFormulario: 'Wizard',
-    PacientesList: pacientesList,
-    seleccionarPaciente: seleccionarPaciente,
-    CIE10: CIE10,
-    validarCampo,
-    seleccionarCIE_10: seleccionarCIE_10,
-    pacienteExiste,
-    id_paciente: id_paciente,
 });
 
 const propiedadesNota = useNotasBuilder({
@@ -428,7 +358,7 @@ const propiedades = computed(() => {
             .setAcciones({ icons: [{ icon: 'ver', action: verHistoria },], botones: true, })
             .setDatos(historiasList)
         )
-        .addComponente('Form', propiedadesForm)
+        .addComponente('Form', builder)
         .addComponente('Modal', modal
             .setFondo('FondoBlur')
             .setShowModal(showVerHistorial)
@@ -671,8 +601,8 @@ const propiedades = computed(() => {
             .nuevaSeccion('tratamientos')
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
-                    { titulo: 'descripcion', value: 'Descripcion', tamaño: 300, ordenar: true },
-                    { titulo: 'mes', value: 'Mes', tamaño: 250, ordenar: true },
+                    { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 300, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 250, ordenar: true },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(tratamientos)
@@ -684,8 +614,8 @@ const propiedades = computed(() => {
             .nuevaSeccion('medicinas')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
-                    { titulo: 'nombre', value: 'Medicamento', tamaño: 200, ordenar: true },
-                    { titulo: 'presentacion', value: 'Presentacion', tamaño: 200, ordenar: true },
+                    { titulo: 'medicamento', value: 'Medicamento', tamaño: 200, ordenar: true },
+                    { titulo: 'dosis', value: 'Dosis', tamaño: 200, ordenar: true },
                     { titulo: 'cantidad', value: 'Cantidad', tamaño: 150 },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])

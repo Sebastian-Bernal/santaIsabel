@@ -8,17 +8,6 @@ import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalente
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 
 
-function mostrarCantidadCaracteres(event) {
-    const { name, value } = event.target;
-    const cantidad = value.length;
-
-    const contadorDiv = document.getElementById(`contador-${name}`);
-    if (contadorDiv) {
-        contadorDiv.innerHTML = cantidad > 5 ? `<p style="color: red;">${cantidad}</p>` : `<p>${cantidad}</p>`;
-    }
-}
-
-
 // Formularios Configuracion Empresa
 const propiedadesEmpresa = useDatosEmpresaBuilder({
     storeId: 'DatosEmpresa',
@@ -27,19 +16,16 @@ const propiedadesEmpresa = useDatosEmpresaBuilder({
 
 const propiedadesSoftware = useDatosSofwareBuilder({
     storeId: 'DatosSoftware',
-    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'Software'
 })
 
 const propiedadesNomina = useDatosNominaBuilder({
     storeId: 'DatosNomina',
-    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'Nomina'
 })
 
 const propiedadesEquivalente = useDatosEquivalentesBuilder({
     storeId: 'DatosEquivalentes',
-    mostrarCantidadCaracteres: mostrarCantidadCaracteres,
     storePinia: 'DocumentosEquivalentes'
 })
 
@@ -58,7 +44,6 @@ const propiedades = pagina
     .addComponente('Form', propiedadesNomina)
     .addComponente('Form', propiedadesEquivalente)
     .build()
-
 
 </script>
 

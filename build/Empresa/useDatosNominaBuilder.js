@@ -3,9 +3,18 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 
 export function useDatosNominaBuilder({
     storeId,
-    mostrarCantidadCaracteres,
     storePinia
 }) {
+
+    function mostrarCantidadCaracteres(event) {
+        const { name, value } = event.target;
+        const cantidad = value.length;
+
+        const contadorDiv = document.getElementById(`contador-${name}`);
+        if (contadorDiv) {
+            contadorDiv.innerHTML = cantidad > 5 ? `<p style="color: red;">${cantidad}</p>` : `<p>${cantidad}</p>`;
+        }
+    }
     const builder = new FormularioBuilder()
 
     return builder

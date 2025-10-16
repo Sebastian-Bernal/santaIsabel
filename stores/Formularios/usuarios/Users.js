@@ -34,32 +34,32 @@ export const useUsersStore = defineStore('Users', {
     getters: {
         async listUsers(state) {
             const store = useIndexedDBStore()
+
             store.almacen = 'User'
             const Users = await store.leerdatos()
 
             store.almacen = 'InformacionUser'
             const informacionUsers = await store.leerdatos()
 
-            const UsersActivos = Users.filter((User) => {
-                return User.estado === 'activo'
-            })
+            // juntar informacion de tablas infoUsuarios y usuarios
+            const usuariosCompletos = informacionUsers.map((usuario) => {
 
-            const usuariosCompletos = UsersActivos.map((usuario) => {
-                const usuarioInfo = informacionUsers.find((user) => user.id_usuario === usuario.id)
+                const usuarioThesalus = Users.find((user) => user.id_infoUsuario === usuario.id)
 
-                if (usuarioInfo) {
+                if (usuarioThesalus) {
                     return {
-                        ...usuarioInfo,
+                        correo: usuarioThesalus.correo,
+                        rol: usuarioThesalus.rol,
                         ...usuario,
-                        // id_paciente: usuario.id // renombramos el id del paciente
                     }
                 } else {
                     return {
                         ...usuario,
-                        // usuario: null
                     }
                 }
+
             })
+
             state.Users = usuariosCompletos // Actualiza la lista de Users en el estado
             return usuariosCompletos
         },
@@ -68,9 +68,6 @@ export const useUsersStore = defineStore('Users', {
     actions: {
 
         async indexDBDatos() {
-            const config = useRuntimeConfig()
-            const usuarios = await getAll(config.public.user, 'store_one')
-
             console.log(usuarios)
             // const UsuariosIndexed = usuarios.map((profesion) => ({
             //     Profesion: {

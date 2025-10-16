@@ -73,7 +73,7 @@ export function useVerHistoriaBuilder({
 
             .addCampo({
                 component: 'Input',
-                vmodel: 'Plan_manejo_medicamentos.nombre',
+                vmodel: 'Plan_manejo_medicamentos.medicamento',
                 type: 'text',
                 id: 'nombre',
                 name: 'nombre',
@@ -82,7 +82,7 @@ export function useVerHistoriaBuilder({
             })
             .addCampo({
                 component: 'Input',
-                vmodel: 'Plan_manejo_medicamentos.presentacion',
+                vmodel: 'Plan_manejo_medicamentos.dosis',
                 type: 'text',
                 id: 'presetacion',
                 name: 'presetacion',
@@ -151,7 +151,7 @@ export function useVerHistoriaBuilder({
             .addCampo({
                 component: 'Input',
                 label: 'Descripcion',
-                vmodel: 'Plan_manejo_procedimientos.descripcion',
+                vmodel: 'Plan_manejo_procedimientos.procedimiento',
                 type: 'text',
                 id: 'nombre',
                 name: 'nombre',
@@ -160,8 +160,8 @@ export function useVerHistoriaBuilder({
             })
             .addCampo({
                 component: 'Input',
-                label: 'Mes',
-                vmodel: 'Plan_manejo_procedimientos.mes',
+                label: 'Codigo',
+                vmodel: 'Plan_manejo_procedimientos.codigo',
                 type: 'text',
                 id: 'presetacion',
                 name: 'presetacion',
@@ -170,8 +170,8 @@ export function useVerHistoriaBuilder({
             })
             .addCampo({
                 component: 'Input',
-                label: 'Cantidad',
-                vmodel: 'Plan_manejo_procedimientos.cantidad',
+                label: 'Fecha',
+                vmodel: 'Plan_manejo_procedimientos.fecha',
                 type: 'text',
                 id: 'cantidad',
                 name: 'cantidad',

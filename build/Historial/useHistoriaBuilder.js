@@ -2,22 +2,117 @@
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { CUPS } from '~/data/CUPS'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
+import { CIE10 } from '~/data/CIE10'
+import { onMounted, ref } from 'vue'
 
 export function useHistoriaBuilder({
     storeId,
     storePinia,
     cerrarModal,
-    tipoFormulario,
-    PacientesList,
-    seleccionarPaciente,
-    CIE10,
-    seleccionarCIE_10,
-    validarCampo,
     show,
-    pacienteExiste,
-    id_paciente
 }) {
+
     const historiaStore = useHistoriasStore()
+    const notificaciones = useNotificacionesStore()
+    const pacienteStore = usePacientesStore()
+    const varView = useVarView()
+
+    const PacientesList = ref([])
+    const id_paciente = ref(null)
+
+    onMounted(async () => {
+        varView.cargando = true
+        PacientesList.value = await pacienteStore.listPacientes;
+        varView.cargando = false
+    });
+
+    function seleccionarPaciente(paciente) {
+        historiaStore.Formulario.HistoriaClinica.type_doc_paciente = paciente.type_doc
+        historiaStore.Formulario.HistoriaClinica.No_document_paciente = paciente.No_document
+        historiaStore.Formulario.HistoriaClinica.id_paciente = paciente.id_paciente
+        id_paciente.value = paciente.id_paciente
+    }
+
+    function seleccionarCIE_10(code) {
+        historiaStore.Formulario.Diagnosticos.at(-1).descripcion = code.description
+        historiaStore.Formulario.Diagnosticos.at(-1).codigo = code.code
+    }
+
+    function validarCampo(event) {
+        const { name, value } = event.target;
+        let mensajeError = '';
+
+        switch (name) {
+            case 'ta': // Presión arterial (TA)
+                // Se espera formato tipo "120/80"
+                if (!/^\d{2,3}\/\d{2,3}$/.test(value)) {
+                    mensajeError = 'TA debe tener el formato "120/80"';
+                }
+                break;
+
+            case 'fc': // Frecuencia cardíaca
+                const fc = parseInt(value);
+                if (isNaN(fc) || fc < 30 || fc > 100) {
+                    mensajeError = 'FC debe estar entre 30 y 100';
+                }
+                break;
+
+            case 'fr': // Frecuencia respiratoria
+                const fr = parseInt(value);
+                if (isNaN(fr) || fr < 10 || fr > 250) {
+                    mensajeError = 'FR debe estar entre 10 y 250';
+                }
+                break;
+
+            case 't': // Temperatura
+                const t = parseFloat(value);
+                if (isNaN(t) || t < 30 || t > 45) {
+                    mensajeError = 'Temperatura debe estar entre 30º y 45º';
+                }
+                break;
+
+            case 'sat': // Saturación de oxígeno
+                const sat = parseInt(value);
+                if (isNaN(sat) || sat < 70 || sat > 100) {
+                    mensajeError = 'Sat O2 debe estar entre 70% y 100%';
+                }
+                break;
+
+            default:
+                console.warn(`No hay validación definida para el campo: ${name}`);
+        }
+
+        const errorDiv = document.getElementById(`error-${name}`);
+        if (errorDiv) {
+            if (mensajeError) {
+                errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+            } else {
+                errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
+            }
+        }
+    }
+
+    async function pacienteExiste(event) {
+        const nombre = event.target.value
+
+        const paciente = PacientesList.value.filter((pacient) => {
+            return pacient.name === nombre
+        });
+
+        if (paciente.length < 1) {
+            notificaciones.options.icono = 'warning'
+            notificaciones.options.title = 'Paciente no registrado'
+            notificaciones.options.html = '¿Deseas registrar <strong>Paciente</strong>?'
+            notificaciones.options.confirmtext = 'Si'
+            notificaciones.options.canceltext = 'No, continuar'
+            let resp = await notificaciones.alertRespuesta();
+            if (resp === 'confirmado') {
+                varView.showNuevoPaciente = true
+            }
+        }
+    }
+
     const builder = new FormularioBuilder()
 
     builder
@@ -27,7 +122,7 @@ export function useHistoriaBuilder({
         .setFormulariotamaño('LG')
         .setFormularioTituloFormulario('Registrar Consulta')
         .setFormularioShow(show)
-        .setFormularioTipo(tipoFormulario)
+        .setFormularioTipo('Wizard')
         .setBotones([
             { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
             { text: 'Siguiente', color: 'bg-blue-500', type: 'enviar' },
@@ -317,7 +412,7 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Diagnosticos',
-            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
             tamaño: 'w-full md:col-span-2',
             vmodel: 'Diagnosticos',
             value: [],
@@ -386,7 +481,7 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Equipos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
+            buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
             tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_equipos',
             value: [],
@@ -399,10 +494,10 @@ export function useHistoriaBuilder({
                     tamaño: 'w-full',
                 },
                 {
-                    name: 'cantidad',
-                    id: 'cantidadEquipos',
+                    name: 'uso',
+                    id: 'usoEquipos',
                     type: 'Input',
-                    placeholder: 'Cantidad',
+                    placeholder: 'Uso',
                     tamaño: 'w-full',
                 },
             ],
@@ -412,16 +507,16 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Insumos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { descripcion: '', cantidad: '', id_paciente: id_paciente }}, ],
+            buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente } },],
             tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_insumos',
             value: [],
             campos: [
                 {
-                    name: 'descripcion',
-                    id: 'descripcionInsumo',
+                    name: 'nombre',
+                    id: 'nombreInsumo',
                     type: 'Input',
-                    placeholder: 'Descripcion',
+                    placeholder: 'Nombre',
                     tamaño: 'w-full',
                 },
                 {
@@ -438,23 +533,23 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Medicamentos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { nombre: '', presentacion: '', cantidad: '',  id_paciente: id_paciente }}, ],
+            buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente } },],
             tamaño: 'w-full md:col-span-2',
             vmodel: 'Plan_manejo_medicamentos',
             value: [],
             campos: [
                 {
-                    name: 'nombre',
+                    name: 'medicamento',
                     id: 'Medicamento',
                     type: 'Input',
                     placeholder: 'Medicamento',
                     tamaño: 'w-full',
                 },
                 {
-                    name: 'presentacion',
-                    id: 'presentacion',
+                    name: 'dosis',
+                    id: 'dosis',
                     type: 'Input',
-                    placeholder: 'Presentacion',
+                    placeholder: 'Dosis',
                     tamaño: 'w-full',
                 },
                 {
@@ -471,35 +566,45 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'GroupCampos',
             labelGroup: 'Procedimientos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { descripcion: '', cantidad: '', mes: '',  id_paciente: id_paciente }}, ],
+            buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', fecha: '', id_paciente: id_paciente } },],
             tamaño: 'w-full md:col-span-2 mb-5',
             vmodel: 'Plan_manejo_procedimientos',
             value: [],
             campos: [
                 {
-                    name: 'descripcion',
+                    name: 'procedimiento',
                     id: 'descripcionProcedimiento',
                     type: 'SelectSearch',
-                    placeholder: 'Descripcion',
+                    placeholder: 'Procedimiento',
                     tamaño: 'w-full',
                     UpperCase: true,
                     options: CUPS,
                     opciones: [{ value: 'nombreProcedimiento' }, { text: 'Codigo', value: 'codigoCups' }],
-                    seleccionarItem: (item) => {historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).descripcion = item.nombreProcedimiento},
+                    seleccionarItem: (item) => { historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.nombreProcedimiento 
+                        historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.codigoCups
+                    },
                 },
                 {
-                    name: 'cantidad',
-                    id: 'cantidad',
+                    name: 'codigo',
+                    id: 'codigo',
                     type: 'Input',
-                    placeholder: 'Cantidad',
+                    placeholder: 'Codigo',
                     tamaño: 'w-full',
                 },
                 {
-                    name: 'mes',
-                    id: 'mes',
+                    name: 'fecha',
+                    id: 'fecha',
                     type: 'Input',
-                    placeholder: 'Mes',
+                    placeholder: 'Fecha',
                     tamaño: 'w-full',
+                    slot: {
+                        input: {
+                            type: 'date',
+                            id: 'fechaInicialDate',
+                            name: 'fechaInicialDate',
+                        },
+                        inputClass: 'w-[20px] '
+                    }
                 },
             ],
             containerCampos: 'grid grid-cols-3 gap-2'
@@ -525,5 +630,10 @@ export function useHistoriaBuilder({
             forLabel: '',
             text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo'
         })
-    return builder.build()
+        builder.build()
+    return {
+        builder,
+        PacientesList,
+        id_paciente,
+    }
 }

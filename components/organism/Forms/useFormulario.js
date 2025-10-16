@@ -91,7 +91,6 @@ export function useFormulario(props) {
         const camposRequeridos = ref(props.Propiedades?.content?.camposRequeridos || []);
 
         const camposValidos = camposRequeridos.value.every((ruta) => {
-            console.log(formData, ruta)
             const valor = getValue(formData, ruta)
             return isValid(valor)
         });
@@ -99,12 +98,11 @@ export function useFormulario(props) {
         // Detectar inputs inválidos
         const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
         varView.formComplete = !hayCamposInvalidos && camposValidos;
-        console.log(varView.formComplete)
         return varView.formComplete
     }
 
     // Botones
-    function manejarClick(item, formData, limpiar) {
+    async function manejarClick(item, formData, limpiar) {
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 guardarDatos(formData)
@@ -112,7 +110,8 @@ export function useFormulario(props) {
             } else {
                 const validacion = camposRequeridos(formData)
                 if (validacion) {
-                    mandarFormulario(formData, limpiar)
+                    await mandarFormulario(formData, limpiar)
+                    limpiar()
                 } else {
                     validarform()
                 }
@@ -152,7 +151,7 @@ export function useFormulario(props) {
 
     async function mandarFormulario(data, limpiar) {
         const accion = accionesFormularios[props.Propiedades.content.storeId]
-
+        varView.cargando = true
         if (typeof accion === 'function') {
             try {
                 const res = await accion(data)
@@ -168,8 +167,7 @@ export function useFormulario(props) {
                     // setTimeout(() => {
                     //     window.location.reload();
                     // }, 1500);
-
-                    limpiar()
+                    // limpiar()
                 }
                 return res
             } catch (err) {
@@ -180,9 +178,12 @@ export function useFormulario(props) {
                 notificaciones.simple()
                 console.error(`Error enviando formulario '${props.Propiedades.content.storeId}':`, err)
                 return false
+            } finally {
+                varView.cargando = false
             }
         } else {
             console.warn(`No se encontró función de envío para '${props.Propiedades.content.storeId}'`)
+            varView.cargando = false
             return false
         }
     }

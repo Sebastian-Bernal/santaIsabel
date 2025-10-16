@@ -3,24 +3,38 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 
 export function useEpsBuilder({
     storeId,
-    storePinia
+    storePinia,
+    actualizar,
+    showModificarEPS,
+    cerrar
 }) {
     const builder = new FormularioBuilder()
-
-    return builder
+    if (actualizar) {
+        builder
+            .setFormularioFondo(true)
+            .nuevaSeccion('Actualizar EPS')
+            .setFormularioShow(showModificarEPS)
+            .setBotones([
+                { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500', accion: cerrar },
+                { type: 'enviar', text: 'Enviar', color: 'bg-blue-500', },
+            ])
+    } else {
+        builder
+            .setFormularioFondo(false)
+            .nuevaSeccion('Agregar Nueva EPS')
+            .setBotones([{
+                type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
+            }])
+    }
+    builder
         .setStoreId(storeId)
         .setStorePinia(storePinia)
-        .setFormularioFondo(false)
-        .setBotones([{
-            type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
-        }])
         .setCamposRequeridos(['EPS.nombre',
             'EPS.codigo',
             'EPS.direccion',
             'EPS.telefono',
             'EPS.email',
             'EPS.website',])
-        .nuevaSeccion('Agregar Nueva EPS')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Agregar Nueva EPS',
@@ -87,5 +101,6 @@ export function useEpsBuilder({
             vmodel: 'EPS.website',
         })
 
-        .build()
+    builder.build()
+    return builder
 }

@@ -44,19 +44,12 @@ async function validaUsuario(event) {
     const correo = event.target.value
     varView.cargando = true
 
-    let options = {
-        metodo: 'GET',
-        url: config.public.authentication + correo,
-    }
+    //     let options = {
+    //     metodo: 'GET',
+    //     url: config.public.users,
+    // }
 
-    let validacion = await api.functionCall(options)
-
-    if (validacion.data.length > 1) {
-        selectEmpresa.value = true
-        validacion.data.forEach((item) => {
-            opcionesCompañy.value.push({ text: item.tenant_name, value: item.tenant_identifier })
-        })
-    }
+    // let validacion = await api.functionCall(options)
 
     varView.cargando = false
 }

@@ -20,6 +20,7 @@ export const useVarView = defineStore('varView', {
         showNuevaNota: false,
         // formularios Datos Empresa
         showNuevoEPS: false,
+        showModificarEPS: false,
         // formulario Datos Excel
         showDatosExcel: false,
         showCrearTabla: false,

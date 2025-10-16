@@ -11,33 +11,32 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
 
         // ==== Reglas por contexto ====
         if (contexto === "Paciente") {
-            if (almacen === "User") {
+
+            if (almacen === "InformacionUser") {
                 if (!contenido.id) {
-                    ids.User = await store.guardardatosID({ ...contenido, estado: 'activo', rol: 'Paciente' });
+                    ids.User = await store.guardardatosID({ ...contenido, estado: 1 });
                 } else {
                     ids.User = contenido.id;
                 }
-            } else if (almacen === "InformacionUser") {
-                await store.guardardatos({ ...contenido, id_usuario: ids.User });
             } else if (almacen === "Paciente") {
                 ids.Paciente = await store.guardardatosID({ ...contenido, id_usuario: ids.User });
             } else {
                 await guardarRelacionado(store, almacen, contenido, "id_paciente", ids.Paciente);
             }
+
         }
 
         else if (contexto === "Profesional") {
-            if (almacen === "User") {
-                const usuarios = await store.leerdatos();
-                const existente = usuarios.find(u => u.id === contenido.id);
-                if (existente && existente.rol !== contenido.rol) {
-                    await store.actualiza({ ...contenido });
-                    ids.UserP = existente.id;
-                } else if (!existente) {
-                    ids.UserP = await store.guardardatosID({ ...contenido, estado: 'activo', rol: 'Profesional' });
+            if (almacen === "InformacionUser") {
+                if (!contenido.id) {
+                    ids.User = await store.guardardatosID({ ...contenido, estado: 1 });
+                } else {
+                    ids.User = contenido.id;
                 }
+            } else if (almacen === "Profesional") {
+                ids.Profesional = await store.guardardatosID({ ...contenido, id_usuario: ids.User });
             } else {
-                await store.guardardatos({ ...contenido, id_usuario: ids.UserP });
+                
             }
         }
 
@@ -73,9 +72,9 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
         else {
             // Contexto Generico
             if (Array.isArray(contenido)) {
-                for (const item of contenido) await store.guardardatos({ ...item });
+                for (const item of contenido) await store.guardardatosID({ ...item });
             } else if (typeof contenido === "object" && contenido !== null) {
-                await store.guardardatos({ ...contenido });
+                ids.data = await store.guardardatosID({ ...contenido });
             }
         }
     }
@@ -152,10 +151,7 @@ export async function actualizarEnIndexedDB(data) {
     for (const [almacen, contenido] of Object.entries(data)) {
         store.almacen = almacen;
 
-        if (almacen === 'HistoriaClinica') {
-            // Si el almacen es Historia Clinica se guarda con id Null
-            await store.actualiza({ ...contenido, id: null })
-        } else if (Array.isArray(contenido)) {
+        if (Array.isArray(contenido)) {
             for (const item of contenido) {
                 await store.actualiza({ ...item });
             }

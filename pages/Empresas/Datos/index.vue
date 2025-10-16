@@ -18,13 +18,15 @@ const varView = useVarView();
 const EPSdata = ref([]);
 const Profesiones = ref([]);
 const showModificarProfesion = ref(false)
+const showModificarEPS = ref(false)
 
 onMounted(async () => {
     varView.cargando = true
-    await storeProfesion.indexDBDatos()
-    await storeEPS.indexDBDatos()
+    // await storeProfesion.indexDBDatos()
+    // await storeEPS.indexDBDatos()
     EPSdata.value = await storeEPS.listEPS
     Profesiones.value = await storeProfesion.listProfesion
+    console.log(EPSdata.value)
     varView.cargando = false
 });
 
@@ -50,6 +52,14 @@ const propiedadesVerProfesion = useProfesionesBuilder({
     cerrar
 })
 
+const propiedadesVerEPS = useEpsBuilder({
+    storeId: 'ActualizarEPS',
+    storePinia: 'EPS',
+    actualizar: true,
+    showModificarEPS: showModificarEPS,
+    cerrar: cerrarEPS
+})
+
 // Funciones Actualizar Profesion
 function actualizarProfesion (profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
@@ -62,9 +72,22 @@ function cerrar () {
     mapCamposLimpios(storeProfesion.Formulario)
 }
 
+// Funciones actualizar eps
+function actualizarEPS (eps) {
+    mapCampos(eps, storeEPS.Formulario)
+    storeEPS.Formulario.EPS.id = eps.id
+    showModificarEPS.value = true
+}
+
+function cerrarEPS () {
+    showModificarEPS.value = false
+    mapCamposLimpios(storeEPS.Formulario)
+}
+
 // Construccion de pagina
 const pagina = new ComponenteBuilder()
-const builderTabla = new TablaBuilder()
+const builderTablaProfessions = new TablaBuilder()
+const builderTablaEPS = new TablaBuilder()
 
 const propiedades = pagina
     .setFondo('FondoDefault')
@@ -73,16 +96,21 @@ const propiedades = pagina
     .setLayout('')
     .setContenedor('w-full flex flex-col gap-5')
     .addComponente('Form', propiedadesEPS)
-    // .addComponente('Tabla', builderTabla
-    //     .setColumnas([
-    //         { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
-    //         { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
-    //     ])
-    //     .setHeaderTabla({ titulo: 'Resoluciones Registradas', color: 'bg-[var(--color-default)] text-white', })
-    //     .setDatos(Resoluciones)
-    // )
+    .addComponente('Tabla', builderTablaEPS
+        .setColumnas([
+            { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
+            { titulo: 'direccion', value: 'Direccion', tamaño: 100, ordenar: true },
+            { titulo: 'email', value: 'Correo', tamaño: 100, ordenar: true },
+            { titulo: 'telefono', value: 'Telefono', tamaño: 100, ordenar: true },
+            { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
+        ])
+        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', })
+        .setAcciones({ icons: [{icon: 'ver', action: actualizarEPS}], botones: true, })
+        .setDatos(EPSdata)
+    )
+    .addComponente('Form', propiedadesVerEPS)
     .addComponente('Form', propiedadesProfesion)
-    .addComponente('Tabla', builderTabla
+    .addComponente('Tabla', builderTablaProfessions
         .setColumnas([
             { titulo: 'nombre', value: 'Nombre', tamaño: 500, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },

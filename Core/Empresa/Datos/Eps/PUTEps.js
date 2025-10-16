@@ -2,7 +2,7 @@ import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
-export const validarYEnviarActualizarProfesion = async (datos) => {
+export const validarYEnviarActualizarEps = async (datos) => {
     return await enviarFormulario(datos);
 };
 
@@ -12,18 +12,22 @@ const enviarFormulario = async (datos) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
-    console.log(datos)
+    
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
             let options = {
                 metodo: 'PUT',
-                url: config.public.professions + '/' + datos.Profesion.id,
+                url: config.public.eps + '/' + datos.EPS.id,
                 token: token,
                 body: {
-                    profession_code: datos.Profesion.codigo,
-                    profession_name: datos.Profesion.nombre,
+                    nombre: datos.EPS.nombre,
+                    codigo: datos.EPS.codigo,
+                    direccion: datos.EPS.direccion,
+                    telefono: datos.EPS.telefono,
+                    email: datos.EPS.email,
+                    website: datos.EPS.website,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -32,7 +36,6 @@ const enviarFormulario = async (datos) => {
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
                 return true
             }
-            return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
             // await guardarEnDB(JSON.parse(JSON.stringify(datos)));

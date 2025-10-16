@@ -4,23 +4,19 @@ import { useUsersStore } from "../usuarios/Users";
 import { useDatosEPSStore } from "../empresa/EPS";
 import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 import { useCitasStore } from "../citas/Cita";
+import { traerPacientes } from "~/Core/Usuarios/Paciente/GETPacientes";
+import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
     state: () => ({
         Pacientes: [],
         Formulario: {
-            User: {
-                correo: '',
-                contraseña: null,
-                rol: 'Paciente',
-                estado: 'activo',
-            },
             InformacionUser: {
-                id_usuario: '',
+                id: '',
                 name: '',
                 No_document: '',
-                tipo: '',
+                type_doc: '',
                 celular: '',
                 telefono: '',
                 nacimiento: '',
@@ -31,7 +27,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 zona: '',
             },
             Paciente: {
-                id_usuario: '',
+                id_infoUsuario: '',
                 sexo: '',
                 genero: '',
                 Eps: '',
@@ -66,26 +62,22 @@ export const usePacientesStore = defineStore('Pacientes', {
                 return acc;
             }, {});
 
-            const pacientesActivos = pacientes.filter((paciente) => {
-                return paciente.estado === 'activo'
-            })
-
 
             // Asociar cada paciente con su usuario correspondiente
-            const usuariosPacientes = pacientesActivos.map((paciente) => {
+            const usuariosPacientes = pacientes.map((paciente) => {
                 const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
 
                 if (usuario) {
                     return {
                         ...paciente,
                         ...usuario,
-                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        Eps: mapaEPS[paciente.Eps] || paciente.id_eps,
                         id_paciente: paciente.id // renombramos el id del paciente
                     }
                 } else {
                     return {
                         ...paciente,
-                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        Eps: mapaEPS[paciente.id_eps] || paciente.id_eps,
                         usuario: null
                     }
                 }
@@ -123,27 +115,6 @@ export const usePacientesStore = defineStore('Pacientes', {
             })
 
             return datos
-        },
-
-        async indexDBDatos() {
-            const config = useRuntimeConfig()
-            const usuarios = await getAll(config.public.patients, 'store_two')
-
-            console.log(usuarios)
-            const UsuariosIndexed = usuarios.map((data) => ({
-                Paciente: {
-                    id: data.patient_id,
-                    sexo: data.patient_gender,
-                    genero: data.patient_gender_identity,
-                    poblacionVulnerable: data.patient_vulnerability,
-                    Eps: data.patient_eps_id,
-                    user_profile: data.user_profile
-                },
-            }));
-
-            // UsuariosIndexed.map((item) => {
-            //     guardarEnDB(item)
-            // })
         },
 
         async listPacientesAtendidos(filtrar = true) {
@@ -209,6 +180,62 @@ export const usePacientesStore = defineStore('Pacientes', {
 
             this.Pacientes = usuariosPacientes
             return usuariosPacientes
+        },
+
+        async indexDBDatos() {
+            const pacientes = await traerPacientes()
+            const pacientesLocal = await this.listPacientes
+
+            // Crear un conjunto de IDs locales para comparación rápida
+            const idsLocales = new Set(
+                pacientesLocal.map(p => `${p.id_paciente}-${p.id_usuario}`)
+            );
+
+            const pacientesIndexed = pacientes.map((data) => ({
+                Paciente: {
+                    id: data.id,
+                    id_usuario: data.info_usuario.id,
+                    id_eps: data.id_eps,
+                    genero: data.genero,
+                    sexo: data.sexo,
+                    Regimen: data.regimen,
+                    poblacionVulnerable: data.vulnerabilidad,
+                    estado: data.estado,
+                },
+                InformacionUser: {
+                    id: data.info_usuario.id,
+                    name: data.info_usuario.name,
+                    No_document: data.info_usuario.No_document,
+                    type_doc: data.info_usuario.type_doc,
+                    celular: data.info_usuario.celular,
+                    telefono: data.info_usuario.telefono,
+                    nacimiento: data.info_usuario.nacimiento,
+                    direccion: data.info_usuario.direccion,
+                    municipio: data.info_usuario.municipio,
+                    departamento: data.info_usuario.departamento,
+                    barrio: data.info_usuario.barrio,
+                    zona: data.info_usuario.zona,
+                    estado: data.info_usuario.estado,
+                },
+                Antecedentes: data.antecedente?.map((a) => ({
+                    id: a.id,
+                    id_paciente: a.id_paciente,
+                    tipo: a.tipo,
+                    descripcion: a.descripcion,
+                })) || [],
+            }));
+
+            // Filtrar los que no están en local
+            const nuevosPacientes = pacientesIndexed.filter(item => {
+                const key = `${item.Paciente.id}-${item.InformacionUser.id}`;
+                return !idsLocales.has(key);
+            });
+
+            // Guardar solo los nuevos
+            nuevosPacientes.forEach(item => {
+                guardarEnDB(item);
+            });
+
         },
 
     }

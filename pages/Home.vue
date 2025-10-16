@@ -3,6 +3,7 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
 import Historia from '~/components/Historia.vue';
 import Cita from '~/components/Cita.vue';
+import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
@@ -27,6 +28,7 @@ onMounted(async () => {
     sessionStorage.removeItem('seccionIdActivo')
 
     rol.value = sessionStorage.getItem('Rol')
+
     const Historias = await historiaStore.ultimasHistorias();
     let citas = []
 
@@ -388,6 +390,17 @@ const cardsPacientes = new CardBuilder();
 const cardsCitas = new CardBuilder();
 const cardsAcciones = new CardBuilder();
 
+function cerrar(){
+    varView.showNuevaCita = false
+}
+
+const {builder, pacientesList, medicosList} = useFormularioCitaBuilder({
+    storeId: 'NuevaCita',
+    storePinia: 'Citas',
+    cerrarModal: cerrar,
+    show: varView.showNuevaCita,
+});
+
 const propiedades = computed(() => {
     if (!rol.value) return null
 
@@ -494,7 +507,8 @@ const propiedades = computed(() => {
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
                 .setheaderTitle('Acciones Rapidas')
                 .build()
-            ) 
+            )
+            .addComponente('Form', builder)
     }
     return paginaBase.build()
 })
@@ -505,5 +519,5 @@ const propiedades = computed(() => {
     <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
     <Paciente v-if="varView.showNuevoPaciente"/>
     <Historia v-if="varView.showNuevaHistoria" />
-    <Cita v-if="varView.showNuevaCita"/>
+    <!-- <Cita v-if="varView.showNuevaCita"/> -->
 </template>

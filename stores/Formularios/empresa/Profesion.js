@@ -1,4 +1,4 @@
-import { traerdatos } from '~/Core/Empresa/Datos/DatosProfesion';
+import { traerdatosProfesion } from '~/Core/Empresa/Datos/Profesion/GETProfesion';
 import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
 
 // Estructura de datos de Profesion
@@ -15,37 +15,49 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     state: () => ({
         Formulario: estructuraDatosProfesion,
         Datos: JSON.parse(JSON.stringify(estructuraDatosProfesion)), // estructura base compartida
-        DatosProfesion: []
+        Profesiones: []
     }),
 
     getters: {
         async listProfesion(state) {
             const store = useIndexedDBStore()
             store.almacen = 'Profesion'
-            const Notas = await store.leerdatos()
+            const Profesiones = await store.leerdatos()
 
-            state.Notas = Notas
-            return Notas
+            state.Profesiones = Profesiones
+            return Profesiones
         },
     },
 
     actions: {
 
         async indexDBDatos() {
-            const profesiones = await traerdatos()
+            const profesiones = await traerdatosProfesion()
+            const profesionesLocal = await this.listProfesion
+
+            // Crear un conjunto de IDs locales para comparación rápida
+            const ids = new Set(
+                profesionesLocal.map(data => data.id)
+            );
 
             const ProfesionesIndexed = profesiones.map((profesion) => ({
                 Profesion: {
-                    id: profesion.profession_id, 
-                    nombre: profesion.profession_name, 
-                    codigo: profesion.profession_code,
-                    // links: profesion._links
+                    id: profesion.id, 
+                    nombre: profesion.nombre, 
+                    codigo: profesion.codigo,
                 }
             }));
 
-            ProfesionesIndexed.map((item) => {
-                guardarEnDB(item)
-            })
+            // Filtrar los que no están en local
+            const nuevasProfesiones = ProfesionesIndexed.filter(item => {
+                const key = item.Profesion.id;
+                return !ids.has(key);
+            });
+
+            // Guardar solo los nuevos
+            nuevasProfesiones.forEach(item => {
+                guardarEnDB(item);
+            });
         },
 
     }

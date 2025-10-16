@@ -20,6 +20,9 @@ const enviarFormulario = async (datos) => {
         try {
             // mandar a api
             await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+
+
+            
             const pacientes = await pacientesStore.listPacientes
             const paciente = pacientes.filter((paciente) => {
                 return paciente.id === datos.Cita.id_paciente

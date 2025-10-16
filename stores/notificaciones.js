@@ -105,7 +105,30 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                     valor: null
                 };
             }
+        },
 
+        loading() {
+            this.inicia();
+            // SweetAlert2 para mostrar "Cargando..."
+            this.swal.fire({
+                title: this.options.titulo || 'Cargando...',
+                html: this.options.texto || 'Por favor, espere un momento...',
+                allowOutsideClick: false,
+                allowEscapeKey: false,   // Evita que se cierre con la tecla Esc
+                showConfirmButton: false, // Oculta el botón de Confirmar
+                didOpen: () => {
+                    // Muestra el indicador de carga (spinner)
+                    this.swal.showLoading(); 
+                },
+                customClass: {
+                    // Opcional: aplica la clase de tema
+                    popup: this.options.theme === 'dark' ? 'swal-dark' : 'swal-light',
+                },
+            });
+        },
+
+        close() {
+            this.swal.close();
         }
     }
 })

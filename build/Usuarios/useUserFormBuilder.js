@@ -4,7 +4,7 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 export function useUserBuilder({
     storeId,
     storePinia,
-    camposRequeridos,
+    camposRequeridos = [],
     cerrarModal,
     tipoFormulario,
     buscarUsuario,
@@ -21,20 +21,34 @@ export function useUserBuilder({
     verUser,
     soloVer,
     eliminar,
-    validarFecha = () => {},
-    validarTipoDoc = ()=>{},
+    validarFecha = () => { },
+    validarTipoDoc = () => { },
 }) {
 
-    const validarContraseña = (event) => {
-        const valor = event.target.value
-        // Al menos 3 letras (mayúsculas o minúsculas)
-        const letras = valor?.match(/[a-zA-Z]/g) || [];
-        // Al menos 2 números
-        const numeros = valor?.match(/[0-9]/g) || [];
-        // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
-        const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || [];
 
-        return letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1;
+    const validarContraseña = (event) => {
+        let mensaje = '';
+
+        const valor = event.target.value
+        
+        const letras = valor?.match(/[a-zA-Z]/g) || []; // Al menos 3 letras (mayúsculas o minúsculas)
+        const numeros = valor?.match(/[0-9]/g) || []; // Al menos 2 números
+        const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || []; // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
+
+        if(letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1){
+            console.log('jaj')
+            mensaje = 'no ma'
+        }
+
+        const errorDiv = document.getElementById(`error-password`);
+        if (errorDiv) {
+            if (mensajeError) {
+                errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+            } else {
+                errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
+            }
+        }
+
     }
 
     const builder = new FormularioBuilder()
@@ -224,27 +238,26 @@ export function useUserBuilder({
             vmodel: 'InformacionUser.telefono',
         })
 
-        // 📌 Sección: Usuario
-        .addCampo({
-            component: 'Label',
-            text: '<i class="fa-solid fa-user-secret text-sky-600 mr-1"></i>Datos usuario',
-            tamaño: 'w-full md:col-span-2',
-            forLabel: 'correo-secret'
-        })
-        .addCampo({
-            component: 'Input',
-            type: 'text',
-            placeholder: 'Correo Electrónico',
-            id: 'correo-secret',
-            name: 'correo-secret',
-            tamaño: 'w-full',
-            minLength: '5',
-            mayuscula: false,
-            vmodel: 'User.correo',
-        })
-
     if (tipoUsuario === 'Administrador') {
         builder
+            // 📌 Sección: Usuario
+            .addCampo({
+                component: 'Label',
+                text: '<i class="fa-solid fa-user-secret text-sky-600 mr-1"></i>Datos usuario',
+                tamaño: 'w-full md:col-span-2',
+                forLabel: 'correo-secret'
+            })
+            .addCampo({
+                component: 'Input',
+                type: 'text',
+                placeholder: 'Correo Electrónico',
+                id: 'correo-secret',
+                name: 'correo-secret',
+                tamaño: 'w-full',
+                minLength: '5',
+                mayuscula: false,
+                vmodel: 'User.correo',
+            })
             .addCampo({
                 component: 'Select',
                 placeholder: 'Rol',
@@ -267,6 +280,9 @@ export function useUserBuilder({
                 minLength: '5',
                 mayuscula: false,
                 vmodel: 'User.contraseña',
+                slot: {
+                    html: `<div id="error-password"></div>`
+                },
                 events: {
                     onInput: validarContraseña
                 }
@@ -428,7 +444,7 @@ export function useUserBuilder({
                 name: 'profesion',
                 tamaño: 'w-full md:col-span-2',
                 options: opcionesProfesion,
-                vmodel: 'Medico.profesion',
+                vmodel: 'Profesional.profesion',
             })
 
             // 📌 Sección: Ubicación Laboral
@@ -447,7 +463,7 @@ export function useUserBuilder({
                 options: departamentos,
                 opciones: [{ value: "nombre" }, { text: 'nombre', value: 'nombre' }],
                 seleccionarItem: seleccionarDepartamento,
-                vmodel: 'Medico.departamentoLaboral',
+                vmodel: 'Profesional.departamentoLaboral',
             })
             .addCampo({
                 component: 'Input',
@@ -457,7 +473,7 @@ export function useUserBuilder({
                 name: 'municipioLaboral',
                 tamaño: 'w-full',
                 list: 'listMunicipio',
-                vmodel: 'Medico.municipioLaboral',
+                vmodel: 'Profesional.municipioLaboral',
             })
             .addCampo({
                 component: 'Select',
@@ -469,7 +485,25 @@ export function useUserBuilder({
                     { text: 'Rural', value: 'Rural' },
                     { text: 'Urbana', value: 'Urbana' }
                 ],
-                vmodel: 'Medico.zonaLaboral',
+                vmodel: 'Profesional.zonaLaboral',
+            })
+            // 📌 Sección: Usuario
+            .addCampo({
+                component: 'Label',
+                text: '<i class="fa-solid fa-user-secret text-sky-600 mr-1"></i>Datos usuario',
+                tamaño: 'w-full md:col-span-2',
+                forLabel: 'correo-secret'
+            })
+            .addCampo({
+                component: 'Input',
+                type: 'text',
+                placeholder: 'Correo Electrónico',
+                id: 'correo-secret',
+                name: 'correo-secret',
+                tamaño: 'w-full',
+                minLength: '5',
+                mayuscula: false,
+                vmodel: 'User.correo',
             })
     }
 

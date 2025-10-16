@@ -11,7 +11,7 @@ import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
-import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/EliminarMedico';
+import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/DELETEMedico';
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -42,19 +42,22 @@ watch(() => showVer.value, async () => {
 // Cargar los Medicos desde el store
 onMounted(async () => {
     varView.cargando = true
+
     await llamadatos()
     const listaProfesiones = await profesionStore.listProfesion
     profesiones.value = listaProfesiones.map((profesion) => {
-        return { text: profesion.nombre, value: profesion.nombre }
-    })
+        return { text: profesion.nombre, value: profesion.id }
+    });
+
     varView.cargando = false
 });
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
 const modificarMedico = (medico) => {
+    console.log(medico)
     mapCampos(medico, medicosStore.Formulario)
-    medicosStore.Formulario.Medico.id = medico.id_profesional
-    medicosStore.Formulario.User.id = medico.id
+    medicosStore.Formulario.Profesional.id = medico.id_profesional
+    medicosStore.Formulario.InformacionUser.id = medico.id_usuario
     showVer.value = true;
 };
 
@@ -91,7 +94,7 @@ function validarFecha(event) {
     const fecha = new Date(event.target.value);
     const hoy = new Date();
 
-    let mensajeError = '' 
+    let mensajeError = ''
     // Calcular edad
     let edad = hoy.getFullYear() - fecha.getFullYear();
     const mes = hoy.getMonth() - fecha.getMonth();
@@ -158,7 +161,6 @@ const municipiosOptions = computed(() => {
 const propiedadesUser = useUserBuilder({
     storeId: 'NuevoProfesional',
     storePinia: 'Profesionales',
-    camposRequeridos: [],
     cerrarModal: cerrar,
     show: show,
     tipoFormulario: 'Wizard',
@@ -233,5 +235,5 @@ const propiedades = computed(() => {
 // console.log(propiedades)
 </script>
 <template>
-    <Pagina :Propiedades="propiedades" :key="refresh"/>
+    <Pagina :Propiedades="propiedades" :key="refresh" />
 </template>

@@ -43,6 +43,7 @@ onMounted(() => {
 });
 
 function limpiar() {
+    console.log('limpiando')
     mapCamposLimpios(tablaStore?.Formulario)
     localStorage.removeItem(props.Propiedades.content.storeId)
     

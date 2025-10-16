@@ -2,6 +2,7 @@
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
+import Historia from '~/components/Historia.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -271,6 +272,7 @@ async function activarCita(cita) {
             </select>
         </div>
     </div>
+
     <Historia v-if="varView.showNuevaHistoria"/>
 </template>
 
