@@ -27,6 +27,7 @@ const showVer = ref(false)
 
 async function llamadatos() {
     medicos.value = await listMedicos.value;
+    console.log(medicos.value)
 }
 // Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async () => {
@@ -54,10 +55,12 @@ onMounted(async () => {
 
 // Variable para controlar la visibilidad del formulario de ingreso de profesional
 const modificarMedico = (medico) => {
-    console.log(medico)
     mapCampos(medico, medicosStore.Formulario)
     medicosStore.Formulario.Profesional.id = medico.id_profesional
+    medicosStore.Formulario.Profesional.id_temporal = medico.id_temporal
+    medicosStore.Formulario.Profesional.id_usuario = medico.id_usuario
     medicosStore.Formulario.InformacionUser.id = medico.id_usuario
+    medicosStore.Formulario.InformacionUser.id_temporal = medico.id_temporalUsuario
     showVer.value = true;
 };
 

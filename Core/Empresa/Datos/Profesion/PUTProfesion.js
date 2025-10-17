@@ -3,6 +3,25 @@ import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/use
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarActualizarProfesion = async (datos) => {
+    const notificacionesStore = useNotificacionesStore()
+    const profesion = datos.Profesion;
+
+    // 🔍 Verificar campos obligatorios
+    const camposObligatorios = ['codigo', 'nombre'];
+    const camposFaltantes = camposObligatorios.filter(campo => {
+        const valor = profesion[campo];
+        return valor === undefined || valor === null || valor === '';
+    });
+
+    if (camposFaltantes.length > 0) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Datos incompletos';
+        notificacionesStore.options.texto = `Faltan los siguientes campos: ${camposFaltantes.join(', ')}`;
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
     return await enviarFormulario(datos);
 };
 
@@ -12,16 +31,25 @@ const enviarFormulario = async (datos) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
-    
+
     const online = navigator.onLine;
     if (online) {
         try {
+            // Guardar local
+            await actualizarEnIndexedDB(JSON.stringify({
+                Profesion: {
+                    ...datos.Profesion,
+                    sincronizado: 0
+                }
+            }))
+
             // mandar a api
             let options = {
                 metodo: 'PUT',
                 url: config.public.professions + '/' + datos.Profesion.id,
                 token: token,
                 body: {
+                    id: datos.Profesion.id,
                     codigo: datos.Profesion.codigo,
                     nombre: datos.Profesion.nombre,
                 }
@@ -29,12 +57,17 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+                // Actualizar local
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+                    Profesion: {
+                        ...datos.Profesion,
+                        sincronizado: 1
+                    }
+                })));
                 return true
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'

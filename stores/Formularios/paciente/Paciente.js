@@ -62,7 +62,6 @@ export const usePacientesStore = defineStore('Pacientes', {
                 return acc;
             }, {});
 
-
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientes.map((paciente) => {
                 const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
@@ -71,8 +70,10 @@ export const usePacientesStore = defineStore('Pacientes', {
                     return {
                         ...paciente,
                         ...usuario,
-                        Eps: mapaEPS[paciente.Eps] || paciente.id_eps,
-                        id_paciente: paciente.id // renombramos el id del paciente
+                        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
+                        id_paciente: paciente.id, // renombramos el id del paciente
+                        id_temporal: paciente.id_temporal,
+                        id_temporalUsuario: usuario.id_temporal
                     }
                 } else {
                     return {
@@ -217,12 +218,12 @@ export const usePacientesStore = defineStore('Pacientes', {
                     zona: data.info_usuario.zona,
                     estado: data.info_usuario.estado,
                 },
-                Antecedentes: data.antecedente?.map((a) => ({
-                    id: a.id,
-                    id_paciente: a.id_paciente,
-                    tipo: a.tipo,
-                    descripcion: a.descripcion,
-                })) || [],
+                // Antecedentes: data.antecedente?.map((a) => ({
+                //     id: a.id,
+                //     id_paciente: a.id_paciente,
+                //     tipo: a.tipo,
+                //     descripcion: a.descripcion,
+                // })) || [],
             }));
 
             // Filtrar los que no están en local

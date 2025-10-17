@@ -15,7 +15,7 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Cita: {...datos.Cita, sincronizado: 0}})));
+    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Cita: {...datos.Cita, estado: 'inactiva', sincronizado: 0}})));
 
     const online = navigator.onLine;
     if (online) {
@@ -51,7 +51,8 @@ const enviarFormulario = async (datos) => {
                         servicio: respuesta.data.servicio,
                         motivo: respuesta.data.motivo,
                         fecha: respuesta.data.fecha,
-                        hora: respuesta.data.hora
+                        hora: respuesta.data.hora,
+                        estado: respuesta.data.estado
                     }
                 }
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));

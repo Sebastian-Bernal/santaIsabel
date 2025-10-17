@@ -3,7 +3,48 @@ import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/use
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosEPS = async (datos) => {
-    
+    const notificacionesStore = useNotificacionesStore();
+    const eps = datos.EPS;
+
+    // 🔍 Validar campos obligatorios
+    const camposObligatorios = ['nombre', 'codigo', 'direccion', 'telefono', 'email', 'website'];
+    const camposFaltantes = camposObligatorios.filter(campo => {
+        const valor = eps[campo];
+        return valor === undefined || valor === null || valor === '';
+    });
+
+    if (camposFaltantes.length > 0) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Datos incompletos';
+        notificacionesStore.options.texto = `Faltan los siguientes campos: ${camposFaltantes.join(', ')}`;
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 📧 Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(eps.email)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Correo inválido';
+        notificacionesStore.options.texto = 'El correo electrónico no tiene un formato válido';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 🌐 Validar formato de website
+    const websiteRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
+    if (!websiteRegex.test(eps.website)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Sitio web inválido';
+        notificacionesStore.options.texto = 'La URL del sitio web no tiene un formato válido';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+
     return await enviarFormulario(datos);
 };
 
@@ -14,11 +55,13 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
-
+    
     const online = navigator.onLine;
     if (online) {
         try {
+            // guardar local
+            const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
+            
             // mandar a api
             let options = {
                 metodo: 'POST',
@@ -36,6 +79,7 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if(respuesta.success){
+                // Actualizar local
                 const datosActualizadosLocal = {
                     EPS: {
                         id_temporal: id_temporal.data,

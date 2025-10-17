@@ -1,24 +1,44 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 
-// funcion para Validar campos del formulario Nuevo Paciente
+// funcion para Validar campos del formulario
 export const validarYEnviarDatosProfesion = async (datos) => {
+    const notificacionesStore = useNotificacionesStore()
+    const profesion = datos.Profesion;
+
+    // 🔍 Verificar campos obligatorios
+    const camposObligatorios = ['codigo', 'nombre'];
+    const camposFaltantes = camposObligatorios.filter(campo => {
+        const valor = profesion[campo];
+        return valor === undefined || valor === null || valor === '';
+    });
+
+    if (camposFaltantes.length > 0) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Datos incompletos';
+        notificacionesStore.options.texto = `Faltan los siguientes campos: ${camposFaltantes.join(', ')}`;
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
     return await enviarFormulario(datos);
 };
 
-// Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
+// Funcion para validar conexion a internet y enviar fomulario a API y IndexedDB
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Profesion: {...datos.Profesion, sincronizado: 0}})));
-
+    
     const online = navigator.onLine;
     if (online) {
         try {
-            // mandar a api
+            // Guardar local
+            const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Profesion: {...datos.Profesion, sincronizado: 0}})));
+            // Mandar a API
             let options = {
                 metodo: 'POST',
                 url: config.public.professions,
@@ -31,6 +51,7 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
+                // actualizar datos local
                 const datosActualizadosLocal = {
                     Profesion: {
                         id_temporal: id_temporal.data,

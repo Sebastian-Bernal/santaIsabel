@@ -53,14 +53,18 @@ export const useMedicosStore = defineStore('Medicos', {
 
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
+
                 const usuario = usuarios.find((user) => user.id === medico.id_usuario)
 
+                if(!usuario) return
                 // usuario.id_profesional = medico.id
                 return {
                     ...medico,
-                    ...usuario || null, // Agregamos los datos del usuario (o null si no se encuentra)
+                    ...usuario, // Agregamos los datos del usuario (o null si no se encuentra)
                     id_profesional: medico.id,
-                    profesion: mapaProfesion[medico.id_profesion] || medico.id_profesion
+                    id_temporal: medico.id_temporal,
+                    id_temporalUsuario: usuario.id_temporal,
+                    profesion: mapaProfesion[medico.id_profesion] || medico.id_profesion,
                 }
             })
 

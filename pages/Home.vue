@@ -10,9 +10,9 @@ import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { onMounted, ref } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 
 const citasStore = useCitasStore();
-const historiaStore = useHistoriasStore();
 const varView = useVarView()
 const rol = ref(null)
 
@@ -28,31 +28,32 @@ onMounted(async () => {
     sessionStorage.removeItem('seccionIdActivo')
 
     rol.value = sessionStorage.getItem('Rol')
+    const usuario = JSON.parse(sessionStorage.getItem('user'))
+    console.log(usuario)
 
-    const Historias = await historiaStore.ultimasHistorias();
     let citas = []
-
+    let Historias = []
+    
     if(rol.value === 'Admin'){
-
+        const historiaStore = useHistoriasStore();
+        Historias = await historiaStore.ultimasHistorias();
         citas = await citasStore.listCitasHoy();
 
     } else if (rol.value === 'Profesional'){
+
+        const profesionalesStore = useMedicosStore()
+        const profesionales = await profesionalesStore.listMedicos
+
+        const profesional = profesionales.find(p => p.id_usuario === usuario.id)[0]
 
         const listCitas = await citasStore.listCitas();
         const hoy = new Date();
         citas = listCitas.filter((cita) => {
             const fechaCita = new Date(cita.fecha);
             return (
-                cita.name_medico === 'LAURA GARCIA' &&
+                cita.id_medico === profesional.id &&
                 fechaCita > hoy
             )
-        })
-
-    } else if (rol.value === 'Paciente'){
-
-        const listCitas = await citasStore.listCitas();
-        citas = listCitas.filter((cita) => {
-            return cita.name_paciente === 'CAMILO JARAMILLO'
         })
 
     }
@@ -61,7 +62,7 @@ onMounted(async () => {
     varView.cargando = false;
 });
 // Funcion para cargar Dashboard por rol
-function DashboardRol(rol, Historias, citas) {
+function DashboardRol(rol, Historias = [], citas) {
     if (rol === 'Admin') {
         if (Historias.length > 0) {
             ultimosPacientes.value = Historias.map(card => {
@@ -165,80 +166,12 @@ function DashboardRol(rol, Historias, citas) {
                 },
             },
         ];
-    } else if (rol === 'Paciente') {
-        const paciente = JSON.parse(sessionStorage.getItem('Paciente'))
-
-        cardPaciente.value = [{
-            header: {
-                html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenido, ${paciente.name.toLowerCase()}</h2>
-                        <p class="text-base font-bold text-gray-200">En Thesalus encontraras un resumen de tu historial clinico</p>`,
-                title: ``,
-            },
-            footer: {
-                status: `EPS: Coomeva`,
-                statusClass: 'bg-white text-blue-700 font-black!'
-            }
-        }]
-
-        Citas.value = citas.map(card => {
-            return {
-                header: {
-                    html: `<div class="flex flex-col items-center">
-                     <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
-                     <p class="text-xs font-thin">${card.fecha}</p>
-                     <div/>`,
-                    title: paciente.name,
-                    subtitle: card.servicio,
-                },
-                // body: {
-                //     html: ``
-                // },
-                footer: {
-                    status: card.motivo,
-                    statusClass: 'bg-blue-500'
-                }
-            }
-        })
-
-        actions.value = [
-            {
-                header: {
-                    icon: 'fa-solid fa-plus text-white',
-                    iconBg: 'bg-inherit',
-                    title: 'Solicitar Cita',
-                    subtitle: 'Enviar peticion para consulta medica',
-                    titleClass: 'text-white',
-                    subtitleClass: 'text-gray-300!'
-                },
-            },
-            {
-                header: {
-                    icon: 'fa-solid fa-search text-white',
-                    iconBg: 'bg-inherit',
-                    title: 'Historial',
-                    subtitle: 'Visualiza tus consultas medicas',
-                    titleClass: 'text-white',
-                    subtitleClass: 'text-gray-300!',
-                },
-                accion: verHistorial
-            },
-            {
-                header: {
-                    icon: 'fa-solid fa-file text-white',
-                    iconBg: 'bg-inherit',
-                    title: 'Descargar Certificados',
-                    subtitle: 'Descarga constancias y archivos medicos',
-                    titleClass: 'text-white',
-                    subtitleClass: 'text-gray-300!'
-                },
-            },
-        ];
     } else if (rol === 'Profesional') {
-        const profesional = JSON.parse(sessionStorage.getItem('Profesional'))
+        const usuario = JSON.parse(sessionStorage.getItem('user'))
 
         cardPaciente.value = [{
             header: {
-                html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${profesional.name.toLowerCase()}</h2>
+                html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
                         <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca tus citas y pacientes</p>
 
                     `,
@@ -268,7 +201,7 @@ function DashboardRol(rol, Historias, citas) {
                     subtitle: card.servicio,
                 },
                 body: {
-                    text: `${profesional.name}`
+                    text: `${usuario.name}`
                 },
                 footer: {
                     status: card.motivo,
@@ -441,37 +374,6 @@ const propiedades = computed(() => {
             .addComponente('Card', cardsAcciones
                 .setCards(actions)
                 .setContenedor('area-actions')
-                .setcontenedorCards('flex flex-col area-actions')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
-                .setheaderTitle('Acciones Rapidas')
-                .build()
-            )
-    }
-    else if (rol.value === 'Paciente') {
-        paginaBase
-            .setHeaderPage({
-                titulo: 'Dashboard',
-                descripcion: 'Resumen de actividad del sistema de historias clínicas.',
-            })
-            .addComponente('Card', cardsState
-                .setCards(cardPaciente)
-                .setContenedor('area-status')
-                .setcontenedorCards('')
-                .setTamaño('flex flex-row justify-between h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 rounded-lg')
-                .build()
-            )
-            .addComponente('Card', cardsCitas
-                .setCards(Citas)
-                .setcontenedorCards('flex flex-col')
-                .setContenedor('area-info bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
-                .setheaderTitle('Citas Proximas')
-                .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
-                .build()
-            )
-            .addComponente('Card', cardsAcciones
-                .setCards(actions)
-                .setContenedor('area-actions bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl h-fit')
                 .setcontenedorCards('flex flex-col area-actions')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
                 .setheaderTitle('Acciones Rapidas')

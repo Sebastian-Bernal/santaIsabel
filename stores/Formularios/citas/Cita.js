@@ -34,6 +34,14 @@ export const useCitasStore = defineStore('Citas', {
             store.almacen = 'Cita';
             let citas = await store.leerdatos();
 
+            // Validar que todos los objetos tengan el campo fecha_historia
+            const faltanFechas = citas.some(h => !h.fecha || typeof h.fecha !== 'string');
+
+            if (faltanFechas) {
+                // Volver a llamar si hay datos incompletos
+                store.almacen = 'Cita';
+                citas = await store.leerdatos();
+            }
             // Ordenar por fecha y hora
             citas.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);
@@ -41,7 +49,6 @@ export const useCitasStore = defineStore('Citas', {
                 return fechaA - fechaB;
             });
 
-            console.log(citas)
             this.Citas = citas;
             return citas;
         },
@@ -104,6 +111,7 @@ export const useCitasStore = defineStore('Citas', {
                     fecha: data.fecha,
                     hora: data.hora,
                     estado: data.estado,
+                    motivo_cancelacion: data.motivo_cancelacion,
                 }
             }));
 

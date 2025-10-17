@@ -128,7 +128,7 @@ async function cancelarCita(cita) {
 function showMotivo(cita) {
     options.icono = "info";
     options.titulo = "Motivo de cancelacion";
-    options.texto = `${cita.motivoCancelacion}`;
+    options.texto = `${cita.motivo_cancelacion}`;
     options.tiempo = 5000;
     simple();
 }

@@ -103,6 +103,7 @@ export function useFormulario(props) {
 
     // Botones
     async function manejarClick(item, formData, limpiar) {
+        varView.cargando = true
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 guardarDatos(formData)
@@ -111,7 +112,6 @@ export function useFormulario(props) {
                 const validacion = camposRequeridos(formData)
                 if (validacion) {
                     await mandarFormulario(formData, limpiar)
-                    limpiar()
                 } else {
                     validarform()
                 }
@@ -126,6 +126,7 @@ export function useFormulario(props) {
         } else {
             item.accion(formData)
         }
+        varView.cargando = false
     }
 
     // Persistencia en localStorage
@@ -155,6 +156,7 @@ export function useFormulario(props) {
         if (typeof accion === 'function') {
             try {
                 const res = await accion(data)
+                console.log(res)
                 if (res) {
                     notificaciones.options.icono = 'success'
                     notificaciones.options.background = '#22c55e'
@@ -164,10 +166,7 @@ export function useFormulario(props) {
                     notificaciones.mensaje()
                     limpiarLocal()
 
-                    // setTimeout(() => {
-                    //     window.location.reload();
-                    // }, 1500);
-                    // limpiar()
+                    limpiar()
                 }
                 return res
             } catch (err) {

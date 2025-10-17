@@ -3,6 +3,54 @@ import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/use
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosEmpresa = async (datos) => {
+    const notificacionesStore = useNotificacionesStore();
+
+    // 🔍 Lista de campos obligatorios
+    const camposObligatorios = [
+        'nombre', 'no_identificacion', 'DV', 'direccion', 'municipio', 'pais',
+        'telefono', 'lenguaje', 'tipoDocumento', 'tipoEntorno', 'tipoMoneda',
+        'tipoOperacion', 'tipoOrganizacion', 'tipoRegimen', 'tipoResponsabilidad',
+        'impuesto', 'registroMercantil', 'logo', 'logoLogin', 'JPG'
+    ];
+
+    const empresa = datos.Empresa;
+
+    // 🔎 Verificar campos vacíos o nulos
+    const camposFaltantes = camposObligatorios.filter(campo => {
+        const valor = empresa[campo];
+        return valor === undefined || valor === null || valor === '';
+    });
+
+    if (camposFaltantes.length > 0) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Datos incompletos';
+        notificacionesStore.options.texto = `Faltan los siguientes campos: ${camposFaltantes.join(', ')}`;
+        notificacionesStore.options.tiempo = 6000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 📞 Validar formato de teléfono (mínimo 7 dígitos)
+    const telefonoRegex = /^\d{7,}$/;
+    if (!telefonoRegex.test(empresa.telefono)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Teléfono inválido';
+        notificacionesStore.options.texto = 'El número de teléfono debe tener al menos 7 dígitos';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 🆔 Validar número de identificación (solo números)
+    const identificacionRegex = /^\d+$/;
+    if (!identificacionRegex.test(empresa.no_identificacion)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Identificación inválida';
+        notificacionesStore.options.texto = 'El número de identificación debe contener solo dígitos';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
 
     return await enviarFormulario(datos);
 };

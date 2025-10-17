@@ -54,20 +54,20 @@ export const accionesFormularios = {
         return respuesta;
     },
     NuevoPaciente: async (data) => {
-        await validarYEnviarNuevoPaciente(data);
-        return true;
+        const respuesta = await validarYEnviarNuevoPaciente(data);
+        return respuesta;
     },
     ModificarPaciente: async (data) => {
-        await validarYEnviarModificarPaciente(data)
-        return true;
+        const respuesta = await validarYEnviarModificarPaciente(data)
+        return respuesta;
     },
     NuevoProfesional: async (data) => {
-        await validarYEnviarNuevoMedico(data)
-        return true;
+        const respuesta = await validarYEnviarNuevoMedico(data)
+        return respuesta;
     },
     ModificarProfesional: async (data) => {
-        await validarYEnviarModificarMedico(data)
-        return true;
+        const respuesta = await validarYEnviarModificarMedico(data)
+        return respuesta;
     },
     RegistrarHistoria: async (data) => {
         const respuesta = await validarYEnviarRegistrarHistoria(data)
@@ -75,6 +75,7 @@ export const accionesFormularios = {
     },
     DatosEmpresa: async (data) => {
         const respuesta = await validarYEnviarDatosEmpresa(data)
+        console.log(respuesta)
         return respuesta
     },
     DatosSoftware: async (data) => {

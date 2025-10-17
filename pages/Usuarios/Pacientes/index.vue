@@ -60,7 +60,6 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
-    await pacientesStore.indexDBDatos()
     varView.cargando = false;
 });
 
@@ -73,7 +72,9 @@ const agregarPaciente = () => {
 const verPaciente = (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
     pacientesStore.Formulario.Paciente.id = paciente.id_paciente
+    pacientesStore.Formulario.Paciente.id_temporal = paciente.id_temporal
     pacientesStore.Formulario.InformacionUser.id = paciente.id_usuario
+    pacientesStore.Formulario.InformacionUser.id_temporal = paciente.id_temporalUsuario
     showVer.value = true;
 };
 

@@ -96,8 +96,16 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
         // Dashboard
         async ultimasHistorias() {
-            const historias = await this.listHistorias
-            return historias.sort(
+            let historias = await this.listHistorias
+            // Validar que todos los objetos tengan el campo fecha_historia
+            const faltanFechas = historias.some(h => !h.fecha_historia || typeof h.fecha_historia !== 'string');
+
+            if (faltanFechas) {
+                // Volver a llamar si hay datos incompletos
+                historias = await this.listHistorias;
+            }
+
+            return historias?.sort(
                 (a, b) => {
                     const fechaA = new Date(a.fecha_historia.split('/').reverse().join('-'));
                     const fechaB = new Date(b.fecha_historia.split('/').reverse().join('-'));

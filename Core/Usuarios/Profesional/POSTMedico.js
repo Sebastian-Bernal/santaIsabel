@@ -7,21 +7,99 @@ import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBMana
 export const validarYEnviarNuevoMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const storeMedicos = useMedicosStore();
-    const medicos = await storeMedicos.listMedicos
+    const medicos = await storeMedicos.listMedicos;
 
-    // Validar si ya existe el medico registrado
-    const medico = await medicos.find(
-        p => parseInt(p.No_document) === parseInt(datos.Profesional.No_document)
-    )
+    const info = datos.InformacionUser;
+    const profesional = datos.Profesional;
+    const usuario = datos.User;
+
+    // 🔍 Campos obligatorios
+    const camposObligatorios = [
+        'name', 'No_document', 'type_doc', 'celular', 'nacimiento',
+        'direccion', 'municipio', 'departamento', 'barrio', 'zona',
+        'id_profesion', 'departamento_laboral', 'municipio_laboral', 'zona_laboral',
+        'correo'
+    ];
+
+    const cuerpo = {
+        name: info.name,
+        No_document: info.No_document,
+        type_doc: info.type_doc,
+        celular: info.celular,
+        nacimiento: info.nacimiento,
+        direccion: info.direccion,
+        municipio: info.municipio,
+        departamento: info.departamento,
+        barrio: info.barrio,
+        zona: info.zona,
+        id_profesion: profesional.profesion,
+        departamento_laboral: profesional.departamentoLaboral,
+        municipio_laboral: profesional.municipioLaboral,
+        zona_laboral: profesional.zonaLaboral,
+        correo: usuario.correo
+    };
+
+    const camposFaltantes = camposObligatorios.filter(campo => {
+        const valor = cuerpo[campo];
+        return valor === undefined || valor === null || valor === '';
+    });
+
+    if (camposFaltantes.length > 0) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Datos incompletos';
+        notificacionesStore.options.texto = `Faltan los siguientes campos: ${camposFaltantes.join(', ')}`;
+        notificacionesStore.options.tiempo = 6000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 📅 Validar formato de fecha
+    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!fechaRegex.test(info.nacimiento)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Fecha inválida';
+        notificacionesStore.options.texto = 'La fecha de nacimiento debe tener el formato YYYY-MM-DD';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 📞 Validar número de celular
+    const celularRegex = /^\d{10}$/;
+    if (!celularRegex.test(info.celular)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Celular inválido';
+        notificacionesStore.options.texto = 'El número de celular debe tener 10 dígitos';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 📧 Validar formato de correo
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(usuario.correo)) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Correo inválido';
+        notificacionesStore.options.texto = 'El correo electrónico no tiene un formato válido';
+        notificacionesStore.options.tiempo = 5000;
+        await notificacionesStore.simple();
+        return false;
+    }
+
+    // 🔁 Validar si ya existe el médico
+    const medico = medicos.find(
+        p => parseInt(p.No_document) === parseInt(info.No_document)
+    );
 
     if (medico) {
-        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.icono = 'warning';
         notificacionesStore.options.titulo = 'Profesional ya existe';
-        notificacionesStore.options.texto = 'Deseas registrar otro?';
+        notificacionesStore.options.texto = '¿Deseas registrar otro?';
         notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple()
-        return;
+        await notificacionesStore.simple();
+        return false;
     }
+
 
     return await enviarFormulario(datos);
 };
@@ -33,6 +111,7 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
+    // Guardar local
     const datosLocal = {
         InformacionUser : {
             ...datos.InformacionUser,
@@ -45,7 +124,6 @@ const enviarFormulario = async (datos) => {
     }
 
     const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
-    console.log('Profesional Local:', id_temporal)
 
     const online = navigator.onLine;
     if (online) {
@@ -60,7 +138,7 @@ const enviarFormulario = async (datos) => {
                         No_document: datos.InformacionUser.No_document,
                         type_doc: datos.InformacionUser.type_doc,
                         celular: datos.InformacionUser.celular,
-                        telefono: datos.InformacionUser.telefono,
+                        telefono: datos.InformacionUser.telefono || null,
                         nacimiento: datos.InformacionUser.nacimiento,
                         direccion: datos.InformacionUser.direccion,
                         municipio: datos.InformacionUser.municipio,
@@ -79,6 +157,7 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
+                // Actualizar local
                 const datosActualizadosLocal = {
                     InformacionUser: {
                         id_temporal: id_temporal.User,

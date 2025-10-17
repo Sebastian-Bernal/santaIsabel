@@ -22,8 +22,6 @@ const showModificarEPS = ref(false)
 
 onMounted(async () => {
     varView.cargando = true
-    // await storeProfesion.indexDBDatos()
-    // await storeEPS.indexDBDatos()
     EPSdata.value = await storeEPS.listEPS
     Profesiones.value = await storeProfesion.listProfesion
     console.log(EPSdata.value)
@@ -64,6 +62,7 @@ const propiedadesVerEPS = useEpsBuilder({
 function actualizarProfesion (profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id
+    storeProfesion.Formulario.Profesion.id_temporal = profesion.id_temporal
     showModificarProfesion.value = true
 }
 
@@ -76,6 +75,7 @@ function cerrar () {
 function actualizarEPS (eps) {
     mapCampos(eps, storeEPS.Formulario)
     storeEPS.Formulario.EPS.id = eps.id
+    storeEPS.Formulario.EPS.id_temporal = eps.id_temporal
     showModificarEPS.value = true
 }
 

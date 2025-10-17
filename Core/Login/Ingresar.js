@@ -34,10 +34,9 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
             if (respuesta) {
                 sessionStorage.setItem('token', respuesta.access_token)
-                sessionStorage.setItem('name', respuesta.user)
-                sessionStorage.setItem('Usuario', datos.correo)
+                sessionStorage.setItem('user', JSON.stringify(respuesta.user.usuario))
+                sessionStorage.setItem('Rol', respuesta.user.rol);
                 sessionStorage.setItem('Permisos', JSON.stringify(secciones));
-                sessionStorage.setItem('Rol', 'Admin');
                 return true
             } else {
                 return false

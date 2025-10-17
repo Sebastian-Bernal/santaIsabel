@@ -5,7 +5,6 @@ import { useNotificacionesStore } from '../../stores/notificaciones.js'
 export const validarYEnviarModificarMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
-
     return await enviarFormulario(datos);
 };
 
@@ -16,44 +15,66 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
+    await actualizarEnIndexedDB(JSON.stringify({
+        InformacionUser: {
+            ...datos.InformacionUser,
+            sincronizado: 0
+        },
+        Profesional: {
+            ...datos.Profesional,
+            id_usuario: datos.InformacionUser.id,
+            id_profesional: datos.Profesional.profesion,
+            sincronizado: 0
+        }
+    }))
+
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
             let options = {
                 metodo: 'PUT',
-                url: config.public.profesionals,
+                url: config.public.profesionals + '/' + datos.Profesional.id,
                 token: token,
                 body: {
-                        name: datos.InformacionUser.name,
-                        No_document: datos.InformacionUser.No_document,
-                        type_doc: datos.InformacionUser.type_doc,
-                        celular: datos.InformacionUser.celular,
-                        telefono: datos.InformacionUser.telefono,
-                        nacimiento: datos.InformacionUser.nacimiento,
-                        direccion: datos.InformacionUser.direccion,
-                        municipio: datos.InformacionUser.municipio,
-                        departamento: datos.InformacionUser.departamento,
-                        barrio: datos.InformacionUser.barrio,
-                        zona: datos.InformacionUser.zona,
+                    name: datos.InformacionUser.name,
+                    No_document: datos.InformacionUser.No_document,
+                    type_doc: datos.InformacionUser.type_doc,
+                    celular: datos.InformacionUser.celular,
+                    telefono: datos.InformacionUser.telefono,
+                    nacimiento: datos.InformacionUser.nacimiento,
+                    direccion: datos.InformacionUser.direccion,
+                    municipio: datos.InformacionUser.municipio,
+                    departamento: datos.InformacionUser.departamento,
+                    barrio: datos.InformacionUser.barrio,
+                    zona: datos.InformacionUser.zona,
 
-                        id_profesion: datos.Profesional.profesion,
-                        departamento_laboral: datos.Profesional.departamentoLaboral,
-                        municipio_laboral: datos.Profesional.municipioLaboral,
-                        zona_laboral: datos.Profesional.zonaLaboral,
+                    id_profesion: datos.Profesional.profesion,
+                    departamento_laboral: datos.Profesional.departamentoLaboral,
+                    municipio_laboral: datos.Profesional.municipioLaboral,
+                    zona_laboral: datos.Profesional.zonaLaboral,
 
-                        correo: datos.User.correo,
+                    correo: datos.User.correo,
                 }
             }
             const respuesta = await api.functionCall(options)
 
-            if (respuesta.status == 200) {
-                // await guardarEnDB(JSON.parse(JSON.stringify(datos)), "Paciente");
-                console.log(respuesta.paciente)
+            if (respuesta.success) {
+                console.log(respuesta)
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+                    InformacionUser: {
+                        ...datos.InformacionUser,
+                        sincronizado: 1
+                    },
+                    Profesional: {
+                        ...datos.Profesional,
+                        id_usuario: datos.InformacionUser.id,
+                        id_profesional: datos.Profesional.profesion,
+                        sincronizado: 1
+                    }
+                })));
                 return true
             }
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
-            return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
             await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
