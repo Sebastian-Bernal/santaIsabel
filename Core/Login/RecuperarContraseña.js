@@ -1,26 +1,9 @@
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { useUsersStore } from '~/stores/Formularios/usuarios/Users.js';
 import emailjs from '@emailjs/browser';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarRecuperarContraseña = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-
-    const usersStore = useUsersStore();
-    const usuarios = await usersStore.listUsers
-
-    const correo = usuarios.find(
-        p => p.correo.toLowerCase() === datos.Usuario.correo.toLowerCase()
-    )
-
-    if (!correo) {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'El correo ingresado no esta enlazado a ningun usuario';
-        notificacionesStore.options.texto = '';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple()
-        return;
-    };
 
     return await enviarFormulario(datos.Usuario);
 };
@@ -29,18 +12,37 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const varView = useVarView();
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = sessionStorage.getItem('token')
+
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
-            datos.codigoRecuperacion = generarCodigo()
-            const response = await emailjs.send(
-                import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
-                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
-                datos,
-                import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
-            )
-            console.log('Correo enviado con éxito:', response.status, response.text)
+        let options = {
+                metodo: 'POST',
+                url: config.public.cambiarContraseña,
+                body: {
+                    correo: datos.correo,
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+
+                console.log('correo enviado')
+                return true
+            }
+
+            // datos.codigoRecuperacion = generarCodigo()
+            // const response = await emailjs.send(
+            //     import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
+            //     import.meta.env.VITE_EMAILJS_TEMPLATE_ID,    // template_id
+            //     datos,
+            //     import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
+            // )
+            // console.log('Correo enviado con éxito:', response.status, response.text)
             return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);

@@ -194,3 +194,8 @@ export const buttons = ref([
 
 export const secciones = ['Configuracion','Resoluciones','Inventarios','Datos','Usuarios','Negocios','Productos','Formas de pago','Impuestos','Cajas','Historias','Consultas','Análisis','Evoluciones','Notas','Tratamientos','Medicacion',
     'Pacientes','Profesional','Citas','Crear','Rips','Reportes'];
+
+export const seccionesConAcciones = secciones.flatMap(seccion => {
+  const clave = seccion.replace(/\s+/g, '_'); // reemplaza espacios por guiones bajos
+  return [`${clave}_get`, `${clave}_post`, `${clave}_put`, `${clave}_delete`, `${clave}_view`];
+});

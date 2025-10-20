@@ -22,6 +22,7 @@ export const validarYEnviarDatosProfesion = async (datos) => {
         return false;
     }
 
+    console.log(datos)
     return await enviarFormulario(datos);
 };
 
@@ -46,6 +47,8 @@ const enviarFormulario = async (datos) => {
                 body: {
                     codigo: datos.Profesion.codigo,
                     nombre: datos.Profesion.nombre,
+
+                    permisos: datos.Profesion.permisos,
                 }
             }
             const respuesta = await api.functionCall(options)

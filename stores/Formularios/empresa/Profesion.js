@@ -1,4 +1,5 @@
 import { traerdatosProfesion } from '~/Core/Empresa/Datos/Profesion/GETProfesion';
+import { traerdatosSecciones } from '~/Core/Empresa/Datos/Profesion/GETSecciones';
 import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
 
 // Estructura de datos de Profesion
@@ -30,6 +31,13 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     },
 
     actions: {
+
+        async listSecciones() {
+            const secciones = await traerdatosSecciones()
+            const permisos = []
+            secciones.map((s) => permisos.push(s.nombre))
+            return permisos
+        },
 
         async indexDBDatos() {
             const profesiones = await traerdatosProfesion()

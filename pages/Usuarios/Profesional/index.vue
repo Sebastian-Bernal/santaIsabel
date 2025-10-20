@@ -196,6 +196,7 @@ const propiedades = computed(() => {
         municipios: municipiosOptions,
         seleccionarMunicipio: () => { },
         tipoUsuario: 'Profesional',
+        opcionesProfesion: profesiones,
         verUser: true,
         eliminar: eliminarProfesional,
         soloVer: varView.soloVer,

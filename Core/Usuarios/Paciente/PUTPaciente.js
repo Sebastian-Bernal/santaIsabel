@@ -4,8 +4,6 @@ import { useNotificacionesStore } from '../../stores/notificaciones.js'
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarModificarPaciente = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    const storePacientes = usePacientesStore();
-    const pacientes = await storePacientes.listPacientes;
 
     // 🔍 Validar campos obligatorios
     const camposObligatorios = [
@@ -53,20 +51,6 @@ export const validarYEnviarModificarPaciente = async (datos) => {
         notificacionesStore.options.tiempo = 5000;
         await notificacionesStore.simple();
         return false;
-    }
-
-    // 🔁 Validación si ya existe el paciente
-    const paciente = pacientes.find(
-        p => parseInt(p.No_document) === parseInt(datos.Paciente.No_document)
-    );
-
-    if (paciente) {
-        notificacionesStore.options.icono = 'warning';
-        notificacionesStore.options.titulo = 'Paciente ya existe';
-        notificacionesStore.options.texto = '¿Desea registrar otro?';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple();
-        return false
     }
     
     return await enviarFormulario(datos);

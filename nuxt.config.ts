@@ -30,6 +30,8 @@ export default defineNuxtConfig({
       software: 'api/v1/software',
       facturaciones: 'api/v1/facturaciones',
       enfermedades: 'api/v1/enfermedades',
+      secciones: 'api/v1/secciones',
+      cambiarContraseña: 'api/v1/cambiarContraseña',
     }
   },
   app: {

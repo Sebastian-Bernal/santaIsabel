@@ -4,8 +4,8 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 export function useProfesionesBuilder({
   storeId,
   storePinia,
-  permisos,
   actualizar,
+  permisos,
   showModificarProfesion,
   cerrar
 }) {
