@@ -32,6 +32,8 @@ export default defineNuxtConfig({
       enfermedades: 'api/v1/enfermedades',
       secciones: 'api/v1/secciones',
       cambiarContraseña: 'api/v1/cambiarContraseña',
+      recuperarContraseña: 'api/v1/recuperarContraseña',
+      primerIngreso: 'api/v1/primerIngreso',
     }
   },
   app: {

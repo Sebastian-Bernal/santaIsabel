@@ -161,80 +161,97 @@ const municipiosOptions = computed(() => {
     return departamento ? departamento.municipios : [];
 });
 
-const propiedadesUser = useUserBuilder({
-    storeId: 'NuevoProfesional',
-    storePinia: 'Profesionales',
-    cerrarModal: cerrar,
-    show: show,
-    tipoFormulario: 'Wizard',
-    buscarUsuario,
-    departamentos: municipios.departamentos,
-    seleccionarDepartamento,
-    municipios: municipiosOptions,
-    seleccionarMunicipio: () => { },
-    opcionesProfesion: profesiones,
-    tipoUsuario: 'Profesional',
-    validarFecha,
-});
-
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
+    // Verificar permisos específicos
+    const puedePost = varView.getPermisos.includes('Profesional_post');
+    const puedePut = varView.getPermisos.includes('Profesional_put');
 
-    const propiedadesVerUser = useUserBuilder({
-        storeId: 'ModificarProfesional',
-        storePinia: 'Profesionales',
-        camposRequeridos: [],
-        cerrarModal: cerrar,
-        show: showVer,
-        tipoFormulario: 'Wizard',
-        buscarUsuario,
-        departamentos: municipios.departamentos,
-        seleccionarDepartamento,
-        municipios: municipiosOptions,
-        seleccionarMunicipio: () => { },
-        tipoUsuario: 'Profesional',
-        opcionesProfesion: profesiones,
-        verUser: true,
-        eliminar: eliminarProfesional,
-        soloVer: varView.soloVer,
-        validarFecha,
-    });
+    // Builder para ver usuario (siempre se usa cuando hay acción "ver")
+    const propiedadesVerUser = puedePut
+        ? useUserBuilder({
+            storeId: 'ModificarProfesional',
+            storePinia: 'Profesionales',
+            camposRequeridos: [],
+            cerrarModal: cerrar,
+            show: showVer,
+            tipoFormulario: 'Wizard',
+            buscarUsuario,
+            departamentos: municipios.departamentos,
+            seleccionarDepartamento,
+            municipios: municipiosOptions,
+            seleccionarMunicipio: () => { },
+            tipoUsuario: 'Profesional',
+            opcionesProfesion: profesiones,
+            verUser: true,
+            eliminar: eliminarProfesional,
+            soloVer: varView.soloVer,
+            validarFecha,
+        })
+        : null;
 
+    // Builder para crear usuario (solo si tiene permiso POST)
+    const propiedadesUser = puedePost
+        ? useUserBuilder({
+            storeId: 'NuevoProfesional',
+            storePinia: 'Profesionales',
+            cerrarModal: cerrar,
+            show: show,
+            tipoFormulario: 'Wizard',
+            buscarUsuario,
+            departamentos: municipios.departamentos,
+            seleccionarDepartamento,
+            municipios: municipiosOptions,
+            seleccionarMunicipio: () => { },
+            opcionesProfesion: profesiones,
+            tipoUsuario: 'Profesional',
+            validarFecha,
+        })
+        : null;
+
+    // Tabla de profesionales
+    builderTabla
+        .setColumnas([
+            { titulo: 'name', value: 'Nombre', tamaño: 200 },
+            { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100 },
+            { titulo: 'profesion', value: 'Profesión', tamaño: 100 },
+            { titulo: 'celular', value: 'Celular', tamaño: 100 },
+            { titulo: 'zona', value: 'Zona', tamaño: 50 },
+            { titulo: 'municipio', value: 'Municipio', tamaño: 150 }
+        ])
+        .setHeaderTabla({
+            titulo: 'Gestión de Profesionales de Medicina',
+            descripcion: 'Administra y consulta información de Médicos',
+            color: 'bg-[var(--color-default)] text-white',
+            accionAgregar: puedePost ? agregarMedico : null,
+            buscador: true,
+            excel: true,
+            filtros: [
+                { columna: 'municipio', placeholder: 'Ciudad', datos: [{ text: 'Palmira', value: 'Palmira' }, { text: 'Cali', value: 'Cali' }] },
+                { columna: 'zona', placeholder: 'Zona', datos: [{ text: 'Urbana', value: 'urbana' }, { text: 'Rural', value: 'rural' }] },
+            ]
+        })
+        .setDatos(medicos);
+
+    if (puedePut) {
+        builderTabla.setAcciones({ icons: [{ icon: 'ver', action: modificarMedico }], botones: true });
+    }
+
+    // Construcción de la página
     pagina
         .setFondo('FondoDefault')
         .setLayout('')
         .setContenedor('w-full')
-        .addComponente('Tabla', builderTabla
-            .setColumnas([
-                { titulo: 'name', value: 'Nombre', tamaño: 200 },
-                { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100 },
-                { titulo: 'profesion', value: 'Profesión', tamaño: 100 },
-                { titulo: 'celular', value: 'Celular', tamaño: 100 },
-                { titulo: 'zona', value: 'Zona', tamaño: 50 },
-                { titulo: 'municipio', value: 'Municipio', tamaño: 150 }
-            ])
-            .setHeaderTabla({
-                titulo: 'Gestion de Profesionales de Medicina',
-                descripcion: 'Administra y consulta información de Medicos',
-                color: 'bg-[var(--color-default)] text-white',
-                accionAgregar: agregarMedico,
-                buscador: true,
-                excel: true,
-                filtros: [
-                    { columna: 'municipio', placeholder: 'Ciudad', datos: [{ text: 'Palmira', value: 'Palmira' }, { text: 'Cali', value: 'Cali' }] },
-                    { columna: 'zona', placeholder: 'Zona', datos: [{ text: 'Urbana', value: 'urbana' }, { text: 'Rural', value: 'rural' }] },
-                ]
-            })
-            .setAcciones({ icons: [{ icon: 'ver', action: modificarMedico }], botones: true })
-            .setDatos(medicos)
-        )
-        .addComponente('Form', propiedadesUser)
-        .addComponente('Form', propiedadesVerUser)
+        .addComponente('Tabla', builderTabla);
 
-    return pagina.build()
+    if (propiedadesUser) pagina.addComponente('Form', propiedadesUser);
+    if (propiedadesVerUser) pagina.addComponente('Form', propiedadesVerUser);
+
+    return pagina.build();
+
 })
 // console.log(propiedades)
 </script>

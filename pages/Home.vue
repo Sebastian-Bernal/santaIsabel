@@ -2,7 +2,6 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
 import Historia from '~/components/Historia.vue';
-import Cita from '~/components/Cita.vue';
 import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
@@ -11,6 +10,7 @@ import { onMounted, ref } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 
 const citasStore = useCitasStore();
 const varView = useVarView()
@@ -21,6 +21,9 @@ const ultimosPacientes = ref();
 
 const cardPaciente = ref([])
 const actions = ref([])
+
+const pacientesList = ref([])
+const medicosList = ref([])
 
 onMounted(async () => {
     varView.cargando = true;
@@ -40,9 +43,11 @@ onMounted(async () => {
         citas = await citasStore.listCitasHoy();
 
     } else if (rol.value === 'Profesional'){
-
+        const pacientesStore = usePacientesStore()
+        pacientesList.value = await pacientesStore.listPacientes
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos
+        medicosList.value = profesionales
 
         const profesional = profesionales.find(p => p.id_usuario === usuario.id)[0]
 
@@ -190,25 +195,35 @@ function DashboardRol(rol, Historias = [], citas) {
             }
         }]
 
-        Citas.value = citas.map(card => {
-            return {
-                header: {
-                    html: `<div class="flex flex-col items-center">
-                     <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
-                     <p class="text-xs font-thin">${card.fecha}</p>
-                     <div/>`,
-                    title: card.name_paciente,
-                    subtitle: card.servicio,
-                },
-                body: {
-                    text: `${usuario.name}`
-                },
-                footer: {
-                    status: card.motivo,
-                    statusClass: 'bg-blue-500 text-white'
+        if(Citas.value.length > 0){
+            Citas.value = citas.map(card => {
+                return {
+                    header: {
+                        html: `<div class="flex flex-col items-center">
+                         <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
+                         <p class="text-xs font-thin">${card.fecha}</p>
+                         <div/>`,
+                        title: card.name_paciente,
+                        subtitle: card.servicio,
+                    },
+                    body: {
+                        text: `${usuario.name}`
+                    },
+                    footer: {
+                        status: card.motivo,
+                        statusClass: 'bg-blue-500 text-white'
+                    }
                 }
-            }
-        })
+            })
+
+        } else {
+            Citas.value = [{
+                header: {
+                    icon: 'fa-solid fa-user',
+                    title: 'No hay Pacientes Recientes',
+                },
+            }]
+        }
 
         actions.value = [
             {
@@ -327,7 +342,7 @@ function cerrar(){
     varView.showNuevaCita = false
 }
 
-const {builder, pacientesList, medicosList} = useFormularioCitaBuilder({
+const builder = useFormularioCitaBuilder({
     storeId: 'NuevaCita',
     storePinia: 'Citas',
     cerrarModal: cerrar,

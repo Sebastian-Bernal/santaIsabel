@@ -36,15 +36,11 @@ const enviarFormulario = async (datos) => {
                 sessionStorage.setItem('token', respuesta.access_token)
                 sessionStorage.setItem('user', JSON.stringify(respuesta.user.usuario))
                 sessionStorage.setItem('Rol', respuesta.user.rol);
-                sessionStorage.setItem('Permisos', JSON.stringify(secciones));
+                sessionStorage.setItem('Permisos', JSON.stringify(respuesta.user.permisos));
                 return true
             } else {
                 return false
             }
-                // sessionStorage.setItem('Usuario', datos.correo)
-                // sessionStorage.setItem('Permisos', JSON.stringify(secciones));
-                // sessionStorage.setItem('Rol', 'Admin');
-            return true
         } catch (error) {
             console.error('Fallo al enviar. Intenta en otro momento', error);
         }

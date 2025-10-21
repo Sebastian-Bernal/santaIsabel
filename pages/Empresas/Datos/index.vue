@@ -19,6 +19,7 @@ const Profesiones = ref([]);
 const showModificarProfesion = ref(false)
 const showModificarEPS = ref(false)
 const secciones = ref([])
+const permisos = ref(varView.getPermisos)
 
 onMounted(async () => {
     varView.cargando = true
@@ -76,60 +77,104 @@ const propiedades = computed(() => {
     const builderTablaProfessions = new TablaBuilder()
     const builderTablaEPS = new TablaBuilder()
 
-    const propiedadesProfesion = useProfesionesBuilder({
-        storeId: 'Profesion',
-        storePinia: 'Profesion',
-        permisos: secciones.value,
-        actualizar: false
-    })
-    
-    const propiedadesVerProfesion = useProfesionesBuilder({
-        storeId: 'ActualizarProfesion',
-        storePinia: 'Profesion',
-        permisos: secciones.value,
-        actualizar: true,
-        showModificarProfesion: showModificarProfesion,
-        cerrar
-    })
+    // Verifica permisos específicos
+    const puedePostEPS = varView.getPermisos.includes('Datos_post');
+    const puedePutEPS = varView.getPermisos.includes('Datos_put');
+    const puedePostProfesion = varView.getPermisos.includes('Datos_post');
+    const puedePutProfesion = varView.getPermisos.includes('Datos_put');
 
+    // Builders condicionales
+    const propiedadesProfesion = puedePostProfesion
+        ? useProfesionesBuilder({
+            storeId: 'Profesion',
+            storePinia: 'Profesion',
+            permisos: secciones.value,
+            actualizar: false
+        })
+        : null;
 
-    return pagina
+    const propiedadesVerProfesion = puedePutProfesion
+        ? useProfesionesBuilder({
+            storeId: 'ActualizarProfesion',
+            storePinia: 'Profesion',
+            permisos: secciones.value,
+            actualizar: true,
+            showModificarProfesion: showModificarProfesion,
+            cerrar
+        })
+        : null;
+
+    const propiedadesEPS = puedePostEPS
+        ? useEpsBuilder({
+            storeId: 'EPS',
+            storePinia: 'EPS',
+        })
+        : null;
+
+    const propiedadesVerEPS = puedePutEPS
+        ? useEpsBuilder({
+            storeId: 'ActualizarEPS',
+            storePinia: 'EPS',
+            actualizar: true,
+            showModificarEPS: showModificarEPS,
+            cerrar: cerrarEPS
+        })
+        : null;
+
+    // Tabla EPS
+    builderTablaEPS
+        .setColumnas([
+            { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
+            { titulo: 'direccion', value: 'Direccion', tamaño: 100, ordenar: true },
+            { titulo: 'email', value: 'Correo', tamaño: 100, ordenar: true },
+            { titulo: 'telefono', value: 'Telefono', tamaño: 100, ordenar: true },
+            { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
+        ])
+        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white' })
+        .setDatos(EPSdata);
+
+    if (puedePutEPS) {
+        builderTablaEPS.setAcciones({ icons: [{ icon: 'ver', action: actualizarEPS }], botones: true });
+    }
+
+    // Tabla Profesiones
+    builderTablaProfessions
+        .setColumnas([
+            { titulo: 'nombre', value: 'Nombre', tamaño: 500, ordenar: true },
+            { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },
+        ])
+        .setHeaderTabla({
+            titulo: 'Profesiones Registradas',
+            color: 'bg-[var(--color-default)] text-white',
+            buscador: true,
+            excel: true,
+        })
+        .setDatos(Profesiones);
+
+    if (puedePutProfesion) {
+        builderTablaProfessions.setAcciones({ icons: [{ icon: 'ver', action: actualizarProfesion }], botones: true });
+    }
+
+    // Construcción final
+    pagina
         .setFondo('FondoDefault')
-        .setHeaderPage({ titulo: 'Datos Asociados a la Empresa', descripcion: 'Registra y configura segun los datos de tu Empresa.', })
+        .setHeaderPage({
+            titulo: 'Datos Asociados a la Empresa',
+            descripcion: 'Registra y configura según los datos de tu Empresa.',
+        })
         .setEstilos('')
         .setLayout('')
-        .setContenedor('w-full flex flex-col gap-5')
-        .addComponente('Form', propiedadesEPS)
-        .addComponente('Tabla', builderTablaEPS
-            .setColumnas([
-                { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
-                { titulo: 'direccion', value: 'Direccion', tamaño: 100, ordenar: true },
-                { titulo: 'email', value: 'Correo', tamaño: 100, ordenar: true },
-                { titulo: 'telefono', value: 'Telefono', tamaño: 100, ordenar: true },
-                { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
-            ])
-            .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', })
-            .setAcciones({ icons: [{ icon: 'ver', action: actualizarEPS }], botones: true, })
-            .setDatos(EPSdata)
-        )
-        .addComponente('Form', propiedadesVerEPS)
-        .addComponente('Form', propiedadesProfesion)
-        .addComponente('Tabla', builderTablaProfessions
-            .setColumnas([
-                { titulo: 'nombre', value: 'Nombre', tamaño: 500, ordenar: true },
-                { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },
-            ])
-            .setHeaderTabla({
-                titulo: 'Profesiones Registradas',
-                color: 'bg-[var(--color-default)] text-white',
-                buscador: true,
-                excel: true,
-            })
-            .setAcciones({ icons: [{ icon: 'ver', action: actualizarProfesion }], botones: true, })
-            .setDatos(Profesiones)
-        )
-        .addComponente('Form', propiedadesVerProfesion)
-        .build()
+        .setContenedor('w-full flex flex-col gap-5');
+
+    if (propiedadesEPS) pagina.addComponente('Form', propiedadesEPS);
+    pagina.addComponente('Tabla', builderTablaEPS);
+    if (propiedadesVerEPS) pagina.addComponente('Form', propiedadesVerEPS);
+    if (propiedadesProfesion) pagina.addComponente('Form', propiedadesProfesion);
+    pagina.addComponente('Tabla', builderTablaProfessions);
+    if (propiedadesVerProfesion) pagina.addComponente('Form', propiedadesVerProfesion);
+
+    return pagina.build();
+
 })
 
 // console.log(propiedades)

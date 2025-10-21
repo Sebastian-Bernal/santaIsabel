@@ -1,34 +1,16 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 
 export function useFormularioCitaBuilder({
   storeId,
   storePinia,
   cerrarModal,
   show,
+  medicosList,
+  pacientesList
 }) {
   const citasStore = useCitasStore()
-  const pacientesStore = usePacientesStore();
-  const medicosStore = useMedicosStore();
-  const varView = useVarView();
-
-  const pacientesList = ref([])
-  const medicosList = ref([])
-
-  onMounted(async () => {
-    varView.cargando = true
-    medicosList.value = await medicosStore.listMedicos;
-    const rol = sessionStorage.getItem('Rol')
-    if (rol === 'Profesional') {
-      pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
-    } else {
-      pacientesList.value = await pacientesStore.listPacientes;
-    }
-    varView.cargando = false
-  });
 
   function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
@@ -196,9 +178,5 @@ export function useFormularioCitaBuilder({
     })
     .build()
 
-    return {
-      builder,
-      pacientesList,
-      medicosList
-    }
+    return builder
 }

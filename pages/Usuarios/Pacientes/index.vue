@@ -107,7 +107,7 @@ function validarFecha(event) {
     const fecha = new Date(event.target.value);
     const hoy = new Date();
 
-    let mensajeError = '' 
+    let mensajeError = ''
     // Calcular edad
     let edad = hoy.getFullYear() - fecha.getFullYear();
     const mes = hoy.getMonth() - fecha.getMonth();
@@ -141,7 +141,7 @@ function validarFecha(event) {
 function validarTipoDoc(event) {
     const tipoDoc = event.target.value
 
-    if(!pacientesStore.Formulario.InformacionUser.nacimiento) return
+    if (!pacientesStore.Formulario.InformacionUser.nacimiento) return
 
     const fecha = new Date(pacientesStore.Formulario.InformacionUser.fecha);
     const hoy = new Date();
@@ -221,144 +221,156 @@ async function eliminarPaciente() {
 
 const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
 
-const propiedadesUser = useUserBuilder({
-    storeId: "NuevoPaciente",
-    storePinia: "Pacientes",
-    camposRequeridos,
-    cerrarModal: cerrar,
-    show: show,
-    tipoFormulario: "Wizard",
-    buscarUsuario,
-    departamentos: municipios.departamentos,
-    seleccionarDepartamento: () => { },
-    municipios: municipiosOptions,
-    seleccionarMunicipio: () => { },
-    EPS: opcionesEPS,
-    agregarDiagnostico: () => { },
-    seleccionarCIE_10,
-    CIE10: CIE10,
-    tipoUsuario: "Paciente",
-    validarFecha,
-    validarTipoDoc,
-});
-
 // Construccion de pagina
 const propiedades = computed(() => {
     const builderTabla = new TablaBuilder();
     const pagina = new ComponenteBuilder();
     const pacientePDF = new PdfBuilder();
+console.log(varView.getPermisos)
+    // Verificar permisos específicos
+    const puedePost = varView.getPermisos.includes('Pacientes_post');
+    const puedePut = varView.getPermisos.includes('Pacientes_put');
+    const puedePDF = varView.getPermisos.includes('Pacientes_pdf');
 
-    const propiedadesVerUser = useUserBuilder({
-        storeId: "ModificarPaciente",
-        storePinia: "Pacientes",
-        camposRequeridos,
-        cerrarModal: cerrar,
-        show: showVer,
-        tipoFormulario: "Wizard",
-        buscarUsuario,
-        departamentos: municipios.departamentos,
-        seleccionarDepartamento: () => { },
-        municipios: municipiosOptions,
-        seleccionarMunicipio: () => { },
-        EPS: opcionesEPS,
-        agregarDiagnostico: () => { },
-        seleccionarCIE_10: () => { },
-        CIE10: CIE10,
-        verUser: true,
-        soloVer: varView.soloVer,
-        eliminar: eliminarPaciente,
-        tipoUsuario: "Paciente",
-        validarFecha,
-        validarTipoDoc,
-    });
+    // Formulario para crear paciente
+    const propiedadesUser = puedePost
+        ? useUserBuilder({
+            storeId: "NuevoPaciente",
+            storePinia: "Pacientes",
+            camposRequeridos,
+            cerrarModal: cerrar,
+            show: show,
+            tipoFormulario: "Wizard",
+            buscarUsuario,
+            departamentos: municipios.departamentos,
+            seleccionarDepartamento: () => { },
+            municipios: municipiosOptions,
+            seleccionarMunicipio: () => { },
+            EPS: opcionesEPS,
+            agregarDiagnostico: () => { },
+            seleccionarCIE_10,
+            CIE10: CIE10,
+            tipoUsuario: "Paciente",
+            validarFecha,
+            validarTipoDoc,
+        })
+        : null;
 
-    return pagina
+    // Formulario para ver/modificar paciente
+    const propiedadesVerUser = puedePut
+        ? useUserBuilder({
+            storeId: "ModificarPaciente",
+            storePinia: "Pacientes",
+            camposRequeridos,
+            cerrarModal: cerrar,
+            show: showVer,
+            tipoFormulario: "Wizard",
+            buscarUsuario,
+            departamentos: municipios.departamentos,
+            seleccionarDepartamento: () => { },
+            municipios: municipiosOptions,
+            seleccionarMunicipio: () => { },
+            EPS: opcionesEPS,
+            agregarDiagnostico: () => { },
+            seleccionarCIE_10: () => { },
+            CIE10: CIE10,
+            verUser: true,
+            soloVer: varView.soloVer,
+            eliminar: eliminarPaciente,
+            tipoUsuario: "Paciente",
+            validarFecha,
+            validarTipoDoc,
+        })
+        : null;
+
+    // Tabla de pacientes
+    builderTabla
+        .setColumnas([
+            { titulo: "name", value: "Nombre", tamaño: 150, ordenar: true },
+            { titulo: "No_document", value: "Documento", tamaño: 100, ordenar: true },
+            { titulo: "municipio", value: "Ciudad", tamaño: 150 },
+            { titulo: "genero", value: "Genero", tamaño: 100 },
+            { titulo: "celular", value: "Celular", tamaño: 100 },
+            { titulo: "Eps", value: "EPS", tamaño: 150, ordenar: true },
+        ])
+        .setHeaderTabla({
+            titulo: "Gestión de Pacientes",
+            descripcion: "Administra y consulta información de pacientes",
+            color: "bg-[var(--color-default)] text-white",
+            accionAgregar: puedePost ? agregarPaciente : null,
+            buscador: true,
+            excel: true,
+            filtros: [
+                { columna: 'municipio', placeholder: 'Ciudad' },
+                { columna: 'Eps', placeholder: 'EPS' },
+            ]
+        })
+        .setDatos(pacientes);
+
+    const acciones = [];
+    if (puedePut) acciones.push({ icon: "ver", action: verPaciente });
+    if (puedePDF) acciones.push({ icon: "download", action: exportarPDF });
+
+    if (acciones.length > 0) {
+        builderTabla.setAcciones({ icons: acciones, botones: true });
+    }
+
+    // Construcción de la página
+    pagina
         .setFondo("FondoDefault")
         .setEstilos("")
         .setLayout("")
         .setContenedor("w-full")
-        .addComponente(
-            "Tabla",
-            builderTabla
-                .setColumnas([
-                    { titulo: "name", value: "Nombre", tamaño: 150, ordenar: true },
-                    { titulo: "No_document", value: "Documento", tamaño: 100, ordenar: true },
-                    { titulo: "municipio", value: "Ciudad", tamaño: 150 },
-                    { titulo: "genero", value: "Genero", tamaño: 100 },
-                    { titulo: "celular", value: "Celular", tamaño: 100 },
-                    { titulo: "Eps", value: "EPS", tamaño: 150, ordenar: true },
-                ])
-                .setHeaderTabla({
-                    titulo: "Gestion de Pacientes",
-                    descripcion: "Administra y consulta información de pacientes",
-                    color: "bg-[var(--color-default)] text-white",
-                    accionAgregar: agregarPaciente,
-                    buscador: true,
-                    excel: true,
-                    filtros: [
-                        { columna: 'municipio', placeholder: 'Ciudad', },
-                        { columna: 'Eps', placeholder: 'EPS', },
-                    ]
-                })
-                .setAcciones({
-                    icons: [{ icon: "ver", action: verPaciente }, { icon: "download", action: exportarPDF }],
-                    botones: true,
-                })
-                .setDatos(pacientes)
-        )
-        .addComponente("Form", propiedadesUser)
-        .addComponente("Form", propiedadesVerUser)
-        .addComponente("PDFTemplate", pacientePDF
-            .setElementId('Paciente')
-            .setIsActive(activePdfPaciente)
-            .setFileName(`paciente_${propiedadesPDF.value.name}`)
-            .addComponente('Tabla', {
-                container: 'border-b-2 pb-3',
-                columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
-                filas: [
-                    [`Sistema de Historias Clinicas`, `<p class="w-full text-end">19/009/2025</p>`],
-                ],
-            })
-            .addComponente('Texto', {
-                texto: 'Informacion del Paciente'
-            })
-            .addComponente('Tabla', {
-                container: 'space-y-2 rounded py-3',
-                styles: {
-                    backgroundColor: '#DBEAFE',
-                },
-                filas: [
-                    ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                    [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.correo}`, `${propiedadesPDF.value.nacimiento}`,],
-                    ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
-                    [`${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`, `${propiedadesPDF.value.sexo}`,],
-                    ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
-                    [`${propiedadesPDF.value.direccion}`, `${propiedadesPDF.value.barrio}`, `${propiedadesPDF.value.zona}`,]
-                ],
-            })
-            .addComponente('Texto', {
-                texto: 'Datos Adicionales'
-            })
-            .addComponente('Tabla', {
-                container: 'space-y-2 rounded py-3',
-                styles: {
-                    backgroundColor: '#DBEAFE',
-                },
-                filas: [
-                    ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
-                    [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.celular}`,],
-                    ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Regimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
-                    [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`,],
-                ],
-            })
-            .addComponente('Espacio', {
-                alto: 24
-            })
-            .addComponente('Firma', {
-                nombre: 'Profesional Medico'
-            })
-        )
-        .build();
+        .addComponente("Tabla", builderTabla);
+
+    if (propiedadesUser) pagina.addComponente("Form", propiedadesUser);
+    if (propiedadesVerUser) pagina.addComponente("Form", propiedadesVerUser);
+
+    pagina.addComponente("PDFTemplate", pacientePDF
+        .setElementId('Paciente')
+        .setIsActive(activePdfPaciente)
+        .setFileName(`paciente_${propiedadesPDF.value.name}`)
+        .addComponente('Tabla', {
+            container: 'border-b-2 pb-3',
+            columnas: [
+                '<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>',
+                '<p class="w-full text-end">Fecha de impresión:</p>'
+            ],
+            filas: [
+                [`Sistema de Historias Clínicas`, `<p class="w-full text-end">19/009/2025</p>`],
+            ],
+        })
+        .addComponente('Texto', { texto: 'Información del Paciente' })
+        .addComponente('Tabla', {
+            container: 'space-y-2 rounded py-3',
+            styles: { backgroundColor: '#DBEAFE' },
+            filas: [
+                ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.correo}`, `${propiedadesPDF.value.nacimiento}`],
+                ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Género:</p>'],
+                [`${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`, `${propiedadesPDF.value.sexo}`],
+                ['<p class="w-full text-start text-xs pt-2">Dirección:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
+                [`${propiedadesPDF.value.direccion}`, `${propiedadesPDF.value.barrio}`, `${propiedadesPDF.value.zona}`]
+            ],
+        })
+        .addComponente('Texto', { texto: 'Datos Adicionales' })
+        .addComponente('Tabla', {
+            container: 'space-y-2 rounded py-3',
+            styles: { backgroundColor: '#DBEAFE' },
+            filas: [
+                ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Teléfono:</p>'],
+                [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.celular}`],
+                ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Régimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
+                [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`],
+            ],
+        })
+        .addComponente('Espacio', { alto: 24 })
+        .addComponente('Firma', { nombre: 'Profesional Médico' })
+    );
+
+
+    return pagina.build();
+
 });
 
 </script>

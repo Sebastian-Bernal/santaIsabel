@@ -62,9 +62,9 @@ export function useRecuperarContraseñaBuilder({
       component: 'Input',
       placeholder: 'Codigo de Recuperacion',
       icon: 'fa-solid fa-key',
-      type: 'number',
-      id: 'contraseña',
-      name: 'contraseña',
+      type: 'text',
+      id: 'codigo',
+      name: 'codigo',
       tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
       vmodel: 'Usuario.codigo',
       events: {
@@ -79,15 +79,6 @@ export function useRecuperarContraseñaBuilder({
       name: 'contraseña',
       tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
       vmodel: 'Usuario.contraseña',
-    })
-    .addCampo({
-      component: 'Input',
-      placeholder: 'Repetir Contraseña',
-      type: 'password',
-      id: 'contraseñaConfirm',
-      name: 'contraseñaConfirm',
-      tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
-      vmodel: 'Usuario.confirmarContraseña',
     })
 
   return builder.build()

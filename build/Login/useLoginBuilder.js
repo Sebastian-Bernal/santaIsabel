@@ -47,7 +47,7 @@ export function useLoginBuilder({
       estilo: 'text-white!',
       vmodel: 'Usuario.correo',
       events: {
-        onChange: validaUsuario
+        onKeyUp: validaUsuario
       },
     })
   if (selectEmpresa.value) {

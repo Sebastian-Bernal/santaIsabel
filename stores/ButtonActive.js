@@ -9,34 +9,36 @@ export const useButtonsAside = defineStore('ButtonsAside', {
 
     getters: {
         getbuttons: (state) => (permisosUsuario) => {
-            // return state.buttons
+            // Normalizamos los permisos: quitamos el "_view"
+            const permisosLimpiados = permisosUsuario.map(p => p.replace(/_view$/, ''));
+
             return state.buttons.map(button => {
-                // Filtramos las secciones
+                // Verificamos si el botón debe incluirse
+                const incluirBoton = permisosLimpiados.includes(button.nombre);
+
                 const seccionesFiltradas = button.secciones?.map(seccion => {
                     // Filtrar subSecciones si existen
                     let subSeccionesFiltradas = seccion.subSecciones?.filter(sub =>
-                        permisosUsuario.includes(sub.titulo)
+                        permisosLimpiados.includes(sub.titulo)
                     );
 
-                    // Si la sección no tiene subSecciones, revisamos el título directamente
+                    // Verificar si se incluye la sección
                     const incluirSeccion = subSeccionesFiltradas?.length > 0 ||
-                        permisosUsuario.includes(seccion.titulo);
+                        permisosLimpiados.includes(seccion.titulo);
 
-                    // Si se debe incluir, devolvemos la sección filtrada
                     return incluirSeccion ? {
                         ...seccion,
                         ...(subSeccionesFiltradas && { subSecciones: subSeccionesFiltradas })
                     } : null;
-                }).filter(Boolean); // elimina los null
+                }).filter(Boolean);
 
-                // Si aún quedan secciones visibles, devolvemos el botón
-                return seccionesFiltradas.length > 0 ? {
+                // Incluir el botón si tiene secciones visibles o permiso directo
+                return seccionesFiltradas.length > 0 || incluirBoton ? {
                     ...button,
                     secciones: seccionesFiltradas
                 } : null;
-            }).filter(Boolean); // elimina los botones sin secciones
+            }).filter(Boolean);
         }
-
 
     },
 

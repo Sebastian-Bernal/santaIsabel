@@ -10,8 +10,18 @@ import { ref, computed, onMounted } from 'vue';
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 const usuarioStore = useUsuariosStore();
 
-const usuario = ref('Usuario');
+const usuario = ref();
 const usuarioRol = ref('');
+
+onMounted(() => {
+    usuarioRol.value = sessionStorage.getItem("Rol") || [];
+    // Obtener y parsear el usuario
+    const datos = sessionStorage.getItem("User");
+    const usuarioParseado = datos ? JSON.parse(datos) : {};
+    console.log(datos)
+    usuario.value = usuarioParseado.name || 'Usuario';
+
+})
 
 function obtenerFechaFormateada() {
     const fecha = new Date();
@@ -23,10 +33,6 @@ function obtenerFechaFormateada() {
     return `${diaSemana}, ${diaMes} ${mesNombre}`;
 }
 
-onMounted(async() => {
-    usuarioRol.value = sessionStorage.getItem("Rol") || [];
-    usuario.value = await usuarioStore.getUsuario()
-})
 
 const fechaActualFormateada = computed(() => {
     return obtenerFechaFormateada();

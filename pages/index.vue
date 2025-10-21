@@ -44,12 +44,20 @@ async function validaUsuario(event) {
     const correo = event.target.value
     varView.cargando = true
 
-    //     let options = {
-    //     metodo: 'GET',
-    //     url: config.public.users,
-    // }
+    let options = {
+        metodo: 'POST',
+        url: config.public.primerIngreso,
+        body: {
+            correo: correo
+        }
+    }
+    const respuesta = await api.functionCall(options)
 
-    // let validacion = await api.functionCall(options)
+    if (respuesta.success) {
+        show.value = true
+        stateCodigo.value = await validarYEnviarRecuperarContraseña({ Usuario: { correo: correo } })
+        console.log('haz click en siguiente y digita una contraseña')
+    }
 
     varView.cargando = false
 }

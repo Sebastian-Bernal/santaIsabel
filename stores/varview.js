@@ -64,5 +64,15 @@ export const useVarView = defineStore('varView', {
                 return true;
             }
         },
+
+        getPermisos: () => {
+            try {
+                const permisos = JSON.parse(sessionStorage.getItem('Permisos'));
+                return Array.isArray(permisos) ? permisos : [];
+            } catch (error) {
+                console.error('Error al obtener permisos desde sessionStorage:', error);
+                return [];
+            }
+        }
     }
 })

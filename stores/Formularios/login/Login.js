@@ -21,16 +21,18 @@ export const useUsuariosStore = defineStore('Usuario', {
 
     actions: {
 
-        async getUsuario() {
+        getUsuario() {
             if (typeof window === 'undefined') {
                 console.log('No estás en el navegador.');
                 return 'Usuario';
             }
 
-            const Usuario = sessionStorage.getItem('Nombre');
+            const Usuario = JSON.parse(sessionStorage.getItem('User'));
+            console.log(Usuario)
+
             if (!Usuario) return 'Usuario';
 
-            return Usuario.split(' ')[0] + ' ' + Usuario.split(' ')[1];
+            return Usuario.name.split(' ')[0] + ' ' + Usuario.split(' ')[1];
         },
 
     }
