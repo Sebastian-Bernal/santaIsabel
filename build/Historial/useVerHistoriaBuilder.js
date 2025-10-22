@@ -6,6 +6,7 @@ export function useVerHistoriaBuilder({
     storePinia,
     cerrarModal,
     formularioItem,
+    actualizar,
     show,
 }) {
     const builder = new FormularioBuilder()
@@ -15,11 +16,21 @@ export function useVerHistoriaBuilder({
         .setStorePinia(storePinia)
         .setFormulariotamaño('XS')
         .setFormularioShow(show)
-        .setSoloVer(true)
+        .setSoloVer(!actualizar.value)
+        .setEditarFormulario(actualizar.value)
         .setFormularioTipo('solo')
-        .setBotones([
-            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
-        ])
+        if(actualizar.value){
+            builder 
+            .setBotones([
+                { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
+                { text: 'Actualizar', color: 'bg-blue-500', type: 'enviar' },
+            ])
+        } else {
+            builder
+            .setBotones([
+                { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
+            ])
+        }
     // 📌 Sección: Datos
     if (formularioItem.value === 'Medicamento') {
         builder

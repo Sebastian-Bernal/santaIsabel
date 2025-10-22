@@ -226,7 +226,7 @@ const propiedades = computed(() => {
     const builderTabla = new TablaBuilder();
     const pagina = new ComponenteBuilder();
     const pacientePDF = new PdfBuilder();
-console.log(varView.getPermisos)
+
     // Verificar permisos específicos
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
@@ -308,8 +308,10 @@ console.log(varView.getPermisos)
         .setDatos(pacientes);
 
     const acciones = [];
-    if (puedePut) acciones.push({ icon: "ver", action: verPaciente });
-    if (puedePDF) acciones.push({ icon: "download", action: exportarPDF });
+    if (puedePut) {
+        acciones.push({ icon: "ver", action: verPaciente });
+        acciones.push({ icon: "download", action: exportarPDF });
+    }
 
     if (acciones.length > 0) {
         builderTabla.setAcciones({ icons: acciones, botones: true });

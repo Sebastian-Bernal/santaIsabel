@@ -176,7 +176,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
         ExamenFisico: {
             Peso: datos.ExamenFisico.Peso,
             altura: datos.ExamenFisico.altura,
-            otros: datos.ExamenFisico.otros,
+            otros: datos.ExamenFisico.otros || null,
             signosVitales: {
                 ta: datos.ExamenFisico.signosVitales.ta,
                 fc: datos.ExamenFisico.signosVitales.fc,
@@ -205,15 +205,14 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
         })),
         Cita: {
             id: datos.Cita.id,
-            ...datos.Cita
         }
     };
 
-    return await enviarFormulario(body);
+    return await enviarFormulario(body, datos.Cita);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+const enviarFormulario = async (datos, cita) => {
     const notificacionesStore = useNotificacionesStore();
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
@@ -221,6 +220,7 @@ const enviarFormulario = async (datos) => {
     const token = sessionStorage.getItem('token')
 
     // Guardar Local
+    const ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
 
     const online = navigator.onLine;
     if (online) {
@@ -235,42 +235,58 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
+                console.log('enviado a la api, actualizando')
                 // Actualizar local
                 const datosActualizar = {
                     HistoriaClinica: {
+                        id_temporal: ids_temporal.HistoriaClinica,
                         id: respuesta.ids.HistoriaClinica,
                         fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
-                        id_paciente: datos.HistoriaClinica.id_paciente
+                        id_paciente: datos.HistoriaClinica.id_paciente,
+                        sincronizado: 1
                     },
                     Analisis: {
+                        id_temporal: ids_temporal.Analisis,
                         id: respuesta.ids.Analisis,
+                        id_historia: respuesta.ids.HistoriaClinica,
                         motivo: datos.Analisis.motivo,
                         observacion: datos.Analisis.observacion,
                         tratamiento: datos.Analisis.tratamiento,
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
-                        id_medico: datos.Cita.id_medico
+                        id_medico: datos.Cita.id_medico,
+                        sincronizado: 1
                     },
                     Diagnosticos: datos.Diagnosticos.map((d, i) => ({
+                        id_temporal: ids_temporal.Diagnosticos[i],
+                        id_analisis: respuesta.ids.Analisis,
                         id: respuesta.ids.Diagnosticos[i],
                         descripcion: d.descripcion,
-                        codigo: d.codigo
+                        codigo: d.codigo,
+                        sincronizado: 1
                     })),
                     Antecedentes: datos.Antecedentes.map((a, i) => ({
+                        id_temporal: ids_temporal.Antecedentes[i],
                         id: respuesta.ids.Antecedentes[i],
                         tipo: a.tipo,
                         descripcion: a.descripcion,
-                        id_paciente: datos.HistoriaClinica.id_paciente
+                        id_paciente: datos.HistoriaClinica.id_paciente,
+                        sincronizado: 1
                     })),
                     Enfermedad: {
+                        id_temporal: ids_temporal.Enfermedad,
                         id: respuesta.ids.Enfermedad,
+                        id_analisis: respuesta.ids.Analisis,
                         valor: datos.Enfermedad.valor,
                         fecha_diagnostico: calendarioStore.fechaActual.split('/').reverse().join('-'),
                         fecha_rehabilitacion: datos.Enfermedad.fecha_rehabilitacion,
-                        id_paciente: datos.HistoriaClinica.id_paciente
+                        id_paciente: datos.HistoriaClinica.id_paciente,
+                        sincronizado: 1
                     },
                     ExamenFisico: {
+                        id_temporal: ids_temporal.ExamenFisico,
                         id: respuesta.ids.ExamenFisico,
+                        id_analisis: respuesta.ids.Analisis,
                         Peso: datos.ExamenFisico.Peso,
                         altura: datos.ExamenFisico.altura,
                         otros: datos.ExamenFisico.otros,
@@ -280,38 +296,55 @@ const enviarFormulario = async (datos) => {
                             fr: datos.ExamenFisico.signosVitales.fr,
                             t: datos.ExamenFisico.signosVitales.t,
                             SATo2: datos.ExamenFisico.signosVitales.SATo2
-                        }
+                        },
+                        sincronizado: 1
                     },
                     Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map((m, i) => ({
+                        id_temporal: ids_temporal.Plan_manejo_medicamentos[i],
                         id: respuesta.ids.Plan_manejo_medicamentos[i],
+                        id_analisis: respuesta.ids.Analisis,
                         medicamento: m.medicamento,
                         dosis: m.dosis,
-                        cantidad: parseInt(m.cantidad)
+                        cantidad: parseInt(m.cantidad),
+                        sincronizado: 1
                     })),
                     Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map((p, i) => ({
+                        id_temporal: ids_temporal.Plan_manejo_procedimientos[i],
                         id: respuesta.ids.Plan_manejo_procedimientos[i],
+                        id_analisis: respuesta.ids.Analisis,
                         procedimiento: p.procedimiento,
                         codigo: p.codigo,
-                        fecha: p.fecha
+                        fecha: p.fecha,
+                        sincronizado: 1
                     })),
                     Plan_manejo_insumos: datos.Plan_manejo_insumos.map((i, index) => ({
-                        id: respuesta.ids.Plan_manejo_insumos[i],
+                        id_temporal: ids_temporal.Plan_manejo_insumos[index],
+                        id: respuesta.ids.Plan_manejo_insumos[index],
+                        id_analisis: respuesta.ids.Analisis,
                         nombre: i.nombre,
-                        cantidad: parseInt(i.cantidad)
+                        cantidad: parseInt(i.cantidad),
+                        sincronizado: 1
                     })),
                     Plan_manejo_equipos: datos.Plan_manejo_equipos.map((e, i) => ({
+                        id_temporal: ids_temporal.Plan_manejo_equipos[i],
                         id: respuesta.ids.Plan_manejo_equipos[i],
+                        id_analisis: respuesta.ids.Analisis,
                         descripcion: e.descripcion,
-                        uso: e.uso
+                        uso: e.uso,
+                        sincronizado: 1
                     })),
                     Cita: {
+                        id_temporal: ids_temporal.Cita,
                         id: datos.Cita.id,
-                        ...datos.Cita,
+                        ...cita,
                         estado: 'Realizada',
-                        id_examen_fisico: respuesta.ids.Analisis
+                        id_analisis: respuesta.ids.Analisis,
+                        sincronizado: 1
                     }
                 };
-                await actualizarEnIndexedDB(JSON.stringify(datosActualizar))
+
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                console.log('actualizado')
                 return true
             } else {
                 console.log(respuesta)

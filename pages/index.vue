@@ -18,9 +18,14 @@ const config = useRuntimeConfig()
 const indexedDB = useIndexedDBStore();
 
 onMounted(async () => {
-    await indexedDB.initialize()
-    await indexedDB.adminDemo()
-    sessionStorage.clear()
+    try {
+        await indexedDB.deleteDatabase('db-thesalus');
+        await indexedDB.initialize(); // tu lógica de inicialización
+        sessionStorage.clear();
+    } catch (e) {
+        console.error('No se pudo reiniciar IndexedDB:', e);
+    }
+
 })
 
 const mostrarContraseña = ref(false);

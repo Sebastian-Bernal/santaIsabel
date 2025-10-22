@@ -28,7 +28,6 @@ const notas = ref([])
 const tratamientos = ref([])
 const medicinas = ref([]);
 
-const onlyWatch = ref(true);
 const show = ref(false);
 const showItem = ref(false)
 const showNota = ref(false)
@@ -38,6 +37,7 @@ const pacientesStore = usePacientesStore();
 const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
+const actualizar = ref(false)
 const propiedadesNotaPDF = ref({})
 const activePdfNotas = ref(false)
 
@@ -66,12 +66,13 @@ watch(() => showNota.value,
     }
 );
 
+watch(() => showItem.value, () => {
+        console.log(historiasStore.Formulario)
+    }
+);
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
-    await historiasStore.indexDBDatos()
-    const permisosStore = JSON.parse(sessionStorage.getItem("Permisos")) || [];
-    onlyWatch.value = permisosStore.includes('Historia')
     await llamadatos()
     varView.cargando = false
 });
@@ -93,7 +94,8 @@ const verHistoria = async (his) => {
 async function cargaHistorial(id) {
 
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
-    const allAnalisis = await historiasStore.listDatos(historia[0].id, 'Analisis', 'id_historia')
+    const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
+    console.log(historia, allAnalisis)
 
 // Consultas
     analisis.value = []
@@ -196,6 +198,17 @@ function cerrarModal() {
 // Visibilidad modal items
 function verItemMedicamentoHistoria(item) {
     formularioItem.value = 'Medicamento'
+    actualizar.value = false
+    mapCampos(item, historiasStore.Formulario)
+    historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
+    historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
+    historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
+    showItem.value = true
+}
+
+function actualizarItemMedicamentoHistoria(item) {
+    formularioItem.value = 'Medicamento'
+    actualizar.value = true
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
     historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
@@ -205,6 +218,17 @@ function verItemMedicamentoHistoria(item) {
 
 function verItemTratamientoHistoria(item) {
     formularioItem.value = 'Tratamientos'
+    actualizar.value = false
+    mapCampos(item, historiasStore.Formulario)
+    historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
+    historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
+    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
+    showItem.value = true
+}
+
+function actualizarItemTratamientoHistoria(item) {
+    formularioItem.value = 'Tratamientos'
+    actualizar.value = true
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
     historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
@@ -214,6 +238,15 @@ function verItemTratamientoHistoria(item) {
 
 function verItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
+    actualizar.value = false
+    const datos = {...item, ...item.signosVitales}
+    mapCampos(datos, historiasStore.Formulario)
+    showItem.value = true
+}
+
+function actualizarItemConsultasHistoria(item) {
+    formularioItem.value = 'Consulta'
+    actualizar.value = true
     const datos = {...item, ...item.signosVitales}
     mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
@@ -305,6 +338,9 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const modal = new ModalBuilder()
 
+    const puedePost = varView.getPermisos.includes('Historias_post')
+    const puedePUT = varView.getPermisos.includes('Historias_put')
+
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
     const tablaNotas = new TablaBuilder()
@@ -315,8 +351,12 @@ const propiedades = computed(() => {
     const pdfHistorial = new PdfBuilder()
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
+        const fechaOriginal = consulta.fecha;
+        const fechaObj = new Date(fechaOriginal);
+        const fecha = `${fechaObj.getDate().toString().padStart(2, '0')}/${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}/${fechaObj.getFullYear()}`;
+
         const contenido = `
-        <p class="text-start text-base py-2"><strong>Fecha:</strong> ${consulta.fecha}</p>
+        <p class="text-start text-base py-2"><strong>Fecha:</strong> ${fecha}</p>
         <p class="text-start text-xs py-2"><strong>Motivo:</strong> ${consulta.motivo}</p>
         <p class="text-start text-xs py-2"><strong>Analisis:</strong> ${consulta.analisis || ''}</p>
         <p class="text-start text-xs py-2"><strong>Observacion:</strong> ${consulta.observacion || ''}</p>
@@ -328,10 +368,11 @@ const propiedades = computed(() => {
     });
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
-        storeId: 'Verhistoria',
+        storeId: 'ActualizarHistoria',
         storePinia: 'Historias',
         cerrarModal: cerrarModalVer,
         formularioItem,
+        actualizar,
         show: showItem,
     })
 
@@ -349,7 +390,7 @@ const propiedades = computed(() => {
                 titulo: 'Gestion de Historias Clinicas',
                 descripcion: 'Administra y consulta información sobre historias clinicas',
                 color: 'bg-[var(--color-default)] text-white',
-                accionAgregar: agregarHistoria,
+                accionAgregar: puedePost ? agregarHistoria : '',
                 buscador: true,
                 filtros: [
                     { columna: 'estado', placeholder: 'Estado', datos: [{ text: 'Creada', value: 'Creada' }, { text: 'Nueva', value: 'Nueva' }] },
@@ -488,8 +529,8 @@ const propiedades = computed(() => {
                         backgroundColor: '#EFF6FF',
                     },
                     filas: [
-                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                        [`${propiedadesHistoriaPDF.value.name}`, `${propiedadesHistoriaPDF.value.correo}`, `${propiedadesHistoriaPDF.value.nacimiento}`,],
+                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                        [`${propiedadesHistoriaPDF.value.name}`, `${propiedadesHistoriaPDF.value.celular}`, `${propiedadesHistoriaPDF.value.nacimiento}`,],
                         ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
                         [`${propiedadesHistoriaPDF.value.type_doc}`, `${propiedadesHistoriaPDF.value.No_document}`, `${propiedadesHistoriaPDF.value.sexo}`,],
                         ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
@@ -506,9 +547,9 @@ const propiedades = computed(() => {
                     },
                     filas: [
                         ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
-                        [`${propiedadesHistoriaPDF.value.municipio}`, `${propiedadesHistoriaPDF.value.departamento}`, `${propiedadesHistoriaPDF.value.celular}`,],
+                        [`${propiedadesHistoriaPDF.value.municipio}`, `${propiedadesHistoriaPDF.value.departamento}`, `${propiedadesHistoriaPDF.value.telefono}`,],
                         ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Regimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
-                        [`${propiedadesHistoriaPDF.value.Eps}`, `${propiedadesHistoriaPDF.value.Regimen}`, `${propiedadesHistoriaPDF.value.poblacionVulnerable}`,],
+                        [`${propiedadesHistoriaPDF.value.id_eps}`, `${propiedadesHistoriaPDF.value.Regimen}`, `${propiedadesHistoriaPDF.value.poblacionVulnerable}`,],
                     ],
                 })
                 .addComponente('Espacio', {
@@ -537,7 +578,7 @@ const propiedades = computed(() => {
                 ])
                 .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
                 .setDatos(analisis)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : ''], botones: true, })
             )
             .addComponente('Form', propiedadesItemHistoria)
 
@@ -606,7 +647,7 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(tratamientos)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -620,7 +661,7 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(medicinas)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('Form', propiedadesItemHistoria)

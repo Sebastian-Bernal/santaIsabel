@@ -31,6 +31,13 @@ const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
+const usuario = ref()
+
+onMounted(() => {
+    const userData = sessionStorage.getItem('User');
+    usuario.value = userData ? JSON.parse(userData).id_profesional : null;
+});
+
 
 const {
     fechaActual,
@@ -212,12 +219,15 @@ async function activarCita(cita) {
                     {{ cita.name_medico }}</h3>
                 <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
             </div>
-            <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
+            <!-- Acciones -->
+            <div class="flex flex-col gap-2"
+                v-if="cita.estado === 'Inactiva' && usuario == cita.id_profesional">
                 <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
                         class="fa-solid fa-check"></i></ButtonRounded>
                 <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
                         class="fa-solid fa-xmark"></i></ButtonRounded>
             </div>
+
             <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
                 <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
                         class="fa-solid fa-info"></i></ButtonRounded>
@@ -228,7 +238,8 @@ async function activarCita(cita) {
             </div>
         </div>
 
-        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1" class="w-full py-8 flex justify-center">
+        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
+            class="w-full py-8 flex justify-center">
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
     </div>
@@ -273,7 +284,7 @@ async function activarCita(cita) {
         </div>
     </div>
 
-    <Historia v-if="varView.showNuevaHistoria"/>
+    <Historia v-if="varView.showNuevaHistoria" />
 </template>
 
 <style>

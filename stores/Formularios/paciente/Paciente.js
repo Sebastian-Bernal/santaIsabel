@@ -6,6 +6,7 @@ import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 import { useCitasStore } from "../citas/Cita";
 import { traerPacientes } from "~/Core/Usuarios/Paciente/GETPacientes";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
+import { useMedicosStore } from "../profesional/Profesionales";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -134,31 +135,31 @@ export const usePacientesStore = defineStore('Pacientes', {
                 return acc;
             }, {});
 
-            const pacientesActivos = pacientes.filter((paciente) => {
-                return paciente.estado === 'activo'
-            })
-
-            let pacientesFiltrados = pacientesActivos;
+            let pacientesFiltrados = pacientes;
 
             const rol = sessionStorage.getItem('Rol')
             if (rol === 'Profesional' && filtrar) {
                 const citasStore = useCitasStore();
-                // Asegúrate de que listCitas sea una función async
                 const citas = await citasStore.listCitas();
+
+                const idUsuario = JSON.parse(sessionStorage.getItem('user')).id;
+                const profesionalStore = useMedicosStore()
+                const profesionales = await profesionalStore.listMedicos
+                const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
+
 
                 const pacientesAtendidos = [
                     ...new Set(
                         citas
-                            .filter(cita => cita.name_medico === 'LAURA GARCIA')
+                            .filter(cita => cita.id_medico === idProfesional)
                             .map(cita => cita.id_paciente)
                     )
                 ];
 
-                pacientesFiltrados = pacientesActivos.filter(paciente =>
+                pacientesFiltrados = pacientes.filter(paciente =>
                     pacientesAtendidos.includes(paciente.id)
                 );
             }
-
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientesFiltrados.map((paciente) => {
                 const usuario = usuarios.find((user) => user.id === paciente.id_usuario)

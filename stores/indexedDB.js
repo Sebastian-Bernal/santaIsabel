@@ -24,9 +24,6 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const medicos = db.createObjectStore('Profesional', { keyPath: 'id_temporal', autoIncrement: true });
                     medicos.createIndex("buscaprofesional", "id", { unique: false });
 
-                    const users = db.createObjectStore('User', { keyPath: 'id_infoUsuario', autoIncrement: true });
-                    users.createIndex("buscaaUser", "id", { unique: false });
-
                     const usersInfo = db.createObjectStore('InformacionUser', { keyPath: 'id_temporal', autoIncrement: true });
                     usersInfo.createIndex("buscaaInformacionUser", "id_usuario", { unique: false });
 
@@ -42,7 +39,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const historiaClinica = db.createObjectStore('HistoriaClinica', { keyPath: 'id_temporal', autoIncrement: true });
                     historiaClinica.createIndex("buscahistoriaClinica", "id_historiaClinica", { unique: false });
 
-                    const examenFisico = db.createObjectStore('ExamenFisico', { keyPath: 'id', auntoIncrement: true });
+                    const examenFisico = db.createObjectStore('ExamenFisico', { keyPath: 'id_temporal', autoIncrement: true });
                     examenFisico.createIndex("buscaexamenFisico", "id", { unique: false });
 
                     const analisis = db.createObjectStore('Analisis', { keyPath: 'id_temporal', autoIncrement: true });
@@ -131,7 +128,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             }
             const tx = this.bd.transaction(this.almacen, 'readwrite');
             const store = tx.objectStore(this.almacen);
-
+            console.log(this.almacen)
             const result = await new Promise((resolve, reject) => {
                 const request = store.add(aguardar);
                 request.onsuccess = () => resolve(request.result); // El ID generado
@@ -237,31 +234,24 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             return datos.map(dato => dato.id === null)
         },
 
-        // Temporal Administrador Demo
-        async adminDemo() {
-            this.almacen = 'User'
-            const usuarios = await this.leerdatos()
-            
-            const user = {
-                name: 'Admin Demo',
-                No_document: '1111111111',
-                celular: '1111111111',
-                telefono: '111111',
-                Tipo: 'Gerente',
-                correo: 'admin@demo.com',
-                contraseña: 'password',
-                estado: 'activo',
-                rol: 'Administrativo'
-            }
+        async deleteDatabase(dbName) {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.deleteDatabase(dbName);
 
-            usuarios.find((ad) => {
-                ad.correo === user.correo
-            })
-            if(usuarios.length > 0){
-                return
-            }
+                request.onsuccess = () => {
+                    console.log(`✅ Base de datos '${dbName}' eliminada correctamente.`);
+                    resolve(true);
+                };
 
-            await this.guardardatos(user)
+                request.onerror = (event) => {
+                    console.error(`❌ Error al eliminar la base de datos '${dbName}':`, event);
+                    reject(event);
+                };
+
+                request.onblocked = () => {
+                    console.warn(`⚠️ La eliminación de '${dbName}' está bloqueada. Cierra otras pestañas que usen esta base.`);
+                };
+            });
         },
 
     }

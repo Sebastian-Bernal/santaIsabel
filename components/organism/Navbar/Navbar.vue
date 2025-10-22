@@ -18,7 +18,6 @@ onMounted(() => {
     // Obtener y parsear el usuario
     const datos = sessionStorage.getItem("User");
     const usuarioParseado = datos ? JSON.parse(datos) : {};
-    console.log(datos)
     usuario.value = usuarioParseado.name || 'Usuario';
 
 })

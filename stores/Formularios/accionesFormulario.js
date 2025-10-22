@@ -7,6 +7,7 @@ import { validarYEnviarNuevoPaciente } from "~/Core/Usuarios/Paciente/POSTPacien
 import { validarYEnviarModificarPaciente } from '~/Core/Usuarios/Paciente/PUTPaciente';
 // Historia
 import { validarYEnviarRegistrarHistoria } from '~/Core/Historial/Historia/PostHistoria';
+import { validarYEnviarActualizarHistoria } from '~/Core/Historial/Historia/PUTHistoria';
 // Profesionales
 import { validarYEnviarNuevoMedico } from '~/Core/Usuarios/Profesional/POSTMedico';
 import { validarYEnviarModificarMedico } from '~/Core/Usuarios/Profesional/PUTMedico';
@@ -71,6 +72,10 @@ export const accionesFormularios = {
     },
     RegistrarHistoria: async (data) => {
         const respuesta = await validarYEnviarRegistrarHistoria(data)
+        return respuesta;
+    },
+    ActualizarHistoria: async (data) => {
+        const respuesta = await validarYEnviarActualizarHistoria(data)
         return respuesta;
     },
     DatosEmpresa: async (data) => {

@@ -8,6 +8,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
     state: () => ({
         Formulario: {
             Analisis: {
+                id: '',
                 motivo: '',
                 acompañante: [],
                 observacion: '',
@@ -24,6 +25,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 fecha_rehabilitacion: '',
             },
             HistoriaClinica: {
+                id: '',
                 fecha_historia: '',
                 id_paciente: '',
                 name_paciente: '',
@@ -31,6 +33,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 No_document_paciente: '',
             },
             ExamenFisico: {
+                id: '',
                 Peso: '',
                 altura: '',
                 otros: '',
@@ -284,6 +287,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                         tipoAnalisis: data.analisis?.tipoAnalisis,
                         id_medico: data.analisis?.id_medico,
                         id_historia: data.analisis?.id_historia,
+                        fecha: data.analisis.updated_at
                     },
                     Diagnosticos: data.analisis?.diagnosticos?.map((d) => ({
                         id: d.id,

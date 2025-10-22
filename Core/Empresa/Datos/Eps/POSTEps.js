@@ -55,12 +55,12 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = sessionStorage.getItem('token')
 
+    // guardar local
+    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
     
     const online = navigator.onLine;
     if (online) {
         try {
-            // guardar local
-            const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
             
             // mandar a api
             let options = {

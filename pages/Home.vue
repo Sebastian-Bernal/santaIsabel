@@ -24,6 +24,7 @@ const actions = ref([])
 
 const pacientesList = ref([])
 const medicosList = ref([])
+const showCita = ref(false)
 
 onMounted(async () => {
     varView.cargando = true;
@@ -32,7 +33,6 @@ onMounted(async () => {
 
     rol.value = sessionStorage.getItem('Rol')
     const usuario = JSON.parse(sessionStorage.getItem('user'))
-    console.log(usuario)
 
     let citas = []
     let Historias = []
@@ -43,24 +43,30 @@ onMounted(async () => {
         citas = await citasStore.listCitasHoy();
 
     } else if (rol.value === 'Profesional'){
+        // Pacientes list
         const pacientesStore = usePacientesStore()
-        pacientesList.value = await pacientesStore.listPacientes
+        pacientesList.value = await pacientesStore.listPacientesAtendidos(false)
+
+        // Profesionales list
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos
         medicosList.value = profesionales
+        const profesional = profesionales.find(p => p.id_usuario === usuario.id)
 
-        const profesional = profesionales.find(p => p.id_usuario === usuario.id)[0]
-
+        // Citas list
         const listCitas = await citasStore.listCitas();
         const hoy = new Date();
+        
         citas = listCitas.filter((cita) => {
             const fechaCita = new Date(cita.fecha);
             return (
-                cita.id_medico === profesional.id &&
-                fechaCita > hoy
+                cita.id_medico === profesional.id_profesional 
+                && fechaCita > hoy
             )
         })
-
+        
+        citasStore.Formulario.id_medico = profesional.id_profesional
+        citasStore.Formulario.name_medico = usuario.name
     }
 
     DashboardRol(rol.value, Historias, citas)
@@ -195,7 +201,8 @@ function DashboardRol(rol, Historias = [], citas) {
             }
         }]
 
-        if(Citas.value.length > 0){
+        // Citas
+        if(citas.length > 0){
             Citas.value = citas.map(card => {
                 return {
                     header: {
@@ -272,7 +279,7 @@ function nuevaHistoria() {
 }
 
 function nuevaCita() {
-    varView.showNuevaCita = true
+    showCita.value = true
 }
 
 // Acciones rapidas
@@ -339,14 +346,16 @@ const cardsCitas = new CardBuilder();
 const cardsAcciones = new CardBuilder();
 
 function cerrar(){
-    varView.showNuevaCita = false
+    showCita.value = false
 }
 
 const builder = useFormularioCitaBuilder({
     storeId: 'NuevaCita',
     storePinia: 'Citas',
     cerrarModal: cerrar,
-    show: varView.showNuevaCita,
+    show: showCita,
+    pacientesList,
+    medicosList
 });
 
 const propiedades = computed(() => {

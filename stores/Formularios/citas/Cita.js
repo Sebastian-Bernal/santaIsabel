@@ -1,5 +1,6 @@
 import { traerCitas } from "~/Core/Usuarios/Cita/GETCita";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
+import { useMedicosStore } from "../profesional/Profesionales";
 
 // Estructura de datos de Citas
 const estructuraCita = {
@@ -49,19 +50,23 @@ export const useCitasStore = defineStore('Citas', {
                 return fechaA - fechaB;
             });
 
+            // Filtrar por id_medico si el rol es Profesional
+            const rol = sessionStorage.getItem('Rol');
+            // Cambiar por ID
+            if (rol === 'Profesional') {
+                const idUsuario = JSON.parse(sessionStorage.getItem('user')).id;
+                const profesionalStore = useMedicosStore()
+                const profesionales = await profesionalStore.listMedicos
+                const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
+
+                citas = citas.filter(cita => {
+                    return cita.id_medico === idProfesional
+                });
+            }
+
             this.Citas = citas;
             return citas;
         },
-        // // Filtrar por id_medico si el rol es Profesional
-        // const rol = sessionStorage.getItem('Rol');
-        // // Cambiar por ID
-        // if (rol === 'Profesional') {
-        //     const idProfesional = JSON.parse(sessionStorage.getItem('Profesional')).name;
-        //     citas = citas.filter(cita => {
-        //         return cita.name_medico === idProfesional
-        //     });
-        // }
-
 
         async listCitasHoy() {
             const store = useIndexedDBStore();
@@ -112,6 +117,7 @@ export const useCitasStore = defineStore('Citas', {
                     hora: data.hora,
                     estado: data.estado,
                     motivo_cancelacion: data.motivo_cancelacion,
+                    id_analisis: data.id_examen_fisico,
                 }
             }));
 
