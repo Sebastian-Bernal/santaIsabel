@@ -1,6 +1,6 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
-import emailjs from '@emailjs/browser';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario cancelar cita
 export const validarYEnviarCancelarCita = async (cita, motivo) => {
@@ -14,21 +14,21 @@ export const validarYEnviarCancelarCita = async (cita, motivo) => {
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    const pacientesStore = usePacientesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+        Cita: {
+            ...datos.Cita,
+            sincronizado: 0
+        }
+    })));
 
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
-                Cita: {
-                    ...datos.Cita,
-                    sincronizado: 0
-                }
-            })));
 
             let options = {
                 metodo: 'DELETE',
@@ -74,24 +74,13 @@ const enviarFormulario = async (datos) => {
                 return true
             }
 
-            
-            // const pacientes = await pacientesStore.listPacientes
-            // const paciente = pacientes.filter((paciente) => {
-            //     return paciente.id === datos.Cita.id_paciente
-            // })
-            // const pacienteYCita = {...datos.Cita, ...paciente[0]};
-            // console.log(pacienteYCita)
-            // const response = await emailjs.send(
-            //     import.meta.env.VITE_EMAILJS_SERVICE_ID,     // service_id
-            //     import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CancelacionCita,    // template_id
-            //     pacienteYCita,
-            //     import.meta.env.VITE_EMAILJS_PUBLIC_KEY      // public_key
-            // )
-            // console.log('Correo enviado con éxito:', response.status, response.text)
-            // return true
         } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -99,7 +88,6 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

@@ -16,11 +16,14 @@ definePageMeta({
 const api = useApiRest()
 const config = useRuntimeConfig()
 const indexedDB = useIndexedDBStore();
+const storeCodigos = useCodigos();
 
 onMounted(async () => {
     try {
         await indexedDB.deleteDatabase('db-thesalus');
         await indexedDB.initialize(); // tu lógica de inicialización
+        await storeCodigos.initialize();
+        await storeCodigos.guardardatos()
         sessionStorage.clear();
     } catch (e) {
         console.error('No se pudo reiniciar IndexedDB:', e);

@@ -5,10 +5,11 @@ import { useButtonsAside } from '~/stores/ButtonActive';
 
 const storeAside = useButtonsAside();
 const buttons = ref([]);
+const varView = useVarView()
 
 onMounted(() => {
-    const permisosStore = sessionStorage.getItem("Permisos");
-    buttons.value = storeAside.getbuttons(JSON.parse(permisosStore));
+    const permisosStore = varView.getPermisos
+    buttons.value = storeAside.getbuttons(permisosStore);
 });
 
 // Funcion para Responsive, si aside esta activo se oculta navbar

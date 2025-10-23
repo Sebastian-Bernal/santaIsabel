@@ -31,8 +31,8 @@ onMounted(async () => {
     sessionStorage.removeItem('activeButton');
     sessionStorage.removeItem('seccionIdActivo')
 
-    rol.value = sessionStorage.getItem('Rol')
-    const usuario = JSON.parse(sessionStorage.getItem('user'))
+    rol.value = varView.getRol
+    const usuario = varView.getUser
 
     let citas = []
     let Historias = []
@@ -80,15 +80,15 @@ function DashboardRol(rol, Historias = [], citas) {
                 return {
                     header: {
                         icon: 'fa-solid fa-user',
-                        title: card.name_paciente,
-                        subtitle: card.No_document_paciente
+                        title: card.name,
+                        subtitle: card.No_document
                     },
                     body: {
                         html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
                     },
                     footer: {
                         status: 'completado',
-                        statusClass: 'bg-green-500'
+                        statusClass: 'bg-green-500 text-white'
                     }
                 }
             })
@@ -178,7 +178,7 @@ function DashboardRol(rol, Historias = [], citas) {
             },
         ];
     } else if (rol === 'Profesional') {
-        const usuario = JSON.parse(sessionStorage.getItem('user'))
+        const usuario = varView.getUser
 
         cardPaciente.value = [{
             header: {

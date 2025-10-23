@@ -1,5 +1,6 @@
 import { guardarEnDB, actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../../stores/notificaciones.js'
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nueva Nota
 export const validarYEnviarNuevaNota = async (datos) => {
@@ -12,7 +13,7 @@ const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
     const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Nota: {...datos.Nota, sincronizado: 0}})));
 
@@ -57,8 +58,12 @@ const enviarFormulario = async (datos) => {
             }
 
         } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
-            await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -66,7 +71,6 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await guardarEnDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

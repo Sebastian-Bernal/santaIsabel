@@ -2,6 +2,7 @@ import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.
 import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nuevo Medico
 export const validarYEnviarNuevoMedico = async (datos) => {
@@ -101,29 +102,35 @@ export const validarYEnviarNuevoMedico = async (datos) => {
     }
 
 
-    return await enviarFormulario(datos);
+    return await enviarFormularioProfesional(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormularioProfesional = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar local
-    const datosLocal = {
-        InformacionUser : {
-            ...datos.InformacionUser,
-            sincronizado: 0
-        },
-        Profesional : {
-            ...datos.Profesional,
-            sincronizado: 0
+    let id_temporal = {}
+    if(!reintento){
+        // Guardar local
+        const datosLocal = {
+            InformacionUser : {
+                ...datos.InformacionUser,
+                correo: datos.User.correo,
+                sincronizado: 0
+            },
+            Profesional : {
+                ...datos.Profesional,
+                sincronizado: 0
+            }
         }
+    
+        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
+    } else {
+        id_temporal = {User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal}
     }
-
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
 
     const online = navigator.onLine;
     if (online) {
@@ -194,6 +201,11 @@ const enviarFormulario = async (datos) => {
 
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
         }
     } else {
         notificacionesStore.options.icono = 'warning'

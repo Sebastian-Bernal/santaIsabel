@@ -1,5 +1,6 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosEPS = async (datos) => {
@@ -49,19 +50,24 @@ export const validarYEnviarDatosEPS = async (datos) => {
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormulario = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
     // guardar local
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
+    let id_temporal = {}
+    if(!reintento){
+        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
+    } else {
+        id_temporal.data = datos.EPS.id_temporal
+    }
     
     const online = navigator.onLine;
     if (online) {
         try {
-            
+            console.log('enviando:', datos.EPS)
             // mandar a api
             let options = {
                 metodo: 'POST',
@@ -98,8 +104,12 @@ const enviarFormulario = async (datos) => {
                 return true
             }
         } catch (error) {
-            console.error('Fallo al enviar. Guardando localmente', error);
-            await guardarEnDB(JSON.parse(JSON.stringify(datos)));
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardado localmente', error);
         }
     } else {
         notificacionesStore.options.icono = 'warning'

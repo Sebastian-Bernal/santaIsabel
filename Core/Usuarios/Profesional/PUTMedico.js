@@ -1,5 +1,6 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarModificarMedico = async (datos) => {
@@ -82,28 +83,31 @@ export const validarYEnviarModificarMedico = async (datos) => {
         return false;
     }
 
-    return await enviarFormulario(datos);
+    return await enviarFormularioPutMedico(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormularioPutMedico = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
-    await actualizarEnIndexedDB(JSON.stringify({
-        InformacionUser: {
-            ...datos.InformacionUser,
-            sincronizado: 0
-        },
-        Profesional: {
-            ...datos.Profesional,
-            id_usuario: datos.InformacionUser.id,
-            id_profesional: datos.Profesional.profesion,
-            sincronizado: 0
-        }
-    }))
+    if(!reintento){
+        await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+            InformacionUser: {
+                ...datos.InformacionUser,
+                correo: datos.User.correo,
+                sincronizado: 0
+            },
+            Profesional: {
+                ...datos.Profesional,
+                id_usuario: datos.InformacionUser.id,
+                id_profesional: datos.Profesional.profesion,
+                sincronizado: 0
+            }
+        })))
+    }
 
     const online = navigator.onLine;
     if (online) {
@@ -153,8 +157,12 @@ const enviarFormulario = async (datos) => {
                 return true
             }
         } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -162,7 +170,6 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

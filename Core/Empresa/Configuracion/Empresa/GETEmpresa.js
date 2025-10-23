@@ -1,10 +1,11 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
+import { decryptData } from '~/composables/Formulario/crypto';
 
 export const traerdatosEmpresa = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
     
     const online = navigator.onLine;
     if (online) {

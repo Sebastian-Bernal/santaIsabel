@@ -1,7 +1,7 @@
 import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../../stores/notificaciones.js'
 import { useCalendarioCitas } from '~/stores/Calendario.js';
-import { useVarView } from '~/stores/varview.js';
+import { decryptData } from '~/composables/Formulario/crypto';
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 
 // funcion para Validar campos del formulario Historia Clinica
@@ -115,7 +115,7 @@ const enviarFormulario = async (datos) => {
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
     // Guardar Local
 
@@ -209,6 +209,11 @@ const enviarFormulario = async (datos) => {
             }
             // await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
         } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {

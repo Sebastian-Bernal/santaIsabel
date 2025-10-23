@@ -156,7 +156,6 @@ export function useFormulario(props) {
         if (typeof accion === 'function') {
             try {
                 const res = await accion(data)
-                console.log(res)
                 if (res) {
                     notificaciones.options.icono = 'success'
                     notificaciones.options.background = '#22c55e'
@@ -165,15 +164,14 @@ export function useFormulario(props) {
                     notificaciones.options.tiempo = 1500
                     notificaciones.mensaje()
                     limpiarLocal()
-
                     limpiar()
                 }
                 return res
             } catch (err) {
-                notificaciones.options.icono = 'error'
+                notificaciones.options.icono = 'warning'
                 notificaciones.options.titulo = '¡Ha ocurrido un problema!'
-                notificaciones.options.texto = 'No se pudo enviar formulario'
-                notificaciones.options.tiempo = 2000
+                notificaciones.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+                notificaciones.options.tiempo = 5000
                 notificaciones.simple()
                 console.error(`Error enviando formulario '${props.Propiedades.content.storeId}':`, err)
                 return false

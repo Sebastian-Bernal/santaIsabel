@@ -1,8 +1,10 @@
+import { decryptData } from '~/composables/Formulario/crypto';
+
 export async function traerdatosEPS () {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
     const online = navigator.onLine;
     if (online) {
@@ -23,11 +25,6 @@ export async function traerdatosEPS () {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
-        notificacionesStore.options.texto = 'en desarrollo'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
         return false
     }
 }

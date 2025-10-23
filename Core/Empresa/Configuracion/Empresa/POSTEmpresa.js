@@ -1,5 +1,6 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosEmpresa = async (datos) => {
@@ -60,7 +61,7 @@ const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
     const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({ Empresa: { ...datos.Empresa, sincronizado: 0 } })));
 

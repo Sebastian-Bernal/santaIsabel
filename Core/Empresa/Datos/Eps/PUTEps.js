@@ -1,5 +1,6 @@
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarActualizarEps = async (datos) => {
@@ -45,22 +46,25 @@ const notificacionesStore = useNotificacionesStore();
     }
 
 
-    return await enviarFormulario(datos);
+    return await enviarFormularioPutEPS(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormularioPutEPS = async (datos, reintento=false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
     
-    await actualizarEnIndexedDB(JSON.stringify({
-        EPS: {
-            ...datos.EPS,
-            sincronizado: 0
-        }
-    }))
+    if(!reintento){
+        await actualizarEnIndexedDB({
+            EPS: {
+                ...datos.EPS,
+                id_temporal: datos.EPS.id_temporal,
+                sincronizado: 0
+            }
+        })
+    }
 
     const online = navigator.onLine;
     if (online) {
@@ -86,6 +90,7 @@ const enviarFormulario = async (datos) => {
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     EPS: {
                         ...datos.EPS,
+                        id_temporal: datos.EPS.id_temporal,
                         sincronizado: 1
                     }
                 })));
@@ -93,7 +98,11 @@ const enviarFormulario = async (datos) => {
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnDB(JSON.parse(JSON.stringify(datos)));
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
         }
     } else {
         notificacionesStore.options.icono = 'warning'

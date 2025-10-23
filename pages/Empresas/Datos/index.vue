@@ -19,7 +19,27 @@ const Profesiones = ref([]);
 const showModificarProfesion = ref(false)
 const showModificarEPS = ref(false)
 const secciones = ref([])
-const permisos = ref(varView.getPermisos)
+const refresh = ref(1)
+
+async function llamadatos() {
+    EPSdata.value = await storeEPS.listEPS
+    Profesiones.value = await storeProfesion.listProfesion
+}
+
+// Refrescar pagina cuando se agrega o modifica Paciente
+watch(() => showModificarProfesion.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
+watch(() => showModificarEPS.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
 
 onMounted(async () => {
     varView.cargando = true
@@ -89,6 +109,7 @@ const propiedades = computed(() => {
             storeId: 'Profesion',
             storePinia: 'Profesion',
             permisos: secciones.value,
+            showModificarProfesion: showModificarProfesion,
             actualizar: false
         })
         : null;
@@ -108,6 +129,7 @@ const propiedades = computed(() => {
         ? useEpsBuilder({
             storeId: 'EPS',
             storePinia: 'EPS',
+            showModificarEPS: showModificarEPS,
         })
         : null;
 
@@ -181,5 +203,5 @@ const propiedades = computed(() => {
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades" />
+    <Pagina :Propiedades="propiedades" :key="refresh" />
 </template>

@@ -36,7 +36,7 @@ import { traerDatos } from '~/Core/BDload';
 export const accionesFormularios = {
     Ingresar: async (data) => {
         const notificaciones = useNotificacionesStore()
-        notificaciones.options.texto = "Por favor, espere un momento mientras se cargan todos los datos"
+        notificaciones.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
         notificaciones.loading()
         const respuesta = await validarYEnviarLogin(data);
         if (respuesta.estado) {

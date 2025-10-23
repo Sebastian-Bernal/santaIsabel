@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { decryptData } from "~/composables/Formulario/crypto";
 
 // Store para loader
 export const useVarView = defineStore('varView', {
@@ -67,11 +68,30 @@ export const useVarView = defineStore('varView', {
 
         getPermisos: () => {
             try {
-                const permisos = JSON.parse(sessionStorage.getItem('Permisos'));
+                const permisos = decryptData(sessionStorage.getItem('Permisos'));
                 return Array.isArray(permisos) ? permisos : [];
             } catch (error) {
                 console.error('Error al obtener permisos desde sessionStorage:', error);
                 return [];
+            }
+        },
+
+        getUser: () => {
+            try {
+                const usuario = decryptData(sessionStorage.getItem('user'));
+                return usuario || {};
+            } catch (error) {Aside
+                console.error('Error al obtener usuario desde sessionStorage:', error);
+                return {};
+            }
+        },
+
+        getRol: () => {
+            try {
+                const rol = decryptData(sessionStorage.getItem('Rol'));
+                return rol
+            } catch (error) {
+                console.error('Error al obtener usuario desde sessionStorage:', error);
             }
         }
     }

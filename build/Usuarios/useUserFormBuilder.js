@@ -341,7 +341,7 @@ export function useUserBuilder({
                 name: 'eps',
                 tamaño: ' w-full',
                 options: EPS,
-                vmodel: 'Paciente.Eps',
+                vmodel: 'Paciente.id_eps',
             })
             .addCampo({
                 component: 'Select',
@@ -380,51 +380,54 @@ export function useUserBuilder({
                 vmodel: 'Paciente.poblacionVulnerable',
             })
 
-            // 📌 Sección: Diagnósticos
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Diagnosticos',
-                buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
-                tamaño: 'w-full md:col-span-2',
-                vmodel: 'Diagnosticos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'cie-10',
-                        type: 'SelectSearch',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full',
-                        options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                        seleccionarItem: seleccionarCIE_10,
-                    },
-
-                ]
-            })
-
-            // 📌 Sección: Antecedentes
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Antecedentes',
-                buttons: [
-                    { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
-                    { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
-                ],
-                tamaño: 'w-full md:col-span-2',
-                vmodel: 'Antecedentes',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'antecedente',
-                        type: 'Input',
-                        placeholder: 'Antecedente',
-                        tamaño: 'w-full'
-                    },
-                ],
-                containerCampos: 'w-full'
-            })
+            if(verUser){
+                builder
+                // 📌 Sección: Diagnósticos
+                .addCampo({
+                    component: 'GroupCampos',
+                    labelGroup: 'Diagnosticos',
+                    buttons: [{ icon: 'fa-solid fa-plus', color: 'bg-blue-500', addItem: { descripcion: '', codigoCIE10: '', id_paciente: '' } }],
+                    tamaño: 'w-full md:col-span-2',
+                    vmodel: 'Diagnosticos',
+                    value: [],
+                    campos: [
+                        {
+                            name: 'descripcion',
+                            id: 'cie-10',
+                            type: 'SelectSearch',
+                            placeholder: 'CIE-10',
+                            tamaño: 'w-full',
+                            options: CIE10,
+                            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                            seleccionarItem: seleccionarCIE_10,
+                        },
+    
+                    ]
+                })
+    
+                // 📌 Sección: Antecedentes
+                .addCampo({
+                    component: 'GroupCampos',
+                    labelGroup: 'Antecedentes',
+                    buttons: [
+                        { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
+                        { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
+                    ],
+                    tamaño: 'w-full md:col-span-2',
+                    vmodel: 'Antecedentes',
+                    value: [],
+                    campos: [
+                        {
+                            name: 'descripcion',
+                            id: 'antecedente',
+                            type: 'Input',
+                            placeholder: 'Antecedente',
+                            tamaño: 'w-full'
+                        },
+                    ],
+                    containerCampos: 'w-full'
+                })
+            }
     }
 
     if (tipoUsuario === 'Profesional') {

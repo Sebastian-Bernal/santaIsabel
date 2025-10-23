@@ -31,6 +31,7 @@ export const useCitasStore = defineStore('Citas', {
     actions: {
 
         async listCitas() {
+            const varView = useVarView()
             const store = useIndexedDBStore();
             store.almacen = 'Cita';
             let citas = await store.leerdatos();
@@ -51,10 +52,10 @@ export const useCitasStore = defineStore('Citas', {
             });
 
             // Filtrar por id_medico si el rol es Profesional
-            const rol = sessionStorage.getItem('Rol');
+            const rol = varView.getRol;
             // Cambiar por ID
             if (rol === 'Profesional') {
-                const idUsuario = JSON.parse(sessionStorage.getItem('user')).id;
+                const idUsuario = varView.getUser.id;
                 const profesionalStore = useMedicosStore()
                 const profesionales = await profesionalStore.listMedicos
                 const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional

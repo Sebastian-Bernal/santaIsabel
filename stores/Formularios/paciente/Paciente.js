@@ -79,7 +79,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 } else {
                     return {
                         ...paciente,
-                        Eps: mapaEPS[paciente.id_eps] || paciente.id_eps,
+                        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
                         usuario: null
                     }
                 }
@@ -123,6 +123,7 @@ export const usePacientesStore = defineStore('Pacientes', {
             const store = useIndexedDBStore()
             const usersStore = useUsersStore()
             const epsStore = useDatosEPSStore()
+            const varView = useVarView()
 
             store.almacen = 'Paciente'
             const pacientes = await store.leerdatos()
@@ -137,7 +138,7 @@ export const usePacientesStore = defineStore('Pacientes', {
 
             let pacientesFiltrados = pacientes;
 
-            const rol = sessionStorage.getItem('Rol')
+            const rol = varView.getRol
             if (rol === 'Profesional' && filtrar) {
                 const citasStore = useCitasStore();
                 const citas = await citasStore.listCitas();
@@ -168,13 +169,13 @@ export const usePacientesStore = defineStore('Pacientes', {
                     return {
                         ...paciente,
                         ...usuario,
-                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
                         id_paciente: paciente.id // renombramos el id del paciente
                     }
                 } else {
                     return {
                         ...paciente,
-                        Eps: mapaEPS[paciente.Eps] || paciente.Eps,
+                        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
                         usuario: null
                     }
                 }

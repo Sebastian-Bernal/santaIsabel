@@ -1,6 +1,6 @@
-import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { secciones } from '~/data/Buttons.js';
+import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { useApiRest } from '~/stores/apiRest.js';
+import { encryptData } from '~/composables/Formulario/crypto.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarLogin = async (datos) => {
@@ -33,16 +33,26 @@ const enviarFormulario = async (datos) => {
             }
             const respuesta = await api.functionCall(options)
             if (respuesta) {
-                sessionStorage.setItem('token', respuesta.access_token)
-                sessionStorage.setItem('user', JSON.stringify(respuesta.user.usuario))
-                sessionStorage.setItem('Rol', respuesta.user.rol);
-                sessionStorage.setItem('Permisos', JSON.stringify(respuesta.user.permisos));
+                const tokenEncrypt = encryptData(respuesta.access_token);
+                const userEncrypt = encryptData(respuesta.user.usuario);
+                const rolEncrypt = encryptData(respuesta.user.rol);
+                const permisosEncrypt = encryptData(respuesta.user.permisos);
+
+                sessionStorage.setItem('token', tokenEncrypt);
+                sessionStorage.setItem('user', userEncrypt);
+                sessionStorage.setItem('Rol', rolEncrypt);
+                sessionStorage.setItem('Permisos', permisosEncrypt);
                 return true
             } else {
                 return false
             }
         } catch (error) {
-            console.error('Fallo al enviar. Intenta en otro momento', error);
+            notificacionesStore.options.icono = 'error'
+            notificacionesStore.options.titulo = '¡No se pudo iniciar Sesion!'
+            notificacionesStore.options.texto = 'Informacion invalida'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
         notificacionesStore.options.icono = 'warning'

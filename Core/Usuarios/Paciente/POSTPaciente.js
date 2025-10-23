@@ -2,6 +2,8 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { decryptData } from '~/composables/Formulario/crypto';
+import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarNuevoPaciente = async (datos) => {
@@ -13,7 +15,7 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
     const camposObligatorios = [
         'name', 'No_document', 'type_doc', 'celular',
         'nacimiento', 'direccion', 'municipio', 'departamento',
-        'barrio', 'zona', 'sexo', 'genero', 'Eps', 'Regimen', 'poblacionVulnerable'
+        'barrio', 'zona', 'sexo', 'genero', 'id_eps', 'Regimen', 'poblacionVulnerable'
     ];
 
     const cuerpo = {
@@ -71,29 +73,42 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
         return false
     }
 
-    return await enviarFormulario(datos);
+    return await enviarFormularioPaciente(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormularioPaciente = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
+    const epsStore = useDatosEPSStore()
+    const EPSList = await epsStore.listEPS
+    const mapaEPS = EPSList.reduce((acc, eps) => {
+        acc[eps.id] = eps.nombre;
+        return acc;
+    }, {});
+
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = sessionStorage.getItem('token')
+    const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar local
-    const datosLocal = {
-        InformacionUser: {
-            ...datos.InformacionUser,
-            sincronizado: 0
-        },
-        Paciente: {
-            ...datos.Paciente,
-            sincronizado: 0
+    let id_temporal = {}
+    if (!reintento) {
+        // Guardar local
+        const datosLocal = {
+            InformacionUser: {
+                ...datos.InformacionUser,
+                sincronizado: 0
+            },
+            Paciente: {
+                ...datos.Paciente,
+                Eps: mapaEPS[datos.Paciente.id_eps],
+                sincronizado: 0
+            }
         }
-    }
 
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Paciente")
+        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Paciente")
+    } else {
+        id_temporal = { User: datos.InformacionUser.id_temporal, Paciente: datos.Paciente.id_temporal }
+    }
 
     const online = navigator.onLine;
     if (online) {
@@ -118,7 +133,7 @@ const enviarFormulario = async (datos) => {
 
                     sexo: datos.Paciente.sexo,
                     genero: datos.Paciente.genero,
-                    id_eps: datos.Paciente.Eps,
+                    id_eps: datos.Paciente.id_eps,
                     Regimen: datos.Paciente.Regimen,
                     vulnerabilidad: datos.Paciente.poblacionVulnerable,
                 }
@@ -138,6 +153,7 @@ const enviarFormulario = async (datos) => {
                         id_temporal: id_temporal.Paciente,
                         id: respuesta.paciente.id,
                         id_eps: respuesta.paciente.id_eps,
+                        Eps: mapaEPS[respuesta.paciente.id_eps],
                         id_usuario: respuesta.paciente.id_infoUsuario,
                         genero: respuesta.paciente.genero,
                         sexo: respuesta.paciente.sexo,
@@ -153,7 +169,11 @@ const enviarFormulario = async (datos) => {
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnDB(JSON.parse(JSON.stringify(datos)), "Paciente");
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
         }
     } else {
         notificacionesStore.options.icono = 'warning'

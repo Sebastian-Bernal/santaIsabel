@@ -230,7 +230,6 @@ const propiedades = computed(() => {
     // Verificar permisos específicos
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
-    const puedePDF = varView.getPermisos.includes('Pacientes_pdf');
 
     // Formulario para crear paciente
     const propiedadesUser = puedePost

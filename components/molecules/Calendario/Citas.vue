@@ -7,6 +7,7 @@ import Historia from '~/components/Historia.vue';
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
@@ -29,15 +30,17 @@ const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
+const profesionalesStore = useMedicosStore()
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
-const usuario = ref()
+const usuario = ref(null)
 
-onMounted(() => {
-    const userData = sessionStorage.getItem('User');
-    usuario.value = userData ? JSON.parse(userData).id_profesional : null;
+onMounted(async () => {
+    const profesionales = await profesionalesStore.listMedicos
+    const userData = varView.getUser;
+
+    usuario.value = profesionales.find(p => p.id_usuario == userData.id);
 });
-
 
 const {
     fechaActual,
@@ -220,8 +223,7 @@ async function activarCita(cita) {
                 <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
             </div>
             <!-- Acciones -->
-            <div class="flex flex-col gap-2"
-                v-if="cita.estado === 'Inactiva' && usuario == cita.id_profesional">
+            <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva' && usuario == cita.id_medico">
                 <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
                         class="fa-solid fa-check"></i></ButtonRounded>
                 <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
