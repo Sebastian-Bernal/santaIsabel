@@ -9,6 +9,7 @@ const varView = useVarView()
 
 onMounted(() => {
     const permisosStore = varView.getPermisos
+    if(permisosStore.length < 1) { window.location.href = '/'}
     buttons.value = storeAside.getbuttons(permisosStore);
 });
 

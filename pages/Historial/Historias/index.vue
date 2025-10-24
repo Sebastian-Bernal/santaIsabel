@@ -31,6 +31,7 @@ const medicinas = ref([]);
 const show = ref(false);
 const showItem = ref(false)
 const showNota = ref(false)
+const showActualizarNota = ref(false)
 const refresh = ref(1);
 
 const pacientesStore = usePacientesStore();
@@ -95,7 +96,6 @@ async function cargaHistorial(id) {
 
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
     const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
-    console.log(historia, allAnalisis)
 
 // Consultas
     analisis.value = []
@@ -251,6 +251,7 @@ function actualizarItemConsultasHistoria(item) {
     mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
 }
+
 // Visibilidad notas
 function nuevaNota() {
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
@@ -259,8 +260,17 @@ function nuevaNota() {
     showNota.value = true
 }
 
+function actualizarNota(nota) {
+    mapCampos(nota, notasStore.Formulario)
+    notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
+    notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
+    notasStore.Formulario.Nota.id_temporal = nota.id_temporal
+    showActualizarNota.value = true
+}
+
 function cerrarNota() {
     showNota.value = false
+    showActualizarNota.value = false
 }
 // PDF
 async function exportarNotaPDF(data) {
@@ -325,6 +335,13 @@ const propiedadesNota = useNotasBuilder({
     show: showNota,
 })
 
+const propiedadesActualizarNota = useNotasBuilder({
+    storeId: 'ActualizarNota',
+    storePinia: 'Notas',
+    cerrarModal: cerrarNota,
+    show: showActualizarNota,
+})
+
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
 
@@ -338,6 +355,8 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const modal = new ModalBuilder()
 
+    const puedeVer = varView.getPermisos.includes('Historias_view');
+    if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Historias_post')
     const puedePUT = varView.getPermisos.includes('Historias_put')
 
@@ -595,16 +614,16 @@ const propiedades = computed(() => {
             .nuevaSeccion('notas')
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
-                    { titulo: 'name_paciente', value: 'Paciente', tamaño: 100, ordenar: true },
                     { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
                     { titulo: 'hora_nota', value: 'Hora', tamaño: 150 },
-                    { titulo: 'nota', value: 'Nota', tamaño: 300 },
+                    { titulo: 'nota', value: 'Nota', tamaño: 400 },
                 ])
                 .setDatos(notas)
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNotaPDF }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNotaPDF }, puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
             )
             .addComponente('Form', propiedadesNota)
+            .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)

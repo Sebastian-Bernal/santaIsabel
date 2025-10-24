@@ -30,16 +30,17 @@ import { validarYEnviarActualizarProfesion } from '~/Core/Empresa/Datos/Profesio
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
 import { traerDatos } from '~/Core/BDload';
+import { validarYEnviarActualizarNota } from '~/Core/Historial/Notas/PUTNota';
 
 
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     Ingresar: async (data) => {
         const notificaciones = useNotificacionesStore()
-        notificaciones.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
-        notificaciones.loading()
         const respuesta = await validarYEnviarLogin(data);
         if (respuesta.estado) {
+            notificaciones.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
+            notificaciones.loading()
             await traerDatos()
             window.location.href = '/Home'
         }
@@ -102,6 +103,10 @@ export const accionesFormularios = {
     },
     NuevaNota: async (data) => {
         const respuesta = await validarYEnviarNuevaNota(data)
+        return respuesta
+    },
+    ActualizarNota: async (data) => {
+        const respuesta = await validarYEnviarActualizarNota(data)
         return respuesta
     },
     NuevoUsuario: async (data) => {

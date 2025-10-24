@@ -52,6 +52,9 @@ const enviarFormulario = async (datos) => {
             notificacionesStore.options.texto = 'Informacion invalida'
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
+            notificacionesStore.options.icono = ''
+            notificacionesStore.options.titulo = ''
+            notificacionesStore.options.texto = ''
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {

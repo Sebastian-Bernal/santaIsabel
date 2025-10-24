@@ -35,8 +35,10 @@ export function useFormularioCitaBuilder({
       alert("Por favor ingresa una fecha.");
       return;
     }
-console.log(fechaCita, hoy)
-    if (fechaCita < hoy) {
+    const maxFecha = new Date(hoy);
+    maxFecha.setDate(maxFecha.getDate() - 1);
+
+    if (fechaCita < maxFecha) {
       errorDiv.innerHTML = `<p>La fecha de la cita no puede ser anterior a hoy.</p>`
       return;
     }

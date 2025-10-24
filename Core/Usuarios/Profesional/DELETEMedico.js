@@ -1,42 +1,64 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarEliminarMedico = async (datos) => {
-    const pacientesStore = usePacientesStore();
-    const pacientes = await pacientesStore.listPacientes;
-    const existePaciente = pacientes.some(paciente => paciente.id_usuario === datos.User.id);
-
-    const datosAEnviar = {
-        Medico: {
-            ...datos.Medico,
-            estado: 'inactivo'
-        },
-        ...(existePaciente && {
-            User: {
-                ...datos.User,
-                rol: 'Paciente'
-            }
-        })
-    };
-
-    return await enviarFormulario(datosAEnviar);
+console.log('eliminando', datos)
+    return await enviarFormulario(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    // Guardar local
+    await actualizarEnIndexedDB(JSON.parse(JSON.stringify(
+        {
+            Profesional: {
+                ...datos.Profesional,
+                id_usuario: datos.InformacionUser.id,
+                sincronizado: 0,
+                estado: 0
+            }
+        }
+    )))
+
+
     const online = navigator.onLine;
     if (online) {
         try {
             // mandar a api
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
-            return true
+            let options = {
+                metodo: 'DELETE',
+                url: config.public.profesionals + '/' + datos.Profesional.id,
+                token: token,
+                body: {
+                    id: datos.Profesional.id,
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+
+                // Actualizar local
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(
+                    {
+                        Profesional: {
+                            ...datos.Profesional,
+                            id_usuario: datos.InformacionUser.id,
+                            estado: 0,
+                            sincronizado: 1
+                        }
+                    }
+                )));
+                return true
+            }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -44,7 +66,6 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

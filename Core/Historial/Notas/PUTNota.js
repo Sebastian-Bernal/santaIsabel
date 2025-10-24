@@ -1,9 +1,8 @@
-import { guardarEnDB, actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
-import { useNotificacionesStore } from '../../../stores/notificaciones.js'
+import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nueva Nota
-export const validarYEnviarNuevaNota = async (datos) => {
+export const validarYEnviarActualizarNota = async (datos) => {
     const notificacionesStore = useNotificacionesStore()
 
     const nota = datos?.Nota;
@@ -26,22 +25,18 @@ export const validarYEnviarNuevaNota = async (datos) => {
         return;
     }
 
-    return await enviarFormularioNota(datos);
+    return await enviarFormularioPutNota(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-export const enviarFormularioNota = async (datos, reintento= false) => {
+export const enviarFormularioPutNota = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar Local
-    let id_temporal = {}
     if(!reintento){
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Nota: {...datos.Nota, sincronizado: 0}})));
-    } else {
-        id_temporal.data = datos.Nota.id_temporal
+        await actualizarEnIndexedDB(JSON.parse(JSON.stringify({Nota: {...datos.Nota, sincronizado: 0}})));
     }
 
     const online = navigator.onLine;
@@ -49,10 +44,11 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.notas,
+                metodo: 'PUT',
+                url: config.public.notas + '/' + datos.Nota.id,
                 token: token,
                 body: {
+                    id: datos.Nota.id,
                     id_paciente: datos.Nota.id_paciente,
                     id_profesional: datos.Nota.id_profesional,
                     direccion: datos.Nota.direccion,
@@ -67,7 +63,7 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Nota: {
-                        id_temporal: id_temporal.data,
+                        id_temporal: datos.Nota.id_temporal,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
@@ -91,7 +87,6 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
-            return true
         }
     } else {
         notificacionesStore.options.icono = 'warning'

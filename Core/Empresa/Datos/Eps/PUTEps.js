@@ -61,6 +61,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
             EPS: {
                 ...datos.EPS,
                 id_temporal: datos.EPS.id_temporal,
+                id: datos.EPS.id,
                 sincronizado: 0
             }
         })
@@ -85,11 +86,12 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
                 }
             }
             const respuesta = await api.functionCall(options)
-
+            console.log(respuesta)
             if (respuesta.success) {
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     EPS: {
                         ...datos.EPS,
+                        id: respuesta.data.id,
                         id_temporal: datos.EPS.id_temporal,
                         sincronizado: 1
                     }
@@ -103,6 +105,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
             notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
+            return true
         }
     } else {
         notificacionesStore.options.icono = 'warning'

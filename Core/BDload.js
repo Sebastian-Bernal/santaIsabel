@@ -12,35 +12,41 @@ import { useFacturacionStore } from "~/stores/Formularios/empresa/Facturacion";
 
 // Funcion que carga datos de bd
 export async function traerDatos() {
-    const epsStore = useDatosEPSStore()
-    await epsStore.indexDBDatos()
-
-    const profesionesStore = useDatosProfesionStore()
-    await profesionesStore.indexDBDatos()
-
-    const empresaStore = useEmpresaStore()
-    await empresaStore.indexDBDatos()
-
-    const facturacionStore = useFacturacionStore()
-    await facturacionStore.indexDBDatos()
-
-    const pacientesStore = usePacientesStore()
-    await pacientesStore.indexDBDatos()
-
-    const profesionalesStore = useMedicosStore()
-    await profesionalesStore.indexDBDatos()
-
-    const citasStore = useCitasStore()
-    await citasStore.indexDBDatos()
-
-    const historiaStore = useHistoriasStore()
-    await historiaStore.indexDBDatos()
-
-    const notasStore = useNotasStore()
-    await notasStore.indexDBDatos()
-
-    const softwareStore = useSoftwareStore()
-    await softwareStore.indexDBDatos()
+    try {
+        const epsStore = useDatosEPSStore()
+        await epsStore.indexDBDatos()
+    
+        const profesionesStore = useDatosProfesionStore()
+        await profesionesStore.indexDBDatos()
+    
+        const empresaStore = useEmpresaStore()
+        await empresaStore.indexDBDatos()
+    
+        const facturacionStore = useFacturacionStore()
+        await facturacionStore.indexDBDatos()
+    
+        const pacientesStore = usePacientesStore()
+        await pacientesStore.indexDBDatos()
+        // await pacientesStore.indexDBDatosAntecedentes()
+    
+        const profesionalesStore = useMedicosStore()
+        await profesionalesStore.indexDBDatos()
+    
+        const citasStore = useCitasStore()
+        await citasStore.indexDBDatos()
+    
+        const historiaStore = useHistoriasStore()
+        await historiaStore.indexDBDatos()
+    
+        const notasStore = useNotasStore()
+        await notasStore.indexDBDatos()
+    
+        const softwareStore = useSoftwareStore()
+        await softwareStore.indexDBDatos()
+    } catch (error){
+        console.log(error)
+        return false
+    }
     // console.log('hola')
 }
 

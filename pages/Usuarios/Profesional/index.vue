@@ -27,7 +27,6 @@ const showVer = ref(false)
 
 async function llamadatos() {
     medicos.value = await listMedicos.value;
-    console.log(medicos.value)
 }
 // Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async () => {
@@ -137,17 +136,18 @@ async function eliminarProfesional() {
     notificaciones.options.confirmtext = 'Si, Eliminar'
     notificaciones.options.canceltext = 'Atras'
     const respuestaAlert = await notificaciones.alertRespuesta()
-    console.log(respuestaAlert)
-    if (respuestaAlert.estado === 'confirmado') {
+
+    if (respuestaAlert === 'confirmado') {
+
         const res = await validarYEnviarEliminarMedico(profesional)
-        console.log(res)
+
         if (res) {
-            options.position = 'top-end';
-            options.texto = "Profesional eliminado con exito.";
-            options.background = '#6bc517'
-            options.tiempo = 1500
-            mensaje()
-            options.background = '#d33'
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Profesional eliminado con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
             window.location.reload()
         }
     }
@@ -167,6 +167,8 @@ const builderTabla = new TablaBuilder()
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     // Verificar permisos específicos
+    const puedeVer = varView.getPermisos.includes('Profesional_view');
+    if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Profesional_post');
     const puedePut = varView.getPermisos.includes('Profesional_put');
 

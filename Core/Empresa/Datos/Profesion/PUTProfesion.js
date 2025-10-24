@@ -37,7 +37,10 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
         // Guardar local
         await actualizarEnIndexedDB({
             Profesion: {
-                ...datos.Profesion,
+                codigo: datos.Profesion.codigo,
+                nombre: datos.Profesion.nombre,
+                id: datos.Profesion.id,
+                id_temporal: datos.Profesion.id_temporal,
                 sincronizado: 0
             }
         })
@@ -64,7 +67,10 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
                 // Actualizar local
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     Profesion: {
-                        ...datos.Profesion,
+                        codigo: datos.Profesion.codigo,
+                        nombre: datos.Profesion.nombre,
+                        id: datos.Profesion.id,
+                        id_temporal: datos.Profesion.id_temporal,
                         sincronizado: 1
                     }
                 })));
@@ -75,8 +81,9 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
             notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
             notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
             notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            await notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
+            return true
         }
     } else {
         notificacionesStore.options.icono = 'warning'

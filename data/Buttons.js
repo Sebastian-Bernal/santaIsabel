@@ -14,110 +14,110 @@ export const buttons = ref([
                     },
                 ]
             },
-            {
-                titulo: 'Resoluciones',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
-            {
-                titulo: 'Inventarios',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
+            // {
+            //     titulo: 'Resoluciones',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
             {
                 titulo: 'Datos',
             },
             {
                 titulo: 'Usuarios',
             },
-            {
-                titulo: 'Negocios',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
-            {
-                titulo: 'Productos',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
-            {
-                titulo: 'Formas de pago',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
-            {
-                titulo: 'Impuestos',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
-            {
-                titulo: 'Cajas',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                    { 
-                        titulo: 'Eliminar',
-                    },
-                    {
-                        titulo: 'Actualizar',
-                    }
-                ]
-            },
+            // {
+            //     titulo: 'Inventarios',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
+            // {
+            //     titulo: 'Negocios',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
+            // {
+            //     titulo: 'Productos',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
+            // {
+            //     titulo: 'Formas de pago',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
+            // {
+            //     titulo: 'Impuestos',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
+            // {
+            //     titulo: 'Cajas',
+            //     subSecciones: [
+            //         {
+            //             titulo: 'Crear',
+            //         },
+            //         { 
+            //             titulo: 'Eliminar',
+            //         },
+            //         {
+            //             titulo: 'Actualizar',
+            //         }
+            //     ]
+            // },
 
         ],
         icon: "fa-building",
@@ -142,16 +142,6 @@ export const buttons = ref([
         secciones: [
             {
                 titulo: "Pacientes",
-                subSecciones: [
-                    {
-                        titulo: 'Datos',
-                        ruta: '/Usuarios/Pacientes'
-                    },
-                    {
-                        titulo: 'Evoluciones',
-                        ruta: '/Usuarios/Pacientes/Evoluciones'
-                    }
-                ]
             },
             {
                 titulo: "Profesional",

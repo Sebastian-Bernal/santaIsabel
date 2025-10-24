@@ -25,6 +25,13 @@ const actions = ref([])
 const pacientesList = ref([])
 const medicosList = ref([])
 const showCita = ref(false)
+const refresh = ref(1)
+
+watch(() => showCita.value,
+    () => {
+        refresh.value++
+    }
+);
 
 onMounted(async () => {
     varView.cargando = true;
@@ -63,7 +70,7 @@ onMounted(async () => {
                 cita.id_medico === profesional.id_profesional 
                 && fechaCita > hoy
             )
-        })
+        }).slice(0,4)
         
         citasStore.Formulario.id_medico = profesional.id_profesional
         citasStore.Formulario.name_medico = usuario.name
@@ -442,7 +449,7 @@ const propiedades = computed(() => {
 </script>
 
 <template>
-    <Pagina v-if="propiedades" :Propiedades="propiedades"></Pagina>
+    <Pagina v-if="propiedades" :Propiedades="propiedades" :key="refresh"></Pagina>
     <Paciente v-if="varView.showNuevoPaciente"/>
     <Historia v-if="varView.showNuevaHistoria" />
     <!-- <Cita v-if="varView.showNuevaCita"/> -->

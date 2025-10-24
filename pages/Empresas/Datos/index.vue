@@ -98,6 +98,8 @@ const propiedades = computed(() => {
     const builderTablaEPS = new TablaBuilder()
 
     // Verifica permisos específicos
+    const puedeVer = varView.getPermisos.includes('Datos_view');
+    if(!puedeVer) return
     const puedePostEPS = varView.getPermisos.includes('Datos_post');
     const puedePutEPS = varView.getPermisos.includes('Datos_put');
     const puedePostProfesion = varView.getPermisos.includes('Datos_post');

@@ -82,6 +82,8 @@ const propiedades = computed(() => {
     const builderCitas = new CitasBuilder()
     const pagina = new ComponenteBuilder()
 
+    const puedeVer = varView.getPermisos.includes('Citas_view');
+    if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Citas_post')
 
     pagina

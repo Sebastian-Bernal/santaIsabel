@@ -53,10 +53,6 @@ const verUser = (usuario) => {
     showVer.value = true
 }
 
-watch(() => UsersStore.Formulario.User.rol, (newValue) => {
-    tipoUsuario.value = newValue
-})
-
 function buscarUsuario() {
 
 }
@@ -192,7 +188,6 @@ const propiedades = computed(() => {
             .setColumnas([
                 { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
                 { titulo: 'No_document', value: 'Documento', tamaño: 100 },
-                { titulo: 'rol', value: 'Rol', tamaño: 100 },
                 { titulo: 'celular', value: 'Celular', tamaño: 100 },
                 { titulo: 'estado', value: 'Estado', tamaño: 150 },
             ])
@@ -200,11 +195,6 @@ const propiedades = computed(() => {
                 titulo: 'Gestion de Usuarios',
                 descripcion: 'Administra y consulta información de Usuarios Admin',
                 color: 'bg-[var(--color-default)] text-white',
-                accionAgregar: nuevoUser
-            })
-            .setAcciones({
-                icons: [{ icon: 'ver', action: verUser }],
-                botones: true
             })
             .setDatos(Users)
         )

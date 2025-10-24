@@ -112,7 +112,6 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             historias = historias.map((historia) => {
                 const paciente = pacientes.find(p => p.id_paciente == historia.id_paciente)
-                console.log(paciente)
                 return {
                     ...historia,
                     ...paciente

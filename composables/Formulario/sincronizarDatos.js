@@ -2,6 +2,7 @@ import { enviarFormulario } from "~/Core/Empresa/Datos/Eps/POSTEps";
 import { enviarFormularioPutEPS } from "~/Core/Empresa/Datos/Eps/PUTEps";
 import { enviarFormularioProfesion } from "~/Core/Empresa/Datos/Profesion/POSTProfesion";
 import { enviarFormularioPutProfesion } from "~/Core/Empresa/Datos/Profesion/PUTProfesion";
+import { enviarFormularioHistoria } from "~/Core/Historial/Historia/PostHistoria";
 import { enviarFormularioCita } from "~/Core/Usuarios/Cita/POSTCita";
 import { enviarFormularioPaciente } from "~/Core/Usuarios/Paciente/POSTPaciente";
 import { enviarFormularioPutPaciente } from "~/Core/Usuarios/Paciente/PUTPaciente";
@@ -19,9 +20,9 @@ async function sincronizarEntidad({
 
   // 1. Leer registros pendientes de sincronización
   store.almacen = nombreEntidad;
-    console.log('almacen sincronizando...', nombreEntidad)
+
   const registrosPendientes = (await store.leerdatos()).filter(r => r.sincronizado === 0);
-    console.log(registrosPendientes)
+  console.log(registrosPendientes)
   if (registrosPendientes.length === 0 || !navigator.onLine) return;
 
   for (const registro of registrosPendientes) {
@@ -33,22 +34,60 @@ async function sincronizarEntidad({
     }
 
     // 3. Construir objeto completo
-    const objetoCompleto = construirObjeto(registro, relacion);
-
-    // 4. Enviar a la API
+    const esActualizacion = !!registro.id;
+    let objetoCompleto;
     try {
-      // await enviarFuncion(objetoCompleto, true);
-      if (registro.id && typeof actualizarFuncion === 'function') {
-        await actualizarFuncion(objetoCompleto, true);
-        console.log(`Registro actualizado: ${registro.id}`);
-      } else {
-        await enviarFuncion(objetoCompleto, true);
-        console.log(`Registro enviado: ${registro.id_temporal}`);
-      }
-
-    } catch (error) {
-      console.error(`Error al sincronizar ${nombreEntidad} ${registro.id}:`, error);
+      objetoCompleto = await construirObjeto(registro, relacion, esActualizacion);
+    } catch (e) {
+      console.error('Error construyendo objeto para sincronizar:', e);
+      continue; // pasa al siguiente registro
     }
+
+    const maxIntentos = 3;
+    let intentos = 0;
+    let exito = false;
+    // 4. Enviar a la API
+    // try {
+    //   // await enviarFuncion(objetoCompleto, true);
+    //   if (registro.id && actualizarFuncion) {
+    //     await actualizarFuncion(objetoCompleto, true);
+    //     console.log(`Registro actualizado: ${registro.id}`);
+    //   } else {
+    //     await enviarFuncion(objetoCompleto, true);
+    //     console.log(`Registro enviado: ${registro.id_temporal}`);
+    //   }
+
+    // } catch (error) {
+    //   console.error(`Error al sincronizar ${nombreEntidad} ${registro.id}:`, error);
+    // }
+    while (intentos < maxIntentos && !exito) {
+      try {
+        intentos++;
+        console.log(`Intento ${intentos} de sincronizar ${nombreEntidad} → id_temp: ${registro.id_temporal}`);
+
+        if (registro.id && actualizarFuncion) {
+          await actualizarFuncion(objetoCompleto, true);
+          console.log(`✅ Actualización exitosa (${nombreEntidad}): id ${registro.id}`);
+        } else {
+          await enviarFuncion(objetoCompleto, true);
+          console.log(`✅ Envío exitoso (${nombreEntidad}): id_temporal ${registro.id_temporal}`);
+        }
+
+        exito = true; // si no lanza error, sale del bucle
+      } catch (error) {
+        console.warn(`⚠️ Fallo intento ${intentos} para ${nombreEntidad}:`, error);
+
+        // Si no fue el último intento, esperar un poco (backoff exponencial)
+        if (intentos < maxIntentos) {
+          const delay = 1000 * intentos; // 1s, luego 2s, luego 3s...
+          console.log(`⏳ Reintentando en ${delay / 1000}s...`);
+          await new Promise(res => setTimeout(res, delay));
+        } else {
+          console.error(`❌ Error definitivo al sincronizar ${nombreEntidad} ${registro.id_temporal}`);
+        }
+      }
+    }
+
   }
 }
 
@@ -56,37 +95,40 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
   const tareasSincronizacion = [
     {
       nombreEntidad: 'EPS',
-      construirObjeto: (registro) => ({
+      construirObjeto: (registro, esActualizacion) => ({
         EPS: {
           id_temporal: registro.id_temporal,
+          ...(esActualizacion ? { id: registro.id } : {}),
           nombre: registro.nombre,
           codigo: registro.codigo,
           direccion: registro.direccion,
           telefono: registro.telefono,
           email: registro.email,
           website: registro.website
-      }
+        }
       }),
       enviarFuncion: enviarFormulario,
       actualizarFuncion: enviarFormularioPutEPS
     },
     {
       nombreEntidad: 'Profesion',
-      construirObjeto: (registro) => ({
+      construirObjeto: (registro, esActualizacion) => ({
         Profesion: {
+          ...(esActualizacion ? { id: registro.id } : {}),
           id_temporal: registro.id_temporal,
           nombre: registro.nombre,
           codigo: registro.codigo,
-      }
+        }
       }),
       enviarFuncion: enviarFormularioProfesion,
       actualizarFuncion: enviarFormularioPutProfesion
     },
     {
       nombreEntidad: 'Cita',
-      construirObjeto: (registro) => ({
+      construirObjeto: (registro, esActualizacion) => ({
         Cita: {
           ...registro,
+          ...(esActualizacion ? { id: registro.id } : {}),
           id_temporal: registro.id_temporal
         }
       }),
@@ -96,13 +138,15 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
       nombreEntidad: 'Paciente',
       claveRelacion: 'id_usuario',
       nombreRelacion: 'InformacionUser',
-      construirObjeto: (registro, InformacionUser) => ({
+      construirObjeto: (registro, InformacionUser, esActualizacion) => ({
         Paciente: {
           ...registro,
+          ...(esActualizacion ? { id: registro.id } : {}),
           id_temporal: registro.id_temporal
         },
         InformacionUser: {
           ...InformacionUser,
+          ...(esActualizacion ? { id: InformacionUser.id } : {}),
           id_temporal: InformacionUser.id_temporal
         }
       }),
@@ -113,13 +157,15 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
       nombreEntidad: 'Profesional',
       claveRelacion: 'id_usuario',
       nombreRelacion: 'InformacionUser',
-      construirObjeto: (registro, InformacionUser) => ({
+      construirObjeto: (registro, InformacionUser, esActualizacion) => ({
         Paciente: {
           ...registro,
+          ...(esActualizacion ? { id: registro.id } : {}),
           id_temporal: registro.id_temporal
         },
         InformacionUser: {
           ...InformacionUser,
+          ...(esActualizacion ? { id: InformacionUser.id } : {}),
           id_temporal: InformacionUser.id_temporal
         },
         User: {
@@ -128,97 +174,151 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
       }),
       enviarFuncion: enviarFormularioCita,
       actualizarFuncion: enviarFormularioPutMedico
+    },
+    {
+      nombreEntidad: 'HistoriaClinica',
+      construirObjeto: async (registro, _, esActualizacion) => {
+        const store = useIndexedDBStore();
+
+        // === Cargar relaciones locales ===
+        store.almacen = 'Analisis';
+        const analisisList = (await store.leerdatos()) || [];
+
+        // tomar primer analisis (si existe)
+        const analisis = analisisList
+        .find(a =>  a.sincronizado == 0 && !a.id);
+        const analisisIdTemp = analisis?.id_temporal ?? null;
+        console.log(analisisIdTemp)
+        store.almacen = 'Diagnosticos';
+        const todosDiagnosticos = (await store.leerdatos()) || [];
+        const diagnosticos = analisisIdTemp
+          ? todosDiagnosticos.filter(d => d.id_analisis === analisisIdTemp)
+          : [];
+
+        store.almacen = 'Antecedentes';
+        const antecedentesAll = (await store.leerdatos()) || [];
+        const antecedentes = antecedentesAll.filter(a => a.id_paciente === registro.id_paciente);
+
+        store.almacen = 'Enfermedad';
+        const todasEnfermedades = (await store.leerdatos()) || [];
+        const enfermedades = analisisIdTemp
+          ? todasEnfermedades.filter(e => e.id_analisis === analisisIdTemp)
+          : [];
+
+        store.almacen = 'ExamenFisico';
+        const todosExamenes = (await store.leerdatos()) || [];
+        const examenes = analisisIdTemp
+          ? todosExamenes.filter(e => e.id_analisis === analisisIdTemp)
+          : [];
+
+        store.almacen = 'Cita';
+        const todasCitas = (await store.leerdatos()) || [];
+        // tomar la cita asociada al análisis (si existe)
+        const cita = analisisIdTemp ? (todasCitas.find(c => c.id_analisis === analisisIdTemp) || {}) : {};
+
+        // planes
+        const planes = {};
+        for (const tipo of [
+          'Plan_manejo_medicamentos',
+          'Plan_manejo_procedimientos',
+          'Plan_manejo_insumos',
+          'Plan_manejo_equipos'
+        ]) {
+          store.almacen = tipo;
+          const todos = (await store.leerdatos()) || [];
+          planes[tipo] = analisisIdTemp ? todos.filter(p => p.id_analisis === analisisIdTemp) : [];
+        }
+
+        // seleccionar registros concretos (si no existen, usar valores por defecto)
+        const examenFisico = examenes.length ? examenes[0] : {};
+        const enfermedad = enfermedades.length ? enfermedades[0] : {};
+
+        // === Construir objeto con seguridad ===
+        const body = {
+          HistoriaClinica: {
+            ...(esActualizacion ? { id: registro.id } : {}),
+            ...(registro.id_temporal ? { id_temporal: registro.id_temporal } : {}),
+            fecha_historia: registro.fecha_historia ?? null,
+            id_paciente: registro.id_paciente
+          },
+          Analisis: {
+            ...(analisis?.id_temporal ? { id_temporal: analisis.id_temporal } : {}),
+            motivo: analisis?.motivo ?? null,
+            observacion: analisis?.observacion ?? null,
+            tratamiento: analisis?.tratamiento ?? null,
+            analisis: analisis?.analisis ?? null,
+            tipoAnalisis: analisis?.tipoAnalisis ?? null,
+            id_medico: analisis?.id_medico ?? registro.id_medico ?? null
+          },
+          Diagnosticos: (diagnosticos || []).map(d => ({
+            ...(d.id_temporal ? { id_temporal: d.id_temporal } : {}),
+            descripcion: d.descripcion ?? null,
+            codigo: d.codigo ?? null
+          })),
+          Antecedentes: (antecedentes || []).map(a => ({
+            ...(a.id_temporal ? { id_temporal: a.id_temporal } : {}),
+            tipo: a.tipo ?? null,
+            descripcion: a.descripcion ?? null,
+            id_paciente: registro.id_paciente
+          })),
+          Enfermedad: {
+            ...(enfermedad?.id_temporal ? { id_temporal: enfermedad.id_temporal } : {}),
+            valor: enfermedad?.valor ?? null,
+            fecha_diagnostico: enfermedad?.fecha_diagnostico ?? null,
+            fecha_rehabilitacion: enfermedad?.fecha_rehabilitacion ?? null,
+            id_paciente: registro.id_paciente
+          },
+          ExamenFisico: {
+            ...(examenFisico?.id_temporal ? { id_temporal: examenFisico.id_temporal } : {}),
+            Peso: examenFisico?.Peso ?? null,
+            altura: examenFisico?.altura ?? null,
+            otros: examenFisico?.otros ?? null,
+            signosVitales: examenFisico?.signosVitales
+              ? {
+                ta: examenFisico.signosVitales.ta ?? null,
+                fc: examenFisico.signosVitales.fc ?? null,
+                fr: examenFisico.signosVitales.fr ?? null,
+                t: examenFisico.signosVitales.t ?? null,
+                SATo2: examenFisico.signosVitales.SATo2 ?? null
+              }
+              : {}
+          },
+          Plan_manejo_medicamentos: (planes.Plan_manejo_medicamentos || []).map(m => ({
+            ...(m.id_temporal ? { id_temporal: m.id_temporal } : {}),
+            medicamento: m.medicamento ?? null,
+            dosis: m.dosis ?? null,
+            cantidad: m.cantidad != null ? parseInt(m.cantidad) : null
+          })),
+          Plan_manejo_procedimientos: (planes.Plan_manejo_procedimientos || []).map(p => ({
+            ...(p.id_temporal ? { id_temporal: p.id_temporal } : {}),
+            procedimiento: p.procedimiento ?? null,
+            codigo: p.codigo ?? null,
+            fecha: p.fecha ?? null
+          })),
+          Plan_manejo_insumos: (planes.Plan_manejo_insumos || []).map(i => ({
+            ...(i.id_temporal ? { id_temporal: i.id_temporal } : {}),
+            nombre: i.nombre ?? null,
+            cantidad: i.cantidad != null ? parseInt(i.cantidad) : null
+          })),
+          Plan_manejo_equipos: (planes.Plan_manejo_equipos || []).map(e => ({
+            ...(e.id_temporal ? { id_temporal: e.id_temporal } : {}),
+            descripcion: e.descripcion ?? null,
+            uso: e.uso ?? null
+          })),
+          Cita: {
+            ...(cita?.id ? { id: cita.id } : {}),
+            ...(cita?.id_temporal ? { id_temporal: cita.id_temporal } : {}),
+            // otros campos de la cita si los necesitas:
+            fecha: cita?.fecha ?? null,
+            id_medico: cita?.id_medico ?? null
+          }
+        };
+
+        return body;
+      },
+      enviarFuncion: enviarFormularioHistoria,
+      // actualizarFuncion: actualizarHistoriaClinicaAPI
     }
-    // {
-    //   nombreEntidad: 'HistoriaClinica',
-    //   construirObjeto: (registro) => ({ ...registro }),
-    //   enviarFuncion: enviarHistoriaClinicaAPI
-    // },
-    // {
-    //   nombreEntidad: 'Analisis',
-    //   claveRelacion: 'id_historia',
-    //   nombreRelacion: 'HistoriaClinica',
-    //   construirObjeto: (registro, historia) => ({
-    //     ...registro,
-    //     historiaClinica: historia
-    //   }),
-    //   enviarFuncion: enviarAnalisisAPI
-    // },
-    // {
-    //   nombreEntidad: 'Diagnosticos',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarDiagnosticoAPI
-    // },
-    // {
-    //   nombreEntidad: 'Antecedentes',
-    //   construirObjeto: (registro) => ({ ...registro }),
-    //   enviarFuncion: enviarAntecedenteAPI
-    // },
-    // {
-    //   nombreEntidad: 'Enfermedad',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarEnfermedadAPI
-    // },
-    // {
-    //   nombreEntidad: 'ExamenFisico',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarExamenFisicoAPI
-    // },
-    // {
-    //   nombreEntidad: 'Plan_manejo_medicamentos',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarMedicamentoAPI
-    // },
-    // {
-    //   nombreEntidad: 'Plan_manejo_procedimientos',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarProcedimientoAPI
-    // },
-    // {
-    //   nombreEntidad: 'Plan_manejo_insumos',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarInsumoAPI
-    // },
-    // {
-    //   nombreEntidad: 'Plan_manejo_equipos',
-    //   claveRelacion: 'id_analisis',
-    //   nombreRelacion: 'Analisis',
-    //   construirObjeto: (registro, analisis) => ({
-    //     ...registro,
-    //     analisisRelacionado: analisis
-    //   }),
-    //   enviarFuncion: enviarEquipoAPI
-    // },
   ];
 
   setInterval(() => {

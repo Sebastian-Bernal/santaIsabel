@@ -156,7 +156,7 @@ export function useFormulario(props) {
         if (typeof accion === 'function') {
             try {
                 const res = await accion(data)
-                if (res) {
+                if (res === true) {
                     notificaciones.options.icono = 'success'
                     notificaciones.options.background = '#22c55e'
                     notificaciones.options.position = 'top-end'
@@ -168,11 +168,11 @@ export function useFormulario(props) {
                 }
                 return res
             } catch (err) {
-                notificaciones.options.icono = 'warning'
-                notificaciones.options.titulo = '¡Ha ocurrido un problema!'
-                notificaciones.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-                notificaciones.options.tiempo = 5000
-                notificaciones.simple()
+                // notificaciones.options.icono = 'warning'
+                // notificaciones.options.titulo = '¡Ha ocurrido un problema!'
+                // notificaciones.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+                // notificaciones.options.tiempo = 5000
+                // notificaciones.simple()
                 console.error(`Error enviando formulario '${props.Propiedades.content.storeId}':`, err)
                 return false
             } finally {

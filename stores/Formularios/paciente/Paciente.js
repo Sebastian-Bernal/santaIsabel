@@ -2,11 +2,12 @@ import { defineStore } from "pinia";
 import { useIndexedDBStore } from "../../indexedDB";
 import { useUsersStore } from "../usuarios/Users";
 import { useDatosEPSStore } from "../empresa/EPS";
-import { getAll } from "~/composables/Formulario/useIndexedDBManager";
 import { useCitasStore } from "../citas/Cita";
 import { traerPacientes } from "~/Core/Usuarios/Paciente/GETPacientes";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useMedicosStore } from "../profesional/Profesionales";
+import { traerAntecedentes } from "~/Core/Usuarios/Paciente/GETAntecedentes";
+import { useVarView } from "~/stores/varview";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -53,7 +54,8 @@ export const usePacientesStore = defineStore('Pacientes', {
             const epsStore = useDatosEPSStore()
 
             store.almacen = 'Paciente'
-            const pacientes = await store.leerdatos()
+            const todosLosPacientes = await store.leerdatos()
+            const pacientes = todosLosPacientes.filter(p => p.estado === 1)
 
             const usuarios = await usersStore.listUsers
             const EPSs = await epsStore.listEPS
@@ -241,6 +243,34 @@ export const usePacientesStore = defineStore('Pacientes', {
 
         },
 
+        async indexDBDatosAntecedentes() {
+            const antecedentes = await traerAntecedentes(); // Datos externos
+
+            const store = useIndexedDBStore()
+            store.almacen = 'Antecedentes'
+            const antecedentesLocal = await store.leerdatos() // Datos locales
+
+            // Crear un conjunto de claves únicas para comparación rápida
+            const clavesLocales = new Set(
+                antecedentesLocal.map(a => a.id)
+            );
+
+            // Filtrar antecedentes que no estén en local
+            const nuevosAntecedentes = antecedentes?.filter(a => {
+                const clave = a.Antecedentes.id;
+                return !clavesLocales.has(clave);
+            });
+
+            // Guardar solo los nuevos antecedentes
+            nuevosAntecedentes.forEach(a => {
+                guardarEnDB({
+                    id: a.id,
+                    tipo: a.tipo,
+                    descripcion: a.descripcion,
+                    id_paciente: a.id_paciente,
+                });
+            });
+        }
     }
 });
 

@@ -40,11 +40,13 @@ export const validarYEnviarNuevaCita = async (datos) => {
         const fechaCita = new Date(fechaStr);
         const hoy = new Date();
 
-        // Comparar solo fechas (sin hora)
-        const fechaCitaSoloFecha = new Date(fechaCita.getFullYear(), fechaCita.getMonth(), fechaCita.getDate());
-        const hoySoloFecha = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+        // Limpiar la hora para comparar solo fechas
+        hoy.setHours(0, 0, 0, 0);
+        fechaCita.setHours(0, 0, 0, 0);
 
-        return fechaCitaSoloFecha > hoySoloFecha;
+        const maxFecha = new Date(hoy);
+        maxFecha.setDate(maxFecha.getDate() - 2);
+        return fechaCita > maxFecha;
     };
 
 

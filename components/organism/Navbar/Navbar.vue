@@ -3,22 +3,18 @@ import DropdownNavbar from '~/components/molecules/Dropdowns/DropdownNavbar.vue'
 import Breadcrumb from '~/components/molecules/BreadCrumbs/Breadcrumb.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
-import { useUsuariosStore } from '~/stores/Formularios/login/Login';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
 import { ref, computed, onMounted } from 'vue';
 
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
-const usuarioStore = useUsuariosStore();
 
 const usuario = ref();
-const usuarioRol = ref('');
+const varView = useVarView();
 
 onMounted(() => {
-    usuarioRol.value = sessionStorage.getItem("Rol") || [];
     // Obtener y parsear el usuario
-    const datos = sessionStorage.getItem("User");
-    const usuarioParseado = datos ? JSON.parse(datos) : {};
-    usuario.value = usuarioParseado.name || 'Usuario';
+    const user = varView.getUser
+    usuario.value = user.name || 'Usuario';
 
 })
 
@@ -47,7 +43,7 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a :href="usuarioRol === 'Paciente' ? '' : '/Home'" class="text-white text-xl font-extrabold ml-3">
+            <a href="/Home" class="text-white text-xl font-extrabold ml-3">
                 <i class="fa-solid fa-laptop-medical text-2xl"></i>
                 Thesalus
             </a>
@@ -65,7 +61,7 @@ const removeStorage = () => {
                     </a>
                 </li>
                 <li>
-                    <Breadcrumb :usuarioRol="usuarioRol"/>
+                    <Breadcrumb/>
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />

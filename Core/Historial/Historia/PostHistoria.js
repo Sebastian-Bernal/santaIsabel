@@ -206,14 +206,15 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
         })),
         Cita: {
             id: datos.Cita.id,
+            ...datos.Cita
         }
     };
 
-    return await enviarFormulario(body, datos.Cita);
+    return await enviarFormularioHistoria(body);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos, cita) => {
+export const enviarFormularioHistoria = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
@@ -221,7 +222,25 @@ const enviarFormulario = async (datos, cita) => {
     const token = decryptData(sessionStorage.getItem('token'))
 
     // Guardar Local
-    const ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
+    let ids_temporal = {}
+    if (!reintento) {
+        ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
+        console.log('guardado', ids_temporal)
+    } else {
+        ids_temporal = {
+            HistoriaClinica: datos.HistoriaClinica.id_temporal,
+            Analisis: datos.Analisis.id_temporal,
+            Diagnosticos: datos.Diagnosticos.map(d => d.id_temporal),
+            Antecedentes: datos.Antecedentes.map(a => a.id_temporal),
+            Enfermedad: datos.Enfermedad.id_temporal,
+            ExamenFisico: datos.ExamenFisico.id_temporal,
+            Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => m.id_temporal),
+            Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => p.id_temporal),
+            Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => i.id_temporal),
+            Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => e.id_temporal),
+            Cita: datos.Cita.id_temporal
+        };
+    }
 
     const online = navigator.onLine;
     if (online) {
@@ -231,7 +250,68 @@ const enviarFormulario = async (datos, cita) => {
                 metodo: 'POST',
                 url: config.public.historiasClinicas,
                 token: token,
-                body: datos
+                body: {
+                    HistoriaClinica: {
+                        fecha_historia: datos.HistoriaClinica.fecha_historia,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    },
+                    Analisis: {
+                        motivo: datos.Analisis.motivo,
+                        observacion: datos.Analisis.observacion,
+                        tratamiento: datos.Analisis.tratamiento,
+                        analisis: datos.Analisis.analisis,
+                        tipoAnalisis: datos.Analisis.tipoAnalisis,
+                        id_medico: datos.Analisis.id_medico
+                    },
+                    Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
+                        descripcion: d.descripcion,
+                        codigo: d.codigo
+                    })),
+                    Antecedentes: (datos.Antecedentes ?? []).map(a => ({
+                        tipo: a.tipo,
+                        descripcion: a.descripcion,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    })),
+                    Enfermedad: {
+                        valor: datos.Enfermedad.valor,
+                        fecha_diagnostico: datos.Enfermedad.fecha_diagnostico,
+                        fecha_rehabilitacion: datos.Enfermedad.fecha_rehabilitacion,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    },
+                    ExamenFisico: {
+                        Peso: datos.ExamenFisico.Peso,
+                        altura: datos.ExamenFisico.altura,
+                        otros: datos.ExamenFisico.otros || null,
+                        signosVitales: {
+                            ta: datos.ExamenFisico.signosVitales.ta,
+                            fc: datos.ExamenFisico.signosVitales.fc,
+                            fr: datos.ExamenFisico.signosVitales.fr,
+                            t: datos.ExamenFisico.signosVitales.t,
+                            SATo2: datos.ExamenFisico.signosVitales.SATo2
+                        }
+                    },
+                    Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
+                        medicamento: m.medicamento,
+                        dosis: m.dosis,
+                        cantidad: parseInt(m.cantidad)
+                    })),
+                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
+                        procedimiento: p.procedimiento,
+                        codigo: p.codigo,
+                        fecha: p.fecha
+                    })),
+                    Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
+                        nombre: i.nombre,
+                        cantidad: parseInt(i.cantidad)
+                    })),
+                    Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
+                        descripcion: e.descripcion,
+                        uso: e.uso
+                    })),
+                    Cita: {
+                        id: datos.Cita.id
+                    }
+                }
             }
             const respuesta = await api.functionCall(options)
 
@@ -337,10 +417,10 @@ const enviarFormulario = async (datos, cita) => {
                     Cita: {
                         id_temporal: ids_temporal.Cita,
                         id: datos.Cita.id,
-                        ...cita,
                         estado: 'Realizada',
                         id_analisis: respuesta.ids.Analisis,
-                        sincronizado: 1
+                        sincronizado: 1,
+                        ...datos.Cita
                     }
                 };
 
@@ -358,6 +438,7 @@ const enviarFormulario = async (datos, cita) => {
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
+            return true
         }
     } else {
         notificacionesStore.options.icono = 'warning'

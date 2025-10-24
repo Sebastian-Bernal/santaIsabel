@@ -48,9 +48,22 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                         const historias = await store.leerdatos();
                         const historiaExistente = historias.find(h => h.id_paciente === contenido.id_paciente);
 
-                        ids.HistoriaClinica = historiaExistente
-                            ? historiaExistente.id_temporal
-                            : await store.guardardatosID({ ...contenido, sincronizado: 0 });
+                        if (historiaExistente) {
+                            // Actualizar la historia existente con sincronizado: 0
+                            await store.actualiza({
+                                ...historiaExistente,
+                                ...data.HistoriaClinica,
+                                sincronizado: 0
+                            });
+                            ids.HistoriaClinica = historiaExistente.id_temporal;
+
+                        } else {
+                            // Guardar nueva historia
+                            ids.HistoriaClinica = await store.guardardatosID({
+                                ...data.HistoriaClinica,
+                                sincronizado: 0
+                            });
+                        }
                         break;
                     }
 
@@ -62,9 +75,23 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                             const historias = await store.leerdatos();
                             const historiaExistente = historias.find(h => h.id_paciente === data.HistoriaClinica.id_paciente);
 
-                            ids.HistoriaClinica = historiaExistente
-                                ? historiaExistente.id_temporal
-                                : await store.guardardatosID({ ...data.HistoriaClinica, sincronizado: 0 });
+                            if (historiaExistente) {
+                                // Actualizar la historia existente con sincronizado: 0
+                                await store.actualiza({
+                                    ...historiaExistente,
+                                    ...data.HistoriaClinica,
+                                    sincronizado: 0
+                                });
+                                ids.HistoriaClinica = historiaExistente.id_temporal;
+
+                            } else {
+                                // Guardar nueva historia
+                                ids.HistoriaClinica = await store.guardardatosID({
+                                    ...data.HistoriaClinica,
+                                    sincronizado: 0
+                                });
+                            }
+
                         }
 
                         const analisisData = {

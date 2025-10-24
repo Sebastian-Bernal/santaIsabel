@@ -41,7 +41,8 @@ export const useMedicosStore = defineStore('Medicos', {
             const profesionesStore = useDatosProfesionStore()
 
             store.almacen = 'Profesional'
-            const medicos = await store.leerdatos()
+            const todosLosMedicos = await store.leerdatos()
+            const medicos = await todosLosMedicos.filter(m => m.estado === 1)
 
             const usuarios = await usersStore.listUsers
             const profesiones = await profesionesStore.listProfesion
@@ -78,7 +79,7 @@ export const useMedicosStore = defineStore('Medicos', {
             const medicos = await store.leerdatos()
 
             const medicosActivos = medicos.filter((medico) => {
-                return medico.estado === 'activo'
+                return medico.estado === 1
             })
 
             return medicosActivos

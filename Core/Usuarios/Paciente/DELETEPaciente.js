@@ -39,11 +39,6 @@ const enviarFormulario = async (datos) => {
                 token: token,
                 body: {
                     id: datos.Paciente.id,
-                    sexo: datos.Paciente.sexo,
-                    genero: datos.Paciente.genero,
-                    id_eps: datos.Paciente.id_eps,
-                    Regimen: datos.Paciente.Regimen,
-                    vulnerabilidad: datos.Paciente.poblacionVulnerable,
                 }
             }
             const respuesta = await api.functionCall(options)

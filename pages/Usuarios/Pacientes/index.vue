@@ -228,6 +228,8 @@ const propiedades = computed(() => {
     const pacientePDF = new PdfBuilder();
 
     // Verificar permisos específicos
+    const puedeVer = varView.getPermisos.includes('Pacientes_view');
+    if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
 
@@ -346,8 +348,8 @@ const propiedades = computed(() => {
             container: 'space-y-2 rounded py-3',
             styles: { backgroundColor: '#DBEAFE' },
             filas: [
-                ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.correo}`, `${propiedadesPDF.value.nacimiento}`],
+                ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                [`${propiedadesPDF.value.name}`, `${propiedadesPDF.value.celular}`, `${propiedadesPDF.value.nacimiento}`],
                 ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Género:</p>'],
                 [`${propiedadesPDF.value.type_doc}`, `${propiedadesPDF.value.No_document}`, `${propiedadesPDF.value.sexo}`],
                 ['<p class="w-full text-start text-xs pt-2">Dirección:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
@@ -360,7 +362,7 @@ const propiedades = computed(() => {
             styles: { backgroundColor: '#DBEAFE' },
             filas: [
                 ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Teléfono:</p>'],
-                [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.celular}`],
+                [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.telefono}`],
                 ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Régimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
                 [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`],
             ],

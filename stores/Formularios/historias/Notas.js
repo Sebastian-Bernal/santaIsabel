@@ -7,6 +7,7 @@ export const useNotasStore = defineStore('Notas', {
     state: () => ({
         Formulario: {
             Nota: {
+                id: '',
                 fecha_nota: '',
                 hora_nota: '',
                 id_paciente: '',
@@ -16,6 +17,7 @@ export const useNotasStore = defineStore('Notas', {
                 id_profesional: '',
                 name_profesional: '',
                 nota: '',
+                tipoAnalisis: '',
             },
         },
         Notas: [],

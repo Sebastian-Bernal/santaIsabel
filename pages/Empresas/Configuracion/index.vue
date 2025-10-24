@@ -7,7 +7,7 @@ import { useDatosNominaBuilder } from '~/build/Empresa/useDatosNominaBuilder';
 import { useDatosEquivalentesBuilder } from '~/build/Empresa/useDatosEquivalentesBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 
-
+const varView = useVarView()
 // Formularios Configuracion Empresa
 const propiedadesEmpresa = useDatosEmpresaBuilder({
     storeId: 'DatosEmpresa',
