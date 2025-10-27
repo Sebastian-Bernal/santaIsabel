@@ -27,7 +27,8 @@ export async function traerDatos() {
     
         const pacientesStore = usePacientesStore()
         await pacientesStore.indexDBDatos()
-        // await pacientesStore.indexDBDatosAntecedentes()
+
+        await pacientesStore.indexDBDatosAntecedentes()
     
         const profesionalesStore = useMedicosStore()
         await profesionalesStore.indexDBDatos()

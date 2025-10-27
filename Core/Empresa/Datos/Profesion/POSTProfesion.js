@@ -23,7 +23,6 @@ export const validarYEnviarDatosProfesion = async (datos) => {
         return false;
     }
 
-    console.log(datos)
     return await enviarFormularioProfesion(datos);
 };
 
@@ -39,7 +38,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
         // Guardar local
         id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Profesion: {...datos.Profesion, sincronizado: 0}})));
     } else {
-        id_temporal.data = datos.Profesional.id_temporal
+        id_temporal = { data : datos.Profesional.id_temporal}
     }
 
     const online = navigator.onLine;
@@ -53,7 +52,6 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
                 body: {
                     codigo: datos.Profesion.codigo,
                     nombre: datos.Profesion.nombre,
-
                     permisos: datos.Profesion.permisos,
                 }
             }

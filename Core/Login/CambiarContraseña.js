@@ -5,7 +5,7 @@ export const validarYEnviarCambiarContraseña = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
 
     const datosEnviar = { ...datos.Usuario }
-    console.log(datosEnviar)
+
     // Validaciones
     const errores = [];
 

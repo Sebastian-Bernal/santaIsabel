@@ -47,6 +47,7 @@ const cambiarMostrarContraseña = () => {
         passwordInput.type = 'password';
     }
 };
+
 // Temporal idexedDB
 async function validaUsuario(event) {
     const correo = event.target.value
@@ -61,10 +62,9 @@ async function validaUsuario(event) {
     }
     const respuesta = await api.functionCall(options)
 
-    if (respuesta.success) {
+    if (respuesta.primer_ingreso) {
         show.value = true
         stateCodigo.value = await validarYEnviarRecuperarContraseña({ Usuario: { correo: correo } })
-        console.log('haz click en siguiente y digita una contraseña')
     }
 
     varView.cargando = false

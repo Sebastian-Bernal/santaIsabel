@@ -4,7 +4,6 @@ import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarEliminarMedico = async (datos) => {
-console.log('eliminando', datos)
     return await enviarFormulario(datos);
 };
 

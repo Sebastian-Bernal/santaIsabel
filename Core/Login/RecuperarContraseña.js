@@ -2,8 +2,6 @@ import { useNotificacionesStore } from '../../stores/notificaciones.js'
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarRecuperarContraseña = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
-
     return await enviarFormulario(datos.Usuario);
 };
 
@@ -27,7 +25,12 @@ const enviarFormulario = async (datos) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
-                console.log('correo enviado')
+                    notificacionesStore.options.icono = 'success'
+                    notificacionesStore.options.background = '#22c55e'
+                    notificacionesStore.options.position = 'top-end'
+                    notificacionesStore.options.texto = '¡Codigo enviado a tu correo!'
+                    notificacionesStore.options.tiempo = 1500
+                    notificacionesStore.mensaje()
                 return true
             }
         } catch (error) {

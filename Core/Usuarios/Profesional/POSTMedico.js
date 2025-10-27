@@ -192,7 +192,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                         zonaLaboral: respuesta.profesional.zona_laboral,
                         departamentoLaboral: respuesta.profesional.departamento_laboral,
                         municipioLaboral: respuesta.profesional.municipio_laboral,
-                        estado: respuesta.profesional.estado,
+                        estado: 1,
                     },
                 }
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));

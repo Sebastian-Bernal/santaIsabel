@@ -6,8 +6,16 @@
     <!-- Imagen sombra-->
     <!-- <div class="bg-[rgba(0,0,0,0.7)] absolute inset-0 z-20"></div> -->
 
+    <Loader v-if="varView.cargando"></Loader>
     <div class="relative z-30 flex flex-col justify-center items-center h-[100vh]">
         <slot></slot>
     </div>
 
 </template>
+
+<script setup>
+import { useVarView } from '~/stores/varview';
+import Loader from '~/components/molecules/Spinner/Loader.vue';
+const varView = useVarView();
+
+</script>

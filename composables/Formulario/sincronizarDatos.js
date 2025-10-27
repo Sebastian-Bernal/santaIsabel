@@ -80,10 +80,11 @@ async function sincronizarEntidad({
         // Si no fue el último intento, esperar un poco (backoff exponencial)
         if (intentos < maxIntentos) {
           const delay = 1000 * intentos; // 1s, luego 2s, luego 3s...
-          console.log(`⏳ Reintentando en ${delay / 1000}s...`);
+          console.log(`⏳ Reintentando en ${delay / 5000}s...`);
           await new Promise(res => setTimeout(res, delay));
         } else {
           console.error(`❌ Error definitivo al sincronizar ${nombreEntidad} ${registro.id_temporal}`);
+          window.location.reload()
         }
       }
     }
@@ -118,6 +119,7 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
           id_temporal: registro.id_temporal,
           nombre: registro.nombre,
           codigo: registro.codigo,
+          permisos: registro.permisos
         }
       }),
       enviarFuncion: enviarFormularioProfesion,

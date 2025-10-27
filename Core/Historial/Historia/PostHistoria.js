@@ -55,7 +55,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     if (!analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
     if (!analisis?.analisis) errores.push("El análisis es obligatorio.");
     if (!analisis?.tipoAnalisis) errores.push("El tipo de análisis es obligatorio.");
-    if (!datos.Cita?.id_medico) errores.push("El ID del médico es obligatorio.");
+    if (!datos.Cita?.id_medico) errores.push("El médico que registra historia es obligatorio.");
 
     // Validar Diagnosticos
     if (!Array.isArray(datos.Diagnosticos) || datos.Diagnosticos.length === 0) {
@@ -225,7 +225,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
     let ids_temporal = {}
     if (!reintento) {
         ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
-        console.log('guardado', ids_temporal)
     } else {
         ids_temporal = {
             HistoriaClinica: datos.HistoriaClinica.id_temporal,
@@ -316,7 +315,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
-                console.log('enviado a la api, actualizando')
                 // Actualizar local
                 const datosActualizar = {
                     HistoriaClinica: {
@@ -415,7 +413,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Cita: {
-                        id_temporal: ids_temporal.Cita,
+                        id_temporal: datos.Cita.id_temporal,
                         id: datos.Cita.id,
                         estado: 'Realizada',
                         id_analisis: respuesta.ids.Analisis,
@@ -425,7 +423,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                console.log('actualizado')
+
                 return true
             } else {
                 console.log(respuesta)

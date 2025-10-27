@@ -4,9 +4,7 @@ import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarEliminarPaciente = async (datos) => {
-    const notificacionesStore = useNotificacionesStore();
-
-    return await enviarFormulario(datosAEnviar);
+    return await enviarFormulario(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB

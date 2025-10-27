@@ -159,7 +159,7 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                         sexo: respuesta.paciente.sexo,
                         Regimen: respuesta.paciente.regimen,
                         poblacionVulnerable: respuesta.paciente.vulnerabilidad,
-                        estado: respuesta.paciente.estado,
+                        estado: 1,
                         sincronizado: 1,
                     },
                 }

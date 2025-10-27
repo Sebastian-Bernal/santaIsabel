@@ -151,6 +151,7 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                         ...datos.Profesional,
                         id_usuario: datos.InformacionUser.id,
                         id_profesional: datos.Profesional.profesion,
+                        estado: 1,
                         sincronizado: 1
                     }
                 })));

@@ -72,7 +72,7 @@ onMounted(async () => {
             )
         }).slice(0,4)
         
-        citasStore.Formulario.id_medico = profesional.id_profesional
+        citasStore.Formulario.id_medico = profesional?.id_profesional
         citasStore.Formulario.name_medico = usuario.name
     }
 

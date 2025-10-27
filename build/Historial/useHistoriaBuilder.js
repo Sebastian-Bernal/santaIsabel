@@ -179,7 +179,7 @@ export function useHistoriaBuilder({
             options: [
                 { text: 'Cedula de ciudadania', value: 'cedula' },
                 { text: 'Cedula Extranjera', value: 'extranjera' },
-                { text: 'Tarjeta de Identidad', value: 'TarjetaIdentidad' }
+                { text: 'Tarjeta de Identidad', value: 'Tarjeta de identidad' }
             ],
         })
 
@@ -206,7 +206,6 @@ export function useHistoriaBuilder({
         // --- Parentesco Acompañante ---
         .addCampo({
             component: 'Select',
-            vmodel: 'Analisis.acompañante',
             id: 'parentesco',
             name: 'parentesco',
             placeholder: 'Seleccione el parentesco',
@@ -353,7 +352,7 @@ export function useHistoriaBuilder({
             type: 'text',
             id: 'otros',
             name: 'otros',
-            placeholder: 'Otros (opcional)',
+            placeholder: 'Otros',
             tamaño: 'w-full col-span-1'
         })
 

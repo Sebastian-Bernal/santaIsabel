@@ -15,6 +15,7 @@ import { mapCampos } from "~/components/organism/Forms/useFormulario.js";
 import { CIE10 } from "~/data/CIE10";
 import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
 import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/DELETEPaciente.js";
+import { useHistoriasStore } from "~/stores/Formularios/historias/Historia.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -69,12 +70,49 @@ const agregarPaciente = () => {
 };
 
 // Visibilidad modal ver Paciente
-const verPaciente = (paciente) => {
+const verPaciente = async (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
     pacientesStore.Formulario.Paciente.id = paciente.id_paciente
     pacientesStore.Formulario.Paciente.id_temporal = paciente.id_temporal
     pacientesStore.Formulario.InformacionUser.id = paciente.id_usuario
     pacientesStore.Formulario.InformacionUser.id_temporal = paciente.id_temporalUsuario
+
+
+    const historiaStore = useHistoriasStore()
+    pacientesStore.Formulario.Antecedentes = await historiaStore.listDatos(paciente.id_paciente, 'Antecedentes', 'id_paciente')
+
+    const historia = await pacientesStore.listDatos(paciente.id_paciente, 'HistoriaClinica', 'id')
+    const allAnalisis = await historiaStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
+
+    if (allAnalisis || allAnalisis.length > 0) {
+        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
+        const diagnosticosPorAnalisis = await Promise.all(
+            allAnalisis.map(async (h) => {
+
+                const diagnostico = await historiaStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || []
+
+                // Enriquecer cada tratamiento con su análisis correspondiente
+                const diagnosticosConAnalisis = diagnostico.map((diag) => {
+                    return {
+                        ...diag,
+                        ...h,
+                    }
+                })
+
+                return diagnosticosConAnalisis
+            })
+        )
+
+        // Unificar todos los diagnosticos en un solo array
+        pacientesStore.Formulario.Diagnosticos = diagnosticosPorAnalisis.flat()
+    }
+    // pacientesStore.Formulario.Diagnosticos = [
+    //     { 
+    //         descripcion: 'Trastornos papuloescamosos', 
+    //         codigoCIE10: 'L40-L45', 
+    //         id_paciente: '1' 
+    //     }
+    // ]
     showVer.value = true;
 };
 
@@ -229,7 +267,7 @@ const propiedades = computed(() => {
 
     // Verificar permisos específicos
     const puedeVer = varView.getPermisos.includes('Pacientes_view');
-    if(!puedeVer) return
+    if (!puedeVer) return
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
 

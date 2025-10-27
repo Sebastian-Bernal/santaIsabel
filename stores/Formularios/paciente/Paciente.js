@@ -44,7 +44,9 @@ export const usePacientesStore = defineStore('Pacientes', {
 
     getters: {
         async listPacientes(state) {
-            const rol = sessionStorage.getItem('Rol')
+            const varView = useVarView()
+            const rol = varView.getRol
+
             if (rol === 'Profesional') {
                 return await this.listPacientesAtendidos()
             }
@@ -145,11 +147,11 @@ export const usePacientesStore = defineStore('Pacientes', {
                 const citasStore = useCitasStore();
                 const citas = await citasStore.listCitas();
 
-                const idUsuario = JSON.parse(sessionStorage.getItem('user')).id;
+                const usuario = varView.getUser;
+                const idUsuario = usuario.id;
                 const profesionalStore = useMedicosStore()
                 const profesionales = await profesionalStore.listMedicos
                 const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
-
 
                 const pacientesAtendidos = [
                     ...new Set(
@@ -222,12 +224,6 @@ export const usePacientesStore = defineStore('Pacientes', {
                     zona: data.info_usuario.zona,
                     estado: data.info_usuario.estado,
                 },
-                // Antecedentes: data.antecedente?.map((a) => ({
-                //     id: a.id,
-                //     id_paciente: a.id_paciente,
-                //     tipo: a.tipo,
-                //     descripcion: a.descripcion,
-                // })) || [],
             }));
 
             // Filtrar los que no están en local
@@ -257,18 +253,21 @@ export const usePacientesStore = defineStore('Pacientes', {
 
             // Filtrar antecedentes que no estén en local
             const nuevosAntecedentes = antecedentes?.filter(a => {
-                const clave = a.Antecedentes.id;
+                const clave = a.id;
                 return !clavesLocales.has(clave);
             });
 
             // Guardar solo los nuevos antecedentes
             nuevosAntecedentes.forEach(a => {
-                guardarEnDB({
-                    id: a.id,
-                    tipo: a.tipo,
-                    descripcion: a.descripcion,
-                    id_paciente: a.id_paciente,
-                });
+                const datosaGuardar = {
+                    Antecedentes: {
+                        id: a.id,
+                        tipo: a.tipo,
+                        descripcion: a.descripcion,
+                        id_paciente: a.id_paciente,
+                    } 
+                }
+                guardarEnDB(datosaGuardar);
             });
         }
     }

@@ -67,10 +67,6 @@ watch(() => showNota.value,
     }
 );
 
-watch(() => showItem.value, () => {
-        console.log(historiasStore.Formulario)
-    }
-);
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
@@ -409,7 +405,7 @@ const propiedades = computed(() => {
                 titulo: 'Gestion de Historias Clinicas',
                 descripcion: 'Administra y consulta información sobre historias clinicas',
                 color: 'bg-[var(--color-default)] text-white',
-                accionAgregar: puedePost ? agregarHistoria : '',
+                // accionAgregar: puedePost ? agregarHistoria : '',
                 buscador: true,
                 filtros: [
                     { columna: 'estado', placeholder: 'Estado', datos: [{ text: 'Creada', value: 'Creada' }, { text: 'Nueva', value: 'Nueva' }] },
@@ -644,8 +640,8 @@ const propiedades = computed(() => {
                         backgroundColor: '#EFF6FF',
                     },
                     filas: [
-                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Email:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                        [`${propiedadesNotaPDF.value.name_paciente}`, `${propiedadesNotaPDF.value.correo}`, `${propiedadesNotaPDF.value.nacimiento}`,],
+                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                        [`${propiedadesNotaPDF.value.name}`, `${propiedadesNotaPDF.value.celular}`, `${propiedadesNotaPDF.value.nacimiento}`,],
                         ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
                         [`${propiedadesNotaPDF.value.type_doc}`, `${propiedadesNotaPDF.value.No_document}`, `${propiedadesNotaPDF.value.sexo}`,],
                         ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],

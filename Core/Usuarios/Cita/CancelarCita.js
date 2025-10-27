@@ -4,7 +4,6 @@ import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario cancelar cita
 export const validarYEnviarCancelarCita = async (cita, motivo) => {
-    const notificacionesStore = useNotificacionesStore();
     cita.estado = 'cancelada'
     const datos = { Cita: { ...cita, motivo_cancelacion: motivo } }
 
@@ -36,14 +35,6 @@ const enviarFormulario = async (datos) => {
                 token: token,
                 body: {
                     id: datos.Cita.id,
-                    id_paciente: datos.Cita.id_paciente,
-                    id_medico: datos.Cita.id_medico,
-                    name_paciente: datos.Cita.name_paciente,
-                    name_medico: datos.Cita.name_medico,
-                    servicio: datos.Cita.servicio,
-                    motivo: datos.Cita.motivo,
-                    fecha: datos.Cita.fecha,
-                    hora: datos.Cita.hora,
                     motivo_cancelacion: datos.Cita.motivo_cancelacion,
                     estado: datos.Cita.estado
                 }
@@ -53,7 +44,7 @@ const enviarFormulario = async (datos) => {
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Cita: {
-                        id_temporal: id_temporal.data,
+                        id_temporal: datos.Cita.id_temporal,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,

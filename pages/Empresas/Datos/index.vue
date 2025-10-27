@@ -49,21 +49,6 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-// Formularios Configuracion Empresa
-const propiedadesEPS = useEpsBuilder({
-    storeId: 'EPS',
-    storePinia: 'EPS',
-})
-
-
-const propiedadesVerEPS = useEpsBuilder({
-    storeId: 'ActualizarEPS',
-    storePinia: 'EPS',
-    actualizar: true,
-    showModificarEPS: showModificarEPS,
-    cerrar: cerrarEPS
-})
-
 // Funciones Actualizar Profesion
 function actualizarProfesion(profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
