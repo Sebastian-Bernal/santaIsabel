@@ -354,7 +354,8 @@ const propiedades = computed(() => {
     const puedeVer = varView.getPermisos.includes('Historias_view');
     if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Historias_post')
-    const puedePUT = varView.getPermisos.includes('Historias_put')
+    // const puedePUT = varView.getPermisos.includes('Historias_put')
+    const puedePUT = false;
 
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
@@ -383,7 +384,7 @@ const propiedades = computed(() => {
     });
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
-        storeId: 'ActualizarHistoria',
+        storeId: 'ActualizarHistoriass',
         storePinia: 'Historias',
         cerrarModal: cerrarModalVer,
         formularioItem,
