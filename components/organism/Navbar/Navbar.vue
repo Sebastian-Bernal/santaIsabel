@@ -14,8 +14,14 @@ const varView = useVarView();
 onMounted(() => {
     // Obtener y parsear el usuario
     const user = varView.getUser
-    usuario.value = user.name || 'Usuario';
+  if (user && typeof user.name === 'string') {
+    usuario.value = user.name.split(' ')[0]
+  } else {
+    usuario.value = 'Usuario'
+  }
 
+    // usuario.value = user.name || 'Usuario';
+    // usuario.value = usuario.value.split(' ')[0]
 })
 
 function obtenerFechaFormateada() {

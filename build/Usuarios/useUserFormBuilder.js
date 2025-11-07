@@ -447,7 +447,7 @@ export function useUserBuilder({
                 name: 'profesion',
                 tamaño: 'w-full md:col-span-2',
                 options: opcionesProfesion,
-                vmodel: 'Profesional.profesion',
+                vmodel: 'Profesional.id_profesion',
             })
 
             // 📌 Sección: Ubicación Laboral

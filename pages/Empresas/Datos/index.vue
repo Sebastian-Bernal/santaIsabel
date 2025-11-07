@@ -16,6 +16,8 @@ const varView = useVarView();
 
 const EPSdata = ref([]);
 const Profesiones = ref([]);
+const showNuevaEPS = ref(false)
+const showNuevaProfesion = ref(false)
 const showModificarProfesion = ref(false)
 const showModificarEPS = ref(false)
 const secciones = ref([])
@@ -34,7 +36,21 @@ watch(() => showModificarProfesion.value,
     }
 );
 
+watch(() => showNuevaProfesion.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
 watch(() => showModificarEPS.value,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
+watch(() => showNuevaEPS.value,
     async () => {
         await llamadatos();
         refresh.value++;
@@ -50,6 +66,11 @@ onMounted(async () => {
 });
 
 // Funciones Actualizar Profesion
+
+function nuevaProfesion() {
+    showNuevaProfesion.value = true
+}
+
 function actualizarProfesion(profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id
@@ -58,11 +79,17 @@ function actualizarProfesion(profesion) {
 }
 
 function cerrar() {
+    showNuevaProfesion.value = false
     showModificarProfesion.value = false
     mapCamposLimpios(storeProfesion.Formulario)
 }
 
 // Funciones actualizar eps
+
+function nuevaEPS() {
+    showNuevaEPS.value = true
+}
+
 function actualizarEPS(eps) {
     mapCampos(eps, storeEPS.Formulario)
     storeEPS.Formulario.EPS.id = eps.id
@@ -71,6 +98,7 @@ function actualizarEPS(eps) {
 }
 
 function cerrarEPS() {
+    showNuevaEPS.value = false
     showModificarEPS.value = false
     mapCamposLimpios(storeEPS.Formulario)
 }
@@ -97,7 +125,9 @@ const propiedades = computed(() => {
             storePinia: 'Profesion',
             permisos: secciones.value,
             showModificarProfesion: showModificarProfesion,
-            actualizar: false
+            actualizar: true,
+            showModificarProfesion: showNuevaProfesion,
+            cerrar
         })
         : null;
 
@@ -116,7 +146,9 @@ const propiedades = computed(() => {
         ? useEpsBuilder({
             storeId: 'EPS',
             storePinia: 'EPS',
-            showModificarEPS: showModificarEPS,
+            actualizar: true,
+            showModificarEPS: showNuevaEPS,
+            cerrar: cerrarEPS,
         })
         : null;
 
@@ -139,7 +171,7 @@ const propiedades = computed(() => {
             { titulo: 'telefono', value: 'Telefono', tamaño: 100, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
         ])
-        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white' })
+        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', accionAgregar: puedePostEPS ? nuevaEPS : null })
         .setDatos(EPSdata);
 
     if (puedePutEPS) {
@@ -157,6 +189,7 @@ const propiedades = computed(() => {
             color: 'bg-[var(--color-default)] text-white',
             buscador: true,
             excel: true,
+            accionAgregar: puedePostProfesion ? nuevaProfesion : null
         })
         .setDatos(Profesiones);
 

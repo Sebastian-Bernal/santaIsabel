@@ -1,6 +1,7 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
 
 // funcion para Validar campos del formulario Modificar Paciente
 export const validarYEnviarModificarMedico = async (datos) => {
@@ -93,6 +94,13 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
+    const profesionesStore = useDatosProfesionStore()
+    const profesiones = await profesionesStore.listProfesion
+    const mapaProfesion = profesiones.reduce((acc, profesion) => {
+        acc[profesion.id] = profesion.nombre;
+        return acc;
+    }, {});
+
     if(!reintento){
         await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
             InformacionUser: {
@@ -104,6 +112,8 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                 ...datos.Profesional,
                 id_usuario: datos.InformacionUser.id,
                 id_profesional: datos.Profesional.profesion,
+                id_profesion: datos.Profesional.id_profesion,
+                profesion: mapaProfesion[datos.Profesional.id_profesion],
                 sincronizado: 0
             }
         })))
@@ -130,7 +140,7 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                     barrio: datos.InformacionUser.barrio,
                     zona: datos.InformacionUser.zona,
 
-                    id_profesion: datos.Profesional.profesion,
+                    id_profesion: datos.Profesional.id_profesion,
                     departamento_laboral: datos.Profesional.departamentoLaboral,
                     municipio_laboral: datos.Profesional.municipioLaboral,
                     zona_laboral: datos.Profesional.zonaLaboral,
@@ -151,6 +161,8 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                         ...datos.Profesional,
                         id_usuario: datos.InformacionUser.id,
                         id_profesional: datos.Profesional.profesion,
+                        id_profesion: datos.Profesional.id_profesion,
+                        profesion: mapaProfesion[datos.Profesional.id_profesion],
                         estado: 1,
                         sincronizado: 1
                     }

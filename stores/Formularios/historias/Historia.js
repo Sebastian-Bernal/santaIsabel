@@ -103,7 +103,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             let historias = await this.listHistorias
             // Validar que todos los objetos tengan el campo fecha_historia
             const faltanFechas = historias.some(h => !h.fecha_historia || typeof h.fecha_historia !== 'string');
-            
+
             if (faltanFechas) {
                 // Volver a llamar si hay datos incompletos
                 historias = await this.listHistorias;
@@ -243,31 +243,22 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
         // },
 
         async indexDBDatos() {
-            const store = useIndexedDBStore()
+            const store = useIndexedDBStore();
 
             const historias = await traerHistorias();
 
-            store.almacen = 'Analisis'
-            const analisisLocal = await store.leerdatos()
-            store.almacen = 'Diagnosticos'
-            const diagnosticosLocal = await store.leerdatos()
-            store.almacen = 'Enfermedad'
-            const enfermedadLocal = await store.leerdatos()
-            store.almacen = 'ExamenFisico'
-            const examenFisicoLocal = await store.leerdatos()
-            store.almacen = 'Plan_manejo_medicamentos'
-            const medicamentosLocal = await store.leerdatos()
-            store.almacen = 'Plan_manejo_procedimientos'
-            const procedimientosLocal = await store.leerdatos()
-            store.almacen = 'Plan_manejo_insumos'
-            const insumosLocal = await store.leerdatos()
-            store.almacen = 'Plan_manejo_equipos'
-            const equiposLocal = await store.leerdatos()
-
-            // Estrategia 1: Cargar todos los datos locales por tabla
+            // Cargar datos locales por tabla
             const historiasLocal = await this.listHistorias;
+            const analisisLocal = await store.leerdatos('Analisis');
+            const diagnosticosLocal = await store.leerdatos('Diagnosticos');
+            const enfermedadLocal = await store.leerdatos('Enfermedad');
+            const examenFisicoLocal = await store.leerdatos('ExamenFisico');
+            const medicamentosLocal = await store.leerdatos('Plan_manejo_medicamentos');
+            const procedimientosLocal = await store.leerdatos('Plan_manejo_procedimientos');
+            const insumosLocal = await store.leerdatos('Plan_manejo_insumos');
+            const equiposLocal = await store.leerdatos('Plan_manejo_equipos');
 
-            // Crear mapas por ID para comparación rápida
+            // Crear mapas por ID
             const mapHistoria = new Map(historiasLocal.map(h => [h.id, h]));
             const mapAnalisis = new Map(analisisLocal.map(a => [a.id, a]));
             const mapDiagnosticos = new Map(diagnosticosLocal.map(d => [d.id, d]));
@@ -280,130 +271,133 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             for (const data of historias) {
                 const historiaId = data.id;
-                const analisisId = data.analisis?.id;
 
-                const nuevaHistoria = {
-                    HistoriaClinica: {
-                        id: data.id,
-                        id_paciente: data.id_paciente,
-                        fecha_historia: data.fecha_historia,
-                    },
-                    Analisis: {
-                        id: data.analisis?.id,
-                        motivo: data.analisis?.motivo,
-                        observacion: data.analisis?.observacion,
-                        tratamiento: data.analisis?.tratamiento,
-                        analisis: data.analisis?.analisis,
-                        tipoAnalisis: data.analisis?.tipoAnalisis,
-                        id_medico: data.analisis?.id_medico,
-                        id_historia: data.analisis?.id_historia,
-                        fecha: data.analisis.updated_at
-                    },
-                    Diagnosticos: data.analisis?.diagnosticos?.map((d) => ({
-                        id: d.id,
-                        descripcion: d.descripcion,
-                        codigo: d.codigo,
-                        id_analisis: d.id_analisis
-                    })) || [],
-                    Enfermedad: data.analisis?.enfermedad
-                        ? {
-                            id: data.analisis.enfermedad.id,
-                            valor: data.analisis.enfermedad.valor,
-                            fecha_diagnostico: data.analisis.enfermedad.fecha_diagnostico,
-                            fecha_rehabilitacion: data.analisis.enfermedad.fecha_rehabilitacion,
-                            id_paciente: data.analisis.enfermedad.id_paciente,
-                            id_analisis: data.analisis.enfermedad.id_analisis
+                // Guardar historia si no existe
+                if (!mapHistoria.has(historiaId)) {
+                    guardarEnDB({
+                        HistoriaClinica: {
+                            id: historiaId,
+                            id_paciente: data.id_paciente,
+                            fecha_historia: data.fecha_historia,
                         }
-                        : null,
-                    ExamenFisico: data.analisis?.examen_fisico
-                        ? {
-                            id: data.analisis.examen_fisico.id,
-                            Peso: data.analisis.examen_fisico.peso,
-                            altura: data.analisis.examen_fisico.altura,
-                            otros: data.analisis.examen_fisico.otros,
-                            signosVitales: { ...data.analisis.examen_fisico.signosVitales },
-                            id_analisis: data.analisis.examen_fisico.id_analisis
+                    });
+                }
+
+                // Recorrer todos los análisis
+                for (const analisis of data.analisis || []) {
+                    const analisisId = analisis.id;
+
+                    if (!mapAnalisis.has(analisisId)) {
+                        guardarEnDB({
+                            Analisis: {
+                                id: analisis.id,
+                                motivo: analisis.motivo,
+                                observacion: analisis.observacion,
+                                tratamiento: analisis.tratamiento,
+                                analisis: analisis.analisis,
+                                tipoAnalisis: analisis.tipoAnalisis,
+                                id_medico: analisis.id_medico,
+                                id_historia: analisis.id_historia,
+                                fecha: analisis.updated_at,
+                            }
+                        });
+                    }
+
+                    analisis.diagnosticos?.forEach(d => {
+                        if (!mapDiagnosticos.has(d.id)) {
+                            guardarEnDB({
+                                Diagnosticos: {
+                                    id: d.id,
+                                    descripcion: d.descripcion,
+                                    codigo: d.codigo,
+                                    id_analisis: d.id_analisis,
+                                }
+                            });
                         }
-                        : null,
-                    Plan_manejo_medicamentos: data.analisis?.medicamentos?.map((m) => ({
-                        id: m.id,
-                        medicamento: m.medicamento,
-                        dosis: m.dosis,
-                        cantidad: m.cantidad,
-                        id_analisis: m.id_analisis
-                    })) || [],
-                    Plan_manejo_procedimientos: data.analisis?.procedimientos?.map((p) => ({
-                        id: p.id,
-                        procedimiento: p.procedimiento,
-                        codigo: p.codigo,
-                        fecha: p.fecha,
-                        id_analisis: p.id_analisis
-                    })) || [],
-                    Plan_manejo_insumos: data.analisis?.insumos?.map((i) => ({
-                        id: i.id,
-                        insumo: i.insumo,
-                        cantidad: i.cantidad,
-                        id_analisis: i.id_analisis,
-                    })) || [],
-                    Plan_manejo_equipos: data.analisis?.equipos?.map((e) => ({
-                        id: e.id,
-                        equipo: e.equipo,
-                        cantidad: e.cantidad,
-                        id_analisis: e.id_analisis
-                    })) || [],
-                };
+                    });
 
-                // Comparar cada tabla por ID
-                const historiaLocal = mapHistoria.get(historiaId);
-                const analisisLocal = mapAnalisis.get(analisisId);
+                    if (analisis.enfermedad && !mapEnfermedad.has(analisis.enfermedad.id)) {
+                        guardarEnDB({
+                            Enfermedad: {
+                                id: analisis.enfermedad.id,
+                                valor: analisis.enfermedad.valor,
+                                fecha_diagnostico: analisis.enfermedad.fecha_diagnostico,
+                                fecha_rehabilitacion: analisis.enfermedad.fecha_rehabilitacion,
+                                id_paciente: analisis.enfermedad.id_paciente,
+                                id_analisis: analisis.enfermedad.id_analisis,
+                            }
+                        });
+                    }
 
-                const historiaCambiada = JSON.stringify(historiaLocal) !== JSON.stringify(nuevaHistoria.HistoriaClinica);
-                const analisisCambiado = JSON.stringify(analisisLocal) !== JSON.stringify(nuevaHistoria.Analisis);
+                    if (analisis.examen_fisico && !mapExamen.has(analisis.examen_fisico.id)) {
+                        guardarEnDB({
+                            ExamenFisico: {
+                                id: analisis.examen_fisico.id,
+                                Peso: analisis.examen_fisico.peso,
+                                altura: analisis.examen_fisico.altura,
+                                otros: analisis.examen_fisico.otros,
+                                signosVitales: { ...analisis.examen_fisico.signosVitales },
+                                id_analisis: analisis.examen_fisico.id_analisis,
+                            }
+                        });
+                    }
 
-                const diagnosticosCambiados = nuevaHistoria.Diagnosticos.some(d => {
-                    const local = mapDiagnosticos.get(d.id);
-                    return !local || JSON.stringify(local) !== JSON.stringify(d);
-                });
+                    analisis.medicamentos?.forEach(m => {
+                        if (!mapMedicamentos.has(m.id)) {
+                            guardarEnDB({
+                                Plan_manejo_medicamentos: {
+                                    id: m.id,
+                                    medicamento: m.medicamento,
+                                    dosis: m.dosis,
+                                    cantidad: m.cantidad,
+                                    id_analisis: m.id_analisis,
+                                }
+                            });
+                        }
+                    });
 
-                const enfermedadCambiada = nuevaHistoria.Enfermedad &&
-                    JSON.stringify(mapEnfermedad.get(nuevaHistoria.Enfermedad.id)) !== JSON.stringify(nuevaHistoria.Enfermedad);
+                    analisis.procedimientos?.forEach(p => {
+                        if (!mapProcedimientos.has(p.id)) {
+                            guardarEnDB({
+                                Plan_manejo_procedimientos: {
+                                    id: p.id,
+                                    procedimiento: p.procedimiento,
+                                    codigo: p.codigo,
+                                    fecha: p.fecha,
+                                    id_analisis: p.id_analisis,
+                                }
+                            });
+                        }
+                    });
 
-                const examenCambiado = nuevaHistoria.ExamenFisico &&
-                    JSON.stringify(mapExamen.get(nuevaHistoria.ExamenFisico.id)) !== JSON.stringify(nuevaHistoria.ExamenFisico);
+                    analisis.insumos?.forEach(i => {
+                        if (!mapInsumos.has(i.id)) {
+                            guardarEnDB({
+                                Plan_manejo_insumos: {
+                                    id: i.id,
+                                    insumo: i.insumo,
+                                    cantidad: i.cantidad,
+                                    id_analisis: i.id_analisis,
+                                }
+                            });
+                        }
+                    });
 
-                const medicamentosCambiados = nuevaHistoria.Plan_manejo_medicamentos.some(m => {
-                    const local = mapMedicamentos.get(m.id);
-                    return !local || JSON.stringify(local) !== JSON.stringify(m);
-                });
-
-                const procedimientosCambiados = nuevaHistoria.Plan_manejo_procedimientos.some(p => {
-                    const local = mapProcedimientos.get(p.id);
-                    return !local || JSON.stringify(local) !== JSON.stringify(p);
-                });
-
-                const insumosCambiados = nuevaHistoria.Plan_manejo_insumos.some(i => {
-                    const local = mapInsumos.get(i.id);
-                    return !local || JSON.stringify(local) !== JSON.stringify(i);
-                });
-
-                const equiposCambiados = nuevaHistoria.Plan_manejo_equipos.some(e => {
-                    const local = mapEquipos.get(e.id);
-                    return !local || JSON.stringify(local) !== JSON.stringify(e);
-                });
-
-                const hayCambios = historiaCambiada || analisisCambiado || diagnosticosCambiados ||
-                    enfermedadCambiada || examenCambiado || medicamentosCambiados ||
-                    procedimientosCambiados || insumosCambiados || equiposCambiados;
-
-                if (!historiaLocal) {
-                    guardarEnDB(nuevaHistoria);
-                } else if (hayCambios) {
-                    // actualizarEnIndexedDB(nuevaHistoria);
-                    console.log('hay cambios')
+                    analisis.equipos?.forEach(e => {
+                        if (!mapEquipos.has(e.id)) {
+                            guardarEnDB({
+                                Plan_manejo_equipos: {
+                                    id: e.id,
+                                    equipo: e.equipo,
+                                    cantidad: e.cantidad,
+                                    id_analisis: e.id_analisis,
+                                }
+                            });
+                        }
+                    });
                 }
             }
         }
-
 
     }
 });

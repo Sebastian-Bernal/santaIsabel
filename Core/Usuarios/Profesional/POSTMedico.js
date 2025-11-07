@@ -3,6 +3,7 @@ import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { decryptData } from '~/composables/Formulario/crypto';
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
 
 // funcion para Validar campos del formulario Nuevo Medico
 export const validarYEnviarNuevoMedico = async (datos) => {
@@ -33,7 +34,7 @@ export const validarYEnviarNuevoMedico = async (datos) => {
         departamento: info.departamento,
         barrio: info.barrio,
         zona: info.zona,
-        id_profesion: profesional.profesion,
+        id_profesion: profesional.id_profesion,
         departamento_laboral: profesional.departamentoLaboral,
         municipio_laboral: profesional.municipioLaboral,
         zona_laboral: profesional.zonaLaboral,
@@ -112,24 +113,32 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
+    const profesionesStore = useDatosProfesionStore()
+    const profesiones = await profesionesStore.listProfesion
+    const mapaProfesion = profesiones.reduce((acc, profesion) => {
+        acc[profesion.id] = profesion.nombre;
+        return acc;
+    }, {});
+
     let id_temporal = {}
-    if(!reintento){
+    if (!reintento) {
         // Guardar local
         const datosLocal = {
-            InformacionUser : {
+            InformacionUser: {
                 ...datos.InformacionUser,
                 correo: datos.User.correo,
                 sincronizado: 0
             },
-            Profesional : {
+            Profesional: {
                 ...datos.Profesional,
+                profesion: mapaProfesion[datos.Profesional.profesion],
                 sincronizado: 0
             }
         }
-    
+
         id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
     } else {
-        id_temporal = {User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal}
+        id_temporal = { User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal }
     }
 
     const online = navigator.onLine;
@@ -141,24 +150,24 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                 url: config.public.profesionals,
                 token: token,
                 body: {
-                        name: datos.InformacionUser.name,
-                        No_document: datos.InformacionUser.No_document,
-                        type_doc: datos.InformacionUser.type_doc,
-                        celular: datos.InformacionUser.celular,
-                        telefono: datos.InformacionUser.telefono || null,
-                        nacimiento: datos.InformacionUser.nacimiento,
-                        direccion: datos.InformacionUser.direccion,
-                        municipio: datos.InformacionUser.municipio,
-                        departamento: datos.InformacionUser.departamento,
-                        barrio: datos.InformacionUser.barrio,
-                        zona: datos.InformacionUser.zona,
+                    name: datos.InformacionUser.name,
+                    No_document: datos.InformacionUser.No_document,
+                    type_doc: datos.InformacionUser.type_doc,
+                    celular: datos.InformacionUser.celular,
+                    telefono: datos.InformacionUser.telefono || null,
+                    nacimiento: datos.InformacionUser.nacimiento,
+                    direccion: datos.InformacionUser.direccion,
+                    municipio: datos.InformacionUser.municipio,
+                    departamento: datos.InformacionUser.departamento,
+                    barrio: datos.InformacionUser.barrio,
+                    zona: datos.InformacionUser.zona,
 
-                        id_profesion: datos.Profesional.profesion,
-                        departamento_laboral: datos.Profesional.departamentoLaboral,
-                        municipio_laboral: datos.Profesional.municipioLaboral,
-                        zona_laboral: datos.Profesional.zonaLaboral,
+                    id_profesion: datos.Profesional.id_profesion,
+                    departamento_laboral: datos.Profesional.departamentoLaboral,
+                    municipio_laboral: datos.Profesional.municipioLaboral,
+                    zona_laboral: datos.Profesional.zonaLaboral,
 
-                        correo: datos.User.correo,
+                    correo: datos.User.correo,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -189,6 +198,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                         id: respuesta.profesional.id,
                         id_usuario: respuesta.profesional.id_infoUsuario,
                         id_profesion: respuesta.profesional.id_profesion,
+                        profesion: mapaProfesion[respuesta.profesional.id_profesion],
                         zonaLaboral: respuesta.profesional.zona_laboral,
                         departamentoLaboral: respuesta.profesional.departamento_laboral,
                         municipioLaboral: respuesta.profesional.municipio_laboral,

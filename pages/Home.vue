@@ -49,6 +49,15 @@ onMounted(async () => {
         Historias = await historiaStore.ultimasHistorias();
         citas = await citasStore.listCitasHoy();
 
+        // Pacientes list
+        const pacientesStore = usePacientesStore()
+        pacientesList.value = await pacientesStore.listPacientesAtendidos(false)
+
+        // Profesionales list
+        const profesionalesStore = useMedicosStore()
+        const profesionales = await profesionalesStore.listMedicos
+        medicosList.value = profesionales
+
     } else if (rol.value === 'Profesional'){
         // Pacientes list
         const pacientesStore = usePacientesStore()
@@ -164,14 +173,14 @@ function DashboardRol(rol, Historias = [], citas) {
             },
             {
                 header: {
-                    icon: 'fa-solid fa-file text-white',
+                    icon: 'fa-solid fa-calendar text-white',
                     iconBg: 'bg-inherit',
-                    title: 'Nueva Historia',
-                    subtitle: 'Crear historia clínica',
+                    title: 'Nueva Cita',
+                    subtitle: 'Nueva consulta medica',
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
-                accion: nuevaHistoria
+                accion: nuevaCita
             },
             {
                 header: {
@@ -197,11 +206,11 @@ function DashboardRol(rol, Historias = [], citas) {
             },
             footer: {
                 status: `Profesion: Odontologia`,
-                statusClass: 'text-gray-300 font-black!',
+                statusClass: 'text-gray-200 font-black!',
                 buttons: [
                     {
                         text: 'Actualizar Informacion',
-                        class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl hover:bg-gray-900 cursor-pointer',
+                        class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl cursor-pointer',
                         icon: 'fa-solid fa-file'
                     }
                 ]
@@ -410,6 +419,7 @@ const propiedades = computed(() => {
                 .setheaderTitle('Acciones Rapidas')
                 .build()
             )
+            .addComponente('Form', builder)
     }
     else if (rol.value === 'Profesional') {
        paginaBase

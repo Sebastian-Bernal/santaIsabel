@@ -49,7 +49,7 @@ export const useApiRest = defineStore('apiRest', {
             if (opcion.body) {
                 options.body = JSON.stringify(opcion.body)
             }
-            console.log(url, options)
+            // console.log(url, options)
             try {
                 const response = await fetch(url.toString(), options)
                 if (response.status === 200 || response.status === 201 || response.status === 204) {

@@ -82,7 +82,7 @@ const estiloColumnas = computed(() => {
         gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
     };
 });
-
+function enviar () { console.log(props.Propiedades.datos.content)}
 </script>
 
 <template>
@@ -106,9 +106,9 @@ const estiloColumnas = computed(() => {
 
                 <client-only v-if="Propiedades.headerTabla.excel">
                     <div class="flex relative dropdown cursor-pointer">
-                        <download-excel class="flex gap-1 items-center"
-                            :data="Array.isArray(props.Propiedades?.datos?.content) ? props.Propiedades.datos.content : []"
-                            :name="props.Propiedades.headerTabla.titulo" type="xls">
+                        <download-excel class="flex gap-1 items-center" @click="enviar"
+                            :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
+                            :name="props.Propiedades.headerTabla.titulo" type="xlsx">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
                             </ButtonRounded>
@@ -226,7 +226,7 @@ const estiloColumnas = computed(() => {
 
                 <div v-if="datosPaginados?.length === 0">
                     <p class="text-gray-500 text-center my-10">No se encontraron
-                        resultados.</p>
+                        resultados. <i class="fa-solid fa-search-minus"></i></p>
                 </div>
 
             </div>

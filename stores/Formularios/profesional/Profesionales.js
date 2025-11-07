@@ -1,7 +1,7 @@
 import { traerProfesionales } from "~/Core/Usuarios/Profesional/GETProfesionales";
 import { useUsersStore } from "../usuarios/Users";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
-import { useDatosProfesionStore } from "../empresa/Profesion";
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
 
 // Pinia Medicos
 export const useMedicosStore = defineStore('Medicos', {
@@ -92,6 +92,13 @@ export const useMedicosStore = defineStore('Medicos', {
             const profesionales = await traerProfesionales()
             const profesionalesLocal = await this.listMedicos
 
+            const profesionesStore = useDatosProfesionStore()
+            const profesiones = await profesionesStore.listProfesion
+            const mapaProfesion = profesiones.reduce((acc, profesion) => {
+                acc[profesion.id] = profesion.nombre;
+                return acc;
+            }, {});
+
             // Crear un conjunto de IDs locales para comparación rápida
             const idsLocales = new Set(
                 profesionalesLocal.map(p => `${p.id_profesional}-${p.id_usuario}`)
@@ -102,6 +109,7 @@ export const useMedicosStore = defineStore('Medicos', {
                     id: data.id,
                     id_usuario: data.info_usuario.id,
                     id_profesion: data.id_profesion,
+                    profesion: mapaProfesion[data.id_profesion],
                     zonaLaboral: data.zona_laboral,
                     departamentoLaboral: data.departamento_laboral,
                     municipioLaboral: data.municipio_laboral,

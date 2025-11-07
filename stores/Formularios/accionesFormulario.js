@@ -43,6 +43,15 @@ export const accionesFormularios = {
             notificaciones.loading()
             await traerDatos()
             window.location.href = '/Home'
+        } else {
+            notificaciones.options.icono = 'error'
+            notificaciones.options.titulo = '¡No se pudo iniciar Sesion!'
+            notificaciones.options.texto = 'Informacion invalida'
+            notificaciones.options.tiempo = 3000
+            await notificaciones.simple()
+            notificaciones.options.icono = ''
+            notificaciones.options.titulo = ''
+            notificaciones.options.texto = ''
         }
         notificaciones.close()
         return respuesta;

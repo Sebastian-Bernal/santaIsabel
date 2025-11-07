@@ -1,5 +1,4 @@
 import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario cancelar cita
@@ -55,8 +54,8 @@ const enviarFormulario = async (datos) => {
                         motivo: respuesta.data.motivo,
                         fecha: respuesta.data.fecha,
                         hora: respuesta.data.hora,
-                        motivo_cancelacion: datos.Cita.motivo_cancelacion,
-                        estado: datos.Cita.estado,
+                        motivo_cancelacion: respuesta.data.motivo_cancelacion,
+                        estado: respuesta.data.estado,
                         sincronizado: 1,
                     }
                 }

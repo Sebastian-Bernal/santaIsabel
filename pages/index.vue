@@ -48,7 +48,7 @@ const cambiarMostrarContraseña = () => {
     }
 };
 
-// Temporal idexedDB
+// funcion para validar primer ingreso
 async function validaUsuario(event) {
     const correo = event.target.value
     varView.cargando = true
