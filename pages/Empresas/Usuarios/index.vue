@@ -16,7 +16,6 @@ const Users = ref([]);
 const refresh = ref(1)
 const show = ref(false)
 const showVer = ref(false)
-const tipoUsuario = ref('Administrador')
 
 async function llamadatos() {
     Users.value = await listUsers.value;
@@ -195,11 +194,12 @@ const propiedades = computed(() => {
                 titulo: 'Gestion de Usuarios',
                 descripcion: 'Administra y consulta información de Usuarios Admin',
                 color: 'bg-[var(--color-default)] text-white',
+                accionAgregar: nuevoUser
             })
             .setDatos(Users)
         )
         .addComponente('Form', propiedadesUser)
-        .addComponente('Form', propiedadesVerUser)
+        // .addComponente('Form', propiedadesVerUser)
         .build();
 });
 

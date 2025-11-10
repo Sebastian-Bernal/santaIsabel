@@ -8,10 +8,7 @@ const estructuraDatosEPS = {
     EPS: {
         nombre: '',
         codigo: '',
-        direccion: '',
-        telefono: '',
-        email: '',
-        website: '',
+        nit: '',
     }
 }
 
@@ -29,8 +26,9 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
             store.almacen = 'EPS'
             const EPS = await store.leerdatos()
 
-            state.EPSs = EPS
-            return EPS
+            const EPSActivas = EPS.filter(p => p.estado === 1)
+            state.EPSs = EPSActivas
+            return EPSActivas
         },
     },
 
@@ -50,10 +48,8 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
                     id: data.id, 
                     nombre: data.nombre, 
                     codigo: data.codigo,
-                    direccion: data.direccion,
-                    telefono: data.telefono,
-                    email: data.email,
-                    website: data.website,
+                    nit: data.nit,
+                    estado: data.estado,
                 }
             }));
 

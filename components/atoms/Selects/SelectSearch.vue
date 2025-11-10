@@ -16,12 +16,13 @@ const emit = defineEmits(['update:modelValue']);
 
 const mostrarLista = ref(false);
 const opcionesFiltradas = ref([]);
+const errorMensaje = ref()
 
 watch(() => props.modelValue, (nuevoValor) => {
     const propiedadFiltrar = unref(props.Propiedades.opciones?.[0]?.value ?? '');
     const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? [])
 
-    if (!nuevoValor || nuevoValor.length < 3) {
+    if (!nuevoValor || nuevoValor.length < 2) {
         opcionesFiltradas.value = [];
         mostrarLista.value = false;
         return;
@@ -37,6 +38,11 @@ watch(() => props.modelValue, (nuevoValor) => {
     );
 
     mostrarLista.value = opcionesFiltradas.value.length > 0 && !coincidenciaExacta;
+    // Mostrar error si no hay coincidencia exacta
+    errorMensaje.value = coincidenciaExacta || opcionesFiltradas.value.length > 0
+        ? ''
+        : 'No se encontró ninguna coincidencia';
+
 });
 
 function seleccionar(item) {
@@ -65,7 +71,7 @@ function handleInput(event) {
 <template>
     <div class="relative" :class="Propiedades.tamaño">
         <input :value="modelValue"
-            class="mt-1 h-[35px] text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="Propiedades.placeholder"
             :disabled="Propiedades.disabled"
@@ -84,8 +90,13 @@ function handleInput(event) {
                         <strong>{{ campo.text }}:</strong> {{ opcion[campo.value] }}
                     </div>
                 </div>
-
             </li>
         </ul>
+
+        <div class="absolute top-2.5 right-3">
+            <i class="fa-solid fa-search text-blue-600"></i>
+        </div>
+
+        <p class="text-xs text-red-400">{{ errorMensaje }}</p>
     </div>
 </template>

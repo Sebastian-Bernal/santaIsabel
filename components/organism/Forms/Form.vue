@@ -68,7 +68,7 @@ function limpiar() {
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
+        <form autocomplete="off" class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%] rounded-2xl">
@@ -84,7 +84,7 @@ function limpiar() {
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                     </h2>
                     <!-- Formulario -->
-                    <form autocomplete="off" class="w-full h-full flex justify-center">
+                    <div class="w-full h-full flex justify-center">
                         <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto"
                             :class="{ 'h-[90%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
@@ -98,17 +98,17 @@ function limpiar() {
                                 <slot></slot>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
             <!-- Botones -->
             <div class="mt-2 w-full flex justify-center items-center gap-3">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
-                    @click="manejarClick(item, tablaStore?.Formulario, limpiar)"
+                    @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)" @keyup.enter="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)"
                     class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>
-        </div>
+        </form>
     </component>
 </template>

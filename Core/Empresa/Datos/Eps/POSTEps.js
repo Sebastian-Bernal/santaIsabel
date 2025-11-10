@@ -8,7 +8,7 @@ export const validarYEnviarDatosEPS = async (datos) => {
     const eps = datos.EPS;
 
     // 🔍 Validar campos obligatorios
-    const camposObligatorios = ['nombre', 'codigo', 'direccion', 'telefono', 'email', 'website'];
+    const camposObligatorios = ['nombre', 'codigo', 'nit'];
     const camposFaltantes = camposObligatorios.filter(campo => {
         const valor = eps[campo];
         return valor === undefined || valor === null || valor === '';
@@ -23,29 +23,6 @@ export const validarYEnviarDatosEPS = async (datos) => {
         return false;
     }
 
-    // 📧 Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(eps.email)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Correo inválido';
-        notificacionesStore.options.texto = 'El correo electrónico no tiene un formato válido';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple();
-        return false;
-    }
-
-    // 🌐 Validar formato de website
-    const websiteRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
-    if (!websiteRegex.test(eps.website)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Sitio web inválido';
-        notificacionesStore.options.texto = 'La URL del sitio web no tiene un formato válido';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple();
-        return false;
-    }
-
-
     return await enviarFormulario(datos);
 };
 
@@ -59,7 +36,7 @@ export const enviarFormulario = async (datos, reintento = false) => {
     // guardar local
     let id_temporal = {}
     if(!reintento){
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0}})));
+        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0, estado: 1}})));
     } else {
         id_temporal.data = datos.EPS.id_temporal
     }
@@ -76,10 +53,7 @@ export const enviarFormulario = async (datos, reintento = false) => {
                 body: {
                     nombre: datos.EPS.nombre,
                     codigo: datos.EPS.codigo,
-                    direccion: datos.EPS.direccion,
-                    telefono: datos.EPS.telefono,
-                    email: datos.EPS.email,
-                    website: datos.EPS.website,
+                    nit: datos.EPS.nit,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -93,10 +67,8 @@ export const enviarFormulario = async (datos, reintento = false) => {
                         id: respuesta.data.id,
                         nombre: respuesta.data.nombre,
                         codigo: respuesta.data.codigo,
-                        direccion: respuesta.data.direccion,
-                        telefono: respuesta.data.telefono,
-                        email: respuesta.data.email,
-                        website: respuesta.data.website,
+                        nit: respuesta.data.nit,
+                        estado: 1,
                     }
                 }
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));

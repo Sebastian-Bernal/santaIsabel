@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps({
   modelValue: {
@@ -14,7 +14,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const showOptions = ref(false);
+const showOptions = ref(props.Propiedades.showOptions || false);
 
 function mostrarOptions() {
   showOptions.value = !showOptions.value;

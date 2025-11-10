@@ -10,7 +10,7 @@ const props = defineProps({
 <template>
   <button
     :disabled="Propiedades.disabled"
-    :class="[
+    :class="Propiedades.color, [
       'px-5 py-2 rounded-2xl font-semibold shadow-md transition-all duration-300',
       Propiedades.disabled
         ? 'bg-gray-400 cursor-not-allowed'
@@ -23,5 +23,6 @@ const props = defineProps({
       <component class="w-5 h-5 inline-block" :class="Propiedades.icon" />
     </span>
     {{ Propiedades.texto }}
+    <slot></slot>
   </button>
 </template>

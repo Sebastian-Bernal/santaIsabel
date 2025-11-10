@@ -36,14 +36,13 @@ export function useUserBuilder({
         const simbolos = valor?.match(/[^a-zA-Z0-9]/g) || []; // Al menos 1 símbolo (cualquier cosa que no sea letra o número)
 
         if(letras.length >= 3 && numeros.length >= 2 && simbolos.length >= 1){
-            console.log('jaj')
-            mensaje = 'no ma'
+            mensaje = 'Contraseña poco segura'
         }
 
         const errorDiv = document.getElementById(`error-password`);
         if (errorDiv) {
-            if (mensajeError) {
-                errorDiv.innerHTML = `<p>${mensajeError}</p>`;
+            if (mensaje) {
+                errorDiv.innerHTML = `<p>${mensaje}</p>`;
             } else {
                 errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
             }
@@ -160,6 +159,11 @@ export function useUserBuilder({
             tamaño: 'md:w-full w-full',
             vmodel: 'InformacionUser.departamento',
             upperCase: true,
+            events: {
+                onChange: () => {
+
+                }
+            }
         })
         .addCampo({
             component: 'SelectSearch',
@@ -258,19 +262,19 @@ export function useUserBuilder({
                 mayuscula: false,
                 vmodel: 'User.correo',
             })
-            .addCampo({
-                component: 'Select',
-                placeholder: 'Rol',
-                id: 'rol',
-                name: 'rol',
-                tamaño: 'w-full',
-                options: [
-                    { text: 'Paciente', value: 'Paciente' },
-                    { text: 'Profesional', value: 'Profesional' },
-                    { text: 'Administrador', value: 'Administrador' },
-                ],
-                vmodel: 'User.rol',
-            })
+            // .addCampo({
+            //     component: 'Select',
+            //     placeholder: 'Rol',
+            //     id: 'rol',
+            //     name: 'rol',
+            //     tamaño: 'w-full',
+            //     options: [
+            //         { text: 'Paciente', value: 'Paciente' },
+            //         { text: 'Profesional', value: 'Profesional' },
+            //         { text: 'Administrador', value: 'Administrador' },
+            //     ],
+            //     vmodel: 'User.rol',
+            // })
             .addCampo({
                 component: 'Input',
                 type: 'password',
@@ -284,7 +288,7 @@ export function useUserBuilder({
                     html: `<div id="error-password"></div>`
                 },
                 events: {
-                    onInput: validarContraseña
+                    onChange: validarContraseña
                 }
             })
 

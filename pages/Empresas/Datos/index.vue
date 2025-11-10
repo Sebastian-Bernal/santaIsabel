@@ -9,10 +9,12 @@ import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
 import { ref, onMounted } from 'vue';
+import { enviarFormularioDeleteEPS } from '~/Core/Empresa/Datos/Eps/DELETEEps';
 
 const storeEPS = useDatosEPSStore();
 const storeProfesion = useDatosProfesionStore();
 const varView = useVarView();
+const notificaciones = useNotificacionesStore();
 
 const EPSdata = ref([]);
 const Profesiones = ref([]);
@@ -61,11 +63,48 @@ onMounted(async () => {
     varView.cargando = true
     EPSdata.value = await storeEPS.listEPS
     Profesiones.value = await storeProfesion.listProfesion
+
     secciones.value = await storeProfesion.listSecciones()
     varView.cargando = false
 });
 
+watch(() => {
+    const seccionesBase = [...secciones.value]; // Copia para iterar sin modificar mientras insertamos
+
+    for (let i = 0; i < seccionesBase.length; i++) {
+        const seccion = seccionesBase[i];
+
+        // Verifica si es una sección principal (no una acción)
+        const esAccion = /(enviar|actualizar|eliminar|leer)$/.test(seccion);
+        if (esAccion) continue;
+
+        const permiso = storeProfesion.Formulario.Profesion.permisos.find((s) => s === seccion);
+
+        const acciones = [
+            `${seccion} leer`,
+            `${seccion} enviar`,
+            `${seccion} actualizar`,
+            `${seccion} eliminar`
+        ];
+
+        const yaInsertadas = acciones.every((accion) => secciones.value.includes(accion));
+
+        if (permiso && !yaInsertadas) {
+            const index = secciones.value.indexOf(seccion);
+            secciones.value.splice(index + 1, 0, ...acciones);
+        }
+
+        // Si la sección principal ya no está en el formulario, eliminamos sus acciones
+        if (!permiso) {
+            secciones.value = secciones.value.filter((item) => {
+                return !(acciones.includes(item));
+            });
+        }
+    }
+});
+
 // Funciones Actualizar Profesion
+
 
 function nuevaProfesion() {
     showNuevaProfesion.value = true
@@ -101,6 +140,33 @@ function cerrarEPS() {
     showNuevaEPS.value = false
     showModificarEPS.value = false
     mapCamposLimpios(storeEPS.Formulario)
+}
+
+async function eliminarEPS() {
+    const EPS = storeEPS.Formulario.EPS
+
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar EPS?';
+    notificaciones.options.html = `Se eliminará la EPS: <span>${EPS.nombre}</span>`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+    console.log(respuestaAlert)
+    if (respuestaAlert === 'confirmado') {
+        const res = await enviarFormularioDeleteEPS(EPS)
+        if (res) {
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Eps eliminado con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
+
+            cerrarEPS()
+            await llamadatos();
+            refresh.value++;
+        }
+    }
 }
 
 // Construccion de pagina
@@ -158,20 +224,19 @@ const propiedades = computed(() => {
             storePinia: 'EPS',
             actualizar: true,
             showModificarEPS: showModificarEPS,
-            cerrar: cerrarEPS
+            cerrar: cerrarEPS,
+            eliminar: eliminarEPS
         })
         : null;
 
     // Tabla EPS
     builderTablaEPS
         .setColumnas([
-            { titulo: 'nombre', value: 'Nombre', tamaño: 100, ordenar: true },
-            { titulo: 'direccion', value: 'Direccion', tamaño: 100, ordenar: true },
-            { titulo: 'email', value: 'Correo', tamaño: 100, ordenar: true },
-            { titulo: 'telefono', value: 'Telefono', tamaño: 100, ordenar: true },
+            { titulo: 'nombre', value: 'Nombre', tamaño: 250, ordenar: true },
+            { titulo: 'nit', value: 'Nit', tamaño: 100, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
         ])
-        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', accionAgregar: puedePostEPS ? nuevaEPS : null })
+        .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', buscador: true, excel: true, accionAgregar: puedePostEPS ? nuevaEPS : null })
         .setDatos(EPSdata);
 
     if (puedePutEPS) {

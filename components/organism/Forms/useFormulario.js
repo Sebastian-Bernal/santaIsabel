@@ -102,7 +102,8 @@ export function useFormulario(props) {
     }
 
     // Botones
-    async function manejarClick(item, formData, limpiar) {
+    async function manejarClick(event, item, formData, limpiar) {
+        event.preventDefault()
         varView.cargando = true
         if (item.type === 'enviar') {
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {

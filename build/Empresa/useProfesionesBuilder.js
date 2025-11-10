@@ -14,7 +14,7 @@ export function useProfesionesBuilder({
   if (actualizar) {
     builder
       .setFormularioFondo(true)
-      .nuevaSeccion('Actualizar Profesion')
+      .nuevaSeccion('Formulario Profesion')
       .setFormularioShow(showModificarProfesion)
       .setBotones([
         {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500', accion: cerrar},
@@ -32,7 +32,8 @@ export function useProfesionesBuilder({
   builder
     .setStoreId(storeId)
     .setStorePinia(storePinia)
-    .setCamposRequeridos(['Profesion.nombre', 'Profesion.codigo',])
+    .setFormulariotamaño('XS')
+    .setCamposRequeridos(['Profesion.nombre', 'Profesion.permisos',])
     .setEditarFormulario(actualizar)
     .addCampo({
       component: 'Label',
@@ -70,6 +71,7 @@ export function useProfesionesBuilder({
       tamaño: 'w-full md:col-span-2',
       vmodel: 'Profesion.permisos',
       options: permisos,
+      showOptions: true,
     })
 
   return builder.build()

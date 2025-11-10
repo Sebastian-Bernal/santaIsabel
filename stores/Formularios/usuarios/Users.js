@@ -19,6 +19,11 @@ export const useUsersStore = defineStore('Users', {
                 barrio: '',
                 zona: '',
             },
+            User: {
+                correo: '',
+                rol: '',
+                contraseña: ''
+            }
         },
         Users: []
     }),
@@ -38,7 +43,6 @@ export const useUsersStore = defineStore('Users', {
     actions: {
 
         async indexDBDatos() {
-            console.log(usuarios)
             // const UsuariosIndexed = usuarios.map((profesion) => ({
             //     Profesion: {
             //         id: profesion.profession_id, 

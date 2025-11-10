@@ -8,7 +8,7 @@ export const validarYEnviarDatosProfesion = async (datos) => {
     const profesion = datos.Profesion;
 
     // 🔍 Verificar campos obligatorios
-    const camposObligatorios = ['codigo', 'nombre'];
+    const camposObligatorios = ['nombre', 'permisos'];
     const camposFaltantes = camposObligatorios.filter(campo => {
         const valor = profesion[campo];
         return valor === undefined || valor === null || valor === '';
@@ -33,6 +33,29 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
+    // Convertir permisos
+    datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
+        if (typeof permiso !== 'string') return permiso;
+
+        const partes = permiso.split(' ');
+        const seccion = partes.slice(0, -1).join(' ');
+        const accion = partes[partes.length - 1];
+
+        switch (accion) {
+            case 'leer':
+                return `${seccion}_get`;
+            case 'enviar':
+                return `${seccion}_post`;
+            case 'actualizar':
+                return `${seccion}_put`;
+            case 'eliminar':
+                return `${seccion}_delete`;
+            default:
+                return `${permiso}_view`;
+        }
+    });
+
+
     let id_temporal = {}
     if(!reintento){
         // Guardar local
@@ -50,7 +73,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
                 url: config.public.professions,
                 token: token,
                 body: {
-                    codigo: datos.Profesion.codigo,
+                    codigo: datos.Profesion.codigo || null,
                     nombre: datos.Profesion.nombre,
                     permisos: datos.Profesion.permisos,
                 }

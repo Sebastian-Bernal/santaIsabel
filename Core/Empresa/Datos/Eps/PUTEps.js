@@ -8,7 +8,7 @@ const notificacionesStore = useNotificacionesStore();
     const eps = datos.EPS;
 
     // 🔍 Validar campos obligatorios
-    const camposObligatorios = ['nombre', 'codigo', 'direccion', 'telefono', 'email', 'website'];
+    const camposObligatorios = ['nombre', 'codigo', 'nit',];
     const camposFaltantes = camposObligatorios.filter(campo => {
         const valor = eps[campo];
         return valor === undefined || valor === null || valor === '';
@@ -22,29 +22,6 @@ const notificacionesStore = useNotificacionesStore();
         await notificacionesStore.simple();
         return false;
     }
-
-    // 📧 Validar formato de email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(eps.email)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Correo inválido';
-        notificacionesStore.options.texto = 'El correo electrónico no tiene un formato válido';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple();
-        return false;
-    }
-
-    // 🌐 Validar formato de website
-    const websiteRegex = /^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/i;
-    if (!websiteRegex.test(eps.website)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Sitio web inválido';
-        notificacionesStore.options.texto = 'La URL del sitio web no tiene un formato válido';
-        notificacionesStore.options.tiempo = 5000;
-        await notificacionesStore.simple();
-        return false;
-    }
-
 
     return await enviarFormularioPutEPS(datos);
 };
@@ -62,6 +39,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
                 ...datos.EPS,
                 id_temporal: datos.EPS.id_temporal,
                 id: datos.EPS.id,
+                estado: 1,
                 sincronizado: 0
             }
         })
@@ -79,10 +57,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
                     id: datos.EPS.id,
                     nombre: datos.EPS.nombre,
                     codigo: datos.EPS.codigo,
-                    direccion: datos.EPS.direccion,
-                    telefono: datos.EPS.telefono,
-                    email: datos.EPS.email,
-                    website: datos.EPS.website,
+                    nit: datos.EPS.nit,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -93,6 +68,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
                         ...datos.EPS,
                         id: respuesta.data.id,
                         id_temporal: datos.EPS.id_temporal,
+                        estado: 1,
                         sincronizado: 1
                     }
                 })));

@@ -33,9 +33,14 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     actions: {
 
         async listSecciones() {
-            const secciones = await traerdatosSecciones()
+            let secciones = await traerdatosSecciones()
+
+            secciones = [...new Set(
+                secciones.map((seccion) => seccion.nombre.split('_')[0])
+            )];
             const permisos = []
-            secciones.map((s) => permisos.push(s.nombre))
+            secciones.map((s) => permisos.push(s))
+            
             return permisos
         },
 
