@@ -95,13 +95,13 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                 </h1>
                 <p>{{ props.Propiedades.headerTabla?.descripcion }}</p>
             </div>
-            <div class="flex gap-3 md:w-[45%] justify-end">
+            <div class="flex gap-3 md:w-[45%] w-full justify-end">
 
                 <div v-if="Propiedades.headerTabla.filtros?.length > 0" class="flex items-center gap-1 cursor-pointer" @click="showFiltros = !showFiltros">
                     <ButtonRounded color="bg-blue-700">
                         <i class="fa-solid fa-filter"></i>
                     </ButtonRounded>
-                    <h4>Filtrar Datos</h4>
+                    <h4 class="md:block hidden">Filtrar Datos</h4>
                 </div>
 
                 <client-only v-if="Propiedades.headerTabla.excel">
@@ -112,7 +112,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
                             </ButtonRounded>
-                            <h4>Exportar</h4>
+                            <h4 class="md:block hidden">Exportar</h4>
                         </download-excel>
                         <div @click="varView.showDatosExcel = true"
                             class="configExcel flex absolute top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
@@ -127,7 +127,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </ButtonRounded>
-                    <h4>Agregar</h4>
+                    <h4 class="md:block hidden">Agregar</h4>
                 </nuxt-link>
             </div>
         </div>
@@ -135,22 +135,22 @@ function enviar () { console.log(props.Propiedades.datos.content)}
         <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
-            <div class="flex items-end justify-between gap-5">
+            <div class="flex items-end justify-between gap-5 md:flex-row flex-col">
                 <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
                     placeholder: 'Buscar dato en la Tabla...',
                     icon: 'fa-solid fa-search',
                     modelValue: busqueda,
-                    tamaño: 'w-2/5',
+                    tamaño: 'md:w-2/5 w-full',
                     upperCase: true,
                     estilo: 'bg-white dark:bg-gray-900'
                 }" v-model="busqueda" />
 
-                <div class="w-3/4 flex justify-end gap-5">
+                <div class="md:w-3/4 w-full flex justify-end md:gap-5 gap-2 md:flex-row flex-col">
                     <Select v-for="(filtro, key) in filtrosConOpciones" :key="key" :Propiedades="{
                         placeholder: filtro.placeholder,
                         label: filtro.placeholder,
                         modelValue: busqueda,
-                        tamaño: 'w-1/4',
+                        tamaño: 'md:w-1/4 w-full',
                         estilo: 'bg-white dark:bg-gray-900',
                         options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
                     }" v-model="filtros[filtro.columna]" />
@@ -160,7 +160,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
 
         <!-- Tabla -->
         <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow bg-white dark:bg-gray-900 rounded-b-xl">
-            <div class="w-full">
+            <div class="w-full h-full">
 
                 <!-- Header titulos de props Columnas -->
                 <div class="sticky top-0 z-1 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
@@ -201,7 +201,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                         <!-- Acciones porp props Responsive -->
                         <button @click="mostrarAcciones(id)" v-if="collapse"
                             class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer">
-                            <i class="fa-solid fa-ellipsis-vertical text-gray-600 absolute"></i>
+                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
                             <div v-if="btnAcciones === id" class="acciones" :id="id">
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
@@ -233,8 +233,8 @@ function enviar () { console.log(props.Propiedades.datos.content)}
         </div>
 
         <!-- Paginador -->
-        <div class="mt-[10px] flex justify-between items-center h-[30px] px-10">
-            <p class="text-sm text-gray-500">
+        <div class="mt-[10px] flex justify-between items-center h-[30px] md:px-10">
+            <p class="text-sm text-gray-500 md:block hidden">
                 Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
             <div class="btnsPagina flex items-center gap-3">
@@ -262,7 +262,8 @@ function enviar () { console.log(props.Propiedades.datos.content)}
             </div>
 
             <div class="flex gap-2 items-center">
-                <p class="text-sm text-gray-500">Número de registros</p>
+                <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
+                <p class="text-sm text-gray-500 md:hidden block">N. registros</p>
                 <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
                     @change="cambiarItemsPorPagina($event.target.value)">
                     <option value="5">5</option>

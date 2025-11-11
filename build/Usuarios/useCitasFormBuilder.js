@@ -84,7 +84,7 @@ export function useFormularioCitaBuilder({
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       forLabel: 'nombreP',
     })
     .addCampo({
@@ -92,7 +92,7 @@ export function useFormularioCitaBuilder({
       placeholder: 'Nombre del paciente',
       id: 'nombreP',
       name: 'nombreP',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       vmodel: 'Cita.name_paciente',
       options: pacientesList,
       opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
@@ -102,7 +102,7 @@ export function useFormularioCitaBuilder({
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-stethoscope text-blue-500 mr-1"></i>Detalles de la cita',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       forLabel: 'nombreM',
     })
     .addCampo({
@@ -168,7 +168,7 @@ export function useFormularioCitaBuilder({
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',
-      tamaño: 'w-full col-span-2',
+      tamaño: 'w-full md:col-span-2',
       forLabel: 'fecha',
     })
     .addCampo({

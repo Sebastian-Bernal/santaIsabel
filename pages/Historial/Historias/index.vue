@@ -406,7 +406,6 @@ const propiedades = computed(() => {
                 titulo: 'Gestion de Historias Clinicas',
                 descripcion: 'Administra y consulta información sobre historias clinicas',
                 color: 'bg-[var(--color-default)] text-white',
-                // accionAgregar: puedePost ? agregarHistoria : '',
                 buscador: true,
                 filtros: [
                     { columna: 'estado', placeholder: 'Estado', datos: [{ text: 'Creada', value: 'Creada' }, { text: 'Nueva', value: 'Nueva' }] },
@@ -565,7 +564,7 @@ const propiedades = computed(() => {
                         ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
                         [`${propiedadesHistoriaPDF.value.municipio}`, `${propiedadesHistoriaPDF.value.departamento}`, `${propiedadesHistoriaPDF.value.telefono}`,],
                         ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Regimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
-                        [`${propiedadesHistoriaPDF.value.id_eps}`, `${propiedadesHistoriaPDF.value.Regimen}`, `${propiedadesHistoriaPDF.value.poblacionVulnerable}`,],
+                        [`${propiedadesHistoriaPDF.value.Eps}`, `${propiedadesHistoriaPDF.value.Regimen}`, `${propiedadesHistoriaPDF.value.poblacionVulnerable}`,],
                     ],
                 })
                 .addComponente('Espacio', {

@@ -232,7 +232,7 @@ const propiedades = computed(() => {
     // Tabla EPS
     builderTablaEPS
         .setColumnas([
-            { titulo: 'nombre', value: 'Nombre', tamaño: 250, ordenar: true },
+            { titulo: 'nombre', value: 'Nombre', tamaño: 220, ordenar: true },
             { titulo: 'nit', value: 'Nit', tamaño: 100, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
         ])

@@ -25,14 +25,14 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'w-1/5 logo mb-2 select-none',
+      tamaño: 'md:w-1/5 w-[60px] logo mb-2 select-none',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({
       component: 'Label',
       text: `
             <div class="flex flex-col justify-center items-center gap-1 pb-5">
-                <h3 class="text-white text-3xl font-bold">Thesalus</h3>
+                <h3 class="text-white md:text-3xl text-xl font-bold">Thesalus</h3>
             </div>
         `,
       tamaño: 'w-full col-span-2 flex justify-center'

@@ -49,8 +49,8 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a href="/Home" class="text-white text-xl font-extrabold ml-3">
-                <i class="fa-solid fa-laptop-medical text-2xl"></i>
+            <a href="/Home" class="text-white md:text-xl text-lg font-extrabold ml-3">
+                <i class="fa-solid fa-laptop-medical md:text-2xl text-lg"></i>
                 Thesalus
             </a>
             <p class="text-xs text-white mr-10 mt-4 md:hidden block">{{ usuario }}</p>
@@ -61,9 +61,9 @@ const removeStorage = () => {
             <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
-                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs text-gray-100 hover:text-blue-500">
+                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-[10px] shadow-lg">
                         <i class="fa-solid fa-calendar"></i>
-                        <p class="text-black md:text-white">{{fechaActualFormateada }}</p>
+                        <p class="text-white md:text-white">{{fechaActualFormateada }}</p>
                     </a>
                 </li>
                 <li>
@@ -164,7 +164,8 @@ const removeStorage = () => {
         top: 95px;
         right: 0;
         width: 100%;
-        background-color: var(--color-default-900);
+        background-color: var(--color-default-600);
+        color: #fff;
         backdrop-filter: blur(10px);
         border-radius: 10px;
         padding: 10px;

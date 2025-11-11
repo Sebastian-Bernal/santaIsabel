@@ -9,7 +9,7 @@ const props = defineProps({
 </script>
 <template>
     <div :class="Propiedades.contenedor">
-        <img :src="Propiedades.src" :alt="Propiedades.alt" class="w-[90px]"
+        <img :src="Propiedades.src" :alt="Propiedades.alt"
             :class="Propiedades.tamaño"/>
             <span v-html="Propiedades.html"></span>
     </div>

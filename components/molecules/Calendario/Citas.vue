@@ -166,8 +166,8 @@ async function activarCita(cita) {
 <template>
     <!-- Header y filtros -->
     <div v-if="props.Propiedades.showTodas"
-        class="flex justify-between items-end px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
-        <div class="w-1/3">
+        class="flex md:flex-row flex-col justify-between items-end px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
+        <div class="md:w-1/3 w-full">
             <h2 class="text-xl font-semibold">Registro completo de Citas</h2>
             <Input :Propiedades="{
                 placeholder: 'Buscar dato en citas...',
@@ -178,7 +178,7 @@ async function activarCita(cita) {
                 estilo: 'bg-white dark:bg-gray-900'
             }" v-model="busqueda" />
         </div>
-        <div class="flex gap-3 w-1/3">
+        <div class="flex gap-3 md:w-1/3 w-full md:mt-0 mt-4">
             <Select v-for="(filtro, key) in filtrosConOpciones" :key="key" :Propiedades="{
                 placeholder: 'Todos',
                 label: filtro.placeholder,
@@ -195,10 +195,10 @@ async function activarCita(cita) {
         <h2 v-if="!props.Propiedades.showTodas" class="text-xl font-semibold my-2 px-10">{{
             calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}</h2>
         <!-- Card Citas -->
-        <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
+        <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex flex-col md:flex-row justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
             v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
             :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
-            <div class="flex gap-5 items-center md:flex-col lg:flex-row sm:flex-row">
+            <div class="flex gap-5 items-center md:flex-col lg:flex-row flex-row">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora }}</h2>
                     <p class="text-xs text-gray-500 dark:text-gray-200">{{ props.Propiedades.showTodas ? cita.fecha :
@@ -209,6 +209,7 @@ async function activarCita(cita) {
                     <p class="text-sm text-gray-700 dark:text-gray-300">{{ cita.servicio }}</p>
                 </div>
             </div>
+            <div class="flex md:w-2/4 w-3/4 justify-between flex-row md:mt-0 mt-5">
             <div class="flex flex-col gap-2">
                 <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i>
                     {{ cita.name_medico }}</h3>
@@ -230,6 +231,7 @@ async function activarCita(cita) {
                 <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
                         class="fa-solid fa-info"></i></ButtonRounded>
             </div>
+            </div>
         </div>
 
         <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
@@ -239,7 +241,7 @@ async function activarCita(cita) {
     </div>
     <!-- Paginador -->
     <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex justify-between items-center h-[30px] px-10">
-        <p class="text-sm text-gray-500">
+        <p class="text-sm text-gray-500 md:block hidden">
             Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
 
         <div class="btnsPagina flex items-center gap-3">
@@ -267,7 +269,7 @@ async function activarCita(cita) {
         </div>
 
         <div class="flex gap-2 items-center">
-            <p class="text-sm text-gray-500">Número de registros</p>
+            <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
             <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
                 @change="cambiarItemsPorPagina($event.target.value)">
                 <option value="5">5</option>

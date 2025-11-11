@@ -17,6 +17,7 @@ export function useEpsBuilder({
     }
     builder
         .setFormularioFondo(true)
+        .setFormulariotamaño('SM')
         .nuevaSeccion('Formulario EPS')
         .setFormularioShow(showModificarEPS)
         .setBotones([

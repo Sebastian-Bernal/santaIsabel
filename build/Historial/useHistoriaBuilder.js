@@ -412,7 +412,7 @@ export function useHistoriaBuilder({
             component: 'GroupCampos',
             labelGroup: 'Diagnosticos',
             buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
-            tamaño: 'w-full md:col-span-2',
+            tamaño: 'w-full col-span-2',
             vmodel: 'Diagnosticos',
             value: [],
             campos: [
@@ -421,7 +421,7 @@ export function useHistoriaBuilder({
                     id: 'cie-10',
                     type: 'SelectSearch',
                     placeholder: 'CIE-10',
-                    tamaño: 'w-full',
+                    tamaño: 'w-full md:col-span-2',
                     options: CIE10,
                     opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                     seleccionarItem: seleccionarCIE_10,
@@ -437,7 +437,7 @@ export function useHistoriaBuilder({
             id: 'tipoAnalisis',
             name: 'tipoAnalisis',
             placeholder: 'Tipo de Análisis',
-            tamaño: 'w-full',
+            tamaño: 'w-full md:col-span-1 col-span-2',
             options: [
                 { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
                 { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
@@ -453,7 +453,7 @@ export function useHistoriaBuilder({
             id: 'observacion',
             name: 'observacion',
             placeholder: 'Observación',
-            tamaño: 'w-full',
+            tamaño: 'w-full md:col-span-1 col-span-2',
             minlength: 5
         })
 
@@ -464,7 +464,7 @@ export function useHistoriaBuilder({
             id: 'analisis',
             name: 'analisis',
             placeholder: 'Análisis',
-            tamaño: 'w-full md:col-span-2',
+            tamaño: 'w-full col-span-2',
             minlength: 10
         })
 
@@ -472,7 +472,8 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'Label',
             forLabel: 'rehabilitacion',
-            text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento'
+            text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento',
+            tamaño: 'w-full col-span-2',
         })
 
         // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
@@ -606,7 +607,7 @@ export function useHistoriaBuilder({
                     }
                 },
             ],
-            containerCampos: 'grid grid-cols-3 gap-2'
+            containerCampos: 'grid md:grid-cols-3 grid-cols-1 gap-2'
         })
 
         // --- Select: Condición de rehabilitación ---
@@ -627,7 +628,8 @@ export function useHistoriaBuilder({
         .addCampo({
             component: 'Label',
             forLabel: '',
-            text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo'
+            text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
+            tamaño: 'w-full col-span-2',
         })
         builder.build()
     return {

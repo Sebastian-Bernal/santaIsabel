@@ -145,7 +145,7 @@ const cerrar = () => {
                 </div>
             </div>
             <!-- Contenido HTML -->
-            <div class="scrollForm w-full gap-[15px] h-[100%] overflow-y-auto">
+            <div class="scrollForm w-full gap-[15px] max-h-[80%] overflow-y-auto">
                 <div class="p-6 bg-white text-black shadow-md">
 
                     <component v-for="component in Propiedades.components" :is="componentes[component.tipo]"
