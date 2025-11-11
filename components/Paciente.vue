@@ -34,7 +34,7 @@ onMounted(async () => {
     const EPS = await epsStore.listEPS;
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
-        value: eps.nombre,
+        value: eps.id,
     }));
 
     varView.cargando = false;

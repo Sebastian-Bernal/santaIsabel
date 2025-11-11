@@ -3210,7 +3210,7 @@ export const municipios = {
             "id": "73873000"
         }]
     }, {
-        "nombre": "Valle",
+        "nombre": "Valle del Cauca",
         "municipios": [{
             "nombre": "ALCALÁ",
             "id": "76020000"
