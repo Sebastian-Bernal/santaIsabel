@@ -38,6 +38,7 @@ onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
+    citasStore.indexDBDatos()
 
     medicosList.value = await medicosStore.listMedicos;
     const rol = sessionStorage.getItem('Rol')

@@ -354,8 +354,7 @@ const propiedades = computed(() => {
     const puedeVer = varView.getPermisos.includes('Historias_view');
     if(!puedeVer) return
     const puedePost = varView.getPermisos.includes('Historias_post')
-    // const puedePUT = varView.getPermisos.includes('Historias_put')
-    const puedePUT = false;
+    const puedePUT = varView.getPermisos.includes('Historias_put')
 
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
@@ -615,7 +614,7 @@ const propiedades = computed(() => {
                     { titulo: 'nota', value: 'Nota', tamaño: 400 },
                 ])
                 .setDatos(notas)
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNotaPDF }, puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'pdf', action: exportarNotaPDF }, puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
             )
             .addComponente('Form', propiedadesNota)

@@ -14,7 +14,7 @@ export const useMedicosStore = defineStore('Medicos', {
                 id: '',
                 name: '',
                 No_document: '',
-                tipo: '',
+                type_doc: '',
                 celular: '',
                 telefono: '',
                 nacimiento: '',
@@ -29,6 +29,7 @@ export const useMedicosStore = defineStore('Medicos', {
                 municipioLaboral: '',
                 zonaLaboral: '',
                 profesion: '',
+                estado: 1,
             }
         },
         Medicos: [] // Lista de medicos
@@ -55,10 +56,19 @@ export const useMedicosStore = defineStore('Medicos', {
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
 
-                const usuario = usuarios.find((user) => user.id === medico.id_usuario)
+                // const usuario = usuarios.find((user) => user.id === medico.id_usuario)
+                const usuario = usuarios.find((user) => {
+                    if (user.id === medico.id_usuario) {
+                        return user;
+                    } // Validar si hay usuario con id
+                    const idVacio = user.id === null || user.id === undefined || user.id === '';
+                    if (user.id_temporal === medico.id_usuario && idVacio) {
+                        return user
+                    } // Validar si hay usuario con id_temporal
+                });
 
                 if(!usuario) return
-                // usuario.id_profesional = medico.id
+
                 return {
                     ...medico,
                     ...usuario, // Agregamos los datos del usuario (o null si no se encuentra)

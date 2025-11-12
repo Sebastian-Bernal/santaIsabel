@@ -35,7 +35,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 Eps: '',
                 Regimen: '',
                 poblacionVulnerable: '',
-                estado: 'activo',
+                estado: 1,
             },
             Diagnosticos: [],
             Antecedentes: [],
@@ -69,7 +69,17 @@ export const usePacientesStore = defineStore('Pacientes', {
 
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientes.map((paciente) => {
-                const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
+
+                const usuario = usuarios.find((user) => {
+                    if (user.id === paciente.id_usuario) {
+                        return user;
+                    } // Validar si hay usuario con id
+                    const idVacio = user.id === null || user.id === undefined || user.id === '';
+                    if (user.id_temporal === paciente.id_usuario && idVacio) {
+                        return user
+                    } // Validar si hay usuario con id_temporal
+                });
+
 
                 if (usuario) {
                     return {
@@ -167,7 +177,16 @@ export const usePacientesStore = defineStore('Pacientes', {
             }
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientesFiltrados.map((paciente) => {
-                const usuario = usuarios.find((user) => user.id === paciente.id_usuario)
+
+                const usuario = usuarios.find((user) => {
+                    if (user.id === paciente.id_usuario) {
+                        return user;
+                    } // Validar si hay usuario con id
+                    const idVacio = user.id === null || user.id === undefined || user.id === '';
+                    if (user.id_temporal === paciente.id_usuario && idVacio) {
+                        return user
+                    } // Validar si hay usuario con id_temporal
+                });
 
                 if (usuario) {
                     return {
@@ -265,7 +284,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                         tipo: a.tipo,
                         descripcion: a.descripcion,
                         id_paciente: a.id_paciente,
-                    } 
+                    }
                 }
                 guardarEnDB(datosaGuardar);
             });

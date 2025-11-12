@@ -3,9 +3,13 @@ import { enviarFormularioPutEPS } from "~/Core/Empresa/Datos/Eps/PUTEps";
 import { enviarFormularioProfesion } from "~/Core/Empresa/Datos/Profesion/POSTProfesion";
 import { enviarFormularioPutProfesion } from "~/Core/Empresa/Datos/Profesion/PUTProfesion";
 import { enviarFormularioHistoria } from "~/Core/Historial/Historia/PostHistoria";
+import { enviarFormularioNota } from "~/Core/Historial/Notas/POSTNota";
+import { enviarFormularioPutNota } from "~/Core/Historial/Notas/PUTNota";
+import { enviarFormularioEliminarCita } from "~/Core/Usuarios/Cita/CancelarCita";
 import { enviarFormularioCita } from "~/Core/Usuarios/Cita/POSTCita";
 import { enviarFormularioPaciente } from "~/Core/Usuarios/Paciente/POSTPaciente";
 import { enviarFormularioPutPaciente } from "~/Core/Usuarios/Paciente/PUTPaciente";
+import { enviarFormularioProfesional } from "~/Core/Usuarios/Profesional/POSTMedico";
 import { enviarFormularioPutMedico } from "~/Core/Usuarios/Profesional/PUTMedico";
 
 async function sincronizarEntidad({
@@ -22,22 +26,24 @@ async function sincronizarEntidad({
   store.almacen = nombreEntidad;
 
   const registrosPendientes = (await store.leerdatos()).filter(r => r.sincronizado === 0);
-  console.log(registrosPendientes)
+
   if (registrosPendientes.length === 0 || !navigator.onLine) return;
 
   for (const registro of registrosPendientes) {
+
     // 2. Obtener datos relacionales si aplica
     let relacion = null;
     if (claveRelacion && nombreRelacion) {
       store.almacen = nombreRelacion;
-      relacion = (await store.leerdatos()).find(r => r.id === registro[claveRelacion]);
+      relacion = (await store.leerdatos()).find(r => r.id_temporal === registro[claveRelacion]);
     }
 
     // 3. Construir objeto completo
     const esActualizacion = !!registro.id;
     let objetoCompleto;
     try {
-      objetoCompleto = await construirObjeto(registro, relacion, esActualizacion);
+      objetoCompleto = await construirObjeto(registro, esActualizacion, relacion);
+      console.log(objetoCompleto)
     } catch (e) {
       console.error('Error construyendo objeto para sincronizar:', e);
       continue; // pasa al siguiente registro
@@ -46,26 +52,15 @@ async function sincronizarEntidad({
     const maxIntentos = 3;
     let intentos = 0;
     let exito = false;
-    // 4. Enviar a la API
-    // try {
-    //   // await enviarFuncion(objetoCompleto, true);
-    //   if (registro.id && actualizarFuncion) {
-    //     await actualizarFuncion(objetoCompleto, true);
-    //     console.log(`Registro actualizado: ${registro.id}`);
-    //   } else {
-    //     await enviarFuncion(objetoCompleto, true);
-    //     console.log(`Registro enviado: ${registro.id_temporal}`);
-    //   }
 
-    // } catch (error) {
-    //   console.error(`Error al sincronizar ${nombreEntidad} ${registro.id}:`, error);
-    // }
+    // 4. Enviar a la API
     while (intentos < maxIntentos && !exito) {
       try {
         intentos++;
         console.log(`Intento ${intentos} de sincronizar ${nombreEntidad} → id_temp: ${registro.id_temporal}`);
 
-        if (registro.id && actualizarFuncion) {
+        if (registro.id && esActualizacion) {
+          console.log('actualizando....')
           await actualizarFuncion(objetoCompleto, true);
           console.log(`✅ Actualización exitosa (${nombreEntidad}): id ${registro.id}`);
         } else {
@@ -84,7 +79,8 @@ async function sincronizarEntidad({
           await new Promise(res => setTimeout(res, delay));
         } else {
           console.error(`❌ Error definitivo al sincronizar ${nombreEntidad} ${registro.id_temporal}`);
-          window.location.reload()
+          // window.location.reload()
+          return
         }
       }
     }
@@ -99,13 +95,10 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
       construirObjeto: (registro, esActualizacion) => ({
         EPS: {
           id_temporal: registro.id_temporal,
-          ...(esActualizacion ? { id: registro.id } : {}),
+          ...(esActualizacion ? {id: registro.id} : {}),
           nombre: registro.nombre,
           codigo: registro.codigo,
-          direccion: registro.direccion,
-          telefono: registro.telefono,
-          email: registro.email,
-          website: registro.website
+          nit: registro.nit,
         }
       }),
       enviarFuncion: enviarFormulario,
@@ -135,12 +128,25 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
         }
       }),
       enviarFuncion: enviarFormularioCita,
+      actualizarFuncion: enviarFormularioEliminarCita
+    },
+    {
+      nombreEntidad: 'Nota',
+      construirObjeto: (registro, esActualizacion) => ({
+        Nota: {
+          ...registro,
+          ...(esActualizacion ? { id: registro.id } : {}),
+          id_temporal: registro.id_temporal
+        }
+      }),
+      enviarFuncion: enviarFormularioNota,
+      actualizarFuncion: enviarFormularioPutNota
     },
     {
       nombreEntidad: 'Paciente',
       claveRelacion: 'id_usuario',
       nombreRelacion: 'InformacionUser',
-      construirObjeto: (registro, InformacionUser, esActualizacion) => ({
+      construirObjeto: (registro, esActualizacion, InformacionUser,) => ({
         Paciente: {
           ...registro,
           ...(esActualizacion ? { id: registro.id } : {}),
@@ -159,8 +165,8 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
       nombreEntidad: 'Profesional',
       claveRelacion: 'id_usuario',
       nombreRelacion: 'InformacionUser',
-      construirObjeto: (registro, InformacionUser, esActualizacion) => ({
-        Paciente: {
+      construirObjeto: (registro, esActualizacion, InformacionUser) => ({
+        Profesional: {
           ...registro,
           ...(esActualizacion ? { id: registro.id } : {}),
           id_temporal: registro.id_temporal
@@ -174,12 +180,12 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
           correo: InformacionUser.correo
         }
       }),
-      enviarFuncion: enviarFormularioCita,
+      enviarFuncion: enviarFormularioProfesional,
       actualizarFuncion: enviarFormularioPutMedico
     },
     {
       nombreEntidad: 'HistoriaClinica',
-      construirObjeto: async (registro, _, esActualizacion) => {
+      construirObjeto: async (registro, esActualizacion) => {
         const store = useIndexedDBStore();
 
         // === Cargar relaciones locales ===

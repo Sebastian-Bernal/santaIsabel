@@ -25,7 +25,7 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'md:w-1/5 w-[60px] logo mb-2 select-none',
+      tamaño: 'md:w-1/6 w-[60px] logo mb-2 select-none',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({

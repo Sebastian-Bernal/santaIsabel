@@ -75,14 +75,14 @@ watch(() => {
         const seccion = seccionesBase[i];
 
         // Verifica si es una sección principal (no una acción)
-        const esAccion = /(enviar|actualizar|eliminar|leer)$/.test(seccion);
+        const esAccion = /(crear|actualizar|eliminar|leer)$/.test(seccion);
         if (esAccion) continue;
 
         const permiso = storeProfesion.Formulario.Profesion.permisos.find((s) => s === seccion);
 
         const acciones = [
             `${seccion} leer`,
-            `${seccion} enviar`,
+            `${seccion} crear`,
             `${seccion} actualizar`,
             `${seccion} eliminar`
         ];
@@ -111,6 +111,7 @@ function nuevaProfesion() {
 }
 
 function actualizarProfesion(profesion) {
+    console.log(profesion)
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id
     storeProfesion.Formulario.Profesion.id_temporal = profesion.id_temporal

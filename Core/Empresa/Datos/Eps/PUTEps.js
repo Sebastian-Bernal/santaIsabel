@@ -32,7 +32,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-    
+    console.log(datos)
     if(!reintento){
         await actualizarEnIndexedDB({
             EPS: {
@@ -48,6 +48,7 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
     const online = navigator.onLine;
     if (online) {
         try {
+            console.log('enviando', datos.EPS)
             // mandar a api
             let options = {
                 metodo: 'PUT',

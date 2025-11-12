@@ -44,7 +44,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
         switch (accion) {
             case 'leer':
                 return `${seccion}_get`;
-            case 'enviar':
+            case 'crear':
                 return `${seccion}_post`;
             case 'actualizar':
                 return `${seccion}_put`;
@@ -61,7 +61,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
         // Guardar local
         id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Profesion: {...datos.Profesion, sincronizado: 0}})));
     } else {
-        id_temporal = { data : datos.Profesional.id_temporal}
+        id_temporal = { data : datos.Profesion.id_temporal}
     }
 
     const online = navigator.onLine;

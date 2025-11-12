@@ -8,7 +8,7 @@ export const validarYEnviarActualizarProfesion = async (datos) => {
     const profesion = datos.Profesion;
 
     // 🔍 Verificar campos obligatorios
-    const camposObligatorios = ['codigo', 'nombre'];
+    const camposObligatorios = ['nombre'];
     const camposFaltantes = camposObligatorios.filter(campo => {
         const valor = profesion[campo];
         return valor === undefined || valor === null || valor === '';
@@ -39,13 +39,36 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
             Profesion: {
                 codigo: datos.Profesion.codigo,
                 nombre: datos.Profesion.nombre,
+                permisos: datos.Profesion.permisos,
                 id: datos.Profesion.id,
                 id_temporal: datos.Profesion.id_temporal,
                 sincronizado: 0
             }
         })
     }
-    
+
+    // Convertir permisos
+    datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
+        if (typeof permiso !== 'string') return permiso;
+
+        const partes = permiso.split(' ');
+        const seccion = partes.slice(0, -1).join(' ');
+        const accion = partes[partes.length - 1];
+
+        switch (accion) {
+            case 'leer':
+                return `${seccion}_get`;
+            case 'crear':
+                return `${seccion}_post`;
+            case 'actualizar':
+                return `${seccion}_put`;
+            case 'eliminar':
+                return `${seccion}_delete`;
+            default:
+                return `${permiso}_view`;
+        }
+    });
+
     const online = navigator.onLine;
     if (online) {
         try {
@@ -59,6 +82,7 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
                     id: datos.Profesion.id,
                     codigo: datos.Profesion.codigo,
                     nombre: datos.Profesion.nombre,
+                    permisos: datos.Profesion.permisos,
                 }
             }
             const respuesta = await api.functionCall(options)

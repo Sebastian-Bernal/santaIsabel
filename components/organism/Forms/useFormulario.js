@@ -165,7 +165,7 @@ export function useFormulario(props) {
                     notificaciones.options.tiempo = 1500
                     notificaciones.mensaje()
                     limpiarLocal()
-                    limpiar()
+                    // limpiar()
                 }
                 return res
             } catch (err) {
@@ -178,6 +178,7 @@ export function useFormulario(props) {
                 return false
             } finally {
                 varView.cargando = false
+                limpiar()
             }
         } else {
             console.warn(`No se encontró función de envío para '${props.Propiedades.content.storeId}'`)

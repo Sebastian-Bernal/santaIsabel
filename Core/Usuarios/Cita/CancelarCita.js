@@ -6,22 +6,24 @@ export const validarYEnviarCancelarCita = async (cita, motivo) => {
     cita.estado = 'cancelada'
     const datos = { Cita: { ...cita, motivo_cancelacion: motivo } }
 
-    return await enviarFormulario(datos);
+    return await enviarFormularioEliminarCita(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-const enviarFormulario = async (datos) => {
+export const enviarFormularioEliminarCita = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
-        Cita: {
-            ...datos.Cita,
-            sincronizado: 0
-        }
-    })));
+    if(!reintento){
+        await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+            Cita: {
+                ...datos.Cita,
+                sincronizado: 0
+            }
+        })));
+    }
 
     const online = navigator.onLine;
     if (online) {

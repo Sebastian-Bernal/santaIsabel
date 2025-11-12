@@ -216,6 +216,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
             notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
+            return true
         }
     } else {
         notificacionesStore.options.icono = 'warning'
