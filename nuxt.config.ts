@@ -2,13 +2,18 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+    ssr: false,
+  nitro: {
+    preset: 'static'
+  },
+
   runtimeConfig: {
     public: {
       // api: 'http://thesalus-api.zeus01one.com',
       // authentication: 'api/email-addresses/',
       // userProfile: 'api/v1/user-profiles',
       
-      api: 'http://127.0.0.1:8000',
+      api: 'https://api.ctsantaisabel.com',
       login: 'api/v1/login',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
