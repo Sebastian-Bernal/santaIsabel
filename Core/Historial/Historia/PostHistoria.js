@@ -13,8 +13,10 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
     datos.Analisis.fecha = calendarioStore.fechaActual;
 
+    const puedePostAnalisis = varView.getPermisos.includes('Analisis_post')
+
     // Validacion si no se registran medicamentos
-    if (datos.Plan_manejo_medicamentos?.length < 1) {
+    if (datos.Plan_manejo_medicamentos?.length < 1 && puedePostAnalisis) {
         notificacionesStore.options.icono = 'warning'
         notificacionesStore.options.title = 'Historia sin plan de medicamentos'
         notificacionesStore.options.html = '¿Deseas registrar <strong>medicamentos</strong>?'
@@ -28,7 +30,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     }
 
     // Validacion si no se registran procedimientos
-    if (datos.Plan_manejo_procedimientos?.length < 1) {
+    if (datos.Plan_manejo_procedimientos?.length < 1 && puedePostAnalisis) {
         notificacionesStore.options.icono = 'warning'
         notificacionesStore.options.title = 'Historia sin plan de procedimientos'
         notificacionesStore.options.html = '¿Deseas registrar <strong>Procedimiento</strong>?'
@@ -50,16 +52,18 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
     // Validar Analisis
     const analisis = datos.Analisis;
-    if (!analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
-    if (!analisis?.observacion) errores.push("La observación es obligatoria.");
-    if (!analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
-    if (!analisis?.analisis) errores.push("El análisis es obligatorio.");
-    if (!analisis?.tipoAnalisis) errores.push("El tipo de análisis es obligatorio.");
+    if (!analisis?.motivo && puedePostAnalisis) errores.push("El motivo de consulta es obligatorio.");
+    if (!analisis?.observacion && puedePostAnalisis) errores.push("La observación es obligatoria.");
+    if (!analisis?.tratamiento && puedePostAnalisis) errores.push("El tratamiento es obligatorio.");
+    if (!analisis?.analisis && puedePostAnalisis) errores.push("El análisis es obligatorio.");
+    if (!analisis?.tipoAnalisis && puedePostAnalisis) errores.push("El tipo de análisis es obligatorio.");
+
+    // Validar Profesional
     if (!datos.Cita?.id_medico) errores.push("El médico que registra historia es obligatorio.");
 
     // Validar Diagnosticos
-    if (!Array.isArray(datos.Diagnosticos) || datos.Diagnosticos.length === 0) {
-        errores.push("Debe ingresar al menos un diagnóstico.");
+    if (datos.Diagnosticos.length === 0 && puedePostAnalisis) {
+        errores.push("Debe haber por lo menos un diagnostico.");
     } else {
         datos.Diagnosticos.forEach((d, i) => {
             if (!d.descripcion || !d.codigo) {

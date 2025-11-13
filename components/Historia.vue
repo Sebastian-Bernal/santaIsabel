@@ -27,7 +27,7 @@ const propiedades = computed(() => {
         .addComponente('Form', builder)
     return pagina.build()
 })
-// console.log(propiedades)
+
 
 </script>
 

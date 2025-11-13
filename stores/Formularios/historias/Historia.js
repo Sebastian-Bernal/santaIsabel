@@ -140,108 +140,6 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             return datos
         },
 
-        // async indexDBDatos() {
-        //     const historias = await traerHistorias()
-        //     const historiasLocal = await this.listHistorias
-
-        //     // Crear sets para comparación rápida
-        //     const historiaIds = new Set(historiasLocal.map(h => h.id));
-
-        //     const analisisLocal = await this.listDatos(historiaIds, 'Analisis', 'id_historia')
-        //     const analisisIds = new Set(historiasLocal.map(h => h.Analisis?.id_historia));
-        //     const analisisRefIds = new Set(historiasLocal.map(h => h.Analisis?.id)); // para diagnosticos, etc.
-
-
-        //     const historiasIndexed = historias.map((data) => {
-        //         const historiaId = data.id;
-        //         const analisisId = data.analisis?.id;
-        //         const id_historia = data.analisis?.id_historia;
-
-        //         // Verificar si ya existe la historia
-        //         if (historiaIds.has(historiaId)) return null;
-
-        //         // Verificar si ya existe el análisis
-        //         if (id_historia && analisisIds.has(id_historia)) return null;
-
-        //         // Verificar si ya existen los datos dependientes
-        //         if (analisisId && analisisRefIds.has(analisisId)) return null;
-
-        //         return {
-        //             HistoriaClinica: {
-        //                 id: data.id,
-        //                 id_paciente: data.id_paciente,
-        //                 fecha_historia: data.fecha_historia,
-        //             },
-        //             Analisis: {
-        //                 id: data.analisis?.id,
-        //                 motivo: data.analisis?.motivo,
-        //                 observacion: data.analisis?.observacion,
-        //                 tratamiento: data.analisis?.tratamiento,
-        //                 analisis: data.analisis?.analisis,
-        //                 tipoAnalisis: data.analisis?.tipoAnalisis,
-        //                 id_medico: data.analisis?.id_medico,
-        //                 id_historia: data.analisis?.id_historia,
-        //             },
-        //             Diagnosticos: data.analisis?.diagnosticos?.map((d) => ({
-        //                 id: d.id,
-        //                 descripcion: d.descripcion,
-        //                 codigo: d.codigo,
-        //                 id_analisis: d.id_analisis
-        //             })) || [],
-        //             Enfermedad: data.analisis?.enfermedad
-        //                 ? {
-        //                     id: data.analisis.enfermedad.id,
-        //                     valor: data.analisis.enfermedad.valor,
-        //                     fecha_diagnostico: data.analisis.enfermedad.fecha_diagnostico,
-        //                     fecha_rehabilitacion: data.analisis.enfermedad.fecha_rehabilitacion,
-        //                     id_paciente: data.analisis.enfermedad.id_paciente,
-        //                     id_analisis: data.analisis.enfermedad.id_analisis
-        //                 }
-        //                 : null,
-        //             ExamenFisico: data.analisis?.examen_fisico
-        //                 ? {
-        //                     id: data.analisis.examen_fisico.id,
-        //                     Peso: data.analisis.examen_fisico.peso,
-        //                     altura: data.analisis.examen_fisico.altura,
-        //                     otros: data.analisis.examen_fisico.otros,
-        //                     signosVitales: { ...data.analisis.examen_fisico.signosVitales },
-        //                     id_analisis: data.analisis.examen_fisico.id_analisis
-        //                 }
-        //                 : null,
-        //             Plan_manejo_medicamentos: data.analisis?.medicamentos?.map((m) => ({
-        //                 id: m.id,
-        //                 medicamento: m.medicamento,
-        //                 dosis: m.dosis,
-        //                 cantidad: m.cantidad,
-        //                 id_analisis: m.id_analisis
-        //             })) || [],
-        //             Plan_manejo_procedimientos: data.analisis?.procedimientos?.map((p) => ({
-        //                 id: p.id,
-        //                 procedimiento: p.procedimiento,
-        //                 codigo: p.codigo,
-        //                 fecha: p.fecha,
-        //                 id_analisis: p.id_analisis
-        //             })) || [],
-        //             Plan_manejo_insumos: data.analisis?.insumos?.map((i) => ({
-        //                 id: i.id,
-        //                 insumo: i.insumo,
-        //                 cantidad: i.cantidad,
-        //                 id_analisis: i.id_analisis,
-        //             })) || [],
-        //             Plan_manejo_equipos: data.analisis?.equipos?.map((e) => ({
-        //                 id: e.id,
-        //                 equipo: e.equipo,
-        //                 cantidad: e.cantidad,
-        //                 id_analisis: e.id_analisis
-        //             })) || [],
-        //         }
-        //     }).filter(item => item !== null);
-
-        //     historiasIndexed?.map((item) => {
-        //         guardarEnDB(item)
-        //     })
-        // },
-
         async indexDBDatos() {
             const store = useIndexedDBStore();
 
@@ -249,14 +147,22 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             // Cargar datos locales por tabla
             const historiasLocal = await this.listHistorias;
-            const analisisLocal = await store.leerdatos('Analisis');
-            const diagnosticosLocal = await store.leerdatos('Diagnosticos');
-            const enfermedadLocal = await store.leerdatos('Enfermedad');
-            const examenFisicoLocal = await store.leerdatos('ExamenFisico');
-            const medicamentosLocal = await store.leerdatos('Plan_manejo_medicamentos');
-            const procedimientosLocal = await store.leerdatos('Plan_manejo_procedimientos');
-            const insumosLocal = await store.leerdatos('Plan_manejo_insumos');
-            const equiposLocal = await store.leerdatos('Plan_manejo_equipos');
+            store.almacen = 'Analisis';
+            const analisisLocal = await store.leerdatos();
+            store.almacen = 'Diagnosticos';
+            const diagnosticosLocal = await store.leerdatos();
+            store.almacen = 'Enfermedad';
+            const enfermedadLocal = await store.leerdatos();
+            store.almacen = 'ExamenFisico';
+            const examenFisicoLocal = await store.leerdatos();
+            store.almacen = 'Plan_manejo_medicamentos';
+            const medicamentosLocal = await store.leerdatos();
+            store.almacen = 'Plan_manejo_procedimientos';
+            const procedimientosLocal = await store.leerdatos();
+            store.almacen = 'Plan_manejo_insumos';
+            const insumosLocal = await store.leerdatos();
+            store.almacen = 'Plan_manejo_equipos';
+            const equiposLocal = await store.leerdatos();
 
             // Crear mapas por ID
             const mapHistoria = new Map(historiasLocal.map(h => [h.id, h]));

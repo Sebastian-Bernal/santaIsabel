@@ -19,6 +19,7 @@ const showVer = ref(false)
 
 async function llamadatos() {
     Users.value = await listUsers.value;
+    await UsersStore.indexDBDatos()
 }
 // Actualizar pagina cunso se agrega Nuevo Usuario
 watch(() => varView.showNuevoUser, async () => {

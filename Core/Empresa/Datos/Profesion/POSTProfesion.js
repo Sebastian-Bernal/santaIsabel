@@ -67,13 +67,14 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
     const online = navigator.onLine;
     if (online) {
         try {
+            console.log(datos)
             // Mandar a API
             let options = {
                 metodo: 'POST',
                 url: config.public.professions,
                 token: token,
                 body: {
-                    codigo: datos.Profesion.codigo || null,
+                    codigo: datos.Profesion.codigo,
                     nombre: datos.Profesion.nombre,
                     permisos: datos.Profesion.permisos,
                 }

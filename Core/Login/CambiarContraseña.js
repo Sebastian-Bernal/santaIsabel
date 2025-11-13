@@ -70,7 +70,11 @@ const enviarFormulario = async (datos) => {
         return true
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // await guardarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos invalidos';
+            notificacionesStore.options.texto = 'Intenta nuevamente con el codigo de tu correo!'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
         }
     } else {
         notificacionesStore.options.icono = 'warning'

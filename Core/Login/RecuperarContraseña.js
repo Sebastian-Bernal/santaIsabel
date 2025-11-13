@@ -7,6 +7,8 @@ export const validarYEnviarRecuperarContraseña = async (datos) => {
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormulario = async (datos) => {
+    const varView = useVarView()
+    varView.cargando = true
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
@@ -35,6 +37,8 @@ const enviarFormulario = async (datos) => {
             }
         } catch (error) {
             console.error('Fallo al enviar.', error);
+        } finally {
+            varView.cargando = false
         }
     } else {
         notificacionesStore.options.icono = 'warning'
@@ -42,6 +46,7 @@ const enviarFormulario = async (datos) => {
         notificacionesStore.options.texto = 'Recuperar contraseña cuando halla internet'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
+        varView.cargando = false
         return true
     }
 };

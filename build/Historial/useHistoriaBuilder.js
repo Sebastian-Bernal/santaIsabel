@@ -20,6 +20,7 @@ export function useHistoriaBuilder({
 
     const PacientesList = ref([])
     const id_paciente = ref(null)
+    const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
     onMounted(async () => {
         varView.cargando = true
@@ -219,6 +220,7 @@ export function useHistoriaBuilder({
             ]
         })
 
+
         .nuevaSeccion('Consulta')
         .addCampo({
             component: 'Label',
@@ -266,6 +268,21 @@ export function useHistoriaBuilder({
             ],
             containerCampos: 'w-full'
         })
+    if (!puedePostAnalisis.value) {
+        builder
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.observacion',
+                type: 'text',
+                id: 'observacion',
+                name: 'observacion',
+                placeholder: 'Observación',
+                tamaño: 'w-full col-span-2',
+                minlength: 5
+            })
+    }
+
+    builder
         .nuevaSeccion('Examen Fisico')
         .addCampo({
             component: 'Label',
@@ -405,233 +422,237 @@ export function useHistoriaBuilder({
             }
         })
 
-        .nuevaSeccion('Analisis')
-        // 📌 Sección: Diagnósticos
+    if (puedePostAnalisis.value) {
+        builder
+            .nuevaSeccion('Analisis')
+            // 📌 Sección: Diagnósticos
 
-        .addCampo({
-            component: 'GroupCampos',
-            labelGroup: 'Diagnosticos',
-            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
-            tamaño: 'w-full col-span-2',
-            vmodel: 'Diagnosticos',
-            value: [],
-            campos: [
-                {
-                    name: 'descripcion',
-                    id: 'cie-10',
-                    type: 'SelectSearch',
-                    placeholder: 'CIE-10',
-                    tamaño: 'w-full md:col-span-2',
-                    options: CIE10,
-                    opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                    seleccionarItem: seleccionarCIE_10,
-                },
-
-            ]
-        })
-
-        // --- Select: Tipo de Análisis ---
-        .addCampo({
-            component: 'Select',
-            vmodel: 'Analisis.tipoAnalisis',
-            id: 'tipoAnalisis',
-            name: 'tipoAnalisis',
-            placeholder: 'Tipo de Análisis',
-            tamaño: 'w-full md:col-span-1 col-span-2',
-            options: [
-                { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
-                { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
-                { text: 'Cambios críticos', value: 'Cambios criticos' }
-            ]
-        })
-
-        // --- Input: Observación ---
-        .addCampo({
-            component: 'Input',
-            vmodel: 'Analisis.observacion',
-            type: 'text',
-            id: 'observacion',
-            name: 'observacion',
-            placeholder: 'Observación',
-            tamaño: 'w-full md:col-span-1 col-span-2',
-            minlength: 5
-        })
-
-        // --- Textarea: Análisis ---
-        .addCampo({
-            component: 'Textarea',
-            vmodel: 'Analisis.analisis',
-            id: 'analisis',
-            name: 'analisis',
-            placeholder: 'Análisis',
-            tamaño: 'w-full col-span-2',
-            minlength: 10
-        })
-
-        // --- Label: Tratamiento ---
-        .addCampo({
-            component: 'Label',
-            forLabel: 'rehabilitacion',
-            text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento',
-            tamaño: 'w-full col-span-2',
-        })
-
-        // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
-
-        .addCampo({
-            component: 'GroupCampos',
-            labelGroup: 'Equipos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
-            tamaño: 'w-full md:col-span-2',
-            vmodel: 'Plan_manejo_equipos',
-            value: [],
-            campos: [
-                {
-                    name: 'descripcion',
-                    id: 'descripcionEquipo',
-                    type: 'Input',
-                    placeholder: 'Descripcion',
-                    tamaño: 'w-full',
-                },
-                {
-                    name: 'uso',
-                    id: 'usoEquipos',
-                    type: 'Input',
-                    placeholder: 'Uso',
-                    tamaño: 'w-full',
-                },
-            ],
-            containerCampos: 'grid grid-cols-2 gap-2'
-        })
-
-        .addCampo({
-            component: 'GroupCampos',
-            labelGroup: 'Insumos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente } },],
-            tamaño: 'w-full md:col-span-2',
-            vmodel: 'Plan_manejo_insumos',
-            value: [],
-            campos: [
-                {
-                    name: 'nombre',
-                    id: 'nombreInsumo',
-                    type: 'Input',
-                    placeholder: 'Nombre',
-                    tamaño: 'w-full',
-                },
-                {
-                    name: 'cantidad',
-                    id: 'cantidadInsumo',
-                    type: 'Input',
-                    placeholder: 'Cantidad (número)',
-                    tamaño: 'w-full',
-                },
-            ],
-            containerCampos: 'grid grid-cols-2 gap-2'
-        })
-
-        .addCampo({
-            component: 'GroupCampos',
-            labelGroup: 'Medicamentos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente } },],
-            tamaño: 'w-full md:col-span-2',
-            vmodel: 'Plan_manejo_medicamentos',
-            value: [],
-            campos: [
-                {
-                    name: 'medicamento',
-                    id: 'Medicamento',
-                    type: 'Input',
-                    placeholder: 'Medicamento',
-                    tamaño: 'w-full',
-                },
-                {
-                    name: 'dosis',
-                    id: 'dosis',
-                    type: 'Input',
-                    placeholder: 'Dosis',
-                    tamaño: 'w-full',
-                },
-                {
-                    name: 'cantidad',
-                    id: 'cantidad',
-                    type: 'Input',
-                    placeholder: 'Cantidad de dias (número)',
-                    tamaño: 'w-full',
-                },
-            ],
-            containerCampos: 'grid grid-cols-3 gap-2'
-        })
-
-        .addCampo({
-            component: 'GroupCampos',
-            labelGroup: 'Procedimientos (opcional)',
-            buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', fecha: '', id_paciente: id_paciente } },],
-            tamaño: 'w-full md:col-span-2 mb-5',
-            vmodel: 'Plan_manejo_procedimientos',
-            value: [],
-            campos: [
-                {
-                    name: 'procedimiento',
-                    id: 'descripcionProcedimiento',
-                    type: 'SelectSearch',
-                    placeholder: 'Procedimiento',
-                    tamaño: 'w-full',
-                    UpperCase: true,
-                    options: CUPS,
-                    opciones: [{ value: 'nombreProcedimiento' }, { text: 'Codigo', value: 'codigoCups' }],
-                    seleccionarItem: (item) => { historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.nombreProcedimiento 
-                        historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.codigoCups
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Diagnosticos',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Diagnosticos',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'cie-10',
+                        type: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
                     },
-                },
-                {
-                    name: 'codigo',
-                    id: 'codigo',
-                    type: 'Input',
-                    placeholder: 'Codigo',
-                    tamaño: 'w-full',
-                },
-                {
-                    name: 'fecha',
-                    id: 'fecha',
-                    type: 'Input',
-                    placeholder: 'Fecha',
-                    tamaño: 'w-full',
-                    slot: {
-                        input: {
-                            type: 'date',
-                            id: 'fechaInicialDate',
-                            name: 'fechaInicialDate',
+
+                ]
+            })
+
+            // --- Select: Tipo de Análisis ---
+            .addCampo({
+                component: 'Select',
+                vmodel: 'Analisis.tipoAnalisis',
+                id: 'tipoAnalisis',
+                name: 'tipoAnalisis',
+                placeholder: 'Tipo de Análisis',
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                options: [
+                    { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
+                    { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
+                    { text: 'Cambios críticos', value: 'Cambios criticos' }
+                ]
+            })
+
+            // --- Input: Observación ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.observacion',
+                type: 'text',
+                id: 'observacion',
+                name: 'observacion',
+                placeholder: 'Observación',
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                minlength: 5
+            })
+
+            // --- Textarea: Análisis ---
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Analisis.analisis',
+                id: 'analisis',
+                name: 'analisis',
+                placeholder: 'Análisis',
+                tamaño: 'w-full col-span-2',
+                minlength: 10
+            })
+
+            // --- Label: Tratamiento ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'rehabilitacion',
+                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento',
+                tamaño: 'w-full col-span-2',
+            })
+
+            // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Equipos (opcional)',
+                buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
+                tamaño: 'w-full md:col-span-2',
+                vmodel: 'Plan_manejo_equipos',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'descripcionEquipo',
+                        type: 'Input',
+                        placeholder: 'Descripcion',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'uso',
+                        id: 'usoEquipos',
+                        type: 'Input',
+                        placeholder: 'Uso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-2'
+            })
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Insumos (opcional)',
+                buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente } },],
+                tamaño: 'w-full md:col-span-2',
+                vmodel: 'Plan_manejo_insumos',
+                value: [],
+                campos: [
+                    {
+                        name: 'nombre',
+                        id: 'nombreInsumo',
+                        type: 'Input',
+                        placeholder: 'Nombre',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'cantidad',
+                        id: 'cantidadInsumo',
+                        type: 'Input',
+                        placeholder: 'Cantidad (número)',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-2'
+            })
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Medicamentos (opcional)',
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente } },],
+                tamaño: 'w-full md:col-span-2',
+                vmodel: 'Plan_manejo_medicamentos',
+                value: [],
+                campos: [
+                    {
+                        name: 'medicamento',
+                        id: 'Medicamento',
+                        type: 'Input',
+                        placeholder: 'Medicamento',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'dosis',
+                        id: 'dosis',
+                        type: 'Input',
+                        placeholder: 'Dosis',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'cantidad',
+                        id: 'cantidad',
+                        type: 'Input',
+                        placeholder: 'Cantidad de dias (número)',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'grid grid-cols-3 gap-2'
+            })
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Procedimientos (opcional)',
+                buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', fecha: '', id_paciente: id_paciente } },],
+                tamaño: 'w-full md:col-span-2 mb-5',
+                vmodel: 'Plan_manejo_procedimientos',
+                value: [],
+                campos: [
+                    {
+                        name: 'procedimiento',
+                        id: 'descripcionProcedimiento',
+                        type: 'SelectSearch',
+                        placeholder: 'Procedimiento',
+                        tamaño: 'w-full',
+                        UpperCase: true,
+                        options: CUPS,
+                        opciones: [{ value: 'nombreProcedimiento' }, { text: 'Codigo', value: 'codigoCups' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.nombreProcedimiento
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.codigoCups
                         },
-                        inputClass: 'w-[20px] '
-                    }
-                },
-            ],
-            containerCampos: 'grid md:grid-cols-3 grid-cols-1 gap-2'
-        })
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'codigo',
+                        type: 'Input',
+                        placeholder: 'Codigo',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'fecha',
+                        id: 'fecha',
+                        type: 'Input',
+                        placeholder: 'Fecha',
+                        tamaño: 'w-full',
+                        slot: {
+                            input: {
+                                type: 'date',
+                                id: 'fechaInicialDate',
+                                name: 'fechaInicialDate',
+                            },
+                            inputClass: 'w-[20px] '
+                        }
+                    },
+                ],
+                containerCampos: 'grid md:grid-cols-3 grid-cols-1 gap-2'
+            })
 
-        // --- Select: Condición de rehabilitación ---
-        .addCampo({
-            component: 'Select',
-            vmodel: 'Analisis.tratamiento',
-            id: 'rehabilitacion',
-            name: 'rehabilitacion',
-            placeholder: 'Condición de rehabilitación',
-            tamaño: 'w-full md:col-span-2',
-            options: [
-                { text: 'Total o Parcial', value: 'Total o Parcial' },
-                { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-            ]
-        })
+            // --- Select: Condición de rehabilitación ---
+            .addCampo({
+                component: 'Select',
+                vmodel: 'Analisis.tratamiento',
+                id: 'rehabilitacion',
+                name: 'rehabilitacion',
+                placeholder: 'Condición de rehabilitación',
+                tamaño: 'w-full md:col-span-2',
+                options: [
+                    { text: 'Total o Parcial', value: 'Total o Parcial' },
+                    { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                    { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                ]
+            })
 
-        .addCampo({
-            component: 'Label',
-            forLabel: '',
-            text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
-            tamaño: 'w-full col-span-2',
-        })
-        builder.build()
+            .addCampo({
+                component: 'Label',
+                forLabel: '',
+                text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
+                tamaño: 'w-full col-span-2',
+            })
+    }
+    builder.build()
     return {
         builder,
         PacientesList,

@@ -54,6 +54,9 @@ watch(() => showVer.value,
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true;
+    await pacientesStore.indexDBDatos().then((res)=>{
+        refresh.value++
+    })
     await llamadatos();
     const EPS = await epsStore.listEPS;
 
@@ -61,6 +64,7 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
+
     varView.cargando = false;
 });
 

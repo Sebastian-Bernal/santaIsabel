@@ -45,9 +45,12 @@ const activePdfNotas = ref(false)
 const propiedadesHistoriaPDF = ref({})
 const activePdfHistoria = ref(false)
 
+const puedePostAnalisis = ref(Boolean)
+
 async function llamadatos() {
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
+    await historiasStore.indexDBDatos()
 }
 // Watchers para actualizar informacion
 watch(() => show.value,
@@ -253,6 +256,7 @@ function nuevaNota() {
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
     notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
     notasStore.Formulario.Nota.id_paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
+    console.log(historiasStore.Formulario.HistoriaClinica)
     showNota.value = true
 }
 
@@ -312,8 +316,10 @@ function estadoSemaforo(fila) {
         return 'Verde'
     } else if (fila.tipoAnalisis === 'Recomendaciones Adicionales') {
         return 'Naranja'
-    } else {
+    } else if(fila.tipoAnalisis === 'Cambios criticos') {
         return 'Rojo'
+    } else {
+        return ''
     }
 }
 
@@ -353,8 +359,10 @@ const propiedades = computed(() => {
 
     const puedeVer = varView.getPermisos.includes('Historias_view');
     if(!puedeVer) return
-    const puedePost = varView.getPermisos.includes('Historias_post')
-    const puedePUT = varView.getPermisos.includes('Historias_put')
+    // const puedePost = varView.getPermisos.includes('Historias_post')
+    // const puedePUT = varView.getPermisos.includes('Historias_put')
+    const puedePUT = false
+    puedePostAnalisis.value = varView.getPermisos.includes('Diagnosticos_view')
 
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
@@ -381,7 +389,7 @@ const propiedades = computed(() => {
         `
         return [contenido]
     });
-
+console.log('analisis', analisis.value)
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistoriass',
         storePinia: 'Historias',
@@ -588,7 +596,7 @@ const propiedades = computed(() => {
                 .setColumnas([
                     { titulo: 'motivo', value: 'Motivo', tamaño: 250, ordenar: true },
                     { titulo: 'observacion', value: 'Observacion', tamaño: 250, ordenar: true },
-                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
+                    // puedePostAnalisis.value ? { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 } : { titulo: 'ta', value: 'Estado'},
                 ])
                 .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
                 .setDatos(analisis)
@@ -682,7 +690,6 @@ const propiedades = computed(() => {
         )
     return pagina.build()
 })
-// console.log(propiedades)
 
 </script>
 

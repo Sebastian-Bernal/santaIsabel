@@ -65,6 +65,45 @@ onMounted(async () => {
     Profesiones.value = await storeProfesion.listProfesion
 
     secciones.value = await storeProfesion.listSecciones()
+    secciones.value = [
+        "Configuracion",
+        "Configuracion leer",
+        "Configuracion crear",
+        "Datos",
+        "Datos leer",
+        "Datos crear",
+        "Datos actualizar",
+        "Usuarios",
+        "Usuarios leer",
+        "Usuarios crear",
+        "Historias",
+        "Historias leer",
+        "Historias crear",
+        "Historias actualizar",
+        "Diagnosticos",
+        "Notas",
+        "Notas leer",
+        "Notas crear",
+        "Pacientes",
+        "Pacientes leer",
+        "Pacientes crear",
+        "Pacientes actualizar",
+        "Pacientes eliminar",
+        "Profesional",
+        "Profesional leer",
+        "Profesional crear",
+        "Profesional actualizar",
+        "Profesional eliminar",
+        "Citas",
+        "Citas leer",
+        "Citas crear",
+        "Citas actualizar",
+        "Citas eliminar",
+    ]
+
+    await storeEPS.indexDBDatos()
+    await storeProfesion.indexDBDatos()
+    refresh.value++
     varView.cargando = false
 });
 
@@ -89,7 +128,7 @@ watch(() => {
 
         const yaInsertadas = acciones.every((accion) => secciones.value.includes(accion));
 
-        if (permiso && !yaInsertadas) {
+        if (permiso && !yaInsertadas && permiso !== 'Diagnosticos') {
             const index = secciones.value.indexOf(seccion);
             secciones.value.splice(index + 1, 0, ...acciones);
         }
@@ -102,6 +141,7 @@ watch(() => {
         }
     }
 });
+
 
 // Funciones Actualizar Profesion
 
@@ -179,7 +219,7 @@ const propiedades = computed(() => {
 
     // Verifica permisos específicos
     const puedeVer = varView.getPermisos.includes('Datos_view');
-    if(!puedeVer) return
+    if (!puedeVer) return
     const puedePostEPS = varView.getPermisos.includes('Datos_post');
     const puedePutEPS = varView.getPermisos.includes('Datos_put');
     const puedePostProfesion = varView.getPermisos.includes('Datos_post');

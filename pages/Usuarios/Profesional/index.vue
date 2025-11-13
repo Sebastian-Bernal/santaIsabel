@@ -49,6 +49,9 @@ onMounted(async () => {
         return { text: profesion.nombre, value: profesion.id }
     });
 
+    await medicosStore.indexDBDatos()
+    refresh.value++
+
     varView.cargando = false
 });
 
