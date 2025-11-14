@@ -128,7 +128,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             }
             const tx = this.bd.transaction(this.almacen, 'readwrite');
             const store = tx.objectStore(this.almacen);
-            console.log(this.almacen)
+
             const result = await new Promise((resolve, reject) => {
                 const request = store.add(aguardar);
                 request.onsuccess = () => resolve(request.result); // El ID generado

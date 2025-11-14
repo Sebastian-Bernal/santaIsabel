@@ -34,6 +34,13 @@ watch(() => show.value,
     }
 );
 
+watch(() => varView.showNuevaHistoria,
+    async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+);
+
 onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario

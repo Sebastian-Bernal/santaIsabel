@@ -369,7 +369,7 @@ export function useHistoriaBuilder({
             type: 'text',
             id: 'otros',
             name: 'otros',
-            placeholder: 'Otros',
+            placeholder: 'Otros (opcional)',
             tamaño: 'w-full col-span-1'
         })
 
@@ -626,8 +626,23 @@ export function useHistoriaBuilder({
                             inputClass: 'w-[20px] '
                         }
                     },
+                    // {
+                    //     name: 'fecha',
+                    //     id: 'fecha',
+                    //     type: 'Input',
+                    //     placeholder: 'Numero de Veces',
+                    //     tamaño: 'w-full',
+                    //     slot: {
+                    //         input: {
+                    //             type: 'date',
+                    //             id: 'fechaInicialDate',
+                    //             name: 'fechaInicialDate',
+                    //         },
+                    //         inputClass: 'w-[20px] '
+                    //     }
+                    // },
                 ],
-                containerCampos: 'grid md:grid-cols-3 grid-cols-1 gap-2'
+                containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
             })
 
             // --- Select: Condición de rehabilitación ---

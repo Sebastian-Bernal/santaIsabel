@@ -48,7 +48,8 @@ export function useVerHistoriaBuilder({
                 options: [
                     { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
                     { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
-                    { text: 'Cambios críticos', value: 'Cambios criticos' }
+                    { text: 'Cambios críticos', value: 'Cambios criticos' },
+                    { text: 'Estado inhabilitado', value: '' }
                 ]
             })
 
@@ -297,11 +298,18 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full'
             })
             .addCampo({
-                component: 'Input',
+                component: 'Select',
                 vmodel: 'Analisis.tipoAnalisis',
                 id: 'tipoAnalisis',
                 name: 'tipoAnalisis',
-                tamaño: 'w-full'
+                tamaño: 'w-full',
+                placeholder: 'Estado inhabilitado',
+                options: [
+                    { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
+                    { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
+                    { text: 'Cambios críticos', value: 'Cambios criticos' },
+                    { text: 'Estado inhabilitado', value: '' }
+                ]
             })
 
             .addCampo({

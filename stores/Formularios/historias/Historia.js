@@ -36,7 +36,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 id: '',
                 Peso: '',
                 altura: '',
-                otros: '',
+                otros: 'N/A',
                 id_historia: '',
                 signosVitales: {
                     ta: '',

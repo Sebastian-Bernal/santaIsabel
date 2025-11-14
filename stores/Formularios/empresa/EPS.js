@@ -22,9 +22,8 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
 
     getters: {
         async listEPS(state) {
-            const store = useIndexedDBStore()
-            store.almacen = 'EPS'
-            const EPS = await store.leerdatos()
+            const apiRest = useApiRest()
+            const EPS = await apiRest.getData('EPS', 'eps')
 
             const EPSActivas = EPS.filter(p => p.estado === 1)
             state.EPSs = EPSActivas
@@ -45,8 +44,8 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
 
             const EPSIndexed = eps?.map((data) => ({
                 EPS: {
-                    id: data.id, 
-                    nombre: data.nombre, 
+                    id: data.id,
+                    nombre: data.nombre,
                     codigo: data.codigo,
                     nit: data.nit,
                     estado: data.estado,

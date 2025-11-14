@@ -26,6 +26,7 @@ const pacientesList = ref([])
 const medicosList = ref([])
 const showCita = ref(false)
 const refresh = ref(1)
+const profesional = ref([])
 
 watch(() => showCita.value,
     () => {
@@ -67,7 +68,7 @@ onMounted(async () => {
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos
         medicosList.value = profesionales
-        const profesional = profesionales.find(p => p.id_usuario === usuario.id)
+        profesional.value = profesionales.find(p => p.id_usuario === usuario.id)
 
         // Citas list
         const listCitas = await citasStore.listCitas();
@@ -76,12 +77,11 @@ onMounted(async () => {
         citas = listCitas.filter((cita) => {
             const fechaCita = new Date(cita.fecha);
             return (
-                cita.id_medico === profesional.id_profesional 
-                && fechaCita > hoy
+                cita.id_medico === profesional.value.id_profesional
             )
         }).slice(0,4)
         
-        citasStore.Formulario.id_medico = profesional?.id_profesional
+        citasStore.Formulario.id_medico = profesional?.value.id_profesional
         citasStore.Formulario.name_medico = usuario.name
     }
 
@@ -195,7 +195,6 @@ function DashboardRol(rol, Historias = [], citas) {
         ];
     } else if (rol === 'Profesional') {
         const usuario = varView.getUser
-
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
@@ -205,15 +204,15 @@ function DashboardRol(rol, Historias = [], citas) {
                 title: ``,
             },
             footer: {
-                status: `Profesion: Odontologia`,
+                status: `Profesion: ${profesional.value.profesion}`,
                 statusClass: 'text-gray-200 font-black!',
-                buttons: [
-                    {
-                        text: 'Actualizar Informacion',
-                        class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl cursor-pointer',
-                        icon: 'fa-solid fa-file'
-                    }
-                ]
+                // buttons: [
+                //     {
+                //         text: 'Actualizar Informacion',
+                //         class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl cursor-pointer',
+                //         icon: 'fa-solid fa-file'
+                //     }
+                // ]
             }
         }]
 
