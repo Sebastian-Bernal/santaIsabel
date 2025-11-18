@@ -7,6 +7,7 @@ import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/Calendari
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { decryptData } from '~/composables/Formulario/crypto';
 import { ref, onMounted } from 'vue'
 
 const varView = useVarView()
@@ -41,6 +42,40 @@ watch(() => varView.showNuevaHistoria,
     }
 );
 
+watch(() => citasStore.Formulario.Cita.servicio,
+    async () => {
+        if (citasStore.Formulario.Cita.servicio === 'Terapia') {
+            varView.cargando = true
+
+            const api = useApiRest()
+            const config = useRuntimeConfig()
+            const token = decryptData(sessionStorage.getItem('token'))
+
+            let options = {
+                metodo: 'POST',
+                url: config.public.diasAsignadosRestantes,
+                token: token,
+                body: {
+                    id_paciente: citasStore.Formulario.Cita.id_paciente
+                }
+            }
+            const respuesta = await api.functionCall(options)
+            console.log(respuesta.message)
+            if (respuesta.success) {
+                // varView.tipoConsulta = 'Terapia'
+                console.log(respuesta.data)
+            }
+            const tratamientodiv = document.getElementById('tratamientos');
+            if (tratamientodiv) {
+                tratamientodiv.innerHTML = `<p>${respuesta.message}</p>`;
+            } else {
+                tratamientodiv.innerHTML = ``;
+            }
+            varView.cargando = false
+        }
+    }
+);
+
 onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
@@ -48,12 +83,12 @@ onMounted(async () => {
     await citasStore.indexDBDatos()
     refresh.value++
 
-    medicosList.value = await medicosStore.listMedicos;
+    medicosList.value = await medicosStore.listMedicos();
     const rol = sessionStorage.getItem('Rol')
     if (rol === 'Profesional') {
-      pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
+        pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
     } else {
-      pacientesList.value = await pacientesStore.listPacientes;
+        pacientesList.value = await pacientesStore.listPacientes();
     }
 });
 
@@ -92,7 +127,7 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
 
     const puedeVer = varView.getPermisos.includes('Citas_view');
-    if(!puedeVer) return
+    if (!puedeVer) return
     const puedePost = varView.getPermisos.includes('Citas_post')
 
     pagina

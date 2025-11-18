@@ -11,6 +11,7 @@ export function useFormularioCitaBuilder({
   pacientesList
 }) {
   const citasStore = useCitasStore()
+  const varView = useVarView()
 
   function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
@@ -125,6 +126,7 @@ export function useFormularioCitaBuilder({
       options: [
         { text: 'Medicina General', value: 'Medicina General' },
         { text: 'Psicología', value: 'Psicología' },
+        { text: 'Terapia', value: 'Terapia' },
         { text: 'Odontología', value: 'Odontología' },
         { text: 'Pediatría', value: 'Pediatría' },
         { text: 'Ginecología', value: 'Ginecología' },
@@ -141,6 +143,9 @@ export function useFormularioCitaBuilder({
         { text: 'Otro', value: 'Otro' },
       ],
       vmodel: 'Cita.servicio',
+      slot: {
+        tooltip: `<div id="tratamientos" class="text-red-300 text-xs mt-1"></div>`
+      },
     })
     .addCampo({
       component: 'Select',

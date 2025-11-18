@@ -57,7 +57,7 @@ export const useCitasStore = defineStore('Citas', {
             if (rol === 'Profesional') {
                 const idUsuario = varView.getUser.id;
                 const profesionalStore = useMedicosStore()
-                const profesionales = await profesionalStore.listMedicos
+                const profesionales = await profesionalStore.listMedicos()
                 const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
 
                 citas = citas.filter(cita => {

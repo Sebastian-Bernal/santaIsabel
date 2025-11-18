@@ -3,7 +3,6 @@ import Pagina from "~/components/organism/Pagina/Pagina.vue";
 
 import { ref, onMounted, } from "vue";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
-import { storeToRefs } from "pinia";
 import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
@@ -17,13 +16,12 @@ const pacientesStore = usePacientesStore();
 const usuariosStore = useUsersStore();
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
-const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
 
 const props = defineProps(['showPaciente']);
 
 async function llamadatos() {
-    pacientes.value = await listPacientes.value;
+    pacientes.value = await pacientesStore.listPacientes();
 }
 
 // Cargar los pacientes desde el store

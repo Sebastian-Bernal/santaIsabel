@@ -146,7 +146,7 @@ async function showObservacion(cita) {
 }
 
 async function activarCita(cita) {
-    const pacientes = await pacientesStore.listPacientes
+    const pacientes = await pacientesStore.listPacientes()
 
     const pacienteCita = pacientes.filter(data => {
         return data.id_paciente === cita.id_paciente

@@ -17,7 +17,7 @@ const medicosList = ref([]);
 const pacientesList = ref([]);
 
 onMounted(async () => {
-    medicosList.value = await medicosStore.listMedicos;
+    medicosList.value = await medicosStore.listMedicos();
     pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
     console.log(pacientesList.value)
     // Autocompletar Campos

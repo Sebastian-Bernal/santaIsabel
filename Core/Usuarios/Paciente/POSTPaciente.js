@@ -9,7 +9,7 @@ import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS.js';
 export const validarYEnviarNuevoPaciente = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const storePacientes = usePacientesStore();
-    const pacientes = await storePacientes.listPacientes;
+    const pacientes = await storePacientes.listPacientes();
 
     // 🔍 Validar campos obligatorios
     const camposObligatorios = [
@@ -90,26 +90,6 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    let id_temporal = {}
-    if (!reintento) {
-        // Guardar local
-        const datosLocal = {
-            InformacionUser: {
-                ...datos.InformacionUser,
-                sincronizado: 0
-            },
-            Paciente: {
-                ...datos.Paciente,
-                Eps: mapaEPS[datos.Paciente.id_eps],
-                sincronizado: 0
-            }
-        }
-
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Paciente")
-    } else {
-        id_temporal = { User: datos.InformacionUser.id_temporal, Paciente: datos.Paciente.id_temporal }
-    }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -145,12 +125,10 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                 // Actualizar local
                 const datosActualizadosLocal = {
                     InformacionUser: {
-                        id_temporal: id_temporal.User,
                         ...respuesta.informacion,
                         sincronizado: 1
                     },
                     Paciente: {
-                        id_temporal: id_temporal.Paciente,
                         id: respuesta.paciente.id,
                         id_eps: respuesta.paciente.id_eps,
                         Eps: mapaEPS[respuesta.paciente.id_eps],
@@ -164,7 +142,7 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     },
                 }
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
                 return true
             }
         } catch (error) {
@@ -176,12 +154,42 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
             notificacionesStore.simple()
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            if (!reintento) {
+                const datosActualizadosLocal = {
+                    InformacionUser: {
+                        ...respuesta.informacion,
+                        sincronizado: 1
+                    },
+                    Paciente: {
+                        id: respuesta.paciente.id,
+                        id_eps: respuesta.paciente.id_eps,
+                        Eps: mapaEPS[respuesta.paciente.id_eps],
+                        id_usuario: respuesta.paciente.id_infoUsuario,
+                        genero: respuesta.paciente.genero,
+                        sexo: respuesta.paciente.sexo,
+                        Regimen: respuesta.paciente.regimen,
+                        poblacionVulnerable: respuesta.paciente.vulnerabilidad,
+                        estado: 1,
+                        sincronizado: 1,
+                    },
+                }
+
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };
 

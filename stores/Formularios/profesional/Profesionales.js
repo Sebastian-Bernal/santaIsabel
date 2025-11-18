@@ -36,29 +36,41 @@ export const useMedicosStore = defineStore('Medicos', {
     }),
 
     getters: {
-        async listMedicos(state) {
+        
+        async tablaMedicos() {
             const store = useIndexedDBStore()
-            const usersStore = useUsersStore()
-            const profesionesStore = useDatosProfesionStore()
-
             store.almacen = 'Profesional'
-            const todosLosMedicos = await store.leerdatos()
-            const medicos = await todosLosMedicos.filter(m => m.estado === 1)
-
-            const usuarios = await usersStore.listUsers
+            const medicos = await store.leerdatos()
+            
+            const medicosActivos = medicos.filter((medico) => {
+                return medico.estado === 1
+            })
+            
+            return medicosActivos
+        },
+    },
+    
+    actions: {
+        async listMedicos() {
+            const profesionesStore = useDatosProfesionStore()
+            const apiRest = useApiRest()
+    
+            const medicos = await apiRest.getData('Profesional', 'profesionals')
+            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+    
             const profesiones = await profesionesStore.listProfesion
-
+    
             const mapaProfesion = profesiones.reduce((acc, profesion) => {
                 acc[profesion.id] = profesion.nombre;
                 return acc;
             }, {});
-
+    
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
-
+    
                 // const usuario = usuarios.find((user) => user.id === medico.id_usuario)
                 const usuario = usuarios.find((user) => {
-                    if (user.id === medico.id_usuario) {
+                    if (user.id === medico.id_infoUsuario) {
                         return user;
                     } // Validar si hay usuario con id
                     const idVacio = user.id === null || user.id === undefined || user.id === '';
@@ -66,9 +78,9 @@ export const useMedicosStore = defineStore('Medicos', {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });
-
+    
                 if(!usuario) return
-
+    
                 return {
                     ...medico,
                     ...usuario, // Agregamos los datos del usuario (o null si no se encuentra)
@@ -78,29 +90,14 @@ export const useMedicosStore = defineStore('Medicos', {
                     profesion: mapaProfesion[medico.id_profesion] || medico.id_profesion,
                 }
             })
-
-            state.Medicos = usuariosProfesionales
+    
+            this.Medicos = usuariosProfesionales
             return usuariosProfesionales
         },
 
-        async tablaMedicos() {
-            const store = useIndexedDBStore()
-            store.almacen = 'Profesional'
-            const medicos = await store.leerdatos()
-
-            const medicosActivos = medicos.filter((medico) => {
-                return medico.estado === 1
-            })
-
-            return medicosActivos
-        },
-    },
-
-    actions: {
-
         async indexDBDatos() {
             const profesionales = await traerProfesionales()
-            const profesionalesLocal = await this.listMedicos
+            const profesionalesLocal = await this.listMedicos()
 
             const profesionesStore = useDatosProfesionStore()
             const profesiones = await profesionesStore.listProfesion
@@ -117,28 +114,13 @@ export const useMedicosStore = defineStore('Medicos', {
             const profesionalesIndexed = profesionales.map((data) => ({
                 Profesional: {
                     id: data.id,
-                    id_usuario: data.info_usuario.id,
+                    id_usuario: data.id_infoUsuario,
                     id_profesion: data.id_profesion,
                     profesion: mapaProfesion[data.id_profesion],
                     zonaLaboral: data.zona_laboral,
                     departamentoLaboral: data.departamento_laboral,
                     municipioLaboral: data.municipio_laboral,
                     estado: data.estado,
-                },
-                InformacionUser: {
-                    id: data.info_usuario.id,
-                    name: data.info_usuario.name,
-                    No_document: data.info_usuario.No_document,
-                    type_doc: data.info_usuario.type_doc,
-                    celular: data.info_usuario.celular,
-                    telefono: data.info_usuario.telefono,
-                    nacimiento: data.info_usuario.nacimiento,
-                    direccion: data.info_usuario.direccion,
-                    municipio: data.info_usuario.municipio,
-                    departamento: data.info_usuario.departamento,
-                    barrio: data.info_usuario.barrio,
-                    zona: data.info_usuario.zona,
-                    estado: data.info_usuario.estado,
                 }
             }));
 

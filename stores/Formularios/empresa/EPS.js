@@ -33,6 +33,14 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
 
     actions: {
 
+        async listEPSes() {
+            const apiRest = useApiRest()
+            const EPS = await apiRest.getData('EPS', 'eps')
+
+            const EPSActivas = EPS.filter(p => p.estado === 1)
+            return EPSActivas
+        },
+
         async indexDBDatos() {
             const eps = await traerdatosEPS()
             const epsLocal = await this.listEPS

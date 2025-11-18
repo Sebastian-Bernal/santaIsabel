@@ -275,7 +275,7 @@ function cerrarNota() {
 // PDF
 async function exportarNotaPDF(data) {
     // mapCampos(data, notasStore.Formulario)
-    const pacientes = await pacientesStore.listPacientes
+    const pacientes = await pacientesStore.listPacientes()
 
     const dataPaciente = pacientes.filter(user => {
         return user.id_paciente === data.id_paciente
@@ -288,7 +288,7 @@ async function exportarNotaPDF(data) {
 async function exportarHistoriaPDF() {
     // mapCampos(data, notasStore.Formulario)
     const paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
-    const pacientes = await pacientesStore.listPacientes
+    const pacientes = await pacientesStore.listPacientes()
 
     const dataPaciente = pacientes.filter(user => {
         return user.id_paciente === paciente
@@ -389,7 +389,7 @@ const propiedades = computed(() => {
         `
         return [contenido]
     });
-console.log('analisis', analisis.value)
+
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistoriass',
         storePinia: 'Historias',

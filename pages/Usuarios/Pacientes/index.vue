@@ -23,7 +23,6 @@ const pacientesStore = usePacientesStore();
 const usuariosStore = useUsersStore()
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
-const { listPacientes } = storeToRefs(pacientesStore);
 const pacientes = ref([]);
 const refresh = ref(1);
 const activePdfPaciente = ref(false)
@@ -33,7 +32,7 @@ const show = ref(false);
 const showVer = ref(false);
 
 async function llamadatos() {
-    pacientes.value = await listPacientes.value;
+    pacientes.value = await pacientesStore.listPacientes();
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
@@ -54,9 +53,7 @@ watch(() => showVer.value,
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true;
-    await pacientesStore.indexDBDatos().then((res)=>{
-        refresh.value++
-    })
+
     await llamadatos();
     const EPS = await epsStore.listEPS;
 

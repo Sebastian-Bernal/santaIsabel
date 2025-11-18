@@ -31,6 +31,10 @@ const emit = defineEmits(['update:modelValue']);
                 {{ option.text }}
             </option>
     </select>
+
+    <!-- Slot (opcional) -->
+    <div v-html="Propiedades.slot?.tooltip"></div>
+    
     </div>
 
 </template>

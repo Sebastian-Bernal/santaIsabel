@@ -56,7 +56,7 @@ onMounted(async () => {
 
         // Profesionales list
         const profesionalesStore = useMedicosStore()
-        const profesionales = await profesionalesStore.listMedicos
+        const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
 
     } else if (rol.value === 'Profesional'){
@@ -66,7 +66,7 @@ onMounted(async () => {
 
         // Profesionales list
         const profesionalesStore = useMedicosStore()
-        const profesionales = await profesionalesStore.listMedicos
+        const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
         profesional.value = profesionales.find(p => p.id_usuario === usuario.id)
 

@@ -24,7 +24,7 @@ export function useHistoriaBuilder({
 
     onMounted(async () => {
         varView.cargando = true
-        PacientesList.value = await pacienteStore.listPacientes;
+        PacientesList.value = await pacienteStore.listPacientes();
         varView.cargando = false
     });
 
@@ -585,7 +585,7 @@ export function useHistoriaBuilder({
             .addCampo({
                 component: 'GroupCampos',
                 labelGroup: 'Procedimientos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', fecha: '', id_paciente: id_paciente } },],
+                buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', id_medico: '', id_paciente: id_paciente } },],
                 tamaño: 'w-full md:col-span-2 mb-5',
                 vmodel: 'Plan_manejo_procedimientos',
                 value: [],
@@ -598,49 +598,40 @@ export function useHistoriaBuilder({
                         tamaño: 'w-full',
                         UpperCase: true,
                         options: CUPS,
-                        opciones: [{ value: 'nombreProcedimiento' }, { text: 'Codigo', value: 'codigoCups' }],
+                        opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
                         seleccionarItem: (item) => {
-                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.nombreProcedimiento
-                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.codigoCups
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
                         },
                     },
                     {
                         name: 'codigo',
                         id: 'codigo',
-                        type: 'Input',
+                        type: 'SelectSearch',
                         placeholder: 'Codigo',
+                        tamaño: 'w-full',
+                        UpperCase: true,
+                        options: CUPS,
+                        opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
+                            historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
+                        },
+                    },
+                    {
+                        name: 'dias_asignados',
+                        id: 'dias_asignados',
+                        type: 'Input',
+                        placeholder: 'Numero de Veces',
                         tamaño: 'w-full',
                     },
                     {
-                        name: 'fecha',
-                        id: 'fecha',
+                        name: 'id_medico',
+                        id: 'id_medico',
                         type: 'Input',
-                        placeholder: 'Fecha',
+                        placeholder: 'Profesional',
                         tamaño: 'w-full',
-                        slot: {
-                            input: {
-                                type: 'date',
-                                id: 'fechaInicialDate',
-                                name: 'fechaInicialDate',
-                            },
-                            inputClass: 'w-[20px] '
-                        }
                     },
-                    // {
-                    //     name: 'fecha',
-                    //     id: 'fecha',
-                    //     type: 'Input',
-                    //     placeholder: 'Numero de Veces',
-                    //     tamaño: 'w-full',
-                    //     slot: {
-                    //         input: {
-                    //             type: 'date',
-                    //             id: 'fechaInicialDate',
-                    //             name: 'fechaInicialDate',
-                    //         },
-                    //         inputClass: 'w-[20px] '
-                    //     }
-                    // },
                 ],
                 containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
             })

@@ -8,7 +8,6 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
-import { storeToRefs } from 'pinia';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
 import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/DELETEMedico';
@@ -18,7 +17,6 @@ const notificaciones = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 const profesionStore = useDatosProfesionStore()
 const usuariosStore = useUsersStore()
-const { listMedicos } = storeToRefs(medicosStore);
 const medicos = ref([]);
 const profesiones = ref([]);
 const refresh = ref(1);
@@ -26,7 +24,7 @@ const show = ref(false)
 const showVer = ref(false)
 
 async function llamadatos() {
-    medicos.value = await listMedicos.value;
+    medicos.value = await medicosStore.listMedicos();
 }
 // Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async () => {
@@ -49,7 +47,6 @@ onMounted(async () => {
         return { text: profesion.nombre, value: profesion.id }
     });
 
-    await medicosStore.indexDBDatos()
     refresh.value++
 
     varView.cargando = false

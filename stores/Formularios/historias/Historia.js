@@ -69,7 +69,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
         async datosHistoria() {
             // Traer pacientes
             const pacienteStore = usePacientesStore()
-            const pacientes = await pacienteStore.listPacientes
+            const pacientes = await pacienteStore.listPacientes()
 
             const datos = [];
             const historiasPacientes = []
@@ -108,7 +108,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 // Volver a llamar si hay datos incompletos
                 historias = await this.listHistorias;
             }
-            const pacientes = await pacientesStore.listPacientes
+            const pacientes = await pacientesStore.listPacientes()
 
             historias = historias.map((historia) => {
                 const paciente = pacientes.find(p => p.id_paciente == historia.id_paciente)

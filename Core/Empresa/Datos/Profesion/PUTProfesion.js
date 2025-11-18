@@ -33,20 +33,6 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    if(!reintento){
-        // Guardar local
-        await actualizarEnIndexedDB({
-            Profesion: {
-                codigo: datos.Profesion.codigo,
-                nombre: datos.Profesion.nombre,
-                permisos: datos.Profesion.permisos,
-                id: datos.Profesion.id,
-                id_temporal: datos.Profesion.id_temporal,
-                sincronizado: 0
-            }
-        })
-    }
-
     // Convertir permisos
     datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
         if (typeof permiso !== 'string') return permiso;
@@ -72,7 +58,6 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
     const online = navigator.onLine;
     if (online) {
         try {
-
             // mandar a api
             let options = {
                 metodo: 'PUT',
@@ -91,15 +76,17 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
                 // Actualizar local
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     Profesion: {
-                        codigo: datos.Profesion.codigo,
-                        nombre: datos.Profesion.nombre,
-                        id: datos.Profesion.id,
+                        codigo: respuesta.data.codigo,
+                        nombre: respuesta.data.nombre,
+                        permisos: respuesta.data.permisos,
+                        id: respuesta.data.id,
                         id_temporal: datos.Profesion.id_temporal,
                         sincronizado: 1
                     }
                 })));
                 return true
             }
+            
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'

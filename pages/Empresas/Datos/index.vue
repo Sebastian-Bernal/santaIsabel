@@ -26,8 +26,8 @@ const secciones = ref([])
 const refresh = ref(1)
 
 async function llamadatos() {
-    EPSdata.value = await storeEPS.listEPS
-    Profesiones.value = await storeProfesion.listProfesion
+    EPSdata.value = await storeEPS.listEPSes()
+    Profesiones.value = await storeProfesion.listProfesiones()
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
@@ -151,7 +151,6 @@ function nuevaProfesion() {
 }
 
 function actualizarProfesion(profesion) {
-    console.log(profesion)
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id
     storeProfesion.Formulario.Profesion.id_temporal = profesion.id_temporal

@@ -113,7 +113,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
     // Validar Procedimientos
     datos.Plan_manejo_procedimientos.forEach((p, i) => {
-        if (!p.procedimiento || !p.codigo || !p.fecha) {
+        if (!p.procedimiento || !p.codigo || !p.id_medico) {
             errores.push(`Procedimiento ${i + 1} incompleto.`);
         }
     });
@@ -198,7 +198,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
         Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => ({
             procedimiento: p.procedimiento,
             codigo: p.codigo,
-            fecha: p.fecha
+            dias_asignados: p.dias_asignados,
+            id_medico: p.id_medico
         })),
         Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
             nombre: i.nombre,
@@ -225,25 +226,25 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar Local
-    let ids_temporal = {}
-    if (!reintento) {
-        ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
-    } else {
-        ids_temporal = {
-            HistoriaClinica: datos.HistoriaClinica.id_temporal,
-            Analisis: datos.Analisis.id_temporal,
-            Diagnosticos: datos.Diagnosticos.map(d => d.id_temporal),
-            Antecedentes: datos.Antecedentes.map(a => a.id_temporal),
-            Enfermedad: datos.Enfermedad.id_temporal,
-            ExamenFisico: datos.ExamenFisico.id_temporal,
-            Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => m.id_temporal),
-            Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => p.id_temporal),
-            Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => i.id_temporal),
-            Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => e.id_temporal),
-            Cita: datos.Cita.id_temporal
-        };
-    }
+    // // Guardar Local
+    // let ids_temporal = {}
+    // if (!reintento) {
+    //     ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
+    // } else {
+    //     ids_temporal = {
+    //         HistoriaClinica: datos.HistoriaClinica.id_temporal,
+    //         Analisis: datos.Analisis.id_temporal,
+    //         Diagnosticos: datos.Diagnosticos.map(d => d.id_temporal),
+    //         Antecedentes: datos.Antecedentes.map(a => a.id_temporal),
+    //         Enfermedad: datos.Enfermedad.id_temporal,
+    //         ExamenFisico: datos.ExamenFisico.id_temporal,
+    //         Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => m.id_temporal),
+    //         Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => p.id_temporal),
+    //         Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => i.id_temporal),
+    //         Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => e.id_temporal),
+    //         Cita: datos.Cita.id_temporal
+    //     };
+    // }
 
     const online = navigator.onLine;
     if (online) {
@@ -301,7 +302,8 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
                         procedimiento: p.procedimiento,
                         codigo: p.codigo,
-                        fecha: p.fecha
+                        id_medico: p.id_medico,
+                        dias_asignados: p.dias_asignados,
                     })),
                     Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
                         nombre: i.nombre,
@@ -426,13 +428,11 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
                 return true
             } else {
                 console.log(respuesta)
             }
-            // await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'

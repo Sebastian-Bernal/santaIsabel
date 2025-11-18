@@ -32,9 +32,6 @@ export const useUsersStore = defineStore('Users', {
         async listUsers(state) {
             const store = useIndexedDBStore()
 
-            if(navigator.onLine){
-                
-            }
             store.almacen = 'InformacionUser'
             const informacionUsers = await store.leerdatos()
 

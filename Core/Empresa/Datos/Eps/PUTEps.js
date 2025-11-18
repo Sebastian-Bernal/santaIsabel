@@ -4,7 +4,7 @@ import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarActualizarEps = async (datos) => {
-const notificacionesStore = useNotificacionesStore();
+    const notificacionesStore = useNotificacionesStore();
     const eps = datos.EPS;
 
     // 🔍 Validar campos obligatorios
@@ -27,28 +27,15 @@ const notificacionesStore = useNotificacionesStore();
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-export const enviarFormularioPutEPS = async (datos, reintento=false) => {
+export const enviarFormularioPutEPS = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-    console.log(datos)
-    if(!reintento){
-        await actualizarEnIndexedDB({
-            EPS: {
-                ...datos.EPS,
-                id_temporal: datos.EPS.id_temporal,
-                id: datos.EPS.id,
-                estado: 1,
-                sincronizado: 0
-            }
-        })
-    }
 
     const online = navigator.onLine;
     if (online) {
         try {
-            console.log('enviando', datos.EPS)
             // mandar a api
             let options = {
                 metodo: 'PUT',
@@ -62,13 +49,15 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
                 }
             }
             const respuesta = await api.functionCall(options)
-            console.log(respuesta)
+
             if (respuesta.success) {
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     EPS: {
                         ...datos.EPS,
                         id: respuesta.data.id,
-                        id_temporal: datos.EPS.id_temporal,
+                        nombre: respuesta.data.nombre,
+                        codigo: respuesta.data.codigo,
+                        nit: datos.EPS.nit,
                         estado: 1,
                         sincronizado: 1
                     }
@@ -85,11 +74,30 @@ export const enviarFormularioPutEPS = async (datos, reintento=false) => {
             return true
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
-        notificacionesStore.options.texto = 'en desarrollo'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+
+        try {
+            await actualizarEnIndexedDB({
+                EPS: {
+                    ...datos.EPS,
+                    id_temporal: datos.EPS.id_temporal,
+                    id: datos.EPS.id,
+                    estado: 1,
+                    sincronizado: 0
+                }
+            })
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
+        
     }
 };

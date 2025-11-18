@@ -21,12 +21,9 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
 
     getters: {
         async listProfesion(state) {
+            console.log('trayendo datos')
             const apiRest = useApiRest()
             const Profesiones = await apiRest.getData('Profesion', 'professions')
-            console.log(Profesiones)
-            // const store = useIndexedDBStore()
-            // store.almacen = 'Profesion'
-            // const Profesiones = await store.leerdatos()
 
             state.Profesiones = Profesiones
             return Profesiones
@@ -34,6 +31,12 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
     },
 
     actions: {
+        async listProfesiones() {
+            const apiRest = useApiRest()
+            const Profesiones = await apiRest.getData('Profesion', 'professions')
+
+            return Profesiones
+        },
 
         async listSecciones() {
             let secciones = await traerdatosSecciones()

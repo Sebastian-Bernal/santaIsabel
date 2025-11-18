@@ -9,7 +9,7 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.j
 export const validarYEnviarNuevoMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const storeMedicos = useMedicosStore();
-    const medicos = await storeMedicos.listMedicos;
+    const medicos = await storeMedicos.listMedicos();
 
     const info = datos.InformacionUser;
     const profesional = datos.Profesional;
@@ -120,26 +120,26 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
         return acc;
     }, {});
 
-    let id_temporal = {}
-    if (!reintento) {
-        // Guardar local
-        const datosLocal = {
-            InformacionUser: {
-                ...datos.InformacionUser,
-                correo: datos.User.correo,
-                sincronizado: 0
-            },
-            Profesional: {
-                ...datos.Profesional,
-                profesion: mapaProfesion[datos.Profesional.profesion],
-                sincronizado: 0
-            }
-        }
+    // let id_temporal = {}
+    // if (!reintento) {
+    //     // Guardar local
+    //     const datosLocal = {
+    //         InformacionUser: {
+    //             ...datos.InformacionUser,
+    //             correo: datos.User.correo,
+    //             sincronizado: 0
+    //         },
+    //         Profesional: {
+    //             ...datos.Profesional,
+    //             profesion: mapaProfesion[datos.Profesional.profesion],
+    //             sincronizado: 0
+    //         }
+    //     }
 
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
-    } else {
-        id_temporal = { User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal }
-    }
+    //     id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
+    // } else {
+    //     id_temporal = { User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal }
+    // }
 
     const online = navigator.onLine;
     if (online) {
@@ -176,7 +176,6 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                 // Actualizar local
                 const datosActualizadosLocal = {
                     InformacionUser: {
-                        id_temporal: id_temporal.User,
                         sincronizado: 1,
                         id: respuesta.informacion.id,
                         name: respuesta.informacion.name,
@@ -193,7 +192,6 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                         estado: respuesta.informacion.estado,
                     },
                     Profesional: {
-                        id_temporal: id_temporal.Profesional,
                         sincronizado: 1,
                         id: respuesta.profesional.id,
                         id_usuario: respuesta.profesional.id_infoUsuario,
@@ -205,7 +203,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                         estado: 1,
                     },
                 }
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
                 return true
             }
 

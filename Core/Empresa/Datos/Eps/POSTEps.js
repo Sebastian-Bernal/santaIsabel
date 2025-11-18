@@ -34,13 +34,13 @@ export const enviarFormulario = async (datos, reintento = false) => {
     const token = decryptData(sessionStorage.getItem('token'))
 
     // guardar local
-    let id_temporal = {}
-    if(!reintento){
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0, estado: 1}})));
-    } else {
-        id_temporal.data = datos.EPS.id_temporal
-    }
-    
+    // let id_temporal = {}
+    // if(!reintento){
+    //     id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0, estado: 1}})));
+    // } else {
+    //     id_temporal.data = datos.EPS.id_temporal
+    // }
+
     const online = navigator.onLine;
     if (online) {
         try {
@@ -58,11 +58,10 @@ export const enviarFormulario = async (datos, reintento = false) => {
             }
             const respuesta = await api.functionCall(options)
 
-            if(respuesta.success){
+            if (respuesta.success) {
                 // Actualizar local
                 const datosActualizadosLocal = {
                     EPS: {
-                        id_temporal: id_temporal.data,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         nombre: respuesta.data.nombre,
@@ -71,24 +70,43 @@ export const enviarFormulario = async (datos, reintento = false) => {
                         estado: 1,
                     }
                 }
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
-                console.log('datos actualizados')
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                console.log('datos guardados')
                 return true
             }
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, intente nuevamente'
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
             console.error('Fallo al enviar. Guardado localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
-        notificacionesStore.options.texto = 'en desarrollo'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            const datosActualizadosLocal = {
+                EPS: {
+                    sincronizado: 1,
+                    id: respuesta.data.id,
+                    nombre: respuesta.data.nombre,
+                    codigo: respuesta.data.codigo,
+                    nit: respuesta.data.nit,
+                    estado: 1,
+                }
+            }
+            await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

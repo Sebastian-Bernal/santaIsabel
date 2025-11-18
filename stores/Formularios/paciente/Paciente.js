@@ -43,35 +43,47 @@ export const usePacientesStore = defineStore('Pacientes', {
     }),
 
     getters: {
-        async listPacientes(state) {
+        
+        async tablaPacientes() {
+            const store = useIndexedDBStore()
+            store.almacen = 'Paciente'
+            const pacientes = await store.leerdatos()
+            
+            
+            const pacientesActivos = pacientes.filter((paciente) => {
+                return paciente.estado === 'activo'
+            })
+            
+            return pacientesActivos
+        },
+    },
+    
+    actions: {
+
+        async listPacientes() {
             const varView = useVarView()
             const rol = varView.getRol
-
+            const apiRest = useApiRest()
+            const epsStore = useDatosEPSStore()
             if (rol === 'Profesional') {
                 return await this.listPacientesAtendidos()
             }
-
-            const store = useIndexedDBStore()
-            const usersStore = useUsersStore()
-            const epsStore = useDatosEPSStore()
-
-            store.almacen = 'Paciente'
-            const todosLosPacientes = await store.leerdatos()
-            const pacientes = todosLosPacientes.filter(p => p.estado === 1)
-
-            const usuarios = await usersStore.listUsers
-            const EPSs = await epsStore.listEPS
-
+    
+            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+            const pacientes = await apiRest.getData('Paciente', 'pacientes')
+    
+            const EPSs = await epsStore.listEPSes()
+    
             const mapaEPS = EPSs.reduce((acc, eps) => {
                 acc[eps.id] = eps.nombre;
                 return acc;
             }, {});
-
+    
             // Asociar cada paciente con su usuario correspondiente
             const usuariosPacientes = pacientes.map((paciente) => {
-
+    
                 const usuario = usuarios.find((user) => {
-                    if (user.id === paciente.id_usuario) {
+                    if (user.id === paciente.id_infoUsuario) {
                         return user;
                     } // Validar si hay usuario con id
                     const idVacio = user.id === null || user.id === undefined || user.id === '';
@@ -79,8 +91,8 @@ export const usePacientesStore = defineStore('Pacientes', {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });
-
-
+    
+    
                 if (usuario) {
                     return {
                         ...paciente,
@@ -98,26 +110,10 @@ export const usePacientesStore = defineStore('Pacientes', {
                     }
                 }
             })
-
-            state.Pacientes = usuariosPacientes
+    
+            this.Pacientes = usuariosPacientes
             return usuariosPacientes
         },
-
-        async tablaPacientes() {
-            const store = useIndexedDBStore()
-            store.almacen = 'Paciente'
-            const pacientes = await store.leerdatos()
-
-
-            const pacientesActivos = pacientes.filter((paciente) => {
-                return paciente.estado === 'activo'
-            })
-
-            return pacientesActivos
-        },
-    },
-
-    actions: {
 
         async listDatos(id, Tabla) {
             // Traer datos de indexedDB
@@ -160,7 +156,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 const usuario = varView.getUser;
                 const idUsuario = usuario.id;
                 const profesionalStore = useMedicosStore()
-                const profesionales = await profesionalStore.listMedicos
+                const profesionales = await profesionalStore.listMedicos()
                 const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
 
                 const pacientesAtendidos = [
@@ -210,49 +206,21 @@ export const usePacientesStore = defineStore('Pacientes', {
 
         async indexDBDatos() {
             const pacientes = await traerPacientes()
-            const pacientesLocal = await this.listPacientes
-
-            // Crear un conjunto de IDs locales para comparación rápida
-            const idsLocales = new Set(
-                pacientesLocal.map(p => `${p.id_paciente}-${p.id_usuario}`)
-            );
 
             const pacientesIndexed = pacientes.map((data) => ({
                 Paciente: {
                     id: data.id,
-                    id_usuario: data.info_usuario.id,
+                    id_infoUsuario: data.infoUsuario,
                     id_eps: data.id_eps,
                     genero: data.genero,
                     sexo: data.sexo,
-                    Regimen: data.regimen,
-                    poblacionVulnerable: data.vulnerabilidad,
+                    regimen: data.regimen,
+                    vulnerabilidad: data.vulnerabilidad,
                     estado: data.estado,
-                },
-                InformacionUser: {
-                    id: data.info_usuario.id,
-                    name: data.info_usuario.name,
-                    No_document: data.info_usuario.No_document,
-                    type_doc: data.info_usuario.type_doc,
-                    celular: data.info_usuario.celular,
-                    telefono: data.info_usuario.telefono,
-                    nacimiento: data.info_usuario.nacimiento,
-                    direccion: data.info_usuario.direccion,
-                    municipio: data.info_usuario.municipio,
-                    departamento: data.info_usuario.departamento,
-                    barrio: data.info_usuario.barrio,
-                    zona: data.info_usuario.zona,
-                    estado: data.info_usuario.estado,
                 },
             }));
 
-            // Filtrar los que no están en local
-            const nuevosPacientes = pacientesIndexed.filter(item => {
-                const key = `${item.Paciente.id}-${item.InformacionUser.id}`;
-                return !idsLocales.has(key);
-            });
-
-            // Guardar solo los nuevos
-            nuevosPacientes.forEach(item => {
+            pacientesIndexed.forEach(item => {
                 guardarEnDB(item);
             });
 

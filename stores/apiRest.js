@@ -50,7 +50,7 @@ export const useApiRest = defineStore('apiRest', {
             if (opcion.body) {
                 options.body = JSON.stringify(opcion.body)
             }
-            // console.log(url, options)
+            console.log(url, options)
             try {
                 const response = await fetch(url.toString(), options)
                 if (response.status === 200 || response.status === 201 || response.status === 204) {
@@ -68,6 +68,7 @@ export const useApiRest = defineStore('apiRest', {
         },
 
         async getData(almacen, nombre) {
+            console.log('actualizando datos')
             let datos = [];
             const token = decryptData(sessionStorage.getItem('token'));
             const config = useRuntimeConfig()
@@ -84,13 +85,14 @@ export const useApiRest = defineStore('apiRest', {
 
                     if (respuesta?.success && Array.isArray(respuesta.data)) {
                         datos = await respuesta.data;
+
                         // guardar en IndexedDB para uso offline
                         const store = useIndexedDBStore();
                         store.almacen = almacen;
                         await store.borrartodo();
-                        console.log(datos)
+                        console.log(almacen, datos)
+
                         for (const item of datos) {
-                            // console.log(item)
                             await store.guardardatosID({ ...item })
                         };
                     }
