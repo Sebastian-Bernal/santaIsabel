@@ -11,7 +11,7 @@ function esHTML(texto) {
 </script>
 
 <template>
-  <table class="w-full text-sm mb-4" :class="Propiedades.container" :style="Propiedades.styles" >
+  <table class="w-full text-sm mb-4" :class="[Propiedades.container, {'border-custom' : props.Propiedades.border === true}]" :style="Propiedades.styles" >
     <thead>
       <tr>
         <th v-for="col in Propiedades.columnas" :key="col" class="px-2 py-1 ">
@@ -30,3 +30,10 @@ function esHTML(texto) {
     </tbody>
   </table>
 </template>
+
+<style scoped>
+.border-custom th, td {
+  border: 1px solid #000;
+}
+
+</style>

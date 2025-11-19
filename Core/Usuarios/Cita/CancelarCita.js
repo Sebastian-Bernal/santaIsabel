@@ -16,15 +16,6 @@ export const enviarFormularioEliminarCita = async (datos, reintento = false) => 
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    if(!reintento){
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
-            Cita: {
-                ...datos.Cita,
-                sincronizado: 0
-            }
-        })));
-    }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -45,7 +36,6 @@ export const enviarFormularioEliminarCita = async (datos, reintento = false) => 
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Cita: {
-                        id_temporal: datos.Cita.id_temporal,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
@@ -58,7 +48,6 @@ export const enviarFormularioEliminarCita = async (datos, reintento = false) => 
                         hora: respuesta.data.hora,
                         motivo_cancelacion: respuesta.data.motivo_cancelacion,
                         estado: respuesta.data.estado,
-                        sincronizado: 1,
                     }
                 }
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));

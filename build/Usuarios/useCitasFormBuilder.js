@@ -8,7 +8,9 @@ export function useFormularioCitaBuilder({
   cerrarModal,
   show,
   medicosList,
-  pacientesList
+  pacientesList,
+  optionsTratamientos,
+  showTratamientos
 }) {
   const citasStore = useCitasStore()
   const varView = useVarView()
@@ -170,6 +172,19 @@ export function useFormularioCitaBuilder({
       ],
       vmodel: 'Cita.motivo',
     })
+    if(showTratamientos.value){
+      builder
+      .addCampo({
+        component: 'Select',
+        placeholder: 'Tratamientos activos',
+        id: 'tratamientos',
+        name: 'tratamientos',
+        tamaño: 'w-full',
+        options: optionsTratamientos,
+        vmodel: 'Cita.id_procedimiento',
+      })
+    }
+    builder
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',

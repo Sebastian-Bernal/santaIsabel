@@ -32,19 +32,10 @@ export const useCitasStore = defineStore('Citas', {
 
         async listCitas() {
             const varView = useVarView()
-            const store = useIndexedDBStore();
-            store.almacen = 'Cita';
-            let citas = await store.leerdatos();
+            const apiRest = useApiRest()
 
-            // Validar que todos los objetos tengan el campo fecha_historia
-            const faltanFechas = citas.some(h => !h.fecha || typeof h.fecha !== 'string');
+            let citas = await apiRest.getData('Cita', 'citas')
 
-            if (faltanFechas) {
-                // Volver a llamar si hay datos incompletos
-                store.almacen = 'Cita';
-                citas = await store.leerdatos();
-            }
-            // Ordenar por fecha y hora
             citas.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);
                 const fechaB = new Date(`${b.fecha}T${b.hora}`);

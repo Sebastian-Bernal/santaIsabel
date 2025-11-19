@@ -44,6 +44,10 @@ export async function traerDatos() {
     
         const softwareStore = useSoftwareStore()
         await softwareStore.indexDBDatos()
+
+        const apiRest = useApiRest()
+        const terapias = await apiRest.getData('Terapia', 'terapias')
+        console.log(terapias)
     } catch (error){
         console.log(error)
         return false

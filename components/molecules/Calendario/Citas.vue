@@ -158,6 +158,12 @@ async function activarCita(cita) {
     historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
 
     historiasStore.Formulario.Cita = cita
+    varView.tipoConsulta = cita.servicio
+    if(cita.servicio === 'Terapia'){
+        historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
+        historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
+        historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
+    }
     varView.showNuevaHistoria = true
 }
 

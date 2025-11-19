@@ -10,6 +10,11 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
+
+    if(varView.tipoConsulta === 'Terapia'){
+        return await enviarFormularioTerapia(datos)
+    }
+
     datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
     datos.Analisis.fecha = calendarioStore.fechaActual;
 
@@ -209,6 +214,16 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             descripcion: e.descripcion,
             uso: e.uso
         })),
+        Terapia: {
+            sesion: datos.Terapia.sesion,
+            objetivos: datos.Terapia.objetivos,
+            fecha: datos.Terapia.fecha,
+            hora: datos.Terapia.hora,
+            evolucion: datos.Terapia.evolucion,
+            id_paciente: datos.Terapia.id_paciente,
+            id_profesional: datos.Terapia.id_profesional,
+            id_procedimiento: datos.Terapia.id_procedimiento,
+        },
         Cita: {
             id: datos.Cita.id,
             ...datos.Cita
@@ -225,26 +240,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-
-    // // Guardar Local
-    // let ids_temporal = {}
-    // if (!reintento) {
-    //     ids_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica")
-    // } else {
-    //     ids_temporal = {
-    //         HistoriaClinica: datos.HistoriaClinica.id_temporal,
-    //         Analisis: datos.Analisis.id_temporal,
-    //         Diagnosticos: datos.Diagnosticos.map(d => d.id_temporal),
-    //         Antecedentes: datos.Antecedentes.map(a => a.id_temporal),
-    //         Enfermedad: datos.Enfermedad.id_temporal,
-    //         ExamenFisico: datos.ExamenFisico.id_temporal,
-    //         Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => m.id_temporal),
-    //         Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => p.id_temporal),
-    //         Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => i.id_temporal),
-    //         Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => e.id_temporal),
-    //         Cita: datos.Cita.id_temporal
-    //     };
-    // }
 
     const online = navigator.onLine;
     if (online) {
@@ -324,14 +319,12 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                 // Actualizar local
                 const datosActualizar = {
                     HistoriaClinica: {
-                        id_temporal: ids_temporal.HistoriaClinica,
                         id: respuesta.ids.HistoriaClinica,
                         fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
                         id_paciente: datos.HistoriaClinica.id_paciente,
                         sincronizado: 1
                     },
                     Analisis: {
-                        id_temporal: ids_temporal.Analisis,
                         id: respuesta.ids.Analisis,
                         id_historia: respuesta.ids.HistoriaClinica,
                         motivo: datos.Analisis.motivo,
@@ -343,7 +336,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     },
                     Diagnosticos: datos.Diagnosticos.map((d, i) => ({
-                        id_temporal: ids_temporal.Diagnosticos[i],
                         id_analisis: respuesta.ids.Analisis,
                         id: respuesta.ids.Diagnosticos[i],
                         descripcion: d.descripcion,
@@ -351,7 +343,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Antecedentes: datos.Antecedentes.map((a, i) => ({
-                        id_temporal: ids_temporal.Antecedentes[i],
                         id: respuesta.ids.Antecedentes[i],
                         tipo: a.tipo,
                         descripcion: a.descripcion,
@@ -359,7 +350,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Enfermedad: {
-                        id_temporal: ids_temporal.Enfermedad,
                         id: respuesta.ids.Enfermedad,
                         id_analisis: respuesta.ids.Analisis,
                         valor: datos.Enfermedad.valor,
@@ -369,7 +359,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     },
                     ExamenFisico: {
-                        id_temporal: ids_temporal.ExamenFisico,
                         id: respuesta.ids.ExamenFisico,
                         id_analisis: respuesta.ids.Analisis,
                         Peso: datos.ExamenFisico.Peso,
@@ -385,7 +374,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     },
                     Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map((m, i) => ({
-                        id_temporal: ids_temporal.Plan_manejo_medicamentos[i],
                         id: respuesta.ids.Plan_manejo_medicamentos[i],
                         id_analisis: respuesta.ids.Analisis,
                         medicamento: m.medicamento,
@@ -394,7 +382,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map((p, i) => ({
-                        id_temporal: ids_temporal.Plan_manejo_procedimientos[i],
                         id: respuesta.ids.Plan_manejo_procedimientos[i],
                         id_analisis: respuesta.ids.Analisis,
                         procedimiento: p.procedimiento,
@@ -403,7 +390,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Plan_manejo_insumos: datos.Plan_manejo_insumos.map((i, index) => ({
-                        id_temporal: ids_temporal.Plan_manejo_insumos[index],
                         id: respuesta.ids.Plan_manejo_insumos[index],
                         id_analisis: respuesta.ids.Analisis,
                         nombre: i.nombre,
@@ -411,7 +397,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Plan_manejo_equipos: datos.Plan_manejo_equipos.map((e, i) => ({
-                        id_temporal: ids_temporal.Plan_manejo_equipos[i],
                         id: respuesta.ids.Plan_manejo_equipos[i],
                         id_analisis: respuesta.ids.Analisis,
                         descripcion: e.descripcion,
@@ -419,7 +404,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         sincronizado: 1
                     })),
                     Cita: {
-                        id_temporal: datos.Cita.id_temporal,
                         id: datos.Cita.id,
                         estado: 'Realizada',
                         id_analisis: respuesta.ids.Analisis,
@@ -430,8 +414,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
 
                 await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
                 return true
-            } else {
-                console.log(respuesta)
             }
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
@@ -440,7 +422,83 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
-            return true
+        }
+    } else {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'Sin conexión';
+        notificacionesStore.options.texto = 'Se guardará localmente'
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
+        await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
+        return true
+    }
+};
+
+
+export const enviarFormularioTerapia = async (datos, reintento = false) => {
+    const notificacionesStore = useNotificacionesStore();
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.terapias,
+                token: token,
+                body: {
+                    Terapia: {
+                        sesion: datos.Terapia.sesion,
+                        objetivos: datos.Terapia.objetivos,
+                        fecha: datos.Terapia.fecha,
+                        hora: datos.Terapia.hora,
+                        evolucion: datos.Terapia.evolucion,
+                        id_paciente: datos.Terapia.id_paciente,
+                        id_profesional: datos.Terapia.id_profesional,
+                        id_procedimiento: datos.Terapia.id_procedimiento,
+                    },
+                    Cita: {
+                        id: datos.Cita.id
+                    }
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                // Actualizar local
+                const datosActualizar = {
+                    Terapia: {
+                        sesion: datos.Terapia.sesion,
+                        objetivos: datos.Terapia.objetivos,
+                        fecha: datos.Terapia.fecha,
+                        hora: datos.Terapia.hora,
+                        evolucion: datos.Terapia.evolucion,
+                        id_paciente: datos.Terapia.id_paciente,
+                        id_profesional: datos.Terapia.id_profesional,
+                        id_procedimiento: datos.Terapia.id_procedimiento,
+                    },
+                    Cita: {
+                        id: datos.Cita.id,
+                        estado: 'Realizada',
+                        id_analisis: respuesta.ids.Analisis,
+                        sincronizado: 1,
+                        ...datos.Cita
+                    }
+                };
+
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
+                return true
+            }
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
         notificacionesStore.options.icono = 'warning'

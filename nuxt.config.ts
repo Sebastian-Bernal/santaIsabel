@@ -38,6 +38,7 @@ export default defineNuxtConfig({
       recuperarContraseña: 'api/v1/recuperarContraseña',
       primerIngreso: 'api/v1/primerIngreso',
       diasAsignadosRestantes: 'api/v1/diasAsignadosRestantes',
+      terapias: 'api/v1/terapias',
     }
   },
   app: {

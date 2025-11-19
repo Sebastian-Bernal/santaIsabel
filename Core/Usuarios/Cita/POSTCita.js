@@ -80,7 +80,7 @@ export const validarYEnviarNuevaCita = async (datos) => {
         notificacionesStore.simple();
         return false;
     }
-
+    // console.log(datos)
     return await enviarFormularioCita({ ...datos });
 };
 
@@ -90,13 +90,6 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-
-    let id_temporal = {}
-    if (!reintento) {
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({ Cita: { ...datos.Cita, estado: 'inactiva', sincronizado: 0 } })));
-    } else {
-        id_temporal.data = datos.Cita.id_temporal
-    }
 
     const online = navigator.onLine;
     if (online) {
@@ -114,7 +107,8 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                     servicio: datos.Cita.servicio,
                     motivo: datos.Cita.motivo,
                     fecha: datos.Cita.fecha,
-                    hora: datos.Cita.hora
+                    hora: datos.Cita.hora,
+                    id_procedimiento: datos.Cita.id_procedimiento
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -122,7 +116,6 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Cita: {
-                        id_temporal: id_temporal.data,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
@@ -133,10 +126,11 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                         motivo: respuesta.data.motivo,
                         fecha: respuesta.data.fecha,
                         hora: respuesta.data.hora,
-                        estado: respuesta.data.estado
+                        estado: respuesta.data.estado,
+                        id_procedimiento: respuesta.data.id_procedimiento
                     }
                 }
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
                 console.log('datos actualizados')
                 return true
             }

@@ -27,6 +27,7 @@ const analisis = ref([])
 const notas = ref([])
 const tratamientos = ref([])
 const medicinas = ref([]);
+const evoluciones = ref([]);
 
 const show = ref(false);
 const showItem = ref(false)
@@ -40,7 +41,9 @@ const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
 const actualizar = ref(false)
 const propiedadesNotaPDF = ref({})
+const propiedadesEvolucionPDF = ref({})
 const activePdfNotas = ref(false)
+const activePdfEvolucion = ref(false)
 
 const propiedadesHistoriaPDF = ref({})
 const activePdfHistoria = ref(false)
@@ -62,7 +65,7 @@ watch(() => show.value,
 
 watch(() => showNota.value,
     async (nuevoValor) => {
-        if(nuevoValor === false){
+        if (nuevoValor === false) {
             await llamadatos();
             refresh.value++;
             window.location.reload()
@@ -96,7 +99,7 @@ async function cargaHistorial(id) {
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
     const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
 
-// Consultas
+    // Consultas
     analisis.value = []
 
     // Cambiar id por id_historia
@@ -116,14 +119,14 @@ async function cargaHistorial(id) {
     }
 
 
-// Evoluciones
+    // Evoluciones
+    evoluciones.value = await pacientesStore.listDatos(id, 'Terapia') || []
 
-
-// Notas
+    // Notas
     notas.value = await pacientesStore.listDatos(id, 'Nota') || []
 
 
-// Tratamientos
+    // Tratamientos
 
     if (allAnalisis || allAnalisis.length > 0) {
         // Obtener todos los tratamientos asociados a cada id_analisis de la historia
@@ -131,14 +134,14 @@ async function cargaHistorial(id) {
             allAnalisis.map(async (h) => {
 
                 const tratamientos = await historiasStore.listDatos(h.id, 'Plan_manejo_procedimientos', 'id_analisis') || []
-    
+
                 // Enriquecer cada tratamiento con su análisis correspondiente
                 const tratamientosConAnalisis = tratamientos.map((tratamiento) => {
-                        return {
-                            ...tratamiento,
-                            ...h,
-                        }
-                    })
+                    return {
+                        ...tratamiento,
+                        ...h,
+                    }
+                })
 
                 return tratamientosConAnalisis
             })
@@ -149,24 +152,24 @@ async function cargaHistorial(id) {
     } else {
         tratamientos.value = []
     }
-    
 
 
-// Medicinas
+
+    // Medicinas
     if (allAnalisis || allAnalisis.length > 0) {
         // Obtener todos los tratamientos asociados a cada id_analisis de la historia
         const medicamentosPorAnalisis = await Promise.all(
             allAnalisis.map(async (h) => {
 
                 const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || []
-    
+
                 // Enriquecer cada tratamiento con su análisis correspondiente
                 const medicamentosConAnalisis = medicamentos.map((tratamiento) => {
-                        return {
-                            ...tratamiento,
-                            ...h,
-                        }
-                    })
+                    return {
+                        ...tratamiento,
+                        ...h,
+                    }
+                })
 
                 return medicamentosConAnalisis
             })
@@ -238,7 +241,7 @@ function actualizarItemTratamientoHistoria(item) {
 function verItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
     actualizar.value = false
-    const datos = {...item, ...item.signosVitales}
+    const datos = { ...item, ...item.signosVitales }
     mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
 }
@@ -246,7 +249,7 @@ function verItemConsultasHistoria(item) {
 function actualizarItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
     actualizar.value = true
-    const datos = {...item, ...item.signosVitales}
+    const datos = { ...item, ...item.signosVitales }
     mapCampos(datos, historiasStore.Formulario)
     showItem.value = true
 }
@@ -285,6 +288,18 @@ async function exportarNotaPDF(data) {
     activePdfNotas.value = true
 }
 
+async function exportarEvolucionPDF(data) {
+    // mapCampos(data, notasStore.Formulario)
+    const pacientes = await pacientesStore.listPacientes()
+
+    const dataPaciente = pacientes.filter(user => {
+        return user.id_paciente === data.id_paciente
+    }); console.log(dataPaciente)
+
+    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente[0] }
+    activePdfEvolucion.value = true
+}
+
 async function exportarHistoriaPDF() {
     // mapCampos(data, notasStore.Formulario)
     const paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
@@ -316,7 +331,7 @@ function estadoSemaforo(fila) {
         return 'Verde'
     } else if (fila.tipoAnalisis === 'Recomendaciones Adicionales') {
         return 'Naranja'
-    } else if(fila.tipoAnalisis === 'Cambios criticos') {
+    } else if (fila.tipoAnalisis === 'Cambios criticos') {
         return 'Rojo'
     } else {
         return ''
@@ -358,7 +373,7 @@ const propiedades = computed(() => {
     const modal = new ModalBuilder()
 
     const puedeVer = varView.getPermisos.includes('Historias_view');
-    if(!puedeVer) return
+    if (!puedeVer) return
     // const puedePost = varView.getPermisos.includes('Historias_post')
     // const puedePUT = varView.getPermisos.includes('Historias_put')
     const puedePUT = false
@@ -372,6 +387,7 @@ const propiedades = computed(() => {
 
     const pdfNotas = new PdfBuilder()
     const pdfHistorial = new PdfBuilder()
+    const pdfEvolucion = new PdfBuilder()
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
         const fechaOriginal = consulta.fecha;
@@ -607,12 +623,120 @@ const propiedades = computed(() => {
             .nuevaSeccion('evoluciones')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
-                    { titulo: 'id', value: 'Cédula', tamaño: 100, ordenar: true },
-                    { titulo: 'paciente', value: 'Paciente', tamaño: 250, ordenar: true },
-                    { titulo: 'estado', value: 'Estado', tamaño: 150 },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'hora', value: 'Hora', tamaño: 250, ordenar: true },
+                    { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
                 ])
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF },], botones: true, })
+                .setDatos(evoluciones)
             )
+            .addComponente('PDFTemplate', pdfEvolucion
+                .setElementId('Evolucion')
+                .setIsActive(activePdfEvolucion)
+                .setFileName(`Evolucion_${propiedadesEvolucionPDF.value.name_paciente}`)
+
+                // ENCABEZADO PRINCIPAL
+                .addComponente('Tabla', {
+                    container: 'border-b-2 pb-3',
+                    border: true,
+                    columnas: [
+                        '<div class="flex items-center justify-center"><img src="https://ctsantaisabel.com/assets/logo_favicon.93ce8078.png" width="60px"/></div>',
+                        `
+                            <p class="text-sm border-b-1 pb-2">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2">Registro</p></br>
+                            <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
+                        `,
+                        `
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-end text-xs">Pagina:</p>
+                        `
+                    ],
+                })
+
+                // DATOS DEL PACIENTE
+                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3 border border-gray-500',
+                    filas: [
+                        [
+                            `<p class="text-xs">Nombre completo: <span class="text-sm">${propiedadesEvolucionPDF.value.name}</span></p>`,
+                            `<p class="text-xs">Tipo de documento: <span class="text-sm">${propiedadesEvolucionPDF.value.type_doc}</span></p>`
+                        ],
+                        [
+                            `<p class="text-xs">Edad: <span class="text-sm">${propiedadesEvolucionPDF.value.nacimiento}</span></p>`,
+                            `<p class="text-xs">No documento: <span class="text-sm">${propiedadesEvolucionPDF.value.No_document}</span></p>`
+                        ],
+                        [
+                            `<p class="text-xs">EPS: <span class="text-sm">${propiedadesEvolucionPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs">Zona: <span class="text-sm">${propiedadesEvolucionPDF.value.zona}</span></p>`
+                        ],
+                    ],
+                })
+
+                // SECCIÓN: DIAGNÓSTICOS
+                .addComponente('Texto', { texto: 'Diagnósticos' })
+                .addComponente('Tabla', {
+                    container: 'w-full border rounded-xl p-3 bg-gray-50',
+                    filas: [
+                        [
+                            propiedadesEvolucionPDF.value.diagnosticos
+                                ? [`<p class="text-xs leading-tight">${propiedadesEvolucionPDF.value.diagnosticos}</p>`, `<p class="text-xs leading-tight">${propiedadesEvolucionPDF.value.codigo}</p>`]
+                                : '<p class="text-xs text-gray-500">Sin diagnósticos registrados</p>'
+                        ]
+                    ]
+                })
+
+                .addComponente('Espacio', { alto: 16 })
+
+                // SECCIÓN: NOTA DE ENFERMERÍA
+                .addComponente('Tabla', {
+                    filas: [
+                        [
+                            `<p class="text-sm text-center">Objetivos de la intervencion terapeutica</p>`,
+                        ],
+                        [
+                            `<p class="text-sm text-center">${propiedadesEvolucionPDF.value.objetivos}</p>`
+                        ],
+                    ],
+                })
+
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3!',
+                    styles: { border: '1px solid #DBEAFE' },
+                    filas: [
+                        [
+                            '<p class="text-sm w-full">Sesion</p>',
+                            ['<p class="text-sm w-full">Fecha (DD/MM/AAAA):</p>',
+                            '<p class="text-sm w-full">Hora (Militar):</p>'],
+                            '<p class="text-sm w-full">Evolucion</p>'
+                        ],
+                        [
+                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.sesion}</p>`,
+                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.fecha}</p>`,
+                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.evolucion}</p>`,
+                        ],
+
+                    ],
+                })
+
+                .addComponente('Espacio', { alto: 32 })
+
+                // PIE DE FIRMA
+                .addComponente('Tabla', {
+                    container: 'pt-5',
+                    border: false,
+                    filas: [
+                        [
+                            '<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido</p>',
+                            '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'
+                        ]
+                    ]
+                })
+            )
+
 
             .nuevaSeccion('notas')
             .addComponente('Tabla', tablaNotas
@@ -631,33 +755,165 @@ const propiedades = computed(() => {
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
                 .setFileName(`Nota_${propiedadesNotaPDF.value.name_paciente}`)
+                // .addComponente('Tabla', {
+                //     container: 'border-b-2 pb-3',
+                //     columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
+                //     filas: [
+                //         [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> ${fechaFormateada()} </p>`],
+                //     ],
+                // })
+                // .addComponente('Texto', {
+                //     texto: 'Informacion del Paciente'
+                // })
+                // .addComponente('Tabla', {
+                //     container: 'space-y-2 rounded-xl py-3',
+                //     styles: {
+                //         backgroundColor: '#EFF6FF',
+                //     },
+                //     filas: [
+                //         ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
+                //         [`${propiedadesNotaPDF.value.name}`, `${propiedadesNotaPDF.value.celular}`, `${propiedadesNotaPDF.value.nacimiento}`,],
+                //         ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
+                //         [`${propiedadesNotaPDF.value.type_doc}`, `${propiedadesNotaPDF.value.No_document}`, `${propiedadesNotaPDF.value.sexo}`,],
+                //         ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
+                //         [`${propiedadesNotaPDF.value.direccion}`, `${propiedadesNotaPDF.value.barrio}`, `${propiedadesNotaPDF.value.zona}`,]
+                //     ],
+                // })
+                // .addComponente('Tabla', {
+                //     columnas: [`<p class="text-start">Fecha:</p>`, `<p class="text-start">Hora:</p>`, `<p class="text-start">Nota:</p>`],
+                //     filas: [[propiedadesNotaPDF.value.fecha_nota, propiedadesNotaPDF.value.hora_nota, propiedadesNotaPDF.value.nota],]
+                // })
+                // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
-                    columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
+                    columnas: [
+                        '<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-xl font-semibold">Santa Isabel IPS<br/>Nota de Enfermería de Atención Domiciliaria</p></div>',
+                        '<p class="w-full text-end text-xs">Fecha de impresión:</p>'
+                    ],
                     filas: [
-                        [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> ${fechaFormateada()} </p>`],
+                        [
+                            '<p class="text-xs">Proceso: Programa de Atención Domiciliaria</p>',
+                            `<p class="w-full text-end text-xs">${fechaFormateada()}</p>`
+                        ],
                     ],
                 })
-                .addComponente('Texto', {
-                    texto: 'Informacion del Paciente'
-                })
+
+                // DATOS DEL PACIENTE
+                .addComponente('Texto', { texto: 'Datos del Paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
-                    styles: {
-                        backgroundColor: '#EFF6FF',
-                    },
+                    styles: { backgroundColor: '#EFF6FF' },
                     filas: [
-                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                        [`${propiedadesNotaPDF.value.name}`, `${propiedadesNotaPDF.value.celular}`, `${propiedadesNotaPDF.value.nacimiento}`,],
-                        ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
-                        [`${propiedadesNotaPDF.value.type_doc}`, `${propiedadesNotaPDF.value.No_document}`, `${propiedadesNotaPDF.value.sexo}`,],
-                        ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
-                        [`${propiedadesNotaPDF.value.direccion}`, `${propiedadesNotaPDF.value.barrio}`, `${propiedadesNotaPDF.value.zona}`,]
+                        [
+                            '<p class="text-xs">Nombre completo:</p>',
+                            '<p class="text-xs">Edad:</p>'
+                        ],
+                        [
+                            `${propiedadesHistoriaPDF.value.name}`,
+                            `${propiedadesHistoriaPDF.value.edad}`
+                        ],
+                        [
+                            '<p class="text-xs pt-2">Tipo de identificación:</p>',
+                            '<p class="text-xs pt-2">No. Documento:</p>'
+                        ],
+                        [
+                            `${propiedadesHistoriaPDF.value.type_doc}`,
+                            `${propiedadesHistoriaPDF.value.No_document}`
+                        ],
+                        [
+                            '<p class="text-xs pt-2">Dirección:</p>',
+                            '<p class="text-xs pt-2">Barrio:</p>',
+                            '<p class="text-xs pt-2">Teléfono/Celular:</p>'
+                        ],
+                        [
+                            `${propiedadesHistoriaPDF.value.direccion}`,
+                            `${propiedadesHistoriaPDF.value.barrio}`,
+                            `${propiedadesHistoriaPDF.value.telefono}`
+                        ]
                     ],
                 })
+
+                // SECCIÓN: DIAGNÓSTICOS
+                .addComponente('Texto', { texto: 'Diagnósticos' })
                 .addComponente('Tabla', {
-                    columnas: [`<p class="text-start">Fecha:</p>`, `<p class="text-start">Hora:</p>`, `<p class="text-start">Nota:</p>`],
-                    filas: [[propiedadesNotaPDF.value.fecha_nota, propiedadesNotaPDF.value.hora_nota, propiedadesNotaPDF.value.nota],]
+                    container: 'w-full border rounded-xl p-3 bg-gray-50',
+                    filas: [
+                        [
+                            propiedadesHistoriaPDF.value.diagnosticos
+                                ? `<p class="text-xs leading-tight">${propiedadesHistoriaPDF.value.diagnosticos}</p>`
+                                : '<p class="text-xs text-gray-500">Sin diagnósticos registrados</p>'
+                        ]
+                    ]
+                })
+
+                .addComponente('Espacio', { alto: 16 })
+
+                // SECCIÓN: NOTA DE ENFERMERÍA
+                .addComponente('Texto', {
+                    texto: 'Nota de Enfermería',
+                })
+
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3!',
+                    styles: { border: '1px solid #DBEAFE' },
+                    filas: [
+                        [
+                            '<p class="text-xs w-full">Fecha (DD/MM/AAAA):</p>',
+                            '<p class="text-xs w-full">Hora (Militar):</p>'
+                        ],
+                        [
+                            `${propiedadesHistoriaPDF.value.fechaNota ?? ''}`,
+                            `${propiedadesHistoriaPDF.value.horaNota ?? ''}`
+                        ],
+                        ['<p class="text-xs pt-2">Subjetivo:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.subjetivo
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+
+                        ['<p class="text-xs pt-2">Objetivo:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.objetivo
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+
+                        ['<p class="text-xs pt-2">Actividades:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.actividades
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+
+                        ['<p class="text-xs pt-2">Plan:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.plan
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+
+                        ['<p class="text-xs pt-2">Intervención:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.intervencion
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+
+                        ['<p class="text-xs pt-2">Evaluación:</p>'],
+                        [
+                            propiedadesHistoriaPDF.value.evaluacion
+                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                        ],
+                    ],
+                })
+
+                .addComponente('Espacio', { alto: 32 })
+
+                // PIE DE FIRMA
+                .addComponente('Tabla', {
+                    container: 'pt-5',
+                    filas: [
+                        [
+                            '<p class="text-xs text-center pt-6">Nombre del Auxiliar de Enfermería</p>',
+                            '<p class="text-xs text-center pt-6">Sello del Auxiliar de Enfermería</p>'
+                        ]
+                    ]
                 })
             )
 
@@ -694,6 +950,6 @@ const propiedades = computed(() => {
 </script>
 
 <template>
-    <Pagina :Propiedades="propiedades" :key="refresh"/>
+    <Pagina :Propiedades="propiedades" :key="refresh" />
     <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
 </template>

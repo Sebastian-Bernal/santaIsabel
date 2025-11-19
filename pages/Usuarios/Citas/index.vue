@@ -23,6 +23,8 @@ const pacientesStore = usePacientesStore()
 const medicosStore = useMedicosStore()
 const pacientesList = ref([])
 const medicosList = ref([])
+const optionsTratamientos = ref(null)
+const showTratamientos = ref(false)
 
 async function llamadatos() {
     citas.value = await citasStore.listCitas();
@@ -60,18 +62,24 @@ watch(() => citasStore.Formulario.Cita.servicio,
                 }
             }
             const respuesta = await api.functionCall(options)
-            console.log(respuesta.message)
+            let respuestaData = ''
             if (respuesta.success) {
-                // varView.tipoConsulta = 'Terapia'
-                console.log(respuesta.data)
+                varView.tipoConsulta = 'Terapia'
+                showTratamientos.value = true
+                respuestaData = respuesta.data
+                optionsTratamientos.value = respuesta.data.map(data => {
+                    return {text: data.tratamiento, value: data.id}
+                })
             }
             const tratamientodiv = document.getElementById('tratamientos');
             if (tratamientodiv) {
-                tratamientodiv.innerHTML = `<p>${respuesta.message}</p>`;
+                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0].dias_restantes}</p>`;
             } else {
                 tratamientodiv.innerHTML = ``;
             }
             varView.cargando = false
+        } else {
+            showTratamientos.value = false
         }
     }
 );
@@ -80,8 +88,6 @@ onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
-    await citasStore.indexDBDatos()
-    refresh.value++
 
     medicosList.value = await medicosStore.listMedicos();
     const rol = sessionStorage.getItem('Rol')
@@ -110,19 +116,23 @@ const showFila = () => {
     showEnFila.value = !showEnFila.value
 };
 
-const builder = useFormularioCitaBuilder({
-    storeId: 'NuevaCita',
-    storePinia: 'Citas',
-    cerrarModal: cerrar,
-    show: show,
-    pacientesList,
-    medicosList
-});
 
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
 
 const propiedades = computed(() => {
+
+    const builder = useFormularioCitaBuilder({
+        storeId: 'NuevaCita',
+        storePinia: 'Citas',
+        cerrarModal: cerrar,
+        show: show,
+        pacientesList,
+        medicosList,
+        optionsTratamientos: optionsTratamientos,
+        showTratamientos: showTratamientos
+    });
+
     const builderCitas = new CitasBuilder()
     const pagina = new ComponenteBuilder()
 
