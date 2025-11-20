@@ -62,7 +62,7 @@ onMounted(async () => {
     } else if (rol.value === 'Profesional') {
         // Pacientes list
         const pacientesStore = usePacientesStore()
-        pacientesList.value = await pacientesStore.listPacientesAtendidos(false)
+        pacientesList.value = await pacientesStore.listPacientesAtendidos()
 
         // Profesionales list
         const profesionalesStore = useMedicosStore()

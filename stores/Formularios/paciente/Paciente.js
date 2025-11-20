@@ -172,11 +172,11 @@ export const usePacientesStore = defineStore('Pacientes', {
             const usuariosPacientes = pacientesFiltrados.map((paciente) => {
 
                 const usuario = usuarios.find((user) => {
-                    if (user.id === paciente.id_usuario) {
+                    if (user.id === paciente.id_infoUsuario) {
                         return user;
                     } // Validar si hay usuario con id
                     const idVacio = user.id === null || user.id === undefined || user.id === '';
-                    if (user.id_temporal === paciente.id_usuario && idVacio) {
+                    if (user.id_temporal === paciente.id_infoUsuario && idVacio) {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });
