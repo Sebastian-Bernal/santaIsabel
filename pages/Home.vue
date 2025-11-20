@@ -44,22 +44,22 @@ onMounted(async () => {
 
     let citas = []
     let Historias = []
-    
-    if(rol.value === 'Admin'){
+
+    if (rol.value === 'Admin') {
         const historiaStore = useHistoriasStore();
         Historias = await historiaStore.ultimasHistorias();
         citas = await citasStore.listCitasHoy();
 
         // Pacientes list
         const pacientesStore = usePacientesStore()
-        pacientesList.value = await pacientesStore.listPacientesAtendidos(false)
+        pacientesList.value = await pacientesStore.listPacientes()
 
         // Profesionales list
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
 
-    } else if (rol.value === 'Profesional'){
+    } else if (rol.value === 'Profesional') {
         // Pacientes list
         const pacientesStore = usePacientesStore()
         pacientesList.value = await pacientesStore.listPacientesAtendidos(false)
@@ -68,21 +68,25 @@ onMounted(async () => {
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
-        profesional.value = profesionales.find(p => p.id_usuario === usuario.id)
+        profesional.value = profesionales.find(p => p.id_infoUsuario === usuario.id)
 
         // Citas list
         const listCitas = await citasStore.listCitas();
         const hoy = new Date();
-        
-        citas = listCitas.filter((cita) => {
-            const fechaCita = new Date(cita.fecha);
-            return (
-                cita.id_medico === profesional.value.id_profesional
-            )
-        }).slice(0,4)
-        
-        citasStore.Formulario.id_medico = profesional?.value.id_profesional
-        citasStore.Formulario.name_medico = usuario.name
+
+        hoy.setHours(0, 0, 0, 0);
+
+        citas = listCitas
+            .filter((cita) => {
+                const fechaCita = new Date(cita.fecha + "T00:00:00");
+                fechaCita.setHours(0, 0, 0, 0); // Normalizamos también la fecha de la cita
+
+                return (
+                    cita.id_medico === profesional.value.id_profesional &&
+                    fechaCita >= hoy
+                );
+            })
+            .slice(0, 4);
     }
 
     DashboardRol(rol.value, Historias, citas)
@@ -217,7 +221,7 @@ function DashboardRol(rol, Historias = [], citas) {
         }]
 
         // Citas
-        if(citas.length > 0){
+        if (citas.length > 0) {
             Citas.value = citas.map(card => {
                 return {
                     header: {
@@ -289,10 +293,6 @@ function nuevoPaciente() {
     varView.showNuevoPaciente = true
 }
 
-function nuevaHistoria() {
-    varView.showNuevaHistoria = true
-}
-
 function nuevaCita() {
     showCita.value = true
 }
@@ -360,7 +360,7 @@ const cardsPacientes = new CardBuilder();
 const cardsCitas = new CardBuilder();
 const cardsAcciones = new CardBuilder();
 
-function cerrar(){
+function cerrar() {
     showCita.value = false
 }
 
@@ -370,7 +370,7 @@ const builder = useFormularioCitaBuilder({
     cerrarModal: cerrar,
     show: showCita,
     pacientesList,
-    medicosList
+    medicosList,
 });
 
 const propiedades = computed(() => {
@@ -421,7 +421,7 @@ const propiedades = computed(() => {
             .addComponente('Form', builder)
     }
     else if (rol.value === 'Profesional') {
-       paginaBase
+        paginaBase
             .setHeaderPage({
                 titulo: 'Dashboard',
                 descripcion: 'Resumen de actividad del sistema de historias clínicas.',
@@ -459,7 +459,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades" :key="refresh"></Pagina>
-    <Paciente v-if="varView.showNuevoPaciente"/>
-    <Historia v-if="varView.showNuevaHistoria" />
-    <!-- <Cita v-if="varView.showNuevaCita"/> -->
+    <Paciente v-if="varView.showNuevoPaciente" />
 </template>

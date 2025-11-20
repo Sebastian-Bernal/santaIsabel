@@ -44,12 +44,11 @@ export const useCitasStore = defineStore('Citas', {
 
             // Filtrar por id_medico si el rol es Profesional
             const rol = varView.getRol;
-            // Cambiar por ID
             if (rol === 'Profesional') {
                 const idUsuario = varView.getUser.id;
                 const profesionalStore = useMedicosStore()
                 const profesionales = await profesionalStore.listMedicos()
-                const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
+                const idProfesional = profesionales.find(p => p.id_infoUsuario === idUsuario)?.id_profesional
 
                 citas = citas.filter(cita => {
                     return cita.id_medico === idProfesional
@@ -109,7 +108,7 @@ export const useCitasStore = defineStore('Citas', {
                     hora: data.hora,
                     estado: data.estado,
                     motivo_cancelacion: data.motivo_cancelacion,
-                    id_analisis: data.id_examen_fisico,
+                    id_examen_fisico: data.id_examen_fisico,
                 }
             }));
 

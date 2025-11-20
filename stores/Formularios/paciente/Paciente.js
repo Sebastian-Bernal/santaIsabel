@@ -8,6 +8,7 @@ import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useMedicosStore } from "../profesional/Profesionales";
 import { traerAntecedentes } from "~/Core/Usuarios/Paciente/GETAntecedentes";
 import { useVarView } from "~/stores/varview";
+import { traerProfesionales } from "~/Core/Usuarios/Profesional/GETProfesionales";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -130,16 +131,13 @@ export const usePacientesStore = defineStore('Pacientes', {
         },
 
         async listPacientesAtendidos(filtrar = true) {
-            const store = useIndexedDBStore()
-            const usersStore = useUsersStore()
             const epsStore = useDatosEPSStore()
+            const apiRest = useApiRest()
             const varView = useVarView()
 
-            store.almacen = 'Paciente'
-            const pacientes = await store.leerdatos()
-
-            const usuarios = await usersStore.listUsers
-            const EPSs = await epsStore.listEPS
+            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+            const pacientes = await apiRest.getData('Paciente', 'pacientes')
+            const EPSs = await epsStore.listEPSes()
 
             const mapaEPS = EPSs.reduce((acc, eps) => {
                 acc[eps.id] = eps.nombre;
@@ -154,11 +152,10 @@ export const usePacientesStore = defineStore('Pacientes', {
                 const citas = await citasStore.listCitas();
 
                 const usuario = varView.getUser;
-                const idUsuario = usuario.id;
                 const profesionalStore = useMedicosStore()
                 const profesionales = await profesionalStore.listMedicos()
-                const idProfesional = profesionales.find(p => p.id_usuario === idUsuario)?.id_profesional
 
+                const idProfesional = profesionales.find(p => p.id_infoUsuario === usuario.id)?.id_profesional
                 const pacientesAtendidos = [
                     ...new Set(
                         citas

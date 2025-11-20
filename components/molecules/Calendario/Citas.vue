@@ -136,7 +136,7 @@ function showMotivo(cita) {
 }
 
 async function showObservacion(cita) {
-    const historia = await historiasStore.listDatos(cita.id_analisis, 'Analisis', 'id')
+    const historia = await historiasStore.listDatos(cita.id_examen_fisico, 'Analisis', 'id')
     const observacion = historia[0].observacion
     options.icono = "info";
     options.titulo = "Observacion del Profesional";
