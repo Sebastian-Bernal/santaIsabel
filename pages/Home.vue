@@ -30,8 +30,10 @@ const refresh = ref(1)
 const profesional = ref([])
 
 watch(() => showCita.value,
-    () => {
+    async() => {
         refresh.value++
+        const apiRest = useApiRest()
+        await apiRest.getData('Cita', 'citas')
     }
 );
 
@@ -396,7 +398,7 @@ watch(() => citasStore.Formulario.Cita.servicio,
             }
             const tratamientodiv = document.getElementById('tratamientos');
             if (tratamientodiv) {
-                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0].dias_restantes}</p>`;
+                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes}</p>`;
             } else {
                 tratamientodiv.innerHTML = ``;
             }

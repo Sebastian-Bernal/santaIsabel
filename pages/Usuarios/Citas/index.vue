@@ -74,7 +74,7 @@ watch(() => citasStore.Formulario.Cita.servicio,
             const tratamientodiv = document.getElementById('tratamientos');
             if (tratamientodiv) {
                 console.log('respuesta', respuesta.message)
-                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes || ''}</p>`;
+                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes}</p>`;
             } else {
                 tratamientodiv.innerHTML = ``;
             }

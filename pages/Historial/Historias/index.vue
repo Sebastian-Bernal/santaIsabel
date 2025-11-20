@@ -77,9 +77,8 @@ watch(() => showNota.value,
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
-    // const apiRest = useApiRest()
-    // const terapias = await apiRest.getData('Terapia', 'terapias')
-    // console.log(terapias)
+    const apiRest = useApiRest()
+    const terapias = await apiRest.getData('Terapia', 'terapias')
     varView.cargando = false
 });
 
