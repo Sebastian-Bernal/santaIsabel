@@ -11,11 +11,10 @@ export function useFormularioCitaBuilder({
   show,
   medicosList,
   pacientesList,
+  showTratamientos,
+  optionsTratamientos
 }) {
   const citasStore = useCitasStore()
-  const varView = useVarView()
-  const showTratamientos = ref(false)
-  const optionsTratamientos = ref([])
 
   function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
@@ -72,46 +71,6 @@ export function useFormularioCitaBuilder({
     }
 
     errorDiv.innerHTML = ''
-  }
-
-  async function traerTratamientos(event) {
-    const servicio = event.target.value
-    console.log(servicio)
-    if (servicio === 'Terapia') {
-      varView.cargando = true
-
-      const api = useApiRest()
-      const config = useRuntimeConfig()
-      const token = decryptData(sessionStorage.getItem('token'))
-
-      let options = {
-        metodo: 'POST',
-        url: config.public.diasAsignadosRestantes,
-        token: token,
-        body: {
-          id_paciente: citasStore.Formulario.Cita.id_paciente
-        }
-      }
-      const respuesta = await api.functionCall(options)
-      let respuestaData = ''
-      if (respuesta.success) {
-        varView.tipoConsulta = 'Terapia'
-        showTratamientos.value = true
-        respuestaData = respuesta.data
-        optionsTratamientos.value = respuesta.data.map(data => {
-          return { text: data.tratamiento, value: data.id }
-        })
-      }
-      const tratamientodiv = document.getElementById('tratamientos');
-      if (tratamientodiv) {
-        tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes || ''}</p>`;
-      } else {
-        tratamientodiv.innerHTML = ``;
-      }
-      varView.cargando = false
-    } else {
-      showTratamientos.value = false
-    }
   }
 
   const builder = new FormularioBuilder()
@@ -190,9 +149,6 @@ export function useFormularioCitaBuilder({
       slot: {
         tooltip: `<div id="tratamientos" class="text-red-300 text-xs mt-1"></div>`
       },
-      events: {
-        onChange: traerTratamientos
-      }
     })
     .addCampo({
       component: 'Select',

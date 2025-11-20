@@ -22,7 +22,7 @@ const iconoClase = computed(() => {
         case 'download':
             return 'fa-solid fa-download';
         case 'pdf':
-            return 'fa-solid fa-file-pdf text-xl text-gray-700';
+            return 'fa-solid fa-file-pdf text-xl text-gray-700 dark:text-gray-200';
         default:
             return '';
     }

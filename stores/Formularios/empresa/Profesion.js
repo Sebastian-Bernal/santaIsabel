@@ -21,7 +21,6 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
 
     getters: {
         async listProfesion(state) {
-            console.log('trayendo datos')
             const apiRest = useApiRest()
             const Profesiones = await apiRest.getData('Profesion', 'professions')
 

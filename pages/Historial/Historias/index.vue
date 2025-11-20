@@ -77,6 +77,9 @@ watch(() => showNota.value,
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
+    // const apiRest = useApiRest()
+    // const terapias = await apiRest.getData('Terapia', 'terapias')
+    // console.log(terapias)
     varView.cargando = false
 });
 
@@ -296,7 +299,9 @@ async function exportarEvolucionPDF(data) {
         return user.id_paciente === data.id_paciente
     }); console.log(dataPaciente)
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente[0] }
+    const diagnosticos = pacientesStore.listDatos(data.id_paciente, 'Diagnostico')
+
+    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente[0], diagnosticos: {...diagnosticos} }
     activePdfEvolucion.value = true
 }
 
@@ -405,6 +410,13 @@ const propiedades = computed(() => {
         `
         return [contenido]
     });
+
+    // const diagnosticosEvolucion = propiedadesEvolucionPDF.value.diagnosticos?.map(diagnostico => {
+    //     return [
+    //         `<p class="text-xs leading-tight">${diagnostico.descripcion}</p>`, 
+    //         `<p class="text-xs leading-tight">${diagnostico.codigo}</p>`
+    //     ]
+    // })
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistoriass',
@@ -641,7 +653,7 @@ const propiedades = computed(() => {
                     container: 'border-b-2 pb-3',
                     border: true,
                     columnas: [
-                        '<div class="flex items-center justify-center"><img src="https://ctsantaisabel.com/assets/logo_favicon.93ce8078.png" width="60px"/></div>',
+                        '<div class="flex items-center justify-center"><img src="/logo.png" width="60px"/></div>',
                         `
                             <p class="text-sm border-b-1 pb-2">Proceso: Programa de Atención Domiciliaria</p></br>
                             <p class="text-sm border-b-1 pb-2">Registro</p></br>
@@ -659,7 +671,7 @@ const propiedades = computed(() => {
                 // DATOS DEL PACIENTE
                 .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
                 .addComponente('Tabla', {
-                    container: 'space-y-2 rounded-xl py-3 border border-gray-500',
+                    container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
                             `<p class="text-xs">Nombre completo: <span class="text-sm">${propiedadesEvolucionPDF.value.name}</span></p>`,
@@ -677,17 +689,13 @@ const propiedades = computed(() => {
                 })
 
                 // SECCIÓN: DIAGNÓSTICOS
-                .addComponente('Texto', { texto: 'Diagnósticos' })
-                .addComponente('Tabla', {
-                    container: 'w-full border rounded-xl p-3 bg-gray-50',
-                    filas: [
-                        [
-                            propiedadesEvolucionPDF.value.diagnosticos
-                                ? [`<p class="text-xs leading-tight">${propiedadesEvolucionPDF.value.diagnosticos}</p>`, `<p class="text-xs leading-tight">${propiedadesEvolucionPDF.value.codigo}</p>`]
-                                : '<p class="text-xs text-gray-500">Sin diagnósticos registrados</p>'
-                        ]
-                    ]
-                })
+                // .addComponente('Texto', { texto: 'Diagnósticos' })
+                // .addComponente('Tabla', {
+                //     container: 'w-full p-3',
+                //     filas: diagnosticosEvolucion.length > 0
+                //             ? diagnosticosEvolucion
+                //             : ['<p class="text-xs text-gray-500">Sin diagnósticos registrados</p>']
+                // })
 
                 .addComponente('Espacio', { alto: 16 })
 
@@ -715,7 +723,7 @@ const propiedades = computed(() => {
                         ],
                         [
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.sesion}</p>`,
-                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.fecha}</p>`,
+                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.fecha}</p> - <p class="text-sm w-full">${propiedadesEvolucionPDF.value.hora}</p>`,
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.evolucion}</p>`,
                         ],
 
@@ -921,7 +929,7 @@ const propiedades = computed(() => {
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
                     { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 300, ordenar: true },
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 250, ordenar: true },
+                    { titulo: 'codigo', value: 'CUPS', tamaño: 250, ordenar: true },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(tratamientos)

@@ -180,16 +180,6 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full',
                 minlength: 5
             })
-            .addCampo({
-                component: 'Input',
-                label: 'Fecha',
-                vmodel: 'Plan_manejo_procedimientos.fecha',
-                type: 'text',
-                id: 'cantidad',
-                name: 'cantidad',
-                tamaño: 'w-full',
-                minlength: 5
-            })
 
             // --- Select: Condición de rehabilitación ---
             .addCampo({

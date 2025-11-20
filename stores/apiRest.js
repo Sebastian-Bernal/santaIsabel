@@ -68,7 +68,6 @@ export const useApiRest = defineStore('apiRest', {
         },
 
         async getData(almacen, nombre) {
-            // console.log('actualizando datos')
             let datos = [];
             const token = decryptData(sessionStorage.getItem('token'));
             const config = useRuntimeConfig()
@@ -111,7 +110,7 @@ export const useApiRest = defineStore('apiRest', {
             const store = useIndexedDBStore();
             store.almacen = almacen;
             const todosLosDatos = await store.leerdatos();
-            return todosLosDatos.filter(p => p.estado === 1);
+            return todosLosDatos
         },
     }
 })

@@ -5,6 +5,7 @@ import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { CIE10 } from '~/data/CIE10'
 import { onMounted, ref } from 'vue'
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 
 export function useHistoriaBuilder({
     storeId,
@@ -16,15 +17,18 @@ export function useHistoriaBuilder({
     const historiaStore = useHistoriasStore()
     const notificaciones = useNotificacionesStore()
     const pacienteStore = usePacientesStore()
+    const medicoStore = useMedicosStore()
     const varView = useVarView()
 
     const PacientesList = ref([])
+    const MedicosList = ref([])
     const id_paciente = ref(null)
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
     onMounted(async () => {
         varView.cargando = true
         PacientesList.value = await pacienteStore.listPacientes();
+        MedicosList.value = await medicoStore.listMedicos();
         varView.cargando = false
     });
 
@@ -188,147 +192,7 @@ export function useHistoriaBuilder({
                 ],
             })
 
-            .nuevaSeccion('Examen Fisico')
-            .addCampo({
-                component: 'Label',
-                forLabel: 'ta',
-                text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
-                tamaño: 'w-full md:col-span-2'
-            })
-
-            // --- Input: TA ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.ta',
-                type: 'text',
-                id: 'ta',
-                name: 'ta',
-                placeholder: 'TA (90-140/60-90 mmHg)',
-                tamaño: 'w-full',
-                slot: {
-                    tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                },
-            })
-
-            // --- Input: FC ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.fc',
-                type: 'number',
-                id: 'fc',
-                name: 'fc',
-                placeholder: 'FC (60-100 lpm)',
-                max: 100,
-                tamaño: 'w-full',
-                slot: {
-                    tooltip: `<div id="error-fc" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                }
-            })
-
-            // --- Input: FR ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.fr',
-                type: 'number',
-                id: 'fr',
-                name: 'fr',
-                placeholder: 'FR (12-20 rpm)',
-                max: 250,
-                tamaño: 'w-full',
-                slot: {
-                    tooltip: `<div id="error-fr" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                }
-            })
-
-            // --- Input: Temperatura (Tº) ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.t',
-                type: 'number',
-                id: 't',
-                name: 't',
-                placeholder: 'Tº (36.1-37.2°C)',
-                max: 50,
-                tamaño: 'w-full',
-                slot: {
-                    tooltip: `<div id="error-t" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                }
-            })
-
-            // --- Input: Otros ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.otros',
-                type: 'text',
-                id: 'otros',
-                name: 'otros',
-                placeholder: 'Otros (opcional)',
-                tamaño: 'w-full col-span-1'
-            })
-
-            // --- Input: Peso ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.Peso',
-                type: 'number',
-                id: 'peso',
-                name: 'peso',
-                placeholder: 'Peso (KG)',
-                tamaño: 'w-full col-span-1'
-            })
-
-            // --- Input: Altura ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.altura',
-                type: 'number',
-                id: 'altura',
-                name: 'altura',
-                placeholder: 'Altura (CM)',
-                tamaño: 'w-full col-span-1'
-            })
-
-            // --- Label: Medidas Antropométricas ---
-            .addCampo({
-                component: 'Label',
-                forLabel: 'altura',
-                text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
-                tamaño: 'w-full md:col-span-2'
-            })
-
-
-            // --- Input: Saturación O2 ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.SATo2',
-                type: 'number',
-                id: 'sat',
-                name: 'sat',
-                placeholder: 'Sat O2 (90% - 100%)',
-                max: 100,
-                tamaño: 'w-full col-span-1',
-                slot: {
-                    tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                }
-            })
-
             .nuevaSeccion('Terapia')
-
             // --- Label: Sesión ---
             .addCampo({
                 component: 'Label',
@@ -871,7 +735,7 @@ export function useHistoriaBuilder({
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', id_medico: '', id_paciente: id_paciente } },],
+                    buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', id_paciente: id_paciente } },],
                     tamaño: 'w-full md:col-span-2 mb-5',
                     vmodel: 'Plan_manejo_procedimientos',
                     value: [],
@@ -912,11 +776,18 @@ export function useHistoriaBuilder({
                             tamaño: 'w-full',
                         },
                         {
-                            name: 'id_medico',
-                            id: 'id_medico',
-                            type: 'Input',
-                            placeholder: 'Profesional',
+                            name: 'profesional',
+                            id: 'profesional',
+                            type: 'SelectSearch',
+                            placeholder: 'Profesional asignado',
                             tamaño: 'w-full',
+                            options: MedicosList,
+                            UpperCase: true,
+                            opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'id_profesional' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
+                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional
+                            },
                         },
                     ],
                     containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'

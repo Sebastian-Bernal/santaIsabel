@@ -7,6 +7,7 @@ import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/Calendari
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { decryptData } from '~/composables/Formulario/crypto';
 import { ref, onMounted } from 'vue'
 
 const varView = useVarView()
@@ -22,6 +23,8 @@ const pacientesStore = usePacientesStore()
 const medicosStore = useMedicosStore()
 const pacientesList = ref([])
 const medicosList = ref([])
+const optionsTratamientos = ref(null)
+const showTratamientos = ref(false)
 
 async function llamadatos() {
     citas.value = await citasStore.listCitas();
@@ -41,6 +44,47 @@ watch(() => varView.showNuevaHistoria,
     }
 );
 
+watch(() => citasStore.Formulario.Cita.servicio,
+    async () => {
+        if (citasStore.Formulario.Cita.servicio === 'Terapia') {
+            varView.cargando = true
+
+            const api = useApiRest()
+            const config = useRuntimeConfig()
+            const token = decryptData(sessionStorage.getItem('token'))
+
+            let options = {
+                metodo: 'POST',
+                url: config.public.diasAsignadosRestantes,
+                token: token,
+                body: {
+                    id_paciente: citasStore.Formulario.Cita.id_paciente
+                }
+            }
+            const respuesta = await api.functionCall(options)
+            let respuestaData = ''
+            if (respuesta.success) {
+                varView.tipoConsulta = 'Terapia'
+                showTratamientos.value = true
+                respuestaData = respuesta.data
+                optionsTratamientos.value = respuesta.data.map(data => {
+                    return {text: data.tratamiento, value: data.id}
+                })
+            }
+            const tratamientodiv = document.getElementById('tratamientos');
+            if (tratamientodiv) {
+                console.log('respuesta', respuesta.message)
+                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes || ''}</p>`;
+            } else {
+                tratamientodiv.innerHTML = ``;
+            }
+            varView.cargando = false
+        } else {
+            showTratamientos.value = false
+        }
+    }
+);
+
 onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
@@ -55,9 +99,10 @@ onMounted(async () => {
     }
 });
 
-watch(() => calendarioCitasStore.fecha, (nuevaFecha) => {
-    citasStore.Formulario.Cita.fecha = nuevaFecha.split('/').reverse().join('-')
-})
+// watch(() => calendarioCitasStore.fecha, (nuevaFecha) => {
+//     console.log(calendarioCitasStore.fecha)
+//     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
+// })
 
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
@@ -86,6 +131,8 @@ const propiedades = computed(() => {
         show: show,
         pacientesList,
         medicosList,
+        optionsTratamientos: optionsTratamientos,
+        showTratamientos: showTratamientos
     });
 
     const builderCitas = new CitasBuilder()

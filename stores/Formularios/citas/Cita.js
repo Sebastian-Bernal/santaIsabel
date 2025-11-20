@@ -33,7 +33,6 @@ export const useCitasStore = defineStore('Citas', {
         async listCitas() {
             const varView = useVarView()
             const apiRest = useApiRest()
-
             let citas = await apiRest.getData('Cita', 'citas')
 
             citas.sort((a, b) => {
@@ -60,9 +59,8 @@ export const useCitasStore = defineStore('Citas', {
         },
 
         async listCitasHoy() {
-            const store = useIndexedDBStore();
-            store.almacen = 'Cita';
-            const citas = await store.leerdatos();
+            const apiRest = useApiRest()
+            let citas = await apiRest.getData('Cita', 'citas')
 
             // Obtener la fecha actual en formato YYYY-MM-DD
             const hoy = new Date().toISOString().split('T')[0];
