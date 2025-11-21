@@ -31,7 +31,6 @@ watch(() => varView.showNuevoUser, async () => {
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
-    await UsersStore.indexDBDatos()
     varView.cargando = false
 });
 
@@ -192,7 +191,7 @@ const propiedades = computed(() => {
                 { titulo: 'estado', value: 'Estado', tamaño: 150 },
             ])
             .setHeaderTabla({
-                titulo: 'Gestion de Usuarios',
+                titulo: 'Gestion de Administradores',
                 descripcion: 'Administra y consulta información de Usuarios Admin',
                 color: 'bg-[var(--color-default)] text-white',
                 accionAgregar: nuevoUser

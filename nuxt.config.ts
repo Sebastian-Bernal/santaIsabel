@@ -39,6 +39,7 @@ export default defineNuxtConfig({
       primerIngreso: 'api/v1/primerIngreso',
       diasAsignadosRestantes: 'api/v1/diasAsignadosRestantes',
       terapias: 'api/v1/terapias',
+      administradores: 'api/v1/administradores',
     }
   },
   app: {

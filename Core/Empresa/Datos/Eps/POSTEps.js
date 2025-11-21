@@ -33,14 +33,6 @@ export const enviarFormulario = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // guardar local
-    // let id_temporal = {}
-    // if(!reintento){
-    //     id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({EPS: {...datos.EPS, sincronizado: 0, estado: 1}})));
-    // } else {
-    //     id_temporal.data = datos.EPS.id_temporal
-    // }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -84,17 +76,19 @@ export const enviarFormulario = async (datos, reintento = false) => {
         }
     } else {
         try {
-            const datosActualizadosLocal = {
-                EPS: {
-                    sincronizado: 1,
-                    id: respuesta.data.id,
-                    nombre: respuesta.data.nombre,
-                    codigo: respuesta.data.codigo,
-                    nit: respuesta.data.nit,
-                    estado: 1,
+            if(!reintento){
+                const datosActualizadosLocal = {
+                    EPS: {
+                        sincronizado: 1,
+                        id: datos.EPS.id,
+                        nombre: datos.EPS.nombre,
+                        codigo: datos.EPS.codigo,
+                        nit: datos.EPS.nit,
+                        estado: 1,
+                    }
                 }
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
             }
-            await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'No hay internet';
             notificacionesStore.options.texto = 'Datos guardados localmente'

@@ -34,8 +34,9 @@ export const usePacientesStore = defineStore('Pacientes', {
                 sexo: '',
                 genero: '',
                 Eps: '',
-                Regimen: '',
-                poblacionVulnerable: '',
+                id_eps: '',
+                regimen: '',
+                vulnerabilidad: '',
                 estado: 1,
             },
             Diagnosticos: [],
@@ -65,7 +66,8 @@ export const usePacientesStore = defineStore('Pacientes', {
             const varView = useVarView()
             const rol = varView.getRol
             const apiRest = useApiRest()
-            const epsStore = useDatosEPSStore()
+            const store = useIndexedDBStore()
+
             if (rol === 'Profesional') {
                 return await this.listPacientesAtendidos()
             }
@@ -73,7 +75,8 @@ export const usePacientesStore = defineStore('Pacientes', {
             const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
             const pacientes = await apiRest.getData('Paciente', 'pacientes')
     
-            const EPSs = await epsStore.listEPSes()
+            store.almacen = 'EPS'
+            const EPSs = await store.leerdatos()
     
             const mapaEPS = EPSs.reduce((acc, eps) => {
                 acc[eps.id] = eps.nombre;
@@ -88,7 +91,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                         return user;
                     } // Validar si hay usuario con id
                     const idVacio = user.id === null || user.id === undefined || user.id === '';
-                    if (user.id_temporal === paciente.id_usuario && idVacio) {
+                    if (user.id_temporal === paciente.id_infoUsuario && idVacio) {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });

@@ -29,33 +29,22 @@ export const useUsersStore = defineStore('Users', {
     }),
 
     getters: {
-        async listUsers(state) {
-            const store = useIndexedDBStore()
+        async listUsers() {
+            const apiRest = useApiRest()
 
-            store.almacen = 'InformacionUser'
-            const informacionUsers = await store.leerdatos()
-
-            state.Users = informacionUsers // Actualiza la lista de Users en el estado
-            return informacionUsers
+            const admin = await apiRest.getData('InformacionUser', 'administradores')
+            console.log(admin)
+            return admin
         },
     },
 
     actions: {
 
         async indexDBDatos() {
-            // const UsuariosIndexed = usuarios.map((profesion) => ({
-            //     Profesion: {
-            //         id: profesion.profession_id, 
-            //         nombre: profesion.profession_name, 
-            //         codigo: profesion.profession_code,
-            //         // links: profesion._links
-            //     }
-            // }));
-
-            // UsuariosIndexed.map((item) => {
-            //     guardarEnDB(item)
-            // })
+            const apiRest = useApiRest()
+            await apiRest.getData('InformacionUser', 'informacionUsers')
         },
+        
     }
 });
 

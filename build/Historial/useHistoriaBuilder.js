@@ -123,7 +123,6 @@ export function useHistoriaBuilder({
     builder
         .setStoreId(storeId)
         .setStorePinia(storePinia)
-        // .setCamposRequeridos(['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo'])
         .setFormulariotamaño('LG')
         .setFormularioTituloFormulario('Registrar Consulta')
         .setFormularioShow(show)
@@ -526,7 +525,7 @@ export function useHistoriaBuilder({
             // --- Input: Peso ---
             .addCampo({
                 component: 'Input',
-                vmodel: 'ExamenFisico.Peso',
+                vmodel: 'ExamenFisico.peso',
                 type: 'number',
                 id: 'peso',
                 name: 'peso',
@@ -783,7 +782,7 @@ export function useHistoriaBuilder({
                             tamaño: 'w-full',
                             options: MedicosList,
                             UpperCase: true,
-                            opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'id_profesional' }],
+                            opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
                             seleccionarItem: (item) => {
                                 historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
                                 historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional

@@ -19,7 +19,7 @@ const enviarFormulario = async (datos) => {
         {
             Paciente: {
                 ...datos.Paciente,
-                id_usuario: datos.InformacionUser.id,
+                id_infoUsuario: datos.InformacionUser.id,
                 id_eps: datos.Paciente.id_eps,
                 sincronizado: 0,
                 estado: 0
@@ -48,7 +48,7 @@ const enviarFormulario = async (datos) => {
                     {
                         Paciente: {
                             ...datos.Paciente,
-                            id_usuario: datos.InformacionUser.id,
+                            id_infoUsuario: datos.InformacionUser.id,
                             id_eps: datos.Paciente.id_eps,
                             estado: 0,
                             sincronizado: 1

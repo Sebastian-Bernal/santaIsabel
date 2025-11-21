@@ -358,7 +358,7 @@ export function useUserBuilder({
                     { text: 'Subsidiado', value: 'Subsidiado' },
                     { text: 'Especial/Excepcion', value: 'Especial/Excepcion' },
                 ],
-                vmodel: 'Paciente.Regimen',
+                vmodel: 'Paciente.regimen',
             })
             .addCampo({
                 component: 'Select',
@@ -381,7 +381,7 @@ export function useUserBuilder({
                     { text: 'Voluntarios activos', value: 'Voluntarios activos' },
                     { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
                 ],
-                vmodel: 'Paciente.poblacionVulnerable',
+                vmodel: 'Paciente.vulnerabilidad',
             })
 
             if(verUser){
@@ -470,7 +470,7 @@ export function useUserBuilder({
                 options: departamentos,
                 opciones: [{ value: "nombre" }, { text: 'nombre', value: 'nombre' }],
                 seleccionarItem: seleccionarDepartamento,
-                vmodel: 'Profesional.departamentoLaboral',
+                vmodel: 'Profesional.departamento_laboral',
                 upperCase: true,
             })
             .addCampo({
@@ -482,20 +482,20 @@ export function useUserBuilder({
                 id: 'municipiolaboral',
                 name: 'municipiolaboral',
                 tamaño: 'md:w-full w-full',
-                vmodel: 'Profesional.municipioLaboral',
+                vmodel: 'Profesional.municipio_laboral',
                 upperCase: true,
             })
             .addCampo({
                 component: 'Select',
                 placeholder: 'Zona',
                 id: 'zonaLaboral',
-                name: 'zonaLaboral',
+                name: 'zona_laboral',
                 tamaño: 'w-full',
                 options: [
                     { text: 'Rural', value: 'Rural' },
                     { text: 'Urbana', value: 'Urbana' }
                 ],
-                vmodel: 'Profesional.zonaLaboral',
+                vmodel: 'Profesional.zona_laboral',
             })
             // 📌 Sección: Usuario
             .addCampo({
@@ -507,7 +507,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Input',
                 type: 'text',
-                placeholder: 'Correo Electrónico',
+                placeholder: !verUser ? 'Correo Electrónico' : 'Correo protegido (Ingresa uno nuevo)',
                 id: 'correo-secret',
                 name: 'correo-secret',
                 tamaño: 'w-full',

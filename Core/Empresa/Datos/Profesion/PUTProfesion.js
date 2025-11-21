@@ -86,7 +86,7 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
                 })));
                 return true
             }
-            
+
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
@@ -97,11 +97,34 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
             return true
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
-        notificacionesStore.options.texto = 'en desarrollo'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+
+        try {
+            if (!reintento) {
+                // Actualizar local
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
+                    Profesion: {
+                        codigo: datos.Profesion.codigo,
+                        nombre: datos.Profesion.nombre,
+                        permisos: datos.Profesion.permisos,
+                        id: datos.Profesion.id,
+                        id_temporal: datos.Profesion.id_temporal,
+                        sincronizado: 1
+                    }
+                })));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet intente en otro momento';
+            notificacionesStore.options.texto = 'en desarrollo'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        }
     }
 };

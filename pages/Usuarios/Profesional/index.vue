@@ -24,17 +24,23 @@ const show = ref(false)
 const showVer = ref(false)
 
 async function llamadatos() {
+    varView.cargando = true
     medicos.value = await medicosStore.listMedicos();
+    varView.cargando = false
 }
 // Watch para actualizar informacion al agregar o actualizar
-watch(() => show.value, async () => {
-    llamadatos()
-    refresh.value++
+watch(() => show.value, async (estado) => {
+    if(!estado){
+        llamadatos()
+        refresh.value++
+    }
 })
 
-watch(() => showVer.value, async () => {
-    llamadatos()
-    refresh.value++
+watch(() => showVer.value, async (estado) => {
+    if(!estado){
+        llamadatos()
+        refresh.value++
+    }
 })
 
 // Cargar los Medicos desde el store
@@ -57,8 +63,8 @@ const modificarMedico = (medico) => {
     mapCampos(medico, medicosStore.Formulario)
     medicosStore.Formulario.Profesional.id = medico.id_profesional
     medicosStore.Formulario.Profesional.id_temporal = medico.id_temporal
-    medicosStore.Formulario.Profesional.id_usuario = medico.id_usuario
-    medicosStore.Formulario.InformacionUser.id = medico.id_usuario
+    medicosStore.Formulario.Profesional.id_infoUsuario = medico.id_infoUsuario
+    medicosStore.Formulario.InformacionUser.id = medico.id_infoUsuario
     medicosStore.Formulario.InformacionUser.id_temporal = medico.id_temporalUsuario
     showVer.value = true;
 };

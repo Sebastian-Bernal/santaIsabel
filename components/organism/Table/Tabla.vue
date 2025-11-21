@@ -189,7 +189,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse" v-for="action in Propiedades.acciones.icons" :key="action"
+                        <BotonAccion v-if="!collapse || Propiedades.acciones.icons.length < 2" v-for="action in Propiedades.acciones.icons" :key="action"
                             :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
 
@@ -199,7 +199,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                             <i class="fa-solid fa-angle-down text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
-                        <button @click="mostrarAcciones(id)" v-if="collapse"
+                        <button @click="mostrarAcciones(id)" v-if="collapse && Propiedades.acciones.icons.length > 1"
                             class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer">
                             <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
 
@@ -216,7 +216,7 @@ function enviar () { console.log(props.Propiedades.datos.content)}
                         <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
                             <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
                                 <p
-                                    class="text-[var(--color-default-700)] text-xs font-bold border-t-gray-200 mb-2 truncate">
+                                    class="text-[var(--color-default-700)] dark:text-[var(--color-default-claro)] text-xs font-bold border-t-gray-200 mb-2 truncate">
                                     {{ col.titulo }}</p>
                                 {{ fila[col.titulo] }}
                             </h2>

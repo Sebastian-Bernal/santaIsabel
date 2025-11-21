@@ -97,16 +97,17 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
     } else {
 
         try {
-            const datosLocal = {
-                Profesion: {
-                    sincronizado: 0,
-                    id: respuesta.data.id,
-                    nombre: respuesta.data.nombre,
-                    codigo: respuesta.data.codigo,
-                    permisos: respuesta.data.permisos,
+
+            if(!reintento){
+                const datosLocal = {
+                    Profesion: {
+                        sincronizado: 0,
+                        id: datos.Profesion.id,
+                        nombre: datos.Profesion.nombre,
+                        codigo: datos.Profesion.codigo,
+                        permisos: datos.Profesion.permisos,
+                    }
                 }
-            }
-            if(!reintento) {
                 await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)));
             }
             notificacionesStore.options.icono = 'warning'
@@ -115,6 +116,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
             notificacionesStore.options.tiempo = 3000
             await notificacionesStore.simple()
             return true
+
         } catch (error) {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'Datos incorrectos';

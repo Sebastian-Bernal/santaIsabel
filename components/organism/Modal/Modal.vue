@@ -71,7 +71,7 @@ function cambiarAInicio() {
                 </div>
                 <div v-if="seccionActual > 0" @click="cambiarAInicio"
                     class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
-                    <i class="fa-solid fa-rotate-left text-gray-200 hover:text-white"></i>
+                    <i class="fa-solid fa-chevron-left text-gray-200 hover:text-white"></i>
                 </div>
             </div>
             <!-- Titulos -->

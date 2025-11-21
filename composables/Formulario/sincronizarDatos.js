@@ -144,7 +144,7 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
     },
     {
       nombreEntidad: 'Paciente',
-      claveRelacion: 'id_usuario',
+      claveRelacion: 'id_infoUsuario',
       nombreRelacion: 'InformacionUser',
       construirObjeto: (registro, esActualizacion, InformacionUser,) => ({
         Paciente: {
@@ -163,7 +163,7 @@ export function iniciarSincronizacionPeriodica(intervalo = 10000) {
     },
     {
       nombreEntidad: 'Profesional',
-      claveRelacion: 'id_usuario',
+      claveRelacion: 'id_infoUsuario',
       nombreRelacion: 'InformacionUser',
       construirObjeto: (registro, esActualizacion, InformacionUser) => ({
         Profesional: {

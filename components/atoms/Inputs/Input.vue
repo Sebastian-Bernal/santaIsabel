@@ -36,9 +36,9 @@ const emit = defineEmits(['update:modelValue']);
         <input :value="modelValue" autocomplete="off" 
             :type="Propiedades.type" 
             :id="Propiedades.id"
-            :name="Propiedades.name" 
+            :name="Propiedades.name"
             :maxlength="Propiedades.maxlength" :minlength="Propiedades.minlength"
-            :min="Propiedades.min" :max="Propiedades.max" 
+            :min="Propiedades.min" :max="Propiedades.max"
             :placeholder="Propiedades.placeholder"
             @input="handleInput($event); Propiedades.events?.onInput?.($event)"
             @click="Propiedades.events?.onClick"
@@ -55,7 +55,7 @@ const emit = defineEmits(['update:modelValue']);
             class="iconInput absolute left-[10px] top-[55%] text-gray-600 dark:text-gray-200"></i>
         <!-- Slot (opcional) -->
         <div v-if="Propiedades.slot" class="absolute right-5 top-2.5">
-            <label v-html="Propiedades.slot.label"></label>
+            <label v-html="Propiedades.slot.label" @click="Propiedades.slot.action?.()"></label>
             <input v-if="Propiedades.slot.input"
                 :type="Propiedades.slot.input.type"
                 :accept="Propiedades.slot.input.accept"

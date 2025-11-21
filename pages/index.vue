@@ -13,6 +13,7 @@ definePageMeta({
 });
 
 // 
+const varView = useVarView();
 const api = useApiRest()
 const config = useRuntimeConfig()
 const indexedDB = useIndexedDBStore();
@@ -20,33 +21,23 @@ const storeCodigos = useCodigos();
 
 onMounted(async () => {
     try {
+        varView.cargando = true
         await indexedDB.deleteDatabase('db-thesalus');
         await indexedDB.initialize(); // tu lógica de inicialización
         await storeCodigos.initialize();
         await storeCodigos.guardardatos()
         sessionStorage.clear();
+        varView.cargando = false;
     } catch (e) {
         console.error('No se pudo reiniciar IndexedDB:', e);
     }
 
 })
 
-const mostrarContraseña = ref(false);
-const varView = useVarView();
 const selectEmpresa = ref(false)
 const opcionesCompañy = ref([])
 const show = ref(false)
 const stateCodigo = ref(false)
-
-const cambiarMostrarContraseña = () => {
-    mostrarContraseña.value = !mostrarContraseña.value;
-    const passwordInput = document.getElementById('password');
-    if (mostrarContraseña.value) {
-        passwordInput.type = 'text';
-    } else {
-        passwordInput.type = 'password';
-    }
-};
 
 // funcion para validar primer ingreso
 async function validaUsuario(event) {
@@ -83,7 +74,9 @@ function validarCodigo() {
 }
 
 async function enviarCodigo(data) {
+    varView.cargando = true
     stateCodigo.value = await validarYEnviarRecuperarContraseña(data)
+    varView.cargando = false
 }
 
 

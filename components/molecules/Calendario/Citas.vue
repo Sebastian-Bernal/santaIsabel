@@ -137,10 +137,10 @@ function showMotivo(cita) {
 
 async function showObservacion(cita) {
     const historia = await historiasStore.listDatos(cita.id_examen_fisico, 'Analisis', 'id')
-    const observacion = historia[0].observacion
+    const observacion = historia[0]?.observacion
     options.icono = "info";
     options.titulo = "Observacion del Profesional";
-    options.texto = `${observacion}`;
+    options.texto = observacion ? `${observacion}` : 'Cita Realizada con exito!';
     options.tiempo = 5000;
     simple();
 }
@@ -174,7 +174,7 @@ async function activarCita(cita) {
     <div v-if="props.Propiedades.showTodas"
         class="flex md:flex-row flex-col justify-between items-end px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
         <div class="md:w-1/3 w-full">
-            <h2 class="text-xl font-semibold">Registro completo de Citas</h2>
+            <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
             <Input :Propiedades="{
                 placeholder: 'Buscar dato en citas...',
                 icon: 'fa-solid fa-search',

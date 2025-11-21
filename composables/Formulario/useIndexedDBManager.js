@@ -19,7 +19,7 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                     ids.User = contenido.id;
                 }
             } else if (almacen === "Paciente") {
-                ids.Paciente = await store.guardardatosID({ ...contenido, id_usuario: ids.User });
+                ids.Paciente = await store.guardardatosID({ ...contenido, id_infoUsuario: ids.User });
             } else {
                 await guardarRelacionado(store, almacen, contenido, "id_paciente", ids.Paciente);
             }
@@ -34,7 +34,7 @@ export async function guardarEnDB(data, contexto = "Generico", config = {}) {
                     ids.User = contenido.id;
                 }
             } else if (almacen === "Profesional") {
-                ids.Profesional = await store.guardardatosID({ ...contenido, id_usuario: ids.User });
+                ids.Profesional = await store.guardardatosID({ ...contenido, id_infoUsuario: ids.User });
             } else {
 
             }
@@ -267,7 +267,7 @@ export async function guardarUsuarioEnIndexedDBID(data) {
         }
 
         if (typeof contenido === 'object' && contenido !== null && almacen !== 'User') {
-            await store.guardardatos({ ...contenido, id_usuario: idUsuario });
+            await store.guardardatos({ ...contenido, id_infoUsuario: idUsuario });
         }
     }
 

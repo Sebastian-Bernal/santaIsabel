@@ -14,19 +14,6 @@ const enviarFormulario = async (datos) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar local
-    await actualizarEnIndexedDB(JSON.parse(JSON.stringify(
-        {
-            Profesional: {
-                ...datos.Profesional,
-                id_usuario: datos.InformacionUser.id,
-                sincronizado: 0,
-                estado: 0
-            }
-        }
-    )))
-
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -48,7 +35,7 @@ const enviarFormulario = async (datos) => {
                     {
                         Profesional: {
                             ...datos.Profesional,
-                            id_usuario: datos.InformacionUser.id,
+                            id_infoUsuario: datos.InformacionUser.id,
                             estado: 0,
                             sincronizado: 1
                         }

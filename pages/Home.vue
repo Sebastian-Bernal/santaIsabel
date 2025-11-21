@@ -1,7 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
-import Historia from '~/components/Historia.vue';
 import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
@@ -11,7 +10,6 @@ import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { decryptData } from '~/composables/Formulario/crypto';
 
 const citasStore = useCitasStore();
 const varView = useVarView()
@@ -30,10 +28,12 @@ const refresh = ref(1)
 const profesional = ref([])
 
 watch(() => showCita.value,
-    async() => {
-        refresh.value++
-        const apiRest = useApiRest()
-        await apiRest.getData('Cita', 'citas')
+    async(estado) => {
+        if(!estado){
+            refresh.value++
+            const apiRest = useApiRest()
+            await apiRest.getData('Cita', 'citas')
+        }
     }
 );
 
@@ -369,45 +369,6 @@ function cerrar() {
 
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
-watch(() => citasStore.Formulario.Cita.servicio,
-    async () => {
-        if (citasStore.Formulario.Cita.servicio === 'Terapia') {
-            varView.cargando = true
-
-            const api = useApiRest()
-            const config = useRuntimeConfig()
-            const token = decryptData(sessionStorage.getItem('token'))
-
-            let options = {
-                metodo: 'POST',
-                url: config.public.diasAsignadosRestantes,
-                token: token,
-                body: {
-                    id_paciente: citasStore.Formulario.Cita.id_paciente
-                }
-            }
-            const respuesta = await api.functionCall(options)
-            let respuestaData = ''
-            if (respuesta.success) {
-                varView.tipoConsulta = 'Terapia'
-                showTratamientos.value = true
-                respuestaData = respuesta.data
-                optionsTratamientos.value = respuesta.data.map(data => {
-                    return {text: data.tratamiento, value: data.id}
-                })
-            }
-            const tratamientodiv = document.getElementById('tratamientos');
-            if (tratamientodiv) {
-                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes}</p>`;
-            } else {
-                tratamientodiv.innerHTML = ``;
-            }
-            varView.cargando = false
-        } else {
-            showTratamientos.value = false
-        }
-    }
-);
 
 const builder = useFormularioCitaBuilder({
     storeId: 'NuevaCita',

@@ -32,21 +32,27 @@ const show = ref(false);
 const showVer = ref(false);
 
 async function llamadatos() {
+    varView.cargando = true
     pacientes.value = await pacientesStore.listPacientes();
+    varView.cargando = false
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => show.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
 watch(() => showVer.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
@@ -56,7 +62,6 @@ onMounted(async () => {
 
     await llamadatos();
     const EPS = await epsStore.listEPS;
-
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
         value: eps.id,
@@ -75,7 +80,7 @@ const verPaciente = async (paciente) => {
     mapCampos(paciente, pacientesStore.Formulario)
     pacientesStore.Formulario.Paciente.id = paciente.id_paciente
     pacientesStore.Formulario.Paciente.id_temporal = paciente.id_temporal
-    pacientesStore.Formulario.InformacionUser.id = paciente.id_usuario
+    pacientesStore.Formulario.InformacionUser.id = paciente.id_infoUsuario
     pacientesStore.Formulario.InformacionUser.id_temporal = paciente.id_temporalUsuario
 
 
@@ -258,7 +263,7 @@ async function eliminarPaciente() {
     }
 }
 
-const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
+const camposRequeridos = []
 
 // Construccion de pagina
 const propiedades = computed(() => {
@@ -403,7 +408,7 @@ const propiedades = computed(() => {
                 ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Teléfono:</p>'],
                 [`${propiedadesPDF.value.municipio}`, `${propiedadesPDF.value.departamento}`, `${propiedadesPDF.value.telefono}`],
                 ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Régimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
-                [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.Regimen}`, `${propiedadesPDF.value.poblacionVulnerable}`],
+                [`${propiedadesPDF.value.Eps}`, `${propiedadesPDF.value.regimen}`, `${propiedadesPDF.value.vulnerabilidad}`],
             ],
         })
         .addComponente('Espacio', { alto: 24 })

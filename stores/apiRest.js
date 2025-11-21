@@ -97,6 +97,7 @@ export const useApiRest = defineStore('apiRest', {
                     }
                 } catch (error) {
                     console.error("Error al obtener datos desde la API:", error);
+                    console.error("Fallo:", almacen)
                     datos = await this.getOfflineData(almacen);
                 }
             } else {

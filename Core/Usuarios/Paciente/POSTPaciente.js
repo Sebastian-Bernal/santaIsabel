@@ -15,7 +15,7 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
     const camposObligatorios = [
         'name', 'No_document', 'type_doc', 'celular',
         'nacimiento', 'direccion', 'municipio', 'departamento',
-        'barrio', 'zona', 'sexo', 'genero', 'id_eps', 'Regimen', 'poblacionVulnerable'
+        'barrio', 'zona', 'sexo', 'genero', 'id_eps', 'regimen', 'vulnerabilidad'
     ];
 
     const cuerpo = {
@@ -114,8 +114,8 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     sexo: datos.Paciente.sexo,
                     genero: datos.Paciente.genero,
                     id_eps: datos.Paciente.id_eps,
-                    Regimen: datos.Paciente.Regimen,
-                    vulnerabilidad: datos.Paciente.poblacionVulnerable,
+                    regimen: datos.Paciente.regimen,
+                    vulnerabilidad: datos.Paciente.vulnerabilidad,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -132,11 +132,11 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                         id: respuesta.paciente.id,
                         id_eps: respuesta.paciente.id_eps,
                         Eps: mapaEPS[respuesta.paciente.id_eps],
-                        id_usuario: respuesta.paciente.id_infoUsuario,
+                        id_infoUsuario: respuesta.paciente.id_infoUsuario,
                         genero: respuesta.paciente.genero,
                         sexo: respuesta.paciente.sexo,
-                        Regimen: respuesta.paciente.regimen,
-                        poblacionVulnerable: respuesta.paciente.vulnerabilidad,
+                        regimen: respuesta.paciente.regimen,
+                        vulnerabilidad: respuesta.paciente.vulnerabilidad,
                         estado: 1,
                         sincronizado: 1,
                     },
@@ -165,11 +165,11 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                         id: respuesta.paciente.id,
                         id_eps: respuesta.paciente.id_eps,
                         Eps: mapaEPS[respuesta.paciente.id_eps],
-                        id_usuario: respuesta.paciente.id_infoUsuario,
+                        id_infoUsuario: respuesta.paciente.id_infoUsuario,
                         genero: respuesta.paciente.genero,
                         sexo: respuesta.paciente.sexo,
-                        Regimen: respuesta.paciente.regimen,
-                        poblacionVulnerable: respuesta.paciente.vulnerabilidad,
+                        regimen: respuesta.paciente.regimen,
+                        vulnerabilidad: respuesta.paciente.vulnerabilidad,
                         estado: 1,
                         sincronizado: 1,
                     },

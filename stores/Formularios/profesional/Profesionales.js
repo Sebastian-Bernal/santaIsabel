@@ -25,10 +25,12 @@ export const useMedicosStore = defineStore('Medicos', {
                 zona: '',
             },
             Profesional: {
-                departamentoLaboral: '',
-                municipioLaboral: '',
-                zonaLaboral: '',
+                departamento_laboral: '',
+                municipio_laboral: '',
+                zona_laboral: '',
                 profesion: '',
+                id_profesion: '',
+                correo: '',
                 estado: 1,
             }
         },
@@ -68,13 +70,12 @@ export const useMedicosStore = defineStore('Medicos', {
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
     
-                // const usuario = usuarios.find((user) => user.id === medico.id_usuario)
                 const usuario = usuarios.find((user) => {
                     if (user.id === medico.id_infoUsuario) {
                         return user;
                     } // Validar si hay usuario con id
                     const idVacio = user.id === null || user.id === undefined || user.id === '';
-                    if (user.id_temporal === medico.id_usuario && idVacio) {
+                    if (user.id_temporal === medico.id_infoUsuario && idVacio) {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });
@@ -108,13 +109,13 @@ export const useMedicosStore = defineStore('Medicos', {
 
             // Crear un conjunto de IDs locales para comparación rápida
             const idsLocales = new Set(
-                profesionalesLocal.map(p => `${p.id_profesional}-${p.id_usuario}`)
+                profesionalesLocal.map(p => `${p.id_profesional}-${p.id_infoUsuario}`)
             );
 
             const profesionalesIndexed = profesionales.map((data) => ({
                 Profesional: {
                     id: data.id,
-                    id_usuario: data.id_infoUsuario,
+                    id_infoUsuario: data.id_infoUsuario,
                     id_profesion: data.id_profesion,
                     profesion: mapaProfesion[data.id_profesion],
                     zonaLaboral: data.zona_laboral,

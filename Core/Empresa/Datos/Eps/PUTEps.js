@@ -57,8 +57,8 @@ export const enviarFormularioPutEPS = async (datos, reintento = false) => {
                         id: respuesta.data.id,
                         nombre: respuesta.data.nombre,
                         codigo: respuesta.data.codigo,
-                        nit: datos.EPS.nit,
-                        estado: 1,
+                        nit: respuesta.data.nit,
+                        estado: respuesta.data.estado,
                         sincronizado: 1
                     }
                 })));
@@ -76,15 +76,17 @@ export const enviarFormularioPutEPS = async (datos, reintento = false) => {
     } else {
 
         try {
-            await actualizarEnIndexedDB({
-                EPS: {
-                    ...datos.EPS,
-                    id_temporal: datos.EPS.id_temporal,
-                    id: datos.EPS.id,
-                    estado: 1,
-                    sincronizado: 0
-                }
-            })
+            if(!reintento){
+                await actualizarEnIndexedDB({
+                    EPS: {
+                        ...datos.EPS,
+                        id_temporal: datos.EPS.id_temporal,
+                        id: datos.EPS.id,
+                        estado: 1,
+                        sincronizado: 0
+                    }
+                })
+            }
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'No hay internet';
             notificacionesStore.options.texto = 'Datos guardados localmente'

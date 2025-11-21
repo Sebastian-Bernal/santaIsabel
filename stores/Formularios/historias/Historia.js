@@ -34,7 +34,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             },
             ExamenFisico: {
                 id: '',
-                Peso: '',
+                peso: '',
                 altura: '',
                 otros: '',
                 id_historia: '',
@@ -129,8 +129,8 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             return historias?.sort(
                 (a, b) => {
-                    const fechaA = new Date(a.fecha_historia.split('/').reverse().join('-'));
-                    const fechaB = new Date(b.fecha_historia.split('/').reverse().join('-'));
+                    const fechaA = new Date(a.fecha_historia?.split('/').reverse().join('-'));
+                    const fechaB = new Date(b.fecha_historia?.split('/').reverse().join('-'));
                     return fechaB - fechaA; // Orden descendente
                 }).slice(0, 3);
         },
@@ -150,169 +150,185 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
         },
 
         async indexDBDatos() {
-            const store = useIndexedDBStore();
+            const apiRest = useApiRest()
 
-            const historias = await traerHistorias();
+            await apiRest.getData('HistoriaClinica', 'historiasClinicas')
+            await apiRest.getData('Analisis', 'analisis')
+            await apiRest.getData('Enfermedad', 'enfermedades')
+            await apiRest.getData('Plan_manejo_medicamentos', 'planManejoMedicamentos')
+            await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
+            await apiRest.getData('Plan_manejo_insumos', 'planManejoInsumos')
+            await apiRest.getData('Plan_manejo_equipos', 'planManejoEquipos')
+            await apiRest.getData('Diagnosticos', 'diagnosticos')
+            await apiRest.getData('Antecedentes', 'antecedentes')
+            await apiRest.getData('ExamenFisico', 'examenFisicos')
 
-            // Cargar datos locales por tabla
-            const historiasLocal = await this.listHistorias;
-            store.almacen = 'Analisis';
-            const analisisLocal = await store.leerdatos();
-            store.almacen = 'Diagnosticos';
-            const diagnosticosLocal = await store.leerdatos();
-            store.almacen = 'Enfermedad';
-            const enfermedadLocal = await store.leerdatos();
-            store.almacen = 'ExamenFisico';
-            const examenFisicoLocal = await store.leerdatos();
-            store.almacen = 'Plan_manejo_medicamentos';
-            const medicamentosLocal = await store.leerdatos();
-            store.almacen = 'Plan_manejo_procedimientos';
-            const procedimientosLocal = await store.leerdatos();
-            store.almacen = 'Plan_manejo_insumos';
-            const insumosLocal = await store.leerdatos();
-            store.almacen = 'Plan_manejo_equipos';
-            const equiposLocal = await store.leerdatos();
-
-            // Crear mapas por ID
-            const mapHistoria = new Map(historiasLocal.map(h => [h.id, h]));
-            const mapAnalisis = new Map(analisisLocal.map(a => [a.id, a]));
-            const mapDiagnosticos = new Map(diagnosticosLocal.map(d => [d.id, d]));
-            const mapEnfermedad = new Map(enfermedadLocal.map(e => [e.id, e]));
-            const mapExamen = new Map(examenFisicoLocal.map(e => [e.id, e]));
-            const mapMedicamentos = new Map(medicamentosLocal.map(m => [m.id, m]));
-            const mapProcedimientos = new Map(procedimientosLocal.map(p => [p.id, p]));
-            const mapInsumos = new Map(insumosLocal.map(i => [i.id, i]));
-            const mapEquipos = new Map(equiposLocal.map(e => [e.id, e]));
-
-            for (const data of historias) {
-                const historiaId = data.id;
-
-                // Guardar historia si no existe
-                if (!mapHistoria.has(historiaId)) {
-                    guardarEnDB({
-                        HistoriaClinica: {
-                            id: historiaId,
-                            id_paciente: data.id_paciente,
-                            fecha_historia: data.fecha_historia,
-                        }
-                    });
-                }
-
-                // Recorrer todos los análisis
-                for (const analisis of data.analisis || []) {
-                    const analisisId = analisis.id;
-
-                    if (!mapAnalisis.has(analisisId)) {
-                        guardarEnDB({
-                            Analisis: {
-                                id: analisis.id,
-                                motivo: analisis.motivo,
-                                observacion: analisis.observacion,
-                                tratamiento: analisis.tratamiento,
-                                analisis: analisis.analisis,
-                                tipoAnalisis: analisis.tipoAnalisis,
-                                id_medico: analisis.id_medico,
-                                id_historia: analisis.id_historia,
-                                fecha: analisis.updated_at,
-                            }
-                        });
-                    }
-
-                    analisis.diagnosticos?.forEach(d => {
-                        if (!mapDiagnosticos.has(d.id)) {
-                            guardarEnDB({
-                                Diagnosticos: {
-                                    id: d.id,
-                                    descripcion: d.descripcion,
-                                    codigo: d.codigo,
-                                    id_analisis: d.id_analisis,
-                                }
-                            });
-                        }
-                    });
-
-                    if (analisis.enfermedad && !mapEnfermedad.has(analisis.enfermedad.id)) {
-                        guardarEnDB({
-                            Enfermedad: {
-                                id: analisis.enfermedad.id,
-                                valor: analisis.enfermedad.valor,
-                                fecha_diagnostico: analisis.enfermedad.fecha_diagnostico,
-                                fecha_rehabilitacion: analisis.enfermedad.fecha_rehabilitacion,
-                                id_paciente: analisis.enfermedad.id_paciente,
-                                id_analisis: analisis.enfermedad.id_analisis,
-                            }
-                        });
-                    }
-
-                    if (analisis.examen_fisico && !mapExamen.has(analisis.examen_fisico.id)) {
-                        guardarEnDB({
-                            ExamenFisico: {
-                                id: analisis.examen_fisico.id,
-                                Peso: analisis.examen_fisico.peso,
-                                altura: analisis.examen_fisico.altura,
-                                otros: analisis.examen_fisico.otros,
-                                signosVitales: { ...analisis.examen_fisico.signosVitales },
-                                id_analisis: analisis.examen_fisico.id_analisis,
-                            }
-                        });
-                    }
-
-                    analisis.medicamentos?.forEach(m => {
-                        if (!mapMedicamentos.has(m.id)) {
-                            guardarEnDB({
-                                Plan_manejo_medicamentos: {
-                                    id: m.id,
-                                    medicamento: m.medicamento,
-                                    dosis: m.dosis,
-                                    cantidad: m.cantidad,
-                                    id_analisis: m.id_analisis,
-                                }
-                            });
-                        }
-                    });
-
-                    analisis.procedimientos?.forEach(p => {
-                        if (!mapProcedimientos.has(p.id)) {
-                            guardarEnDB({
-                                Plan_manejo_procedimientos: {
-                                    id: p.id,
-                                    procedimiento: p.procedimiento,
-                                    codigo: p.codigo,
-                                    fecha: p.fecha,
-                                    id_analisis: p.id_analisis,
-                                }
-                            });
-                        }
-                    });
-
-                    analisis.insumos?.forEach(i => {
-                        if (!mapInsumos.has(i.id)) {
-                            guardarEnDB({
-                                Plan_manejo_insumos: {
-                                    id: i.id,
-                                    insumo: i.insumo,
-                                    cantidad: i.cantidad,
-                                    id_analisis: i.id_analisis,
-                                }
-                            });
-                        }
-                    });
-
-                    analisis.equipos?.forEach(e => {
-                        if (!mapEquipos.has(e.id)) {
-                            guardarEnDB({
-                                Plan_manejo_equipos: {
-                                    id: e.id,
-                                    equipo: e.equipo,
-                                    cantidad: e.cantidad,
-                                    id_analisis: e.id_analisis,
-                                }
-                            });
-                        }
-                    });
-                }
-            }
         }
+        // async indexDBDatos() {
+        //     const store = useIndexedDBStore();
+
+
+        //     const historias = await traerHistorias();
+
+        //     // Cargar datos locales por tabla
+        //     const historiasLocal = await this.listHistorias;
+        //     store.almacen = 'Analisis';
+        //     const analisisLocal = await store.leerdatos();
+        //     store.almacen = 'Diagnosticos';
+        //     const diagnosticosLocal = await store.leerdatos();
+        //     store.almacen = 'Enfermedad';
+        //     const enfermedadLocal = await store.leerdatos();
+        //     store.almacen = 'ExamenFisico';
+        //     const examenFisicoLocal = await store.leerdatos();
+        //     store.almacen = 'Plan_manejo_medicamentos';
+        //     const medicamentosLocal = await store.leerdatos();
+        //     store.almacen = 'Plan_manejo_procedimientos';
+        //     const procedimientosLocal = await store.leerdatos();
+        //     store.almacen = 'Plan_manejo_insumos';
+        //     const insumosLocal = await store.leerdatos();
+        //     store.almacen = 'Plan_manejo_equipos';
+        //     const equiposLocal = await store.leerdatos();
+
+        //     // Crear mapas por ID
+        //     const mapHistoria = new Map(historiasLocal.map(h => [h.id, h]));
+        //     const mapAnalisis = new Map(analisisLocal.map(a => [a.id, a]));
+        //     const mapDiagnosticos = new Map(diagnosticosLocal.map(d => [d.id, d]));
+        //     const mapEnfermedad = new Map(enfermedadLocal.map(e => [e.id, e]));
+        //     const mapExamen = new Map(examenFisicoLocal.map(e => [e.id, e]));
+        //     const mapMedicamentos = new Map(medicamentosLocal.map(m => [m.id, m]));
+        //     const mapProcedimientos = new Map(procedimientosLocal.map(p => [p.id, p]));
+        //     const mapInsumos = new Map(insumosLocal.map(i => [i.id, i]));
+        //     const mapEquipos = new Map(equiposLocal.map(e => [e.id, e]));
+
+        //     for (const data of historias) {
+        //         const historiaId = data.id;
+
+        //         // Guardar historia si no existe
+        //         if (!mapHistoria.has(historiaId)) {
+        //             guardarEnDB({
+        //                 HistoriaClinica: {
+        //                     id: historiaId,
+        //                     id_paciente: data.id_paciente,
+        //                     fecha_historia: data.fecha_historia,
+        //                 }
+        //             });
+        //         }
+
+        //         // Recorrer todos los análisis
+        //         for (const analisis of data.analisis || []) {
+        //             const analisisId = analisis.id;
+
+        //             if (!mapAnalisis.has(analisisId)) {
+        //                 guardarEnDB({
+        //                     Analisis: {
+        //                         id: analisis.id,
+        //                         motivo: analisis.motivo,
+        //                         observacion: analisis.observacion,
+        //                         tratamiento: analisis.tratamiento,
+        //                         analisis: analisis.analisis,
+        //                         tipoAnalisis: analisis.tipoAnalisis,
+        //                         id_medico: analisis.id_medico,
+        //                         id_historia: analisis.id_historia,
+        //                         fecha: analisis.updated_at,
+        //                     }
+        //                 });
+        //             }
+
+        //             analisis.diagnosticos?.forEach(d => {
+        //                 if (!mapDiagnosticos.has(d.id)) {
+        //                     guardarEnDB({
+        //                         Diagnosticos: {
+        //                             id: d.id,
+        //                             descripcion: d.descripcion,
+        //                             codigo: d.codigo,
+        //                             id_analisis: d.id_analisis,
+        //                         }
+        //                     });
+        //                 }
+        //             });
+
+        //             if (analisis.enfermedad && !mapEnfermedad.has(analisis.enfermedad.id)) {
+        //                 guardarEnDB({
+        //                     Enfermedad: {
+        //                         id: analisis.enfermedad.id,
+        //                         valor: analisis.enfermedad.valor,
+        //                         fecha_diagnostico: analisis.enfermedad.fecha_diagnostico,
+        //                         fecha_rehabilitacion: analisis.enfermedad.fecha_rehabilitacion,
+        //                         id_paciente: analisis.enfermedad.id_paciente,
+        //                         id_analisis: analisis.enfermedad.id_analisis,
+        //                     }
+        //                 });
+        //             }
+
+        //             if (analisis.examen_fisico && !mapExamen.has(analisis.examen_fisico.id)) {
+        //                 guardarEnDB({
+        //                     ExamenFisico: {
+        //                         id: analisis.examen_fisico.id,
+        //                         Peso: analisis.examen_fisico.peso,
+        //                         altura: analisis.examen_fisico.altura,
+        //                         otros: analisis.examen_fisico.otros,
+        //                         signosVitales: { ...analisis.examen_fisico.signosVitales },
+        //                         id_analisis: analisis.examen_fisico.id_analisis,
+        //                     }
+        //                 });
+        //             }
+
+        //             analisis.medicamentos?.forEach(m => {
+        //                 if (!mapMedicamentos.has(m.id)) {
+        //                     guardarEnDB({
+        //                         Plan_manejo_medicamentos: {
+        //                             id: m.id,
+        //                             medicamento: m.medicamento,
+        //                             dosis: m.dosis,
+        //                             cantidad: m.cantidad,
+        //                             id_analisis: m.id_analisis,
+        //                         }
+        //                     });
+        //                 }
+        //             });
+
+        //             analisis.procedimientos?.forEach(p => {
+        //                 if (!mapProcedimientos.has(p.id)) {
+        //                     guardarEnDB({
+        //                         Plan_manejo_procedimientos: {
+        //                             id: p.id,
+        //                             procedimiento: p.procedimiento,
+        //                             codigo: p.codigo,
+        //                             fecha: p.fecha,
+        //                             id_analisis: p.id_analisis,
+        //                         }
+        //                     });
+        //                 }
+        //             });
+
+        //             analisis.insumos?.forEach(i => {
+        //                 if (!mapInsumos.has(i.id)) {
+        //                     guardarEnDB({
+        //                         Plan_manejo_insumos: {
+        //                             id: i.id,
+        //                             insumo: i.insumo,
+        //                             cantidad: i.cantidad,
+        //                             id_analisis: i.id_analisis,
+        //                         }
+        //                     });
+        //                 }
+        //             });
+
+        //             analisis.equipos?.forEach(e => {
+        //                 if (!mapEquipos.has(e.id)) {
+        //                     guardarEnDB({
+        //                         Plan_manejo_equipos: {
+        //                             id: e.id,
+        //                             equipo: e.equipo,
+        //                             cantidad: e.cantidad,
+        //                             id_analisis: e.id_analisis,
+        //                         }
+        //                     });
+        //                 }
+        //             });
+        //         }
+        //     }
+        // }
 
     }
 });

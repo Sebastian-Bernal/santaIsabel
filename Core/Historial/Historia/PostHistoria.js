@@ -94,7 +94,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
     // Validar Examen Físico
     const examen = datos.ExamenFisico;
-    if (!examen?.Peso || isNaN(examen.Peso)) errores.push("El peso debe ser un número.");
+    if (!examen?.peso || isNaN(examen.peso)) errores.push("El peso debe ser un número.");
     if (!examen?.altura || isNaN(examen.altura)) errores.push("La altura debe ser un número.");
     if (!examen?.signosVitales) {
         errores.push("Los signos vitales son obligatorios.");
@@ -184,7 +184,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             id_paciente: datos.HistoriaClinica.id_paciente
         },
         ExamenFisico: {
-            Peso: datos.ExamenFisico.Peso,
+            peso: datos.ExamenFisico.peso,
             altura: datos.ExamenFisico.altura,
             otros: datos.ExamenFisico.otros || null,
             signosVitales: {
@@ -278,7 +278,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         id_paciente: datos.HistoriaClinica.id_paciente
                     },
                     ExamenFisico: {
-                        Peso: datos.ExamenFisico.Peso,
+                        peso: datos.ExamenFisico.peso,
                         altura: datos.ExamenFisico.altura,
                         otros: datos.ExamenFisico.otros || null,
                         signosVitales: {
@@ -361,7 +361,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     ExamenFisico: {
                         id: respuesta.ids.ExamenFisico,
                         id_analisis: respuesta.ids.Analisis,
-                        Peso: datos.ExamenFisico.Peso,
+                        peso: datos.ExamenFisico.peso,
                         altura: datos.ExamenFisico.altura,
                         otros: datos.ExamenFisico.otros,
                         signosVitales: {

@@ -392,7 +392,7 @@ export function useVerHistoriaBuilder({
             // --- Input: Peso ---
             .addCampo({
                 component: 'Input',
-                vmodel: 'ExamenFisico.Peso',
+                vmodel: 'ExamenFisico.peso',
                 type: 'number',
                 id: 'peso',
                 name: 'peso',

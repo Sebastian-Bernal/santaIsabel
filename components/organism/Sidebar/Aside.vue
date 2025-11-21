@@ -83,4 +83,16 @@ button .active {
         padding: 0;
     }
 }
+
+@media screen and (max-height: 600px) {
+    .section-asidebar__content {
+        height: 80%;
+    }
+}
+
+@media screen and (max-height: 400px) {
+    .section-asidebar__content {
+        height: 90%;
+    }
+}
 </style>

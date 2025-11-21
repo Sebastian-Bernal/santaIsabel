@@ -11,7 +11,7 @@ export const validarYEnviarModificarPaciente = async (datos) => {
     const camposObligatorios = [
         'name', 'No_document', 'type_doc', 'celular',
         'nacimiento', 'direccion', 'municipio', 'departamento',
-        'barrio', 'zona', 'sexo', 'genero', 'id_eps', 'Regimen', 'poblacionVulnerable'
+        'barrio', 'zona', 'sexo', 'genero', 'id_eps', 'regimen', 'vulnerabilidad'
     ];
 
     const cuerpo = {
@@ -82,7 +82,7 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
                 },
                 Paciente: {
                     ...datos.Paciente,
-                    id_usuario: datos.InformacionUser.id,
+                    id_infoUsuario: datos.InformacionUser.id,
                     id_eps: datos.Paciente.id_eps,
                     Eps: mapaEPS[datos.Paciente.id_eps],
                     sincronizado: 0
@@ -117,8 +117,8 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
                     sexo: datos.Paciente.sexo,
                     genero: datos.Paciente.genero,
                     id_eps: datos.Paciente.id_eps,
-                    Regimen: datos.Paciente.Regimen,
-                    vulnerabilidad: datos.Paciente.poblacionVulnerable,
+                    regimen: datos.Paciente.regimen,
+                    vulnerabilidad: datos.Paciente.vulnerabilidad,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -134,7 +134,7 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
                         },
                         Paciente: {
                             ...datos.Paciente,
-                            id_usuario: datos.InformacionUser.id,
+                            id_infoUsuario: datos.InformacionUser.id,
                             id_eps: datos.Paciente.id_eps,
                             Eps: mapaEPS[datos.Paciente.id_eps],
                             sincronizado: 1

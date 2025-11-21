@@ -26,36 +26,46 @@ const secciones = ref([])
 const refresh = ref(1)
 
 async function llamadatos() {
+    varView.cargando = true
     EPSdata.value = await storeEPS.listEPSes()
     Profesiones.value = await storeProfesion.listProfesiones()
+    varView.cargando = false
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => showModificarProfesion.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
 watch(() => showNuevaProfesion.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
 watch(() => showModificarEPS.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
 watch(() => showNuevaEPS.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 

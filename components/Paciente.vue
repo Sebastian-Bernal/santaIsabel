@@ -100,7 +100,7 @@ const municipiosOptions = computed(() => {
 });
 
 
-const camposRequeridos = ['InformacionUser.No_document', 'InformacionUser.name', 'Paciente.Regimen', 'Paciente.genero', 'Paciente.poblacionVulnerable', 'Paciente.sexo']
+const camposRequeridos = []
 
 // Construccion de pagina
 

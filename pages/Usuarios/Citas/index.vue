@@ -7,7 +7,6 @@ import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/Calendari
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
-import { decryptData } from '~/composables/Formulario/crypto';
 import { ref, onMounted } from 'vue'
 
 const varView = useVarView()
@@ -27,13 +26,17 @@ const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
 
 async function llamadatos() {
+    varView.cargando = true
     citas.value = await citasStore.listCitas();
+    varView.cargando = false
 }
 // Watch para actualizar citas al agregar nueva
 watch(() => show.value,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 
@@ -41,47 +44,6 @@ watch(() => varView.showNuevaHistoria,
     async () => {
         await llamadatos();
         refresh.value++;
-    }
-);
-
-watch(() => citasStore.Formulario.Cita.servicio,
-    async () => {
-        if (citasStore.Formulario.Cita.servicio === 'Terapia') {
-            varView.cargando = true
-
-            const api = useApiRest()
-            const config = useRuntimeConfig()
-            const token = decryptData(sessionStorage.getItem('token'))
-
-            let options = {
-                metodo: 'POST',
-                url: config.public.diasAsignadosRestantes,
-                token: token,
-                body: {
-                    id_paciente: citasStore.Formulario.Cita.id_paciente
-                }
-            }
-            const respuesta = await api.functionCall(options)
-            let respuestaData = ''
-            if (respuesta.success) {
-                varView.tipoConsulta = 'Terapia'
-                showTratamientos.value = true
-                respuestaData = respuesta.data
-                optionsTratamientos.value = respuesta.data.map(data => {
-                    return {text: data.tratamiento, value: data.id}
-                })
-            }
-            const tratamientodiv = document.getElementById('tratamientos');
-            if (tratamientodiv) {
-                console.log('respuesta', respuesta.message)
-                tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes}</p>`;
-            } else {
-                tratamientodiv.innerHTML = ``;
-            }
-            varView.cargando = false
-        } else {
-            showTratamientos.value = false
-        }
     }
 );
 
@@ -99,11 +61,6 @@ onMounted(async () => {
     }
 });
 
-// watch(() => calendarioCitasStore.fecha, (nuevaFecha) => {
-//     console.log(calendarioCitasStore.fecha)
-//     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
-// })
-
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
     show.value = true
@@ -117,7 +74,6 @@ function cerrar() {
 const showFila = () => {
     showEnFila.value = !showEnFila.value
 };
-
 
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
@@ -148,7 +104,7 @@ const propiedades = computed(() => {
     if (!showEnFila.value) {
         pagina
             .setHeaderPage({
-                titulo: 'Calendario de Citas',
+                titulo: 'Calendario de tu Agenda',
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila },
@@ -167,7 +123,7 @@ const propiedades = computed(() => {
     } else if (showEnFila.value) {
         pagina
             .setHeaderPage({
-                titulo: 'Calendario de Citas',
+                titulo: 'Calendario de tu Agenda',
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila },

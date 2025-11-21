@@ -25,7 +25,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     medicos.createIndex("buscaprofesional", "id", { unique: false });
 
                     const usersInfo = db.createObjectStore('InformacionUser', { keyPath: 'id_temporal', autoIncrement: true });
-                    usersInfo.createIndex("buscaaInformacionUser", "id_usuario", { unique: false });
+                    usersInfo.createIndex("buscaaInformacionUser", "id", { unique: false });
 
                     const diagnostico = db.createObjectStore('Diagnosticos', { keyPath: 'id_temporal', autoIncrement: true });
                     diagnostico.createIndex("buscadiagnostico", "id_diagnostico", { unique: false });
@@ -132,8 +132,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             const tx = this.bd.transaction(this.almacen, 'readwrite');
             const store = tx.objectStore(this.almacen);
 
+            const limpio = JSON.parse(JSON.stringify(aguardar));
+
             const result = await new Promise((resolve, reject) => {
-                const request = store.add(aguardar);
+                const request = store.add(limpio);
                 request.onsuccess = () => resolve(request.result); // El ID generado
                 request.onerror = () => reject(request.error);
             });

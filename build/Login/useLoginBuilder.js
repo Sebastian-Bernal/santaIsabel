@@ -1,6 +1,7 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import CrossImg from '~/assets/img/cross.png'
+import { ref } from 'vue'
 
 export function useLoginBuilder({
   storeId,
@@ -11,6 +12,17 @@ export function useLoginBuilder({
   opcionesCompañy
 }) {
   const builder = new FormularioBuilder()
+  const mostrarcontraseña = ref(false)
+
+  const cambiarMostrarContraseña = () => {
+      mostrarContraseña.value = !mostrarContraseña.value;
+      const passwordInput = document.getElementById('password');
+      if (mostrarContraseña.value) {
+          passwordInput.type = 'text';
+      } else {
+          passwordInput.type = 'password';
+      }
+  };
 
   builder
     .setStoreId(storeId)
@@ -70,11 +82,15 @@ export function useLoginBuilder({
       component: 'Input',
       placeholder: 'Contraseña',
       type: 'password',
-      id: 'contraseña',
+      id: 'password',
       name: 'contraseña',
       tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
       estilo: 'text-white!',
       vmodel: 'Usuario.contraseña',
+      // slot: {
+      //   label: mostrarcontraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-gray-200"></i>`,
+      //   action: cambiarMostrarContraseña
+      // }
     })
     .addCampo({
       component: 'Label',

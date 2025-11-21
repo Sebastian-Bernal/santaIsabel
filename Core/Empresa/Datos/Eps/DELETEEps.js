@@ -8,18 +8,6 @@ export const enviarFormularioDeleteEPS = async (datos, reintento=false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-    console.log(datos)
-    if(!reintento){
-        await actualizarEnIndexedDB({
-            EPS: {
-                ...datos,
-                id_temporal: datos.id_temporal,
-                id: datos.id,
-                estado: 0,
-                sincronizado: 0
-            }
-        })
-    }
 
     const online = navigator.onLine;
     if (online) {
@@ -40,7 +28,6 @@ export const enviarFormularioDeleteEPS = async (datos, reintento=false) => {
                     EPS: {
                         ...datos.EPS,
                         id: respuesta.data.id,
-                        id_temporal: datos.id_temporal,
                         estado: 0,
                         sincronizado: 1
                     }

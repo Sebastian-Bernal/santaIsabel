@@ -35,9 +35,9 @@ export const validarYEnviarNuevoMedico = async (datos) => {
         barrio: info.barrio,
         zona: info.zona,
         id_profesion: profesional.id_profesion,
-        departamento_laboral: profesional.departamentoLaboral,
-        municipio_laboral: profesional.municipioLaboral,
-        zona_laboral: profesional.zonaLaboral,
+        departamento_laboral: profesional.departamento_laboral,
+        municipio_laboral: profesional.municipio_laboral,
+        zona_laboral: profesional.zona_laboral,
         correo: usuario.correo
     };
 
@@ -120,27 +120,6 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
         return acc;
     }, {});
 
-    // let id_temporal = {}
-    // if (!reintento) {
-    //     // Guardar local
-    //     const datosLocal = {
-    //         InformacionUser: {
-    //             ...datos.InformacionUser,
-    //             correo: datos.User.correo,
-    //             sincronizado: 0
-    //         },
-    //         Profesional: {
-    //             ...datos.Profesional,
-    //             profesion: mapaProfesion[datos.Profesional.profesion],
-    //             sincronizado: 0
-    //         }
-    //     }
-
-    //     id_temporal = await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)), "Profesional")
-    // } else {
-    //     id_temporal = { User: datos.InformacionUser.id_temporal, Profesional: datos.Profesional.id_temporal }
-    // }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -163,9 +142,9 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                     zona: datos.InformacionUser.zona,
 
                     id_profesion: datos.Profesional.id_profesion,
-                    departamento_laboral: datos.Profesional.departamentoLaboral,
-                    municipio_laboral: datos.Profesional.municipioLaboral,
-                    zona_laboral: datos.Profesional.zonaLaboral,
+                    departamento_laboral: datos.Profesional.departamento_laboral,
+                    municipio_laboral: datos.Profesional.municipio_laboral,
+                    zona_laboral: datos.Profesional.zona_laboral,
 
                     correo: datos.User.correo,
                 }
@@ -194,12 +173,12 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                     Profesional: {
                         sincronizado: 1,
                         id: respuesta.profesional.id,
-                        id_usuario: respuesta.profesional.id_infoUsuario,
+                        id_infoUsuario: respuesta.profesional.id_infoUsuario,
                         id_profesion: respuesta.profesional.id_profesion,
                         profesion: mapaProfesion[respuesta.profesional.id_profesion],
-                        zonaLaboral: respuesta.profesional.zona_laboral,
-                        departamentoLaboral: respuesta.profesional.departamento_laboral,
-                        municipioLaboral: respuesta.profesional.municipio_laboral,
+                        zona_laboral: respuesta.profesional.zona_laboral,
+                        departamento_laboral: respuesta.profesional.departamento_laboral,
+                        municipio_laboral: respuesta.profesional.municipio_laboral,
                         estado: 1,
                     },
                 }

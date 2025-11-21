@@ -31,9 +31,9 @@ export const validarYEnviarModificarMedico = async (datos) => {
         barrio: info.barrio,
         zona: info.zona,
         id_profesion: profesional.profesion,
-        departamento_laboral: profesional.departamentoLaboral,
-        municipio_laboral: profesional.municipioLaboral,
-        zona_laboral: profesional.zonaLaboral,
+        departamento_laboral: profesional.departamento_laboral,
+        municipio_laboral: profesional.municipio_laboral,
+        zona_laboral: profesional.zona_laboral,
         correo: usuario.correo
     };
 
@@ -101,24 +101,6 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
         return acc;
     }, {});
 
-    if(!reintento){
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
-            InformacionUser: {
-                ...datos.InformacionUser,
-                correo: datos.User.correo,
-                sincronizado: 0
-            },
-            Profesional: {
-                ...datos.Profesional,
-                id_usuario: datos.InformacionUser.id,
-                id_profesional: datos.Profesional.profesion,
-                id_profesion: datos.Profesional.id_profesion,
-                profesion: mapaProfesion[datos.Profesional.id_profesion],
-                sincronizado: 0
-            }
-        })))
-    }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -141,9 +123,9 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                     zona: datos.InformacionUser.zona,
 
                     id_profesion: datos.Profesional.id_profesion,
-                    departamento_laboral: datos.Profesional.departamentoLaboral,
-                    municipio_laboral: datos.Profesional.municipioLaboral,
-                    zona_laboral: datos.Profesional.zonaLaboral,
+                    departamento_laboral: datos.Profesional.departamento_laboral,
+                    municipio_laboral: datos.Profesional.municipio_laboral,
+                    zona_laboral: datos.Profesional.zona_laboral,
 
                     correo: datos.User.correo,
                 }
@@ -159,8 +141,7 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                     },
                     Profesional: {
                         ...datos.Profesional,
-                        id_usuario: datos.InformacionUser.id,
-                        id_profesional: datos.Profesional.profesion,
+                        id_infoUsuario: datos.InformacionUser.id,
                         id_profesion: datos.Profesional.id_profesion,
                         profesion: mapaProfesion[datos.Profesional.id_profesion],
                         estado: 1,
