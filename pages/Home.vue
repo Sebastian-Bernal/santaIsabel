@@ -415,7 +415,7 @@ const propiedades = computed(() => {
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Citas de Hoy')
-                .setheaderHtml(`<a href="Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
+                .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )
             .addComponente('Card', cardsAcciones
