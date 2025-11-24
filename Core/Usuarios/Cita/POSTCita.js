@@ -7,17 +7,32 @@ export const validarYEnviarNuevaCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const cita = datos.Cita;
 
+    let camposObligatorios = []
+    if(datos.Cita.servicio === 'Terapia'){
+        camposObligatorios = [
+            'id_paciente',
+            'id_medico',
+            'name_paciente',
+            'name_medico',
+            'servicio',
+            'motivo',
+            'fecha',
+            'hora',
+            'id_procedimiento'
+        ];
+    } else {
+        camposObligatorios = [
+            'id_paciente',
+            'id_medico',
+            'name_paciente',
+            'name_medico',
+            'servicio',
+            'motivo',
+            'fecha',
+            'hora'
+        ];
+    }
     // Validar campos vacíos
-    const camposObligatorios = [
-        'id_paciente',
-        'id_medico',
-        'name_paciente',
-        'name_medico',
-        'servicio',
-        'motivo',
-        'fecha',
-        'hora'
-    ];
 
     const camposVacios = camposObligatorios.filter(campo => {
         const valor = cita[campo];
@@ -143,11 +158,22 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            if(!reintento){
+                await guardarEnDB(JSON.parse(JSON.stringify({Cita: {...datos.Cita, sincronizado: 0}})));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

@@ -26,9 +26,8 @@ export const useNotasStore = defineStore('Notas', {
 
     getters: {
         async listNotas(state) {
-            const store = useIndexedDBStore()
-            store.almacen = 'Nota'
-            const Notas = await store.leerdatos()
+            const apiRest = useApiRest()
+            const Notas = await apiRest.getData('Notas','notas')
 
             state.Notas = Notas
             return Notas

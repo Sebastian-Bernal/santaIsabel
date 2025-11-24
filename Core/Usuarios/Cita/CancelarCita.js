@@ -64,11 +64,22 @@ export const enviarFormularioEliminarCita = async (datos, reintento = false) => 
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            if(!reintento){
+                await guardarEnDB(JSON.parse(JSON.stringify({Cita: {...datos.Cita, sincronizado: 0}})));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

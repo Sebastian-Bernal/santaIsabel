@@ -10,7 +10,7 @@ const props = defineProps({
     Propiedades: {
         default: {}
     }
-});
+});console.log(props.Propiedades)
 
 const emit = defineEmits(['update:modelValue']);
 
@@ -93,7 +93,7 @@ function handleInput(event) {
             </li>
         </ul>
 
-        <div class="absolute top-2.5 right-3">
+        <div v-if="!Propiedades.disabled" class="absolute top-2.5 right-3">
             <i class="fa-solid fa-search text-blue-600"></i>
         </div>
 

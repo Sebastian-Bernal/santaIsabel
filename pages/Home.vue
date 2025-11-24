@@ -182,7 +182,7 @@ function DashboardRol(rol, Historias = [], citas) {
                 header: {
                     icon: 'fa-solid fa-calendar text-white',
                     iconBg: 'bg-inherit',
-                    title: 'Nueva Cita',
+                    title: 'Agendar',
                     subtitle: 'Nueva consulta medica',
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
@@ -205,7 +205,7 @@ function DashboardRol(rol, Historias = [], citas) {
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
-                        <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca tus citas y pacientes</p>
+                        <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca tu agenda y pacientes</p>
 
                     `,
                 title: ``,
@@ -259,7 +259,7 @@ function DashboardRol(rol, Historias = [], citas) {
                 header: {
                     icon: 'fa-solid fa-plus text-white',
                     iconBg: 'bg-inherit',
-                    title: 'Crear Cita',
+                    title: 'Agendar',
                     subtitle: 'Nueva consulta medica',
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
@@ -414,7 +414,7 @@ const propiedades = computed(() => {
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
-                .setheaderTitle('Citas de Hoy')
+                .setheaderTitle('Agenda de Hoy')
                 .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )

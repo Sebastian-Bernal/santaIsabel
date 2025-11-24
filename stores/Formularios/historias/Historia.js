@@ -162,6 +162,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             await apiRest.getData('Diagnosticos', 'diagnosticos')
             await apiRest.getData('Antecedentes', 'antecedentes')
             await apiRest.getData('ExamenFisico', 'examenFisicos')
+            await apiRest.getData('Terapia', 'terapias')
 
         }
         // async indexDBDatos() {

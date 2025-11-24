@@ -108,7 +108,7 @@ const propiedades = computed(() => {
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila },
-                    puedePost ? { text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
+                    puedePost ? { text: 'Agendar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
                 ]
             })
             .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3')
@@ -127,7 +127,7 @@ const propiedades = computed(() => {
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila },
-                    puedePost ? { text: 'Agregar Cita', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
+                    puedePost ? { text: 'Agendar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
                 ]
             })
             .setContenedor('grid grid-cols-1 gap-3')

@@ -8,11 +8,14 @@ import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users";
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { mapCampos } from "./organism/Forms/useFormulario";
 import { CIE10 } from "~/data/CIE10";
 
 const varView = useVarView();
 const pacientesStore = usePacientesStore();
+const medicoStore = useMedicosStore()
+const MedicosList = ref([])
 const usuariosStore = useUsersStore();
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
@@ -34,6 +37,8 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
+
+    MedicosList.value = await medicoStore.listMedicos();
 
     varView.cargando = false;
 });
@@ -124,7 +129,8 @@ const propiedades = computed(() => {
         seleccionarCIE_10: () => {},
         CIE10: CIE10,
         tipoUsuario: "Paciente",
-        validarFecha
+        validarFecha,
+        MedicosList: MedicosList
     });
 
     return pagina

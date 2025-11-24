@@ -36,14 +36,6 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Guardar Local
-    let id_temporal = {}
-    if(!reintento){
-        id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Nota: {...datos.Nota, sincronizado: 0}})));
-    } else {
-        id_temporal.data = datos.Nota.id_temporal
-    }
-
     const online = navigator.onLine;
     if (online) {
         try {
@@ -67,7 +59,6 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Nota: {
-                        id_temporal: id_temporal.data,
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
@@ -94,11 +85,22 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
             return true
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            if(!reintento){
+                await guardarEnDB(JSON.parse(JSON.stringify({Nota: {...datos.Nota, sincronizado: 0}})));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

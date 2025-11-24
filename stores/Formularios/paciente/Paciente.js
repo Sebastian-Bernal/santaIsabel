@@ -8,7 +8,6 @@ import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useMedicosStore } from "../profesional/Profesionales";
 import { traerAntecedentes } from "~/Core/Usuarios/Paciente/GETAntecedentes";
 import { useVarView } from "~/stores/varview";
-import { traerProfesionales } from "~/Core/Usuarios/Profesional/GETProfesionales";
 
 // Pinia Pacientes
 export const usePacientesStore = defineStore('Pacientes', {
@@ -39,7 +38,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 vulnerabilidad: '',
                 estado: 1,
             },
-            Diagnosticos: [],
+            Plan_manejo_procedimientos: [],
             Antecedentes: [],
         }
     }),

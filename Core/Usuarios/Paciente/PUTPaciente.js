@@ -152,11 +152,36 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return true
+        try {
+            if (!reintento) {
+                const datosActualizadosLocal = {
+                    InformacionUser: {
+                        ...datos.InformacionUser,
+                        sincronizado: 0
+                    },
+                    Paciente: {
+                        ...datos.Paciente,
+                        id_infoUsuario: datos.InformacionUser.id,
+                        id_eps: datos.Paciente.id_eps,
+                        Eps: mapaEPS[datos.Paciente.id_eps],
+                        sincronizado: 0
+                    }
+                }
+
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

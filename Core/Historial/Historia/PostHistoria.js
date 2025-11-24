@@ -11,7 +11,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
 
-    if(varView.tipoConsulta === 'Terapia'){
+    if (varView.tipoConsulta === 'Terapia') {
         return await enviarFormularioTerapia(datos)
     }
 
@@ -424,13 +424,99 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
-        return true
+
+        try {
+            const datosActualizar = {
+                HistoriaClinica: {
+                    fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    sincronizado: 0
+                },
+                Analisis: {
+                    id_historia: respuesta.ids.HistoriaClinica,
+                    motivo: datos.Analisis.motivo,
+                    observacion: datos.Analisis.observacion,
+                    tratamiento: datos.Analisis.tratamiento,
+                    analisis: datos.Analisis.analisis,
+                    tipoAnalisis: datos.Analisis.tipoAnalisis,
+                    id_medico: datos.Cita.id_medico,
+                    sincronizado: 0
+                },
+                Diagnosticos: datos.Diagnosticos.map((d, i) => ({
+                    descripcion: d.descripcion,
+                    codigo: d.codigo,
+                    sincronizado: 0
+                })),
+                Antecedentes: datos.Antecedentes.map((a, i) => ({
+                    tipo: a.tipo,
+                    descripcion: a.descripcion,
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    sincronizado: 0
+                })),
+                Enfermedad: {
+                    valor: datos.Enfermedad.valor,
+                    fecha_diagnostico: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                    fecha_rehabilitacion: datos.Enfermedad.fecha_rehabilitacion,
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    sincronizado: 0
+                },
+                ExamenFisico: {
+                    peso: datos.ExamenFisico.peso,
+                    altura: datos.ExamenFisico.altura,
+                    otros: datos.ExamenFisico.otros,
+                    signosVitales: {
+                        ta: datos.ExamenFisico.signosVitales.ta,
+                        fc: datos.ExamenFisico.signosVitales.fc,
+                        fr: datos.ExamenFisico.signosVitales.fr,
+                        t: datos.ExamenFisico.signosVitales.t,
+                        SATo2: datos.ExamenFisico.signosVitales.SATo2
+                    },
+                    sincronizado: 0
+                },
+                Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map((m, i) => ({
+                    medicamento: m.medicamento,
+                    dosis: m.dosis,
+                    cantidad: parseInt(m.cantidad),
+                    sincronizado: 0
+                })),
+                Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map((p, i) => ({
+                    procedimiento: p.procedimiento,
+                    codigo: p.codigo,
+                    fecha: p.fecha,
+                    sincronizado: 0
+                })),
+                Plan_manejo_insumos: datos.Plan_manejo_insumos.map((i, index) => ({
+                    nombre: i.nombre,
+                    cantidad: parseInt(i.cantidad),
+                    sincronizado: 0
+                })),
+                Plan_manejo_equipos: datos.Plan_manejo_equipos.map((e, i) => ({
+                    descripcion: e.descripcion,
+                    uso: e.uso,
+                    sincronizado: 0
+                })),
+                Cita: {
+                    id: datos.Cita.id,
+                    estado: 'Realizada',
+                    sincronizado: 0,
+                    ...datos.Cita
+                }
+            };
+
+            await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };
 
@@ -501,12 +587,41 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Se guardará localmente'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
-        return true
+        try {
+            if (!reintento) {
+                const datosActualizar = {
+                    Terapia: {
+                        sesion: datos.Terapia.sesion,
+                        objetivos: datos.Terapia.objetivos,
+                        fecha: datos.Terapia.fecha,
+                        hora: datos.Terapia.hora,
+                        evolucion: datos.Terapia.evolucion,
+                        id_paciente: datos.Terapia.id_paciente,
+                        id_profesional: datos.Terapia.id_profesional,
+                        id_procedimiento: datos.Terapia.id_procedimiento,
+                        sinconizado: 0
+                    },
+                    Cita: {
+                        id: datos.Cita.id,
+                        estado: 'Realizada',
+                        sincronizado: 0,
+                        ...datos.Cita
+                    }
+                };
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)));
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
     }
 };

@@ -61,7 +61,7 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
 
     // 🔁 Validación si ya existe el paciente
     const paciente = pacientes.find(
-        p => parseInt(p.No_document) === parseInt(datos.Paciente.No_document)
+        p => parseInt(p.No_document) === parseInt(datos.InformacionUser.No_document)
     );
 
     if (paciente) {
@@ -116,6 +116,17 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     id_eps: datos.Paciente.id_eps,
                     regimen: datos.Paciente.regimen,
                     vulnerabilidad: datos.Paciente.vulnerabilidad,
+
+                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
+                        procedimiento: p.procedimiento,
+                        codigo: p.codigo,
+                        id_medico: p.id_medico,
+                        dias_asignados: p.dias_asignados,
+                    })),
+                    Antecedentes: (datos.Antecedentes ?? []).map(a => ({
+                        tipo: a.tipo,
+                        descripcion: a.descripcion,
+                    })),
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -158,24 +169,22 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
             if (!reintento) {
                 const datosActualizadosLocal = {
                     InformacionUser: {
-                        ...respuesta.informacion,
-                        sincronizado: 1
+                        ...datos.InformacionUser,
+                        sincronizado: 0
                     },
                     Paciente: {
-                        id: respuesta.paciente.id,
-                        id_eps: respuesta.paciente.id_eps,
-                        Eps: mapaEPS[respuesta.paciente.id_eps],
-                        id_infoUsuario: respuesta.paciente.id_infoUsuario,
-                        genero: respuesta.paciente.genero,
-                        sexo: respuesta.paciente.sexo,
-                        regimen: respuesta.paciente.regimen,
-                        vulnerabilidad: respuesta.paciente.vulnerabilidad,
+                        id_eps: datos.Paciente.id_eps,
+                        Eps: mapaEPS[datos.Paciente.id_eps],
+                        genero: datos.Paciente.genero,
+                        sexo: datos.Paciente.sexo,
+                        regimen: datos.Paciente.regimen,
+                        vulnerabilidad: datos.Paciente.vulnerabilidad,
                         estado: 1,
-                        sincronizado: 1,
+                        sincronizado: 0,
                     },
                 }
 
-                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)), "Paciente");
             }
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'No hay internet';

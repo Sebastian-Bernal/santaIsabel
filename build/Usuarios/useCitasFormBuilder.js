@@ -23,7 +23,8 @@ export function useFormularioCitaBuilder({
 
   watch(() => citasStore.Formulario.Cita.servicio,
     async () => {
-      if (citasStore.Formulario.Cita.servicio === 'Terapia') {
+      if (citasStore.Formulario.Cita.servicio === 'Terapia' && citasStore.Formulario.Cita.id_paciente) {
+
         const varView = useVarView()
         varView.cargando = true
 
@@ -39,8 +40,11 @@ export function useFormularioCitaBuilder({
             id_paciente: citasStore.Formulario.Cita.id_paciente
           }
         }
+
         const respuesta = await api.functionCall(options)
         let respuestaData = ''
+
+
         if (respuesta.success) {
           varView.tipoConsulta = 'Terapia'
           showTratamientos.value = true
@@ -49,15 +53,20 @@ export function useFormularioCitaBuilder({
             return { text: data.tratamiento, value: data.id }
           })
         }
+
         const tratamientodiv = document.getElementById('tratamientos');
         if (tratamientodiv) {
-          tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes}</p>`;
+          tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes || ''}</p>`;
         } else {
           tratamientodiv.innerHTML = ``;
         }
         varView.cargando = false
+
+
       } else {
         showTratamientos.value = false
+        const tratamientodiv = document.getElementById('tratamientos');
+        tratamientodiv.innerHTML = ``;
       }
     }
   );
@@ -129,7 +138,7 @@ export function useFormularioCitaBuilder({
       { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
       { text: 'Guardar', color: 'bg-blue-500', type: 'enviar' },
     ])
-    .nuevaSeccion('Agendar Cita')
+    .nuevaSeccion('Agregar Cita a tu Agenda')
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
@@ -192,7 +201,7 @@ export function useFormularioCitaBuilder({
       ],
       vmodel: 'Cita.servicio',
       slot: {
-        tooltip: `<div id="tratamientos" class="text-red-300 text-xs mt-1"></div>`
+        tooltip: `<div id="tratamientos" class="text-green-300 text-xs mt-1"></div>`
       },
     })
     .addCampo({

@@ -5,7 +5,6 @@ import { ref, onMounted, watch } from "vue";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
 import { useUsersStore } from "~/stores/Formularios/usuarios/Users.js";
 import { useVarView } from "../../stores/varview.js";
-import { storeToRefs } from "pinia";
 import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
 import { TablaBuilder } from "~/build/Constructores/TablaBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
@@ -16,10 +15,13 @@ import { CIE10 } from "~/data/CIE10";
 import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
 import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/DELETEPaciente.js";
 import { useHistoriasStore } from "~/stores/Formularios/historias/Historia.js";
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const pacientesStore = usePacientesStore();
+const medicoStore = useMedicosStore()
+const MedicosList = ref([])
 const usuariosStore = useUsersStore()
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
@@ -66,7 +68,11 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
+    MedicosList.value = await medicoStore.listMedicos();
 
+    const apiRest = useApiRest()
+    await apiRest.getData('Antecedentes', 'antecedentes')
+    await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     varView.cargando = false;
 });
 
@@ -86,39 +92,8 @@ const verPaciente = async (paciente) => {
 
     const historiaStore = useHistoriasStore()
     pacientesStore.Formulario.Antecedentes = await historiaStore.listDatos(paciente.id_paciente, 'Antecedentes', 'id_paciente')
+    pacientesStore.Formulario.Plan_manejo_procedimientos = await historiaStore.listDatos(paciente.id_paciente, 'Plan_manejo_procedimientos', 'id_paciente')
 
-    const historia = await pacientesStore.listDatos(paciente.id_paciente, 'HistoriaClinica', 'id')
-    const allAnalisis = await historiaStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
-
-    if (allAnalisis || allAnalisis.length > 0) {
-        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
-        const diagnosticosPorAnalisis = await Promise.all(
-            allAnalisis.map(async (h) => {
-
-                const diagnostico = await historiaStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || []
-
-                // Enriquecer cada tratamiento con su análisis correspondiente
-                const diagnosticosConAnalisis = diagnostico.map((diag) => {
-                    return {
-                        ...diag,
-                        ...h,
-                    }
-                })
-
-                return diagnosticosConAnalisis
-            })
-        )
-
-        // Unificar todos los diagnosticos en un solo array
-        pacientesStore.Formulario.Diagnosticos = diagnosticosPorAnalisis.flat()
-    }
-    // pacientesStore.Formulario.Diagnosticos = [
-    //     { 
-    //         descripcion: 'Trastornos papuloescamosos', 
-    //         codigoCIE10: 'L40-L45', 
-    //         id_paciente: '1' 
-    //     }
-    // ]
     showVer.value = true;
 };
 
@@ -298,6 +273,7 @@ const propiedades = computed(() => {
             tipoUsuario: "Paciente",
             validarFecha,
             validarTipoDoc,
+            MedicosList: MedicosList
         })
         : null;
 

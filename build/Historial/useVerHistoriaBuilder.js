@@ -115,44 +115,6 @@ export function useVerHistoriaBuilder({
         builder
             .nuevaSeccion('Tratamientos')
 
-            // --- Select: Tipo de Análisis ---
-            .addCampo({
-                component: 'Select',
-                vmodel: 'Analisis.tipoAnalisis',
-                id: 'rehabilitacion',
-                name: 'rehabilitacion',
-                placeholder: 'Tipo de Análisis',
-                tamaño: 'w-full',
-                options: [
-                    { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
-                    { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
-                    { text: 'Cambios críticos', value: 'Cambios criticos' }
-                ]
-            })
-
-            // --- Input: Observación ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Analisis.observacion',
-                type: 'text',
-                id: 'observacion',
-                name: 'observacion',
-                placeholder: 'Observación',
-                tamaño: 'w-full',
-                minlength: 5
-            })
-
-            // --- Textarea: Análisis ---
-            .addCampo({
-                component: 'Textarea',
-                vmodel: 'Analisis.analisis',
-                id: 'analisis',
-                name: 'analisis',
-                placeholder: 'Análisis',
-                tamaño: 'w-full col-span-2',
-                minlength: 10
-            })
-
             .addCampo({
                 component: 'Label',
                 forLabel: 'rehabilitacion',
@@ -167,7 +129,7 @@ export function useVerHistoriaBuilder({
                 type: 'text',
                 id: 'nombre',
                 name: 'nombre',
-                tamaño: 'w-full',
+                tamaño: 'w-full col-span-2',
                 minlength: 5
             })
             .addCampo({
@@ -180,20 +142,14 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full',
                 minlength: 5
             })
-
-            // --- Select: Condición de rehabilitación ---
             .addCampo({
-                component: 'Select',
-                vmodel: 'Analisis.tratamiento',
+                component: 'Input',
+                label: 'Dias asignados',
+                vmodel: 'Plan_manejo_procedimientos.dias_asignados',
                 id: 'rehabilitacion',
                 name: 'rehabilitacion',
-                placeholder: 'Condición de rehabilitación',
-                tamaño: 'w-full col-span-2',
-                options: [
-                    { text: 'Total o Parcial', value: 'Total o Parcial' },
-                    { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                    { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-                ]
+                placeholder: '0',
+                tamaño: 'w-full',
             })
     }
 

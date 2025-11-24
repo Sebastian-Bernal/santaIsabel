@@ -130,32 +130,7 @@ async function cargaHistorial(id) {
 
 
     // Tratamientos
-
-    if (allAnalisis || allAnalisis.length > 0) {
-        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
-        const tratamientosPorAnalisis = await Promise.all(
-            allAnalisis.map(async (h) => {
-
-                const tratamientos = await historiasStore.listDatos(h.id, 'Plan_manejo_procedimientos', 'id_analisis') || []
-
-                // Enriquecer cada tratamiento con su análisis correspondiente
-                const tratamientosConAnalisis = tratamientos.map((tratamiento) => {
-                    return {
-                        ...tratamiento,
-                        ...h,
-                    }
-                })
-
-                return tratamientosConAnalisis
-            })
-        )
-
-        // Unificar todos los tratamientos en un solo array
-        tratamientos.value = tratamientosPorAnalisis.flat()
-    } else {
-        tratamientos.value = []
-    }
-
+    tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || []
 
 
     // Medicinas
@@ -227,7 +202,7 @@ function verItemTratamientoHistoria(item) {
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
     historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
-    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
+    historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
     showItem.value = true
 }
 
@@ -932,7 +907,7 @@ const propiedades = computed(() => {
                 .setColumnas([
                     { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 300, ordenar: true },
                     { titulo: 'codigo', value: 'CUPS', tamaño: 250, ordenar: true },
-                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
+                    { titulo: 'dias_asignados', value: 'No. Dias', tamaño: 250 },
                 ])
                 .setDatos(tratamientos)
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })

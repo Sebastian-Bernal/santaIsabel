@@ -67,7 +67,7 @@ export const useApiRest = defineStore('apiRest', {
             }
         },
 
-        async getData(almacen, nombre) {
+        async getData(almacen, nombre, time = true) {
             let datos = [];
             const token = decryptData(sessionStorage.getItem('token'));
             const config = useRuntimeConfig()
@@ -80,7 +80,23 @@ export const useApiRest = defineStore('apiRest', {
                         token: token
                     };
 
-                    const respuesta = await this.functionCall(options);
+                    let respuesta
+                    if(time){
+                        // Promesa de timeout
+                        const timeout = new Promise((_, reject) =>
+                            setTimeout(() => reject(new Error("Timeout")), 10000) // 10 segundos
+                        );
+    
+                        // Correr la llamada y el timeout en paralelo
+                        respuesta = await Promise.race([
+                            this.functionCall(options),
+                            timeout
+                        ]);
+                    } else {
+                        respuesta = await this.functionCall(options);
+
+                    }
+
 
                     if (respuesta?.success && Array.isArray(respuesta.data)) {
                         datos = await respuesta.data;
