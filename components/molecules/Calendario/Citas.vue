@@ -156,6 +156,7 @@ async function activarCita(cita) {
     historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = pacienteCita.No_document
     historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
+    historiasStore.Formulario.Analisis.servicio = cita.servicio
 
     historiasStore.Formulario.Cita = cita
     varView.tipoConsulta = cita.servicio

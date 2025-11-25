@@ -6,19 +6,18 @@ import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
-import { storeToRefs } from 'pinia';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
+import { traerAdministradores } from '~/Core/Empresa/Usuario/GetAdministradores';
 
 const varView = useVarView();
 const UsersStore = useUsersStore();
-const { listUsers } = storeToRefs(UsersStore);
 const Users = ref([]);
 const refresh = ref(1)
 const show = ref(false)
 const showVer = ref(false)
 
 async function llamadatos() {
-    Users.value = await listUsers.value;
+    Users.value = await traerAdministradores()
     await UsersStore.indexDBDatos()
 }
 // Actualizar pagina cunso se agrega Nuevo Usuario

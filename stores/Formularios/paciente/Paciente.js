@@ -71,7 +71,8 @@ export const usePacientesStore = defineStore('Pacientes', {
                 return await this.listPacientesAtendidos()
             }
     
-            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+            store.almacen = 'InformacionUser'
+            const usuarios = await store.leerdatos()
             const pacientes = await apiRest.getData('Paciente', 'pacientes')
     
             store.almacen = 'EPS'

@@ -10,7 +10,7 @@ const props = defineProps({
     Propiedades: {
         default: {}
     }
-});console.log(props.Propiedades)
+});
 
 const emit = defineEmits(['update:modelValue']);
 

@@ -21,6 +21,7 @@ export default defineNuxtConfig({
       informacionUsers: 'api/v1/informacionUsers',
       citas: 'api/v1/citas',
       historiasClinicas: 'api/v1/historiasClinicas',
+      historiasNutricion: 'api/v1/historiasClinicasNutricion',
       analisis: 'api/v1/analisis',
       examenFisicos: 'api/v1/examenFisicos',
       planManejoMedicamentos: 'api/v1/planManejoMedicamentos',

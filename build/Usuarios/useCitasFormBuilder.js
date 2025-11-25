@@ -50,13 +50,13 @@ export function useFormularioCitaBuilder({
           showTratamientos.value = true
           respuestaData = respuesta.data
           optionsTratamientos.value = respuesta.data.map(data => {
-            return { text: data.tratamiento, value: data.id }
+            return { text: `${data.tratamiento} - ${data.dias_restantes}`, value: data.id }
           })
         }
 
         const tratamientodiv = document.getElementById('tratamientos');
         if (tratamientodiv) {
-          tratamientodiv.innerHTML = `<p>${respuesta.message} ${respuestaData[0]?.dias_restantes || ''}</p>`;
+          tratamientodiv.innerHTML = `<p>Tratamientos activos: ${respuestaData.length || 0}</p>`;
         } else {
           tratamientodiv.innerHTML = ``;
         }
@@ -70,6 +70,7 @@ export function useFormularioCitaBuilder({
       }
     }
   );
+
   function seleccionarPaciente(paciente) {
     citasStore.Formulario.Cita.name_paciente = paciente.name
     citasStore.Formulario.Cita.id_paciente = paciente.id_paciente
@@ -188,20 +189,21 @@ export function useFormularioCitaBuilder({
         { text: 'Pediatría', value: 'Pediatría' },
         { text: 'Ginecología', value: 'Ginecología' },
         { text: 'Medicina Interna', value: 'Medicina Interna' },
+        { text: 'Trabajo Social', value: 'Trabajo Social' },
         { text: 'Cardiología', value: 'Cardiología' },
         { text: 'Dermatología', value: 'Dermatología' },
         { text: 'Oftalmología', value: 'Oftalmología' },
         { text: 'Otorrinolaringología', value: 'Otorrinolaringología' },
         { text: 'Traumatología', value: 'Traumatología' },
         { text: 'Fisioterapia', value: 'Fisioterapia' },
-        { text: 'Nutrición', value: 'Nutrición' },
+        { text: 'Nutrición', value: 'Nutricion' },
         { text: 'Laboratorio Clínico', value: 'Laboratorio Clínico' },
         { text: 'Imagenología', value: 'Imagenología' },
         { text: 'Otro', value: 'Otro' },
       ],
       vmodel: 'Cita.servicio',
       slot: {
-        tooltip: `<div id="tratamientos" class="text-green-300 text-xs mt-1"></div>`
+        tooltip: `<div id="tratamientos" class="text-green-600 dark:text-green-300 text-xs mt-1"></div>`
       },
     })
     .addCampo({
