@@ -19,8 +19,9 @@ const opcionesFiltradas = ref([]);
 const errorMensaje = ref()
 
 watch(() => props.modelValue, (nuevoValor) => {
-    const propiedadFiltrar = unref(props.Propiedades.opciones?.[0]?.value ?? '');
-    const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? [])
+    const propiedadFiltrar1 = unref(props.Propiedades.opciones?.[0]?.value ?? '');
+    const propiedadFiltrar2 = unref(props.Propiedades.opciones?.[1]?.value ?? '');
+    const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? []);
 
     if (!nuevoValor || nuevoValor.length < 2) {
         opcionesFiltradas.value = [];
@@ -28,22 +29,41 @@ watch(() => props.modelValue, (nuevoValor) => {
         return;
     }
 
-    opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item =>
-        item?.[propiedadFiltrar]?.toLowerCase().includes(nuevoValor.toLowerCase())
-    ).slice(0,20) : [];
+    opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item => {
+        const val1 = item?.[propiedadFiltrar1]?.toLowerCase() ?? '';
+        const val2 = item?.[propiedadFiltrar2]?.toLowerCase() ?? '';
+        return val1.includes(nuevoValor.toLowerCase()) || val2.includes(nuevoValor.toLowerCase());
+    }).slice(0,20) : [];
 
-    const filtradas = opcionesFiltradas.value
-    const coincidenciaExacta = filtradas.some(item =>
-        item?.[propiedadFiltrar]?.toLowerCase() === nuevoValor.toLowerCase()
-    );
+    const filtradas = opcionesFiltradas.value;
+    const coincidenciaExacta = filtradas.find(item => {
+        const val1 = item?.[propiedadFiltrar1]?.toLowerCase() ?? '';
+        const val2 = item?.[propiedadFiltrar2]?.toLowerCase() ?? '';
+        return val1 === nuevoValor.toLowerCase() || val2 === nuevoValor.toLowerCase();
+    });
 
     mostrarLista.value = opcionesFiltradas.value.length > 0 && !coincidenciaExacta;
     // Mostrar error si no hay coincidencia exacta
     errorMensaje.value = coincidenciaExacta || opcionesFiltradas.value.length > 0
         ? ''
         : 'No se encontró ninguna coincidencia';
-
 });
+
+function coincidencia(event) {
+    const nuevoValor = event.target.value;
+    const propiedadFiltrar1 = unref(props.Propiedades.opciones?.[0]?.value ?? '');
+    const propiedadFiltrar2 = unref(props.Propiedades.opciones?.[1]?.value ?? '');
+
+        const coincidenciaExacta = opcionesFiltradas.value.find(item => {
+        const val1 = item?.[propiedadFiltrar1]?.toLowerCase() ?? '';
+        const val2 = item?.[propiedadFiltrar2]?.toLowerCase() ?? '';
+        return val1 === nuevoValor.toLowerCase() || val2 === nuevoValor.toLowerCase();
+    });
+
+    if(coincidenciaExacta){
+        seleccionar(coincidenciaExacta)
+    }
+}
 
 function seleccionar(item) {
     props.Propiedades.seleccionarItem(item);
@@ -77,7 +97,7 @@ function handleInput(event) {
             :disabled="Propiedades.disabled"
             @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)"
-            @blur="Propiedades.events?.onBlur" @keyup.enter="Propiedades.events?.onKeyUp" />
+            @blur="($event) => {Propiedades.events?.onBlur?.(); coincidencia($event);}" @keyup.enter="Propiedades.events?.onKeyUp" />
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length"
             class="autocomplete-list top-full left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-9 p-0 mt-1">

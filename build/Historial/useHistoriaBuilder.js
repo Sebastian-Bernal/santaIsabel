@@ -25,10 +25,10 @@ export function useHistoriaBuilder({
     const id_paciente = ref(null)
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
-    onMounted(async () => {
+    onMounted(() => {
         varView.cargando = true
-        PacientesList.value = await pacienteStore.listPacientes();
-        MedicosList.value = await medicoStore.listMedicos();
+        PacientesList.value = pacienteStore.Pacientes;
+        MedicosList.value = medicoStore.Medicos;
         varView.cargando = false
     });
 
@@ -384,7 +384,7 @@ export function useHistoriaBuilder({
                     {
                         name: 'descripcion',
                         id: 'cie-10',
-                        type: 'SelectSearch',
+                        typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
                         tamaño: 'w-full md:col-span-2',
                         options: CIE10,
@@ -536,7 +536,7 @@ export function useHistoriaBuilder({
                     {
                         name: 'descripcion',
                         id: 'cie-10',
-                        type: 'SelectSearch',
+                        typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
                         tamaño: 'w-full md:col-span-2',
                         options: CIE10,
@@ -622,14 +622,14 @@ export function useHistoriaBuilder({
                     {
                         name: 'descripcion',
                         id: 'descripcionEquipo',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Descripcion',
                         tamaño: 'w-full',
                     },
                     {
                         name: 'uso',
                         id: 'usoEquipos',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Uso',
                         tamaño: 'w-full',
                     },
@@ -648,14 +648,15 @@ export function useHistoriaBuilder({
                     {
                         name: 'nombre',
                         id: 'nombreInsumo',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Nombre',
                         tamaño: 'w-full',
                     },
                     {
                         name: 'cantidad',
                         id: 'cantidadInsumo',
-                        type: 'Input',
+                        typeCampo: 'Input',
+                        type: 'number',
                         placeholder: 'Cantidad (número)',
                         tamaño: 'w-full',
                     },
@@ -674,21 +675,21 @@ export function useHistoriaBuilder({
                     {
                         name: 'medicamento',
                         id: 'Medicamento',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Medicamento',
                         tamaño: 'w-full',
                     },
                     {
                         name: 'dosis',
                         id: 'dosis',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Dosis',
                         tamaño: 'w-full',
                     },
                     {
                         name: 'cantidad',
                         id: 'cantidad',
-                        type: 'Input',
+                        typeCampo: 'Input',
                         placeholder: 'Cantidad de dias (número)',
                         tamaño: 'w-full',
                     },
@@ -854,7 +855,7 @@ export function useHistoriaBuilder({
                 vmodel: 'Antecedentes',
                 value: [],
                 campos: [
-                    { name: 'descripcion', id: 'antecedente', type: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
+                    { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
                 ],
                 containerCampos: 'w-full'
             })
@@ -1028,7 +1029,7 @@ export function useHistoriaBuilder({
                         {
                             name: 'descripcion',
                             id: 'cie-10',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'CIE-10',
                             tamaño: 'w-full md:col-span-2',
                             options: CIE10,
@@ -1098,14 +1099,14 @@ export function useHistoriaBuilder({
                         {
                             name: 'descripcion',
                             id: 'descripcionEquipo',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Descripcion',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'uso',
                             id: 'usoEquipos',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Uso',
                             tamaño: 'w-full',
                         },
@@ -1124,14 +1125,15 @@ export function useHistoriaBuilder({
                         {
                             name: 'nombre',
                             id: 'nombreInsumo',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Nombre',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'cantidad',
                             id: 'cantidadInsumo',
-                            type: 'Input',
+                            typeCampo: 'Input',
+                            type: 'number',
                             placeholder: 'Cantidad (número)',
                             tamaño: 'w-full',
                         },
@@ -1150,21 +1152,22 @@ export function useHistoriaBuilder({
                         {
                             name: 'medicamento',
                             id: 'Medicamento',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Medicamento',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'dosis',
                             id: 'dosis',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Dosis',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'cantidad',
                             id: 'cantidad',
-                            type: 'Input',
+                            typeCampo: 'Input',
+                            type: 'number',
                             placeholder: 'Cantidad de dias (número)',
                             tamaño: 'w-full',
                         },
@@ -1183,7 +1186,7 @@ export function useHistoriaBuilder({
                         {
                             name: 'procedimiento',
                             id: 'descripcionProcedimiento',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Procedimiento',
                             tamaño: 'w-full',
                             UpperCase: true,
@@ -1197,7 +1200,7 @@ export function useHistoriaBuilder({
                         {
                             name: 'codigo',
                             id: 'codigo',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Codigo',
                             tamaño: 'w-full',
                             UpperCase: true,
@@ -1211,14 +1214,14 @@ export function useHistoriaBuilder({
                         {
                             name: 'dias_asignados',
                             id: 'dias_asignados',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Numero de Veces',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'profesional',
                             id: 'profesional',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Profesional asignado',
                             tamaño: 'w-full',
                             options: MedicosList,

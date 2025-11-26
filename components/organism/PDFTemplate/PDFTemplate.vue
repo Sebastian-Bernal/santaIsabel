@@ -51,7 +51,6 @@ function getValue(obj, path) {
 }
 
 const exportPdf = async () => {
-    console.log(config)
     const pdfBuilder = new PdfBuilder()
         .setElementId(props.Propiedades.elementId)
         .setFileName(props.Propiedades.filename)
@@ -84,17 +83,18 @@ const cerrar = () => {
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
-                    <h2 class="text-white font-bold text-2xl">Vista Previa PDF</h2>
+                    <h2 class="text-white font-bold text-2xl">Vista previa del PDF</h2>
                 </div>
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div class="relative drop" @mouseleave="cerrarDropdown">
-                        <div @click="exportPdf"
+                        <div
                             class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
                             <i class="fa-solid fa-download hover:text-white"></i>
                         </div>
                         <div
-                            class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300  z-9 gap-2 items-center justify-center rounded-b-lg">
-                            <p class="text-xs px-3 py-3" v-if="!showDropdown" @click="toggleDropdown">Configurar</p>
+                            class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] z-9 gap-2 items-center justify-center rounded-b-lg">
+                            <p class="text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="exportPdf">Descargar</p>
+                            <p class="text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="toggleDropdown">Configurar</p>
                             <div v-if="showDropdown"
                                 class=" w-56 bg-white shadow-lg rounded-lg p-4 z-50 text-gray-700">
                                 <h3 class="font-semibold text-sm mb-2">Configuración PDF</h3>

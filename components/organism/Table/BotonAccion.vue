@@ -41,7 +41,7 @@ const botonClase = computed(() => {
         case 'download':
             return 'bg-blue-700 w-[24px] h-[24px] cursor-pointer';
         case 'pdf':
-            return 'w-[24px] h-[24px] cursor-pointer md:bg-inherit sm:bg-gray-200 sm:dark:bg-gray-900';
+            return 'w-[24px] h-[24px] cursor-pointer md:bg-inherit bg-gray-200 dark:bg-gray-700';
         case 'Rojo':
             return 'bg-red-500 w-[10px] h-[10px]';        
         case 'Naranja':

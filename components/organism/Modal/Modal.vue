@@ -93,7 +93,7 @@ function cambiarAInicio() {
                 </div>
             </div>
             <!-- Componentes -->
-            <div :class="Propiedades.contenedor" class="scrollForm w-full gap-[15px] max-h-[80%] overflow-y-auto">
+            <div :class="Propiedades.secciones[seccionActual].contenedor" class="scrollForm w-full gap-[15px] max-h-[80%] overflow-y-auto">
 
                 <component v-for="(component, index) in Propiedades.secciones[seccionActual].componentes" :key="index"
                     :is="components[component.tipo]" :Propiedades="component"

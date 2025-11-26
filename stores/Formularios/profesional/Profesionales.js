@@ -54,13 +54,14 @@ export const useMedicosStore = defineStore('Medicos', {
     
     actions: {
         async listMedicos() {
-            const profesionesStore = useDatosProfesionStore()
             const apiRest = useApiRest()
     
             const medicos = await apiRest.getData('Profesional', 'profesionals')
             const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
     
-            const profesiones = await profesionesStore.listProfesion
+            const store = useIndexedDBStore()
+            store.almacen = 'Profesion'
+            const profesiones = await store.leerdatos()
     
             const mapaProfesion = profesiones.reduce((acc, profesion) => {
                 acc[profesion.id] = profesion.nombre;

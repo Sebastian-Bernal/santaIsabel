@@ -41,9 +41,11 @@ watch(() => show.value,
 );
 
 watch(() => varView.showNuevaHistoria,
-    async () => {
-        await llamadatos();
-        refresh.value++;
+    async (estado) => {
+        if(!estado){
+            await llamadatos();
+            refresh.value++;
+        }
     }
 );
 

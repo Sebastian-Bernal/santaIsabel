@@ -54,9 +54,11 @@ const emit = defineEmits(['update:modelValue']);
     <!-- Header -->
     <div class="flex justify-between">
         <label v-if="Propiedades.labelGroup" :for="Propiedades.name" @click="showCampos = !showCampos"
-            class="block font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
+            class="flex gap-2 font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
             {{ Propiedades.labelGroup }}
-            <i class="fa-solid text-blue-700 font-bold ml-2" :class="{'fa-angle-up':showCampos, 'fa-angle-down': !showCampos}"></i>
+            <div class="w-[30px] h-[30px] flex justify-center items-center hover:bg-gray-200 hover:dark:bg-gray-700 cursor-pointer rounded-full">
+                <i class="fa-solid text-blue-700 font-bold" :class="{'fa-angle-up':showCampos, 'fa-angle-down': !showCampos}"></i>
+            </div>
         </label>
         <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
             <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)" class="flex items-center cursor-pointer">
@@ -77,8 +79,8 @@ const emit = defineEmits(['update:modelValue']);
                 <i v-if="!Propiedades.disabled" class="fa-solid fa-close text-red-500 hover:text-red-700 cursor-pointer"
                 @click="() => removeItem(index)"></i>
             </div>
-            <div v-for="campoDef in Propiedades.campos" :key="campoDef.name" class="mb-2">
-                <component :is="campos[campoDef.type]" :modelValue="input[campoDef.name]" :Propiedades="{...campoDef, disabled: Propiedades.disabled}"
+            <div v-for="campoDef in Propiedades.campos" :key="campoDef.name" class="">
+                <component :is="campos[campoDef.typeCampo]" :modelValue="input[campoDef.name]" :Propiedades="{...campoDef, disabled: Propiedades.disabled}"
                     @input="e => updateField(index, campoDef.name, e.target.value)" />
             </div>
 

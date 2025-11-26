@@ -402,7 +402,7 @@ export function useUserBuilder({
                         {
                             name: 'procedimiento',
                             id: 'descripcionProcedimiento',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Procedimiento',
                             tamaño: 'w-full',
                             UpperCase: true,
@@ -413,31 +413,31 @@ export function useUserBuilder({
                                 pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
                             },
                         },
-                        {
-                            name: 'codigo',
-                            id: 'codigo',
-                            type: 'SelectSearch',
-                            placeholder: 'Codigo',
-                            tamaño: 'w-full',
-                            UpperCase: true,
-                            options: CUPS,
-                            opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
-                            seleccionarItem: (item) => {
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
-                            },
-                        },
+                        // {
+                        //     name: 'codigo',
+                        //     id: 'codigo',
+                        //     typeCampo: 'SelectSearch',
+                        //     placeholder: 'Codigo',
+                        //     tamaño: 'w-full',
+                        //     UpperCase: true,
+                        //     options: CUPS,
+                        //     opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
+                        //     seleccionarItem: (item) => {
+                        //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
+                        //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
+                        //     },
+                        // },
                         {
                             name: 'dias_asignados',
                             id: 'dias_asignados',
-                            type: 'Input',
+                            typeCampo: 'Input',
                             placeholder: 'Numero de Veces',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'profesional',
                             id: 'profesional',
-                            type: 'SelectSearch',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Profesional asignado',
                             tamaño: 'w-full',
                             options: MedicosList,
@@ -467,8 +467,10 @@ export function useUserBuilder({
                         {
                             name: 'descripcion',
                             id: 'antecedente',
-                            type: 'Input',
+                            typeCampo: 'Input',
+                            type: 'text',
                             placeholder: 'Antecedente',
+                            UpperCase: true,
                             tamaño: 'w-full'
                         },
                     ],

@@ -35,7 +35,7 @@ onMounted(() => {
             <div id="data.id"
                 class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] py-[15px] w-[150px] rounded-br-3xl "
                 :class="[data.tamaño, { 'up': data.showUp }]">
-                <a class="cursor-pointer w-full text-base font-bold text-[var(--color-default-claro)] hover:text-[var(--color-green)]"
+                <a class="cursor-pointer w-full text-base font-bold text-[var(--color-default-claro)] hover:text-green-500"
                     v-for="seccion in data.secciones" :href="`/${data.nombre}/${seccion.titulo}`"
                         @click="footer.cambiarSecciones(seccion.subSecciones)">
                     <span>

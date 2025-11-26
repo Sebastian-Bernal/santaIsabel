@@ -61,10 +61,11 @@ export class ModalBuilder {
         return this
     }
 
-    nuevaSeccion(nombre, descripcion = '') {
+    nuevaSeccion(nombre, contenedor, descripcion = '') {
         const seccion = {
             nombre,
             descripcion,
+            contenedor,
             componentes: []
         };
         this.propiedades.secciones.push(seccion);

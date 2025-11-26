@@ -30,7 +30,6 @@ const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
-const profesionalesStore = useMedicosStore()
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
 
@@ -145,8 +144,8 @@ async function showObservacion(cita) {
     simple();
 }
 
-async function activarCita(cita) {
-    const pacientes = await pacientesStore.listPacientes()
+function activarCita(cita) {
+    const pacientes = pacientesStore.Pacientes
 
     const pacienteCita = pacientes.filter(data => {
         return data.id_paciente === cita.id_paciente

@@ -9,8 +9,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      api: 'https://api.ctsantaisabel.com',
-      // api: 'http://127.0.0.1:8000',
+      // api: 'https://api.ctsantaisabel.com',
+      api: 'http://127.0.0.1:8000',
       login: 'api/v1/login',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
@@ -22,6 +22,7 @@ export default defineNuxtConfig({
       citas: 'api/v1/citas',
       historiasClinicas: 'api/v1/historiasClinicas',
       historiasNutricion: 'api/v1/historiasClinicasNutricion',
+      historiasClinicasTrabajoSocial: 'api/v1/historiasClinicasTrabajoSocial',
       analisis: 'api/v1/analisis',
       examenFisicos: 'api/v1/examenFisicos',
       planManejoMedicamentos: 'api/v1/planManejoMedicamentos',

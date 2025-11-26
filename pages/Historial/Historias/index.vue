@@ -30,6 +30,7 @@ const medicinas = ref([]);
 const evoluciones = ref([]);
 const nutricion = ref([]);
 const diagnosticos = ref([])
+const trabajosSocial = ref([])
 
 const show = ref(false);
 const showItem = ref(false)
@@ -48,6 +49,8 @@ const activePdfNotas = ref(false)
 const activePdfEvolucion = ref(false)
 const activePdfNutricion = ref(false)
 const propiedadesNutricionPDF = ref([])
+const activePdfTrabajoSocial = ref(false)
+const propiedadesTrabajoSocialPDF = ref([])
 
 const propiedadesHistoriaPDF = ref({})
 const activePdfHistoria = ref(false)
@@ -129,6 +132,8 @@ async function cargaHistorial(id) {
     allAnalisis.map((analisis) => {
         if (analisis.servicio === 'Nutricion') {
             nutricion.value.push({ ...analisis })
+        } else if(analisis.servicio === 'Trabajo Social'){
+            trabajosSocial.value.push({ ...analisis})
         }
     })
 
@@ -283,6 +288,7 @@ function cerrarNota() {
     showNota.value = false
     showActualizarNota.value = false
 }
+
 // PDF
 async function exportarNotaPDF(data) {
     // mapCampos(data, notasStore.Formulario)
@@ -322,6 +328,22 @@ async function exportarNutricionPDF(data) {
 
     propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0] }
     activePdfNutricion.value = true
+    varView.cargando = false
+}
+
+async function exportarTrabajoSocialPDF(data) {
+    varView.cargando = true
+    const pacientes = await pacientesStore.listPacientes()
+
+    const historia = await historiasStore.listDatos(data.id_historia, 'HistoriaClinica', 'id')
+    const id_paciente = historia[0]?.id_paciente
+
+    const dataPaciente = pacientes.filter(user => {
+        return user.id_paciente === id_paciente || null
+    });
+
+    propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0] }
+    activePdfTrabajoSocial.value = true
     varView.cargando = false
 }
 
@@ -393,6 +415,7 @@ const notasCard = new CardBuilder()
 const tratamientosCard = new CardBuilder()
 const medicacionCard = new CardBuilder()
 const nutricionCard = new CardBuilder()
+const trabajoSocialCard = new CardBuilder()
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
@@ -410,11 +433,13 @@ const propiedades = computed(() => {
     const tablaNotas = new TablaBuilder()
     const tablaTratamientos = new TablaBuilder()
     const tablaMedicacion = new TablaBuilder()
+    const tablaTrabajoSocial = new TablaBuilder()
 
     const pdfNotas = new PdfBuilder()
     const pdfHistorial = new PdfBuilder()
     const pdfEvolucion = new PdfBuilder()
     const pdfNutricion = new PdfBuilder()
+    const pdfTrabajoSocial = new PdfBuilder()
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
         const fechaOriginal = consulta.fecha;
@@ -490,7 +515,7 @@ const propiedades = computed(() => {
                 acciones: [{ icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF }]
             })
 
-            .nuevaSeccion('Botones')
+            .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col justify-center gap-1 w-full h-full content-center py-5 px-8')
             .addComponente('Card', consultasCard
                 .setCards([
                     {
@@ -504,11 +529,10 @@ const propiedades = computed(() => {
                         },
                     },
                 ])
-                .setContenedor('')
-                .setheaderTitle('Consulta por las diferentes secciones del Historial')
+                .setContenedor('col-span-2')
                 .setheaderSubTitle('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full col-span-2')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('Card', evolucionesCard
@@ -525,8 +549,8 @@ const propiedades = computed(() => {
                     },
                 ])
                 .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('Card', notasCard
@@ -543,8 +567,8 @@ const propiedades = computed(() => {
                     },
                 ])
                 .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('Card', tratamientosCard
@@ -561,8 +585,8 @@ const propiedades = computed(() => {
                     },
                 ])
                 .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('Card', medicacionCard
@@ -579,8 +603,8 @@ const propiedades = computed(() => {
                     },
                 ])
                 .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('Card', nutricionCard
@@ -597,19 +621,49 @@ const propiedades = computed(() => {
                     },
                 ])
                 .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[50vh]!')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
+                .build()
+            )
+            .addComponente('Card', trabajoSocialCard
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-book-medical text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Trabajo Social',
+                            subtitle: 'Trabajo Social del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
             )
             .addComponente('PDFTemplate', pdfHistorial
                 .setElementId('Historia')
                 .setIsActive(activePdfHistoria)
                 .setFileName(`paciente_${propiedadesHistoriaPDF.value.name}`)
+                // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
-                    columnas: ['<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-2xl">Thesalus</p></div>', '<p class="w-full text-end">Fecha de impresion:</p>'],
-                    filas: [
-                        [`Sistema de Historias Clinicas`, `<p class="w-full text-end"> ${fechaFormateada()} </p>`],
+                    border: true,
+                    columnas: [
+                        '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
+                        `
+                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Historial Clinico</p>
+                        `,
+                        `
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-end text-xs">Pagina:</p>
+                        `
                     ],
                 })
                 .addComponente('Texto', {
@@ -662,7 +716,7 @@ const propiedades = computed(() => {
             )
 
             // consultas
-            .nuevaSeccion('Consultas')
+            .nuevaSeccion('Consultas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaConsultas
                 .setColumnas([
                     { titulo: 'motivo', value: 'Motivo', tamaño: 250, ordenar: true },
@@ -677,7 +731,7 @@ const propiedades = computed(() => {
 
 
             // evoluciones
-            .nuevaSeccion('evoluciones')
+            .nuevaSeccion('evoluciones', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
                     { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
@@ -786,7 +840,7 @@ const propiedades = computed(() => {
             )
 
             //  notas
-            .nuevaSeccion('notas')
+            .nuevaSeccion('notas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
                     { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
@@ -806,15 +860,20 @@ const propiedades = computed(() => {
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
+                    border: true,
                     columnas: [
-                        '<div class="flex items-center gap-2"><img src="https://play-lh.googleusercontent.com/Yk1bwaX-O7BZbScyAIExW-Ktljt9ZIMwhTrcZ7DtA99TYGPKv8VCUDTfyxKpRQs8YxMf=w600-h300-pc0xffffff-pd" width="60px"/><p class="w-full text-start text-xl font-semibold">Santa Isabel IPS<br/>Nota de Enfermería de Atención Domiciliaria</p></div>',
-                        '<p class="w-full text-end text-xs">Fecha de impresión:</p>'
-                    ],
-                    filas: [
-                        [
-                            '<p class="text-xs">Proceso: Programa de Atención Domiciliaria</p>',
-                            `<p class="w-full text-end text-xs">${fechaFormateada()}</p>`
-                        ],
+                        '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
+                        `
+                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Nota de enfermeria de atencion domiciliaria</p>
+                        `,
+                        `
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-end text-xs">Pagina:</p>
+                        `
                     ],
                 })
 
@@ -939,7 +998,7 @@ const propiedades = computed(() => {
 
 
             //  tratamientos
-            .nuevaSeccion('tratamientos')
+            .nuevaSeccion('tratamientos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
                     { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 300, ordenar: true },
@@ -954,7 +1013,7 @@ const propiedades = computed(() => {
 
 
             // medicinas
-            .nuevaSeccion('medicinas')
+            .nuevaSeccion('medicinas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
                     { titulo: 'medicamento', value: 'Medicamento', tamaño: 200, ordenar: true },
@@ -970,7 +1029,7 @@ const propiedades = computed(() => {
 
 
             // nutricion
-            .nuevaSeccion('nutricion')
+            .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
                     { titulo: 'analisis', value: 'Analisis', tamaño: 200, ordenar: true },
@@ -993,9 +1052,9 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2">Registro</p></br>
-                            <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Hoja de evolucion nutricional</p>
                         `,
                         `
                             <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
@@ -1075,9 +1134,114 @@ const propiedades = computed(() => {
             )
 
 
+            // trabajo social
+            .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
+            .addComponente('Tabla', tablaTrabajoSocial
+                .setColumnas([
+                    { titulo: 'analisis', value: 'Analisis', tamaño: 200, ordenar: true },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
+                    { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
+                ])
+                .setDatos(trabajosSocial)
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarTrabajoSocialPDF }], botones: true, })
+                .setHeaderTabla({ titulo: 'Trabajo Social', color: 'bg-[var(--color-default-600)] text-white', })
+            )
+            .addComponente('PDFTemplate', pdfTrabajoSocial
+                .setElementId('TrabajoSocial')
+                .setIsActive(activePdfTrabajoSocial)
+                .setFileName(`Trabajo_Social_${propiedadesTrabajoSocialPDF.value.name}`)
+
+                // ENCABEZADO PRINCIPAL
+                .addComponente('Tabla', {
+                    container: 'border-b-2 pb-3',
+                    border: true,
+                    columnas: [
+                        '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
+                        `
+                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Historia Clinica </br> Trabajo Social</p>
+                        `,
+                        `
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-end text-xs">Pagina:</p>
+                        `
+                    ],
+                })
+
+                // DATOS DEL PACIENTE
+                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3',
+                    filas: [
+                        [
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.name}</span></p>`,
+                            ``,
+                        ],
+                        [
+                            [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.No_document}</span></p>
+                            <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.nacimiento}</span></p>
+                            <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.sexo}</span></p>`],
+                        ],
+                        [
+                            `<p class="text-xs py-2">EPS: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs py-2">Zona: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.zona}</span></p>`
+                        ],
+                    ],
+                })
+
+                // SECCIÓN: DIAGNÓSTICOS
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Diagnostico', 'CIE-10'],
+                    filas: diagnosticosEvolucion?.length > 0
+                        ? diagnosticosEvolucion
+                        : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
+                })
+
+                .addComponente('Espacio', { alto: 16 })
+
+                // SECCIÓN: NOTA DE ENFERMERÍA
+                .addComponente('Tabla', {
+                    filas: [
+                        [
+                            `<p class="text-sm text-center py-1">Motivo de consulta</p>`,
+                        ],
+                        [
+                            `<p class="text-sm text-center py-1">${propiedadesTrabajoSocialPDF.value.motivo}</p>`
+                        ],
+                    ],
+                })
+
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3!',
+                    filas: [
+                        [
+                            '<p class="text-sm w-full text-center py-1">Analisis/Tratamiento</p>',
+                        ],
+                        [
+                            `<p class="text-sm w-full text-center py-1">${propiedadesTrabajoSocialPDF.value.analisis}</p>`,
+                        ],
+                    ],
+                })
+
+                .addComponente('Espacio', { alto: 32 })
+
+                // PIE DE FIRMA
+                .addComponente('Tabla', {
+                    container: 'pt-5',
+                    border: false,
+                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido del profesional</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
+                })
+            )
+
+
         )
     return pagina.build()
-})
+});console.log(propiedades)
 
 </script>
 

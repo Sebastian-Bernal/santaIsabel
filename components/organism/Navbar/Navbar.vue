@@ -84,7 +84,7 @@ const removeStorage = () => {
 
 <style scoped>
 .navbar {
-    padding: 10px 10px 5px 10px;
+    padding: 5px;
     grid-area: navbar;
 }
 

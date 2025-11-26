@@ -26,38 +26,93 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
-            const bodyTerapia = {
-                Terapia: {
-                    id_paciente: datos.Terapia.id_paciente,
-                    id_medico: datos.Terapia.id_medico,
-                    sesion: datos.Terapia.sesion,
-                    fecha: datos.Terapia.fecha,
-                    hora: datos.Terapia.hora,
-                    objetivo: datos.Terapia.objetivo,
-                    evolucion: datos.Terapia.evolucion
-                }
-            };
             return await enviarFormularioTerapia(datos);
 
         case 'Nutricion':
+            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
-            // const bodyNutricion = {
-            //     Analisis: {
-            //         fecha: calendarioStore.fechaActual,
-            //         motivo: datos.Analisis.motivo,
-            //         analisis: datos.Analisis.analisis,
-            //         observacion: datos.Analisis.observacion,
-            //         tratamiento: datos.Analisis.tratamiento,
-            //         tipoAnalisis: datos.Analisis.tipoAnalisis,
-            //         id_medico: datos.Cita.id_medico,
-            //         servicio: datos.Cita.servicio,
-            //     }
-            // };
             return await enviarFormularioNutricion(datos);
+
+        case 'Trabajo Social':
+            if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
+            if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
+            if (!datos.Analisis?.observacion) errores.push("La observacion de la consulta es obligatorio.");
+            if (!datos.Analisis?.tipoAnalisis) errores.push("El tipo de analisis es obligatorio.");
+            if (!datos.Analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
+
+            if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
+                errores.push("El plan de medicamentos debe ser un arreglo.");
+            } else {
+                datos.Plan_manejo_medicamentos.forEach((m, i) => {
+                    if (!m.medicamento || !m.dosis || isNaN(parseInt(m.cantidad))) {
+                        errores.push(`Medicamento ${i + 1} incompleto o cantidad inválida.`);
+                    }
+                });
+            }
+
+            // Validar Insumos
+            datos.Plan_manejo_insumos.forEach((i, idx) => {
+                if (!i.nombre || isNaN(parseInt(i.cantidad))) {
+                    errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
+                }
+            });
+
+            // Validar Equipos
+            datos.Plan_manejo_equipos.forEach((e, idx) => {
+                if (!e.descripcion || !e.uso) {
+                    errores.push(`Equipo ${idx + 1} incompleto.`);
+                }
+            });
+
+            // Validar Cita
+            if (!datos.Cita?.id) {
+                errores.push("El ID de la cita es obligatorio.");
+            }
+
+            if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
+
+            const trabajoSocial = {
+                HistoriaClinica: {
+                    fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                    id_paciente: datos.HistoriaClinica.id_paciente
+                },
+                Analisis: {
+                    motivo: datos.Analisis.motivo,
+                    observacion: datos.Analisis.observacion,
+                    tratamiento: datos.Analisis.tratamiento,
+                    analisis: datos.Analisis.analisis,
+                    tipoAnalisis: datos.Analisis.tipoAnalisis,
+                    id_medico: datos.Cita.id_medico,
+                    servicio: datos.Cita.servicio,
+                },
+                Diagnosticos: datos.Diagnosticos.map(d => ({
+                    descripcion: d.descripcion,
+                    codigo: d.codigo
+                })),
+                Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => ({
+                    medicamento: m.medicamento,
+                    dosis: m.dosis,
+                    cantidad: parseInt(m.cantidad)
+                })),
+                Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
+                    nombre: i.nombre,
+                    cantidad: parseInt(i.cantidad)
+                })),
+                Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
+                    descripcion: e.descripcion,
+                    uso: e.uso
+                })),
+                Cita: {
+                    id: datos.Cita.id,
+                    ...datos.Cita
+                }
+            };
+
+            return await enviarFormularioTrabajoSocial(trabajoSocial);
 
         case 'Medicina':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
@@ -794,6 +849,196 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
             await notificacionesStore.simple()
             return true
         } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
+    }
+};
+
+export const enviarFormularioTrabajoSocial = async (datos, reintento = false) => {
+    const notificacionesStore = useNotificacionesStore();
+    const calendarioStore = useCalendarioCitas()
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.historiasClinicas,
+                token: token,
+                body: {
+                    HistoriaClinica: {
+                        fecha_historia: datos.HistoriaClinica.fecha_historia,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    },
+                    Analisis: {
+                        motivo: datos.Analisis.motivo,
+                        observacion: datos.Analisis.observacion,
+                        tratamiento: datos.Analisis.tratamiento,
+                        analisis: datos.Analisis.analisis,
+                        tipoAnalisis: datos.Analisis.tipoAnalisis,
+                        id_medico: datos.Analisis.id_medico,
+                        servicio: datos.Analisis.servicio,
+                    },
+                    Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
+                        descripcion: d.descripcion,
+                        codigo: d.codigo
+                    })),
+                    Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
+                        medicamento: m.medicamento,
+                        dosis: m.dosis,
+                        cantidad: parseInt(m.cantidad)
+                    })),
+                    Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
+                        nombre: i.nombre,
+                        cantidad: parseInt(i.cantidad)
+                    })),
+                    Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
+                        descripcion: e.descripcion,
+                        uso: e.uso
+                    })),
+                    Cita: {
+                        id: datos.Cita.id
+                    }
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                // Actualizar local
+                const datosActualizar = {
+                    HistoriaClinica: {
+                        id: respuesta.ids.HistoriaClinica,
+                        fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                        id_paciente: datos.HistoriaClinica.id_paciente,
+                        sincronizado: 1
+                    },
+                    Analisis: {
+                        id: respuesta.ids.Analisis,
+                        id_historia: respuesta.ids.HistoriaClinica,
+                        motivo: datos.Analisis.motivo,
+                        observacion: datos.Analisis.observacion,
+                        tratamiento: datos.Analisis.tratamiento,
+                        analisis: datos.Analisis.analisis,
+                        tipoAnalisis: datos.Analisis.tipoAnalisis,
+                        id_medico: datos.Cita.id_medico,
+                        servicio: datos.Cita.servicio,
+                        sincronizado: 1
+                    },
+                    Diagnosticos: datos.Diagnosticos.map((d, i) => ({
+                        id_analisis: respuesta.ids.Analisis,
+                        id: respuesta.ids.Diagnosticos[i],
+                        descripcion: d.descripcion,
+                        codigo: d.codigo,
+                        sincronizado: 1
+                    })),
+                    Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map((m, i) => ({
+                        id: respuesta.ids.Plan_manejo_medicamentos[i],
+                        id_analisis: respuesta.ids.Analisis,
+                        medicamento: m.medicamento,
+                        dosis: m.dosis,
+                        cantidad: parseInt(m.cantidad),
+                        sincronizado: 1
+                    })),
+                    Plan_manejo_insumos: datos.Plan_manejo_insumos.map((i, index) => ({
+                        id: respuesta.ids.Plan_manejo_insumos[index],
+                        id_analisis: respuesta.ids.Analisis,
+                        nombre: i.nombre,
+                        cantidad: parseInt(i.cantidad),
+                        sincronizado: 1
+                    })),
+                    Plan_manejo_equipos: datos.Plan_manejo_equipos.map((e, i) => ({
+                        id: respuesta.ids.Plan_manejo_equipos[i],
+                        id_analisis: respuesta.ids.Analisis,
+                        descripcion: e.descripcion,
+                        uso: e.uso,
+                        sincronizado: 1
+                    })),
+                    Cita: {
+                        id: datos.Cita.id,
+                        estado: 'Realizada',
+                        id_analisis: respuesta.ids.Analisis,
+                        sincronizado: 1,
+                        ...datos.Cita
+                    }
+                };
+
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                return true
+            }
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
+        }
+    } else {
+
+        try {
+            const datosActualizar = {
+                HistoriaClinica: {
+                    fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    sincronizado: 0
+                },
+                Analisis: {
+                    id_historia: respuesta.ids.HistoriaClinica,
+                    motivo: datos.Analisis.motivo,
+                    observacion: datos.Analisis.observacion,
+                    tratamiento: datos.Analisis.tratamiento,
+                    analisis: datos.Analisis.analisis,
+                    tipoAnalisis: datos.Analisis.tipoAnalisis,
+                    id_medico: datos.Cita.id_medico,
+                    servicio: datos.Cita.servicio,
+                    sincronizado: 0
+                },
+                Diagnosticos: datos.Diagnosticos.map((d, i) => ({
+                    descripcion: d.descripcion,
+                    codigo: d.codigo,
+                    sincronizado: 0
+                })),
+                Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map((m, i) => ({
+                    medicamento: m.medicamento,
+                    dosis: m.dosis,
+                    cantidad: parseInt(m.cantidad),
+                    sincronizado: 0
+                })),
+                Plan_manejo_insumos: datos.Plan_manejo_insumos.map((i, index) => ({
+                    nombre: i.nombre,
+                    cantidad: parseInt(i.cantidad),
+                    sincronizado: 0
+                })),
+                Plan_manejo_equipos: datos.Plan_manejo_equipos.map((e, i) => ({
+                    descripcion: e.descripcion,
+                    uso: e.uso,
+                    sincronizado: 0
+                })),
+                Cita: {
+                    id: datos.Cita.id,
+                    estado: 'Realizada',
+                    sincronizado: 0,
+                    ...datos.Cita
+                }
+            };
+            if (!reintento) {
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'Datos incorrectos';
             notificacionesStore.options.texto = 'No se pudo guardar el formulario'
