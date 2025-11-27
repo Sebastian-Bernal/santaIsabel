@@ -12,7 +12,8 @@ export function useFormularioCitaBuilder({
   medicosList,
   pacientesList,
   showTratamientos,
-  optionsTratamientos
+  optionsTratamientos,
+  variasCitas,
 }) {
   const citasStore = useCitasStore()
   const calendarioCitasStore = useCalendarioCitas();
@@ -42,31 +43,43 @@ export function useFormularioCitaBuilder({
         }
 
         const respuesta = await api.functionCall(options)
-        let respuestaData = ''
-
 
         if (respuesta.success) {
           varView.tipoConsulta = 'Terapia'
-          showTratamientos.value = true
-          respuestaData = respuesta.data
+          varView.tratamientos = respuesta.data
+
           optionsTratamientos.value = respuesta.data.map(data => {
             return { text: `${data.tratamiento} - ${data.dias_restantes}`, value: data.id }
           })
+          showTratamientos.value = varView.tratamientos.length > 0
         }
 
         const tratamientodiv = document.getElementById('tratamientos');
+
         if (tratamientodiv) {
-          tratamientodiv.innerHTML = `<p>Tratamientos activos: ${respuestaData.length || 0}</p>`;
+          tratamientodiv.innerHTML = `<p>Tratamientos activos: ${varView.tratamientos.length || 0}</p>`;
         } else {
           tratamientodiv.innerHTML = ``;
         }
+
         varView.cargando = false
-
-
+        
       } else {
+
         showTratamientos.value = false
         const tratamientodiv = document.getElementById('tratamientos');
         tratamientodiv.innerHTML = ``;
+
+      }
+    }
+  );
+
+  watch(() => citasStore.Formulario.Cita.tipo,
+    async () => {
+      if (citasStore.Formulario.Cita.tipo === true) {
+        variasCitas.value = true
+      } else {
+        variasCitas.value = false
       }
     }
   );
@@ -183,6 +196,7 @@ export function useFormularioCitaBuilder({
       tamaño: 'w-full',
       options: [
         { text: 'Medicina General', value: 'Medicina General' },
+        { text: 'Enfermeria', value: 'Enfermeria' },
         { text: 'Psicología', value: 'Psicología' },
         { text: 'Terapia', value: 'Terapia' },
         { text: 'Odontología', value: 'Odontología' },
@@ -243,42 +257,108 @@ export function useFormularioCitaBuilder({
   }
   builder
     .addCampo({
-      component: 'Label',
-      text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',
-      tamaño: 'w-full md:col-span-2',
-      forLabel: 'fecha',
+      component: 'Checkbox',
+      placeholder: 'Agendar varias Citas',
+      tamaño: 'w-full col-span-2 py-3',
+      vmodel: 'Cita.tipo',
     })
-    .addCampo({
-      component: 'Input',
-      placeholder: 'Seleccione la fecha',
-      type: 'date',
-      id: 'fecha',
-      name: 'fecha',
-      tamaño: 'w-full',
-      vmodel: 'Cita.fecha',
-      events: {
-        onChange: validarFecha
-      },
-      slot: {
-        tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
-      },
-    })
-    .addCampo({
-      component: 'Input',
-      placeholder: 'Seleccione la hora para la cita',
-      type: 'time',
-      id: 'hora',
-      name: 'hora',
-      tamaño: 'w-full',
-      vmodel: 'Cita.hora',
-      events: {
-        onChange: validarHora
-      },
-      slot: {
-        tooltip: `<div id="error-hora" class="text-red-300 text-xs mt-1"></div>`
-      },
-    })
-    .build()
+  if (variasCitas?.value) {
+    builder
+      .addCampo({
+        component: 'Label',
+        text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Agregar Varias Citas',
+        tamaño: 'w-full md:col-span-2',
+        forLabel: 'fechaInicial',
+      })
+      .addCampo({
+        component: 'Input',
+        type: 'date',
+        label: 'Fecha Inicial',
+        id: 'fechaInicial',
+        name: 'fechaInicial',
+        tamaño: 'w-full',
+        vmodel: 'Cita.fecha',
+        events: {
+          onChange: validarFecha
+        },
+        slot: {
+          tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
+        },
+      })
+      .addCampo({
+        component: 'Input',
+        type: 'time',
+        label: 'Hora',
+        id: 'horaInicial',
+        name: 'horaInicial',
+        tamaño: 'w-full',
+        vmodel: 'Cita.hora',
+        events: {
+          onChange: validarHora
+        },
+        slot: {
+          tooltip: `<div id="error-hora" class="text-red-300 text-xs mt-1"></div>`
+        },
+      })
+      .addCampo({
+        component: 'Input',
+        type: 'number',
+        placeholder: 'Cantidad de Citas',
+        id: 'cantidadCitas',
+        name: 'cantidadCitas',
+        tamaño: 'w-full',
+        vmodel: 'Cita.cantidadCitas',
+      })
+      .addCampo({
+        component: 'Input',
+        type: 'number',
+        placeholder: 'Intervalo de Agendamiento (dias)',
+        id: 'intervaloCitas',
+        name: 'intervaloCitas',
+        tamaño: 'w-full',
+        vmodel: 'Cita.intervaloCitas',
+      })
+
+  } else {
+    builder
+      .addCampo({
+        component: 'Label',
+        text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',
+        tamaño: 'w-full col-span-2',
+        forLabel: 'fecha',
+      })
+      .addCampo({
+        component: 'Input',
+        placeholder: 'Seleccione la fecha',
+        type: 'date',
+        id: 'fecha',
+        name: 'fecha',
+        tamaño: 'w-full',
+        vmodel: 'Cita.fecha',
+        events: {
+          onChange: validarFecha
+        },
+        slot: {
+          tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
+        },
+      })
+      .addCampo({
+        component: 'Input',
+        placeholder: 'Seleccione la hora para la cita',
+        type: 'time',
+        id: 'hora',
+        name: 'hora',
+        tamaño: 'w-full',
+        vmodel: 'Cita.hora',
+        events: {
+          onChange: validarHora
+        },
+        slot: {
+          tooltip: `<div id="error-hora" class="text-red-300 text-xs mt-1"></div>`
+        },
+      })
+  }
+  builder.build()
 
   return builder
 }

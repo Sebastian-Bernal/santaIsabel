@@ -21,6 +21,8 @@ const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const pacientesStore = usePacientesStore();
 const medicoStore = useMedicosStore()
+const apiRest = useApiRest()
+
 const MedicosList = ref([])
 const usuariosStore = useUsersStore()
 const epsStore = useDatosEPSStore();
@@ -44,6 +46,7 @@ watch(() => show.value,
     async (estado) => {
         if(!estado){
             await llamadatos();
+            await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
             refresh.value++;
         }
     }
@@ -70,7 +73,6 @@ onMounted(async () => {
     }));
     MedicosList.value = await medicoStore.listMedicos();
 
-    const apiRest = useApiRest()
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     varView.cargando = false;

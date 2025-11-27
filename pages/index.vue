@@ -30,6 +30,7 @@ onMounted(async () => {
         varView.cargando = false;
     } catch (e) {
         console.error('No se pudo reiniciar IndexedDB:', e);
+        varView.cargando = false;
     }
 
 })

@@ -63,17 +63,17 @@ export const useCitasStore = defineStore('Citas', {
             let citas = await apiRest.getData('Cita', 'citas')
 
             // Obtener la fecha actual en formato YYYY-MM-DD
-            const hoy = new Date().toISOString().split('T')[0];
+            // const hoy = new Date().toISOString().split('T')[0];
 
             // Filtrar solo las citas con fecha igual a hoy
-            const citasHoy = citas.filter(cita => cita.fecha === hoy);
+            let citasHoy = citas.filter(cita => cita.estado === "Inactiva");
 
             // Ordenar por hora
-            citasHoy.sort((a, b) => {
+            citasHoy = citasHoy.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);
                 const fechaB = new Date(`${b.fecha}T${b.hora}`);
                 return fechaA - fechaB;
-            });
+            }).slice(0, 3);
 
             this.Citas = citasHoy;
             return citasHoy;

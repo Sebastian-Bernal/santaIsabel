@@ -24,6 +24,7 @@ const pacientesList = ref([])
 const medicosList = ref([])
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
+const variasCitas = ref(false)
 
 async function llamadatos() {
     varView.cargando = true
@@ -90,7 +91,8 @@ const propiedades = computed(() => {
         pacientesList,
         medicosList,
         optionsTratamientos: optionsTratamientos,
-        showTratamientos: showTratamientos
+        showTratamientos: showTratamientos,
+        variasCitas: variasCitas
     });
 
     const builderCitas = new CitasBuilder()

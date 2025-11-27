@@ -5,10 +5,11 @@ import { decryptData } from '~/composables/Formulario/crypto';
 // funcion para Validar campos del formulario Nueva Cita
 export const validarYEnviarNuevaCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
+    const varView = useVarView()
     const cita = datos.Cita;
 
     let camposObligatorios = []
-    if(datos.Cita.servicio === 'Terapia'){
+    if (datos.Cita.servicio === 'Terapia') {
         camposObligatorios = [
             'id_paciente',
             'id_medico',
@@ -31,6 +32,12 @@ export const validarYEnviarNuevaCita = async (datos) => {
             'fecha',
             'hora'
         ];
+    }
+
+    if (datos.Cita.tipo) {
+        camposObligatorios.push(
+            'intervaloCitas',
+            'cantidadCitas',);
     }
     // Validar campos vacíos
 
@@ -95,9 +102,77 @@ export const validarYEnviarNuevaCita = async (datos) => {
         notificacionesStore.simple();
         return false;
     }
-    // console.log(datos)
+
+if (cita.tipo) {
+    const cantidad = parseInt(cita.cantidadCitas) || 0;
+
+    if(cita.servicio === 'Terapia'){
+        const dias_restantes = varView.tratamientos.find(tratamiento => {
+            return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
+        })?.dias_restantes
+        
+        if(cantidad > dias_restantes){
+            notificacionesStore.options.icono = 'error';
+            notificacionesStore.options.titulo = 'Informacion invalida.';
+            notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
+            notificacionesStore.options.tiempo = 5000;
+            notificacionesStore.simple();
+            return false;
+        }
+        
+    }
+    // Utilidad para convertir string "YYYY-MM-DD" a Date
+    function parseFechaISO(iso) {
+        const [y, m, d] = iso.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    // Utilidad para formatear Date a "YYYY-MM-DD"
+    function formatearISO(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    const fechaInicial = parseFechaISO(datos.Cita.fecha);
+
+    // Generar todas las citas
+    for (let i = 0; i < cantidad; i++) {
+        // Clonar la fecha inicial
+        const fechaCita = new Date(fechaInicial);
+
+        // Sumar el intervalo en días multiplicado por el índice
+        fechaCita.setDate(fechaCita.getDate() + (i * datos.Cita.intervaloCitas));
+
+        // Formatear la fecha en YYYY-MM-DD
+        const fechaFormateada = formatearISO(fechaCita);
+
+        const body = {
+            id_paciente: datos.Cita.id_paciente,
+            id_medico: datos.Cita.id_medico,
+            name_paciente: datos.Cita.name_paciente,
+            name_medico: datos.Cita.name_medico,
+            servicio: datos.Cita.servicio,
+            motivo: datos.Cita.motivo,
+            fecha: fechaFormateada,
+            hora: datos.Cita.hora,
+            id_procedimiento: datos.Cita.id_procedimiento
+        };
+        await enviarFormularioCita({ Cita: { ...body } });
+    }
+
+    return true;
+}
+
     return await enviarFormularioCita({ ...datos });
 };
+
+function parseFechaISO_UTC(iso) {
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
+}
+
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 export const enviarFormularioCita = async (datos, reintento = false) => {
@@ -159,8 +234,8 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
         }
     } else {
         try {
-            if(!reintento){
-                await guardarEnDB(JSON.parse(JSON.stringify({Cita: {...datos.Cita, sincronizado: 0}})));
+            if (!reintento) {
+                await guardarEnDB(JSON.parse(JSON.stringify({ Cita: { ...datos.Cita, sincronizado: 0 } })));
             }
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'No hay internet';

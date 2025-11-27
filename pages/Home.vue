@@ -52,7 +52,6 @@ onMounted(async () => {
         const historiaStore = useHistoriasStore();
         Historias = await historiaStore.ultimasHistorias();
         citas = await citasStore.listCitasHoy();
-
         // Pacientes list
         const pacientesStore = usePacientesStore()
         pacientesList.value = await pacientesStore.listPacientes()
@@ -86,7 +85,7 @@ onMounted(async () => {
 
                 return (
                     cita.id_medico === profesional.value.id_profesional &&
-                    fechaCita >= hoy
+                    cita.estado === 'Inactiva'
                 );
             })
             .slice(0, 4);
@@ -130,7 +129,7 @@ function DashboardRol(rol, Historias = [], citas) {
                     header: {
                         html: `<div class="flex flex-col items-center">
                      <h3 class="text-xl font-bold text-blue-600">${card.hora}</h3>
-                     <p class="text-xs font-thin">Hoy</p>
+                     <p class="text-xs font-thin">${card.fecha}</p>
                      <div/>`,
                         title: card.name_paciente,
                         subtitle: card.servicio,
@@ -205,7 +204,7 @@ function DashboardRol(rol, Historias = [], citas) {
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
-                        <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca tu agenda y pacientes</p>
+                        <p class="text-base font-bold text-gray-100">Aqui encontraras informacion acerca de tu agenda y pacientes</p>
 
                     `,
                 title: ``,
@@ -357,7 +356,6 @@ const stats = [
 ];
 
 // Construccion de pagina
-const pagina = new ComponenteBuilder();
 const cardsState = new CardBuilder();
 const cardsPacientes = new CardBuilder();
 const cardsCitas = new CardBuilder();
@@ -369,21 +367,24 @@ function cerrar() {
 
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
+const variasCitas = ref(false)
 
-const builder = useFormularioCitaBuilder({
-    storeId: 'NuevaCita',
-    storePinia: 'Citas',
-    cerrarModal: cerrar,
-    show: showCita,
-    pacientesList,
-    medicosList,
-    showTratamientos,
-    optionsTratamientos
-});
 
 const propiedades = computed(() => {
     if (!rol.value) return null
+    const builder = useFormularioCitaBuilder({
+        storeId: 'NuevaCita',
+        storePinia: 'Citas',
+        cerrarModal: cerrar,
+        show: showCita,
+        pacientesList,
+        medicosList,
+        optionsTratamientos: optionsTratamientos,
+        showTratamientos: showTratamientos,
+        variasCitas: variasCitas
+    });
 
+    const pagina = new ComponenteBuilder();
     const paginaBase = pagina
         .setFondo('FondoDefault')
         .setContenedor('containerDashboard gap-5')
@@ -414,7 +415,7 @@ const propiedades = computed(() => {
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
-                .setheaderTitle('Agenda de Hoy')
+                .setheaderTitle('Agenda de Pendientes')
                 .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )
@@ -446,7 +447,7 @@ const propiedades = computed(() => {
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-info bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl')
                 .setTamaño('flex md:flex-row justify-between md:items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200 hover:bg-white! dark:hover:bg-gray-900!')
-                .setheaderTitle('Citas Proximas')
+                .setheaderTitle('Agenda de Pendientes')
                 .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
             )

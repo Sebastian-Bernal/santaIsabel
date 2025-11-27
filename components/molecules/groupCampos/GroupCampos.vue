@@ -71,7 +71,7 @@ const emit = defineEmits(['update:modelValue']);
     </div>
     
     <!-- Campos -->
-    <div v-if="showCampos || showCampos && items.length > 0" :class="[Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto">
+    <div v-if="showCampos || showCampos && items.length > 0" :class="[Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto scrollForm">
         <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5" :class="Propiedades.containerCampos">
 
             <div class="w-full flex justify-between absolute top-0">

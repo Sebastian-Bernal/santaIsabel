@@ -114,6 +114,27 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             return await enviarFormularioTrabajoSocial(trabajoSocial);
 
+        case 'Enfermeria':
+            const nota = datos?.Nota;
+
+            // Validar que todos los campos estén presentes y no vacíos
+            if (
+                !nota?.id_paciente ||
+                !nota?.direccion ||
+                !nota?.fecha_nota ||
+                !nota?.hora_nota ||
+                !nota?.nota ||
+                !nota?.tipoAnalisis
+            ) {
+                const msg = 'Todos los campos son obligatorios. Verifica que no haya ninguno vacío.';
+                notificacionesStore.options.icono = 'error';
+                notificacionesStore.options.titulo = 'Información inválida.';
+                notificacionesStore.options.texto = msg;
+                notificacionesStore.options.tiempo = 5000;
+                notificacionesStore.simple();
+                return;
+            }
+
         case 'Medicina':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
             datos.Analisis.fecha = calendarioStore.fechaActual;
@@ -330,6 +351,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             };
 
             return await enviarFormularioHistoria(body);
+
 
         default:
             errores.push("Tipo de consulta no soportado.");

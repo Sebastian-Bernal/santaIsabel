@@ -61,6 +61,9 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 objetivos: '',
                 evolucion: '',
             },
+            Nota: {
+
+            },
             Cita: {},
         },
         Historias: [],

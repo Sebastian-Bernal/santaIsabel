@@ -719,6 +719,137 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full col-span-2',
             })
 
+    } if (varView.tipoConsulta === 'Enfermeria') {
+        builder
+            // 📌 Sección: Datos
+            .nuevaSeccion('Datos usuarios')
+            .addCampo({
+                component: 'Label',
+                forLabel: 'nombre',
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
+            })
+            // --- Nombre Paciente ---
+            .addCampo({
+                component: 'SelectSearch',
+                vmodel: 'HistoriaClinica.name_paciente',
+                id: 'nombre',
+                name: 'nombre',
+                placeholder: 'Nombre del paciente',
+                options: PacientesList,
+                seleccionarItem: seleccionarPaciente,
+                opciones: [
+                    { value: 'name' },
+                    { text: 'Cedula', value: 'No_document' }
+                ],
+                tamaño: 'w-full',
+                events: {
+                    onChange: pacienteExiste
+                },
+            })
+
+            // --- Numero de documento ---
+            .addCampo({
+                component: 'SelectSearch',
+                vmodel: 'HistoriaClinica.No_document_paciente',
+                id: 'documento',
+                name: 'documento',
+                placeholder: 'Numero de documento',
+                options: 'PacientesList',
+                seleccionarItem: 'seleccionarPaciente',
+                opciones: [{ value: 'No_document' }],
+                tamaño: 'w-full'
+            })
+
+            // --- Tipo de documento ---
+            .addCampo({
+                component: 'Select',
+                vmodel: 'HistoriaClinica.type_doc_paciente',
+                id: 'tipoDocumento',
+                name: 'tipoDocumento',
+                placeholder: 'Tipo de documento',
+                tamaño: 'w-full',
+                options: [
+                    { text: 'Cedula de ciudadania', value: 'cedula' },
+                    { text: 'Cedula Extranjera', value: 'extranjera' },
+                    { text: 'Tarjeta de Identidad', value: 'Tarjeta de identidad' }
+                ],
+            })
+
+            .nuevaSeccion('Nota de Enfermeria')
+            // --- Label: Sesión ---
+            .addCampo({
+                component: 'Label',
+                text: '<i class="fa-solid fa-location-dot text-blue-500 mr-1"></i>Fecha y Ubicacion',
+                forLabel: 'departamento',
+                tamaño: 'md:col-span-2 w-full'
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Nota.fecha_nota',
+                type: 'date',
+                id: 'fecha_nota',
+                name: 'fecha_nota',
+                placeholder: 'Fecha',
+                tamaño: 'w-full',
+                slot: '<input v-model="Nota.fecha_nota" type="date" class="w-[20px]">'
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Nota.hora_nota',
+                type: 'time',
+                id: 'hora_nota',
+                name: 'hora_nota',
+                placeholder: 'Hora (00:00)',
+                tamaño: 'w-full',
+                slot: '<input v-model="Nota.hora_nota" type="time" class="w-[30px]">'
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Nota.direccion',
+                type: 'text',
+                id: 'direccion',
+                name: 'direccion',
+                placeholder: 'Dirección',
+                tamaño: 'w-full',
+            })
+
+            .addCampo({
+                component: 'Select',
+                vmodel: 'Nota.tipoAnalisis',
+                id: 'rehabilitacion',
+                name: 'rehabilitacion',
+                placeholder: 'Tipo de Análisis',
+                tamaño: 'w-full md:col-span-2',
+                options: [
+                    { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
+                    { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
+                    { text: 'Cambios críticos', value: 'Cambios criticos' }
+                ]
+            })
+            
+            .addCampo({
+                component: 'Label',
+                icon: 'fa-solid fa-comment text-blue-500',
+                text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnosticos',
+                forLabel: 'departamento',
+                tamaño: 'md:col-span-2 w-full'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Nota.nota',
+                id: 'nota',
+                name: 'nota',
+                placeholder: 'Nota',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Label',
+                text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Describe...',
+                forLabel: 'tipo',
+                tamaño: 'md:col-span-2 w-full'
+            })
     } else {
         builder
             // 📌 Sección: Datos

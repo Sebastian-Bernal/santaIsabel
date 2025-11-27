@@ -4,7 +4,6 @@ const props = defineProps({
         default: {}
     },
     modelValue: {
-        type: String,
         default: ''
     },
 });

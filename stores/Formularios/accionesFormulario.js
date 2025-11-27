@@ -42,7 +42,8 @@ export const accionesFormularios = {
             notificaciones.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
             notificaciones.loading()
             await traerDatos()
-            window.location.href = '/Home'
+            const ultimaSeccion = localStorage.getItem('seccion')
+            window.location.href = ultimaSeccion || '/Home'
         } else {
             notificaciones.options.icono = 'error'
             notificaciones.options.titulo = '¡No se pudo iniciar Sesion!'
