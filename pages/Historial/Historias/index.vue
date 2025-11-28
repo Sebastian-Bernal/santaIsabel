@@ -130,7 +130,7 @@ async function cargaHistorial(id) {
 
     // Nutricion
     allAnalisis.map((analisis) => {
-        if (analisis.servicio === 'Nutricion') {
+        if (analisis.servicio === 'Evolucion nutricional') {
             nutricion.value.push({ ...analisis })
         } else if(analisis.servicio === 'Trabajo Social'){
             trabajosSocial.value.push({ ...analisis})
@@ -236,7 +236,7 @@ function verItemTratamientoHistoria(item) {
     actualizar.value = false
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
-    historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
+    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
     historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
     showItem.value = true
 }
@@ -433,6 +433,7 @@ const propiedades = computed(() => {
     const tablaNotas = new TablaBuilder()
     const tablaTratamientos = new TablaBuilder()
     const tablaMedicacion = new TablaBuilder()
+    const tablaNutricion = new TablaBuilder()
     const tablaTrabajoSocial = new TablaBuilder()
 
     const pdfNotas = new PdfBuilder()
@@ -839,6 +840,7 @@ const propiedades = computed(() => {
                 })
             )
 
+
             //  notas
             .nuevaSeccion('notas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaNotas
@@ -1030,7 +1032,7 @@ const propiedades = computed(() => {
 
             // nutricion
             .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
-            .addComponente('Tabla', tablaMedicacion
+            .addComponente('Tabla', tablaNutricion
                 .setColumnas([
                     { titulo: 'analisis', value: 'Analisis', tamaño: 200, ordenar: true },
                     { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
@@ -1238,6 +1240,7 @@ const propiedades = computed(() => {
                 })
             )
 
+            
 
         )
     return pagina.build()

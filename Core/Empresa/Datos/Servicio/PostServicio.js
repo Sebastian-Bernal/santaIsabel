@@ -3,14 +3,14 @@ import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/use
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario
-export const validarYEnviarDatosProfesion = async (datos) => {
+export const validarYEnviarDatosServicio = async (datos) => {
     const notificacionesStore = useNotificacionesStore()
-    const profesion = datos.Profesion;
+    const servicio = datos.Servicio;
 
     // 🔍 Verificar campos obligatorios
-    const camposObligatorios = ['nombre', 'permisos'];
+    const camposObligatorios = ['name', 'plantilla'];
     const camposFaltantes = camposObligatorios.filter(campo => {
-        const valor = profesion[campo];
+        const valor = servicio[campo];
         return valor === undefined || valor === null || valor === '';
     });
 
@@ -23,37 +23,15 @@ export const validarYEnviarDatosProfesion = async (datos) => {
         return false;
     }
 
-    return await enviarFormularioProfesion(datos);
+    return await enviarFormularioServicio(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API y IndexedDB
-export const enviarFormularioProfesion = async (datos, reintento = false) => {
+export const enviarFormularioServicio = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
-
-    // Convertir permisos
-    datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
-        if (typeof permiso !== 'string') return permiso;
-
-        const partes = permiso.split(' ');
-        const seccion = partes.slice(0, -1).join(' ');
-        const accion = partes[partes.length - 1];
-
-        switch (accion) {
-            case 'leer':
-                return `${seccion}_get`;
-            case 'crear':
-                return `${seccion}_post`;
-            case 'actualizar':
-                return `${seccion}_put`;
-            case 'eliminar':
-                return `${seccion}_delete`;
-            default:
-                return `${permiso}_view`;
-        }
-    });
 
     const online = navigator.onLine;
     if (online) {
@@ -61,12 +39,11 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
             // Mandar a API
             let options = {
                 metodo: 'POST',
-                url: config.public.professions,
+                url: config.public.servicios,
                 token: token,
                 body: {
-                    codigo: datos.Profesion.codigo,
-                    nombre: datos.Profesion.nombre,
-                    permisos: datos.Profesion.permisos,
+                    plantilla: datos.Servicio.plantilla,
+                    name: datos.Servicio.name,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -74,16 +51,14 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
             if (respuesta.success) {
                 // actualizar datos local
                 const datosActualizadosLocal = {
-                    Profesion: {
+                    Servicio: {
                         sincronizado: 1,
                         id: respuesta.data.id,
-                        nombre: respuesta.data.nombre,
-                        codigo: respuesta.data.codigo,
-                        permisos: respuesta.data.permisos,
+                        name: respuesta.data.name,
+                        plantilla: respuesta.data.plantilla,
                     }
                 }
                 await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
-                console.log('datos actualizados')
                 return true
             }
         } catch (error) {
@@ -92,7 +67,7 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
             notificacionesStore.options.texto = 'No se pudo enviar formulario'
             notificacionesStore.options.tiempo = 3000
             notificacionesStore.simple()
-            console.error('Fallo al enviar. Guardando localmente', error);
+            console.error('Fallo al enviar.', error);
         }
     } else {
 
@@ -100,11 +75,10 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
 
             if(!reintento){
                 const datosLocal = {
-                    Profesion: {
+                    Servicio: {
                         sincronizado: 0,
-                        nombre: datos.Profesion.nombre,
-                        codigo: datos.Profesion.codigo,
-                        permisos: datos.Profesion.permisos,
+                        name: datos.Servicio.name,
+                        plantilla: datos.Servicio.plantilla,
                     }
                 }
                 await guardarEnDB(JSON.parse(JSON.stringify(datosLocal)));

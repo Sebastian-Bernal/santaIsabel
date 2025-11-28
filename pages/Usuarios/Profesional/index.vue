@@ -82,7 +82,9 @@ const agregarMedico = () => {
 
 async function buscarUsuario(event) {
     const document = event.target.value
-    const usuarios = await usuariosStore.listUsers
+    const store = useIndexedDBStore()
+    store.almacen = 'InformacionUser'
+    const usuarios = await store.leerdatos()
 
     const usuarioExistente = usuarios.filter((user) => {
         return user.No_document === document

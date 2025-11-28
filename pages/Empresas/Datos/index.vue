@@ -3,6 +3,7 @@ import Pagina from '~/components/organism/Pagina/Pagina.vue';
 
 import { useEpsBuilder } from '~/build/Empresa/useEpsBuilder'
 import { useProfesionesBuilder } from '~/build/Empresa/useProfesionesBuilder'
+import { useServicioBuilder } from '~/build/Empresa/useServicioBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS';
@@ -10,18 +11,24 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
 import { ref, onMounted } from 'vue';
 import { enviarFormularioDeleteEPS } from '~/Core/Empresa/Datos/Eps/DELETEEps';
+import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
 
 const storeEPS = useDatosEPSStore();
 const storeProfesion = useDatosProfesionStore();
+const storeServicio = useDatosServicioStore();
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
+const apiRest = useApiRest();
 
 const EPSdata = ref([]);
 const Profesiones = ref([]);
+const Servicios = ref([])
 const showNuevaEPS = ref(false)
 const showNuevaProfesion = ref(false)
+const showNuevoServicio = ref(false)
 const showModificarProfesion = ref(false)
 const showModificarEPS = ref(false)
+const showModificarServicio = ref(false)
 const secciones = ref([])
 const refresh = ref(1)
 
@@ -75,6 +82,7 @@ onMounted(async () => {
     Profesiones.value = await storeProfesion.listProfesion
 
     secciones.value = await storeProfesion.listSecciones()
+    Servicios.value = await apiRest.getData('Servicio', 'servicios')
 
     varView.cargando = false
 });
@@ -117,7 +125,6 @@ watch(() => {
 
 // Funciones Actualizar Profesion
 
-
 function nuevaProfesion() {
     showNuevaProfesion.value = true
 }
@@ -156,7 +163,7 @@ function cerrarEPS() {
 
 async function eliminarEPS() {
     const EPS = storeEPS.Formulario.EPS
-
+    
     notificaciones.options.icono = 'warning';
     notificaciones.options.titulo = 'Deseas Eliminar EPS?';
     notificaciones.options.html = `Se eliminará la EPS: <span>${EPS.nombre}</span>`;
@@ -173,12 +180,31 @@ async function eliminarEPS() {
             notificaciones.options.tiempo = 1500
             notificaciones.mensaje()
             notificaciones.options.background = '#d33'
-
+            
             cerrarEPS()
             await llamadatos();
             refresh.value++;
         }
     }
+}
+
+// Funciones actualizar Servicio
+
+function nuevoServicio() {
+    showNuevoServicio.value = true
+}
+
+function actualizarServicio(servicio) {
+    mapCampos(servicio, storeServicio.Formulario)
+    storeServicio.Formulario.Servicio.id = servicio.id
+    storeServicio.Formulario.Servicio.id_temporal = servicio.id_temporal
+    showModificarServicio.value = true
+}
+
+function cerrarServicio() {
+    showNuevoServicio.value = false
+    showModificarServicio.value = false
+    mapCamposLimpios(storeServicio.Formulario)
 }
 
 // Construccion de pagina
@@ -187,6 +213,7 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const builderTablaProfessions = new TablaBuilder()
     const builderTablaEPS = new TablaBuilder()
+    const builderTablaServicios = new TablaBuilder()
 
     // Verifica permisos específicos
     const puedeVer = varView.getPermisos.includes('Datos_view');
@@ -195,6 +222,8 @@ const propiedades = computed(() => {
     const puedePutEPS = varView.getPermisos.includes('Datos_put');
     const puedePostProfesion = varView.getPermisos.includes('Datos_post');
     const puedePutProfesion = varView.getPermisos.includes('Datos_put');
+    const puedePostServicio = varView.getPermisos.includes('Datos_post');
+    const puedePutServicio = varView.getPermisos.includes('Datos_put');
 
     // Builders condicionales
     const propiedadesProfesion = puedePostProfesion
@@ -241,6 +270,26 @@ const propiedades = computed(() => {
         })
         : null;
 
+    const propiedadesServicio = puedePostServicio
+        ? useServicioBuilder({
+            storeId: 'Servicio',
+            storePinia: 'Servicio',
+            actualizar: true,
+            showModificarServicio: showNuevoServicio,
+            cerrar: cerrarServicio,
+        })
+        : null;
+
+    const propiedadesVerServicio = puedePutServicio
+        ? useServicioBuilder({
+            storeId: 'ActualizarServicio',
+            storePinia: 'Servicio',
+            actualizar: true,
+            showModificarServicio: showModificarServicio,
+            cerrar: cerrarServicio,
+        })
+        : null;
+
     // Tabla EPS
     builderTablaEPS
         .setColumnas([
@@ -274,6 +323,25 @@ const propiedades = computed(() => {
         builderTablaProfessions.setAcciones({ icons: [{ icon: 'ver', action: actualizarProfesion }], botones: true });
     }
 
+    // Tabla Profesiones
+    builderTablaServicios
+        .setColumnas([
+            { titulo: 'name', value: 'Nombre', tamaño: 500, ordenar: true },
+            { titulo: 'plantilla', value: 'Tipo', tamaño: 200, ordenar: true },
+        ])
+        .setHeaderTabla({
+            titulo: 'Servicios Registrados',
+            color: 'bg-[var(--color-default)] text-white',
+            buscador: true,
+            excel: true,
+            accionAgregar: puedePostServicio ? nuevoServicio : null
+        })
+        .setDatos(Servicios);
+
+    if (puedePutServicio) {
+        builderTablaProfessions.setAcciones({ icons: [{ icon: 'ver', action: actualizarServicio }], botones: true });
+    }
+
     // Construcción final
     pagina
         .setFondo('FondoDefault')
@@ -282,15 +350,22 @@ const propiedades = computed(() => {
             descripcion: 'Registra y configura según los datos de tu Empresa.',
         })
         .setEstilos('')
-        .setLayout('')
-        .setContenedor('w-full flex flex-col gap-5');
+        .setContenedor('w-full flex flex-col gap-10');
 
+        //EPS
     if (propiedadesEPS) pagina.addComponente('Form', propiedadesEPS);
     pagina.addComponente('Tabla', builderTablaEPS);
     if (propiedadesVerEPS) pagina.addComponente('Form', propiedadesVerEPS);
+
+        //Profesiones
     if (propiedadesProfesion) pagina.addComponente('Form', propiedadesProfesion);
     pagina.addComponente('Tabla', builderTablaProfessions);
     if (propiedadesVerProfesion) pagina.addComponente('Form', propiedadesVerProfesion);
+
+        //Servicios
+    if (propiedadesServicio) pagina.addComponente('Form', propiedadesServicio);
+    pagina.addComponente('Tabla', builderTablaServicios)
+    if (propiedadesVerServicio) pagina.addComponente('Form', propiedadesVerServicio);
 
     return pagina.build();
 

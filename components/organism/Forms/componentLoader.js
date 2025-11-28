@@ -72,6 +72,11 @@ export async function cargarStore(storeName) {
       tablaStore = useDatosEPSStore();
       break;
     }
+    case 'Servicio': {
+      const { useDatosServicioStore } = await import('~/stores/Formularios/empresa/Servicio');
+      tablaStore = useDatosServicioStore();
+      break;
+    }
     case 'Empresa': {
       const { useEmpresaStore } = await import('~/stores/Formularios/empresa/Empresa');
       tablaStore = useEmpresaStore();

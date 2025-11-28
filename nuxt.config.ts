@@ -23,6 +23,7 @@ export default defineNuxtConfig({
       historiasClinicas: 'api/v1/historiasClinicas',
       historiasNutricion: 'api/v1/historiasClinicasNutricion',
       historiasClinicasTrabajoSocial: 'api/v1/historiasClinicasTrabajoSocial',
+      historiasClinicasNota: 'api/v1/historiasClinicasNota',
       analisis: 'api/v1/analisis',
       examenFisicos: 'api/v1/examenFisicos',
       planManejoMedicamentos: 'api/v1/planManejoMedicamentos',
@@ -41,6 +42,7 @@ export default defineNuxtConfig({
       primerIngreso: 'api/v1/primerIngreso',
       diasAsignadosRestantes: 'api/v1/diasAsignadosRestantes',
       terapias: 'api/v1/terapias',
+      servicios: 'api/v1/servicios',
       administradores: 'api/v1/administradores',
     }
   },

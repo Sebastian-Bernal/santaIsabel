@@ -13,9 +13,11 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 
 const citasStore = useCitasStore();
 const varView = useVarView()
+const apiRest = useApiRest()
 const rol = ref(null)
 
 const Citas = ref([]);
+const servicios = ref([])
 const ultimosPacientes = ref();
 
 const cardPaciente = ref([])
@@ -48,6 +50,8 @@ onMounted(async () => {
     let citas = []
     let Historias = []
 
+    servicios.value = await apiRest.getData('Servicio', 'servicios')
+    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
     if (rol.value === 'Admin') {
         const historiaStore = useHistoriasStore();
         Historias = await historiaStore.ultimasHistorias();
@@ -379,6 +383,7 @@ const propiedades = computed(() => {
         show: showCita,
         pacientesList,
         medicosList,
+        servicios,
         optionsTratamientos: optionsTratamientos,
         showTratamientos: showTratamientos,
         variasCitas: variasCitas

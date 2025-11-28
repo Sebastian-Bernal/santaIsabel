@@ -7,6 +7,7 @@ import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/Calendari
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio'
 import { ref, onMounted } from 'vue'
 
 const varView = useVarView()
@@ -20,8 +21,11 @@ const refresh = ref(1);
 
 const pacientesStore = usePacientesStore()
 const medicosStore = useMedicosStore()
+const servicioStore = useDatosServicioStore()
+const apiRest = useApiRest()
 const pacientesList = ref([])
 const medicosList = ref([])
+const servicios = ref([])
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
 const variasCitas = ref(false)
@@ -55,7 +59,10 @@ onMounted(async () => {
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 
+    // Llamar datos para Cita
     medicosList.value = await medicosStore.listMedicos();
+    servicios.value = await servicioStore.listServicios();
+    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
     const rol = sessionStorage.getItem('Rol')
     if (rol === 'Profesional') {
         pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
@@ -90,6 +97,7 @@ const propiedades = computed(() => {
         show: show,
         pacientesList,
         medicosList,
+        servicios,
         optionsTratamientos: optionsTratamientos,
         showTratamientos: showTratamientos,
         variasCitas: variasCitas

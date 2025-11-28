@@ -7,7 +7,7 @@ import Historia from '~/components/Historia.vue';
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
+import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio'
 import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
 import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
@@ -30,6 +30,7 @@ const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
+const servicioStore = useDatosServicioStore();
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
 
@@ -144,7 +145,7 @@ async function showObservacion(cita) {
     simple();
 }
 
-function activarCita(cita) {
+async function activarCita(cita) {
     const pacientes = pacientesStore.Pacientes
 
     const pacienteCita = pacientes.filter(data => {
@@ -158,11 +159,25 @@ function activarCita(cita) {
     historiasStore.Formulario.Analisis.servicio = cita.servicio
 
     historiasStore.Formulario.Cita = cita
-    varView.tipoConsulta = cita.servicio
-    if(cita.servicio === 'Terapia'){
+
+    const servicios = await servicioStore.listServicios()
+    varView.tipoConsulta = servicios.find((s) => {
+        return s.name === cita.servicio
+    })
+    console.log(varView.tipoConsulta)
+
+    // varView.tipoConsulta = cita.servicio
+    if(varView.tipoConsulta.plantilla === 'Terapia'){
         historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
         historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
         historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
+    } else if(varView.tipoConsulta.plantilla === 'Nota'){
+        historiasStore.Formulario.Nota.id_paciente = cita.id_paciente
+        historiasStore.Formulario.Nota.id_profesional = cita.id_medico
+        historiasStore.Formulario.Nota.id_procedimiento = cita.id_procedimiento
+        historiasStore.Formulario.Nota.direccion = pacienteCita.direccion
+        historiasStore.Formulario.Nota.fecha_nota = cita.fecha
+        historiasStore.Formulario.Nota.hora_nota = cita.hora
     }
     varView.showNuevaHistoria = true
 }

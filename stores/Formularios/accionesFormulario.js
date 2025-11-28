@@ -17,6 +17,7 @@ import { validarYEnviarDatosSoftware } from '~/Core/Empresa/Configuracion/Softwa
 import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/Facturacion/POSTFacturacion';
 // Nota
 import { validarYEnviarNuevaNota } from '~/Core/Historial/Notas/POSTNota';
+import { validarYEnviarActualizarNota } from '~/Core/Historial/Notas/PUTNota';
 // Usuarios
 import { validarYEnviarNuevoUsuario } from '~/Core/Empresa/Usuario/NuevoUsuario';
 import { validarYEnviarModificarUsuario } from '~/Core/Empresa/Usuario/ModificarUsuario';
@@ -26,11 +27,14 @@ import { validarYEnviarActualizarEps } from '~/Core/Empresa/Datos/Eps/PUTEps';
 // Profesion
 import { validarYEnviarDatosProfesion } from '~/Core/Empresa/Datos/Profesion/POSTProfesion';
 import { validarYEnviarActualizarProfesion } from '~/Core/Empresa/Datos/Profesion/PUTProfesion';
+// Servicio
+import { validarYEnviarDatosServicio } from '~/Core/Empresa/Datos/Servicio/PostServicio';
+
 // Login
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
+
 import { traerDatos } from '~/Core/BDload';
-import { validarYEnviarActualizarNota } from '~/Core/Historial/Notas/PUTNota';
 
 
 // Importa accion de cada formulario desde el core
@@ -137,6 +141,14 @@ export const accionesFormularios = {
     },
     Profesion: async (data) => {
         const respuesta = await validarYEnviarDatosProfesion(data)
+        return respuesta
+    },
+    ActualizarProfesion: async (data) => {
+        const respuesta = await validarYEnviarActualizarProfesion(data)
+        return respuesta
+    },
+    Servicio: async (data) => {
+        const respuesta = await validarYEnviarDatosServicio(data)
         return respuesta
     },
     ActualizarProfesion: async (data) => {

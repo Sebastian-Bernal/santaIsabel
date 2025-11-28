@@ -29,17 +29,17 @@ export const useUsersStore = defineStore('Users', {
     }),
 
     getters: {
-        async listUsers() {
-            // const apiRest = useApiRest()
-
-            // const admin = await apiRest.getData('InformacionUser', 'administradores')
-            // console.log(admin)
-            // return admin
-        },
     },
-
+    
     actions: {
-
+        async listUsers() {
+            const apiRest = useApiRest()
+    
+            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+            this.Users = usuarios
+            return usuarios
+        },
+        
         async indexDBDatos() {
             const apiRest = useApiRest()
             await apiRest.getData('InformacionUser', 'informacionUsers')

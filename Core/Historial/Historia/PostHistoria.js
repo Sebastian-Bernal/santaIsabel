@@ -13,7 +13,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
     const errores = [];
     // --- Validaciones por tipo de consulta ---
-    switch (varView.tipoConsulta) {
+    switch (varView.tipoConsulta.plantilla) {
         case 'Terapia':
             if (!datos.Terapia?.id_paciente) errores.push("El paciente es obligatorio.");
             if (!datos.Terapia?.id_profesional) errores.push("El médico es obligatorio.");
@@ -28,7 +28,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             return await enviarFormularioTerapia(datos);
 
-        case 'Nutricion':
+        case 'Evolucion':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
@@ -114,9 +114,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             return await enviarFormularioTrabajoSocial(trabajoSocial);
 
-        case 'Enfermeria':
+        case 'Nota':
             const nota = datos?.Nota;
-
+            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
             // Validar que todos los campos estén presentes y no vacíos
             if (
                 !nota?.id_paciente ||
@@ -134,6 +134,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 notificacionesStore.simple();
                 return;
             }
+
+            return await enviarFormularioNota(datos)
 
         case 'Medicina':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
@@ -893,7 +895,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
             // mandar a api
             let options = {
                 metodo: 'POST',
-                url: config.public.historiasClinicas,
+                url: config.public.historiasClinicasTrabajoSocial,
                 token: token,
                 body: {
                     HistoriaClinica: {
@@ -1044,6 +1046,125 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                     uso: e.uso,
                     sincronizado: 0
                 })),
+                Cita: {
+                    id: datos.Cita.id,
+                    estado: 'Realizada',
+                    sincronizado: 0,
+                    ...datos.Cita
+                }
+            };
+            if (!reintento) {
+                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)), "HistoriaClinica")
+            }
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
+    }
+};
+
+export const enviarFormularioNota = async (datos, reintento = false) => {
+    const notificacionesStore = useNotificacionesStore();
+    const calendarioStore = useCalendarioCitas()
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.historiasClinicasNota,
+                token: token,
+                body: {
+                    HistoriaClinica: {
+                        fecha_historia: datos.HistoriaClinica.fecha_historia,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    },
+                    Nota: {
+                        id_paciente: datos.Nota.id_paciente,
+                        id_profesional: datos.Nota.id_profesional,
+                        direccion: datos.Nota.direccion,
+                        fecha_nota: datos.Nota.fecha_nota,
+                        hora_nota: datos.Nota.hora_nota,
+                        nota: datos.Nota.nota,
+                        tipoAnalisis: datos.Nota.tipoAnalisis,
+                    },
+                    Cita: {
+                        id: datos.Cita.id
+                    }
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                // Actualizar local
+                const datosActualizar = {
+                    HistoriaClinica: {
+                        id: respuesta.ids.HistoriaClinica,
+                        fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                        id_paciente: datos.HistoriaClinica.id_paciente,
+                        sincronizado: 1
+                    },
+                    Nota: {
+                        id: respuesta.data.id,
+                        id_paciente: respuesta.data.id_paciente,
+                        id_profesional: respuesta.data.id_profesional,
+                        direccion: respuesta.data.direccion,
+                        fecha_nota: respuesta.data.fecha_nota,
+                        hora_nota: respuesta.data.hora_nota,
+                        nota: respuesta.data.nota,
+                        tipoAnalisis: respuesta.data.tipoAnalisis,
+                    },
+                    Cita: {
+                        id: datos.Cita.id,
+                        estado: 'Realizada',
+                        id_analisis: respuesta.ids.Analisis,
+                        sincronizado: 1,
+                        ...datos.Cita
+                    }
+                };
+
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                return true
+            }
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
+        }
+    } else {
+
+        try {
+            const datosActualizar = {
+                HistoriaClinica: {
+                    fecha_historia: calendarioStore.fechaActual.split('/').reverse().join('-'),
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    sincronizado: 0
+                },
+                Nota: {
+                    id_paciente: datos.Nota.id_paciente,
+                    id_profesional: datos.Nota.id_profesional,
+                    direccion: datos.Nota.direccion,
+                    fecha_nota: datos.Nota.fecha_nota,
+                    hora_nota: datos.Nota.hora_nota,
+                    nota: datos.Nota.nota,
+                    tipoAnalisis: datos.Nota.tipoAnalisis,
+                },
                 Cita: {
                     id: datos.Cita.id,
                     estado: 'Realizada',

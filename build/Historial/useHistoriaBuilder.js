@@ -133,7 +133,7 @@ export function useHistoriaBuilder({
         ])
 
     // Tipo terapia
-    if (varView.tipoConsulta === 'Terapia') {
+    if (varView.tipoConsulta?.plantilla === 'Terapia') {
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
@@ -191,7 +191,7 @@ export function useHistoriaBuilder({
                 ],
             })
 
-            .nuevaSeccion('Terapia')
+            .nuevaSeccion(varView.tipoConsulta.name)
             // --- Label: Sesión ---
             .addCampo({
                 component: 'Label',
@@ -277,7 +277,7 @@ export function useHistoriaBuilder({
                 text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de la sesión',
                 tamaño: 'w-full md:col-span-2'
             })
-    } else if (varView.tipoConsulta === 'Nutricion') {
+    } else if (varView.tipoConsulta?.plantilla === 'Evolucion') {
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
@@ -371,7 +371,7 @@ export function useHistoriaBuilder({
                 ]
             })
 
-            .nuevaSeccion('Evolucion Nutricional')
+            .nuevaSeccion(varView.tipoConsulta.name)
             // --- Diagnosticos ---
             .addCampo({
                 component: 'GroupCampos',
@@ -429,7 +429,7 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full md:col-span-2'
             })
 
-    } else if (varView.tipoConsulta === 'Trabajo Social') {
+    } else if (varView.tipoConsulta?.plantilla === 'Trabajo Social') {
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
@@ -523,7 +523,7 @@ export function useHistoriaBuilder({
                 ]
             })
 
-            .nuevaSeccion('Trabajo Social')
+            .nuevaSeccion(varView.tipoConsulta.name)
             // --- Diagnosticos ---
             .addCampo({
                 component: 'GroupCampos',
@@ -719,7 +719,7 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full col-span-2',
             })
 
-    } if (varView.tipoConsulta === 'Enfermeria') {
+    } else if (varView.tipoConsulta?.plantilla === 'Nota') {
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
@@ -777,7 +777,7 @@ export function useHistoriaBuilder({
                 ],
             })
 
-            .nuevaSeccion('Nota de Enfermeria')
+            .nuevaSeccion(varView.tipoConsulta.name)
             // --- Label: Sesión ---
             .addCampo({
                 component: 'Label',
@@ -841,16 +841,16 @@ export function useHistoriaBuilder({
                 vmodel: 'Nota.nota',
                 id: 'nota',
                 name: 'nota',
-                placeholder: 'Nota',
+                placeholder: 'Escriba aqui las observaciones de la atención, Subjetivo, Objetivo, Actividades, Plan, Intervencion, Evaluacion...',
                 tamaño: 'w-full md:col-span-2',
             })
             .addCampo({
                 component: 'Label',
-                text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Describe...',
+                text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Nota de enfermeria',
                 forLabel: 'tipo',
                 tamaño: 'md:col-span-2 w-full'
             })
-    } else {
+    } else if (varView.tipoConsulta?.plantilla === 'Medicina'){
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
