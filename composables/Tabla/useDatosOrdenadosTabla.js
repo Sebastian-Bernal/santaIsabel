@@ -84,7 +84,6 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
         if (columnaOrden.value) {
             const key = `${columnaOrden.value}_${menorAMayor.value ? "asc" : "desc"}`;
             if (!cacheOrdenes[key]) {
-                console.log(cacheOrdenes)
                 cacheOrdenes[key] = [...resultado].sort((a, b) => {
                     const valorA = a[columnaOrden.value];
                     const valorB = b[columnaOrden.value];
@@ -116,6 +115,11 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
         });
     });
 
+    const borrarFiltros = () => {
+        busqueda.value = ''
+        filtros.value = {}
+    }
+
     return {
         busqueda,
         filtros,
@@ -124,5 +128,6 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
         datosOrdenados,
         columnaOrden,
         menorAMayor,
+        borrarFiltros
     };
 }

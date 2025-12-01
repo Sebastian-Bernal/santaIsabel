@@ -1,7 +1,6 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import CrossImg from '~/assets/img/cross.png'
-import { ref } from 'vue'
 
 export function useLoginBuilder({
   storeId,
@@ -9,19 +8,14 @@ export function useLoginBuilder({
   recuperarcontraseña,
   validaUsuario,
   selectEmpresa,
-  opcionesCompañy
+  opcionesCompañy,
+  mostrarContraseña
 }) {
   const builder = new FormularioBuilder()
-  const mostrarcontraseña = ref(false)
 
   const cambiarMostrarContraseña = () => {
       mostrarContraseña.value = !mostrarContraseña.value;
-      const passwordInput = document.getElementById('password');
-      if (mostrarContraseña.value) {
-          passwordInput.type = 'text';
-      } else {
-          passwordInput.type = 'password';
-      }
+      console.log(mostrarContraseña.value)
   };
 
   builder
@@ -81,16 +75,16 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Input',
       placeholder: 'Contraseña',
-      type: 'password',
+      type: !mostrarContraseña.value ? 'password' : 'text',
       id: 'password',
       name: 'contraseña',
       tamaño: 'lg:w-2/3 w-full justify-self-center col-span-2',
       estilo: 'text-white!',
       vmodel: 'Usuario.contraseña',
-      // slot: {
-      //   label: mostrarcontraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-gray-200"></i>`,
-      //   action: cambiarMostrarContraseña
-      // }
+      slot: {
+        label: mostrarContraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-gray-200"></i>`,
+        action: cambiarMostrarContraseña
+      }
     })
     .addCampo({
       component: 'Label',

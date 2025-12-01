@@ -30,6 +30,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
         case 'Evolucion':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
+            datos.Cita.servicio = varView.tipoConsulta.plantilla
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
@@ -87,7 +88,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: datos.Cita.servicio,
+                    servicio: varView.tipoConsulta.plantilla,
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -287,7 +288,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: datos.Cita.servicio,
+                    servicio: varView.tipoConsulta.plantilla,
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,

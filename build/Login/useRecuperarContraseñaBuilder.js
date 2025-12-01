@@ -59,6 +59,12 @@ export function useRecuperarContraseñaBuilder({
     })
     .nuevaSeccion('Cambiar Contraseña')
     .addCampo({
+      component: 'Imagen',
+      src: CrossImg,
+      tamaño: 'w-1/6 logo mb-2 select-none invert dark:invert-0',
+      contenedor: 'flex justify-center w-full col-span-2'
+    })
+    .addCampo({
       component: 'Input',
       placeholder: 'Codigo de Recuperacion',
       icon: 'fa-solid fa-key',

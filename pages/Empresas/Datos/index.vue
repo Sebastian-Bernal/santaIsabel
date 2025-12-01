@@ -34,7 +34,7 @@ const refresh = ref(1)
 
 async function llamadatos() {
     varView.cargando = true
-    EPSdata.value = await storeEPS.listEPSes()
+    EPSdata.value = await storeEPS.listEPS()
     Profesiones.value = await storeProfesion.listProfesiones()
     varView.cargando = false
 }
@@ -42,7 +42,7 @@ async function llamadatos() {
 // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => showModificarProfesion.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -51,7 +51,7 @@ watch(() => showModificarProfesion.value,
 
 watch(() => showNuevaProfesion.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -60,7 +60,7 @@ watch(() => showNuevaProfesion.value,
 
 watch(() => showModificarEPS.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -69,7 +69,7 @@ watch(() => showModificarEPS.value,
 
 watch(() => showNuevaEPS.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -78,7 +78,7 @@ watch(() => showNuevaEPS.value,
 
 onMounted(async () => {
     varView.cargando = true
-    EPSdata.value = await storeEPS.listEPS
+    EPSdata.value = await storeEPS.listEPS()
     Profesiones.value = await storeProfesion.listProfesion
 
     secciones.value = await storeProfesion.listSecciones()

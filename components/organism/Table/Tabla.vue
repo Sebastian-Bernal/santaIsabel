@@ -40,7 +40,8 @@ const {
     filtros,
     filtrosConOpciones,
     sortedItems,
-    datosOrdenados
+    datosOrdenados,
+    borrarFiltros
 } = useOrdenamiento(props.Propiedades.datos.content || ref([]), props.Propiedades.headerTabla.filtros);
 
 
@@ -82,7 +83,6 @@ const estiloColumnas = computed(() => {
         gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
     };
 });
-function enviar () { console.log(props.Propiedades.datos.content)}
 </script>
 
 <template>
@@ -106,18 +106,28 @@ function enviar () { console.log(props.Propiedades.datos.content)}
 
                 <client-only v-if="Propiedades.headerTabla.excel">
                     <div class="flex relative dropdown cursor-pointer">
-                        <download-excel class="flex gap-1 items-center" @click="enviar"
-                            :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
-                            :name="props.Propiedades.headerTabla.titulo" type="xlsx">
+                        <div class="flex gap-1 items-center">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
                             </ButtonRounded>
                             <h4 class="md:block hidden">Exportar</h4>
-                        </download-excel>
-                        <div @click="varView.showDatosExcel = true"
-                            class="configExcel flex absolute top-[100%] bg-[var(--color-default-500)] hover:text-white text-gray-300 px-3 py-3 z-9 gap-2 items-center justify-center rounded-b-lg">
-                            <i class="fa-solid fa-gear"></i>
-                            <p class="text-xs">Configurar</p>
+                        </div>
+                        <div class="configExcel flex flex-col absolute top-[100%] bg-[var(--color-default-500)] text-gray-300 p-3 z-9 gap-4 items-center justify-center rounded-b-lg">
+                            
+                            <download-excel 
+                                class="flex gap-1 hover:text-white"
+                                :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
+                                :name="props.Propiedades.headerTabla.titulo" type="xlsx"
+                            >
+                                <i class="fa-solid fa-download"></i>
+                                <p class="text-xs">Descargar</p>
+                            </download-excel>
+
+                            <div class="flex gap-1 hover:text-white" @click="varView.showDatosExcel = true">
+                                <i class="fa-solid fa-gear"></i>
+                                <p class="text-xs">Configurar</p>
+                            </div>
+
                         </div>
                     </div>
                 </client-only>
@@ -134,7 +144,10 @@ function enviar () { console.log(props.Propiedades.datos.content)}
         <!-- Filtos -->
         <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
-            <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
+            <div class="flex justify-between items-center">
+                <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
+                <span v-if="busqueda !== '' || filtros" class="dark:text-gray-400 text-gray-600 cursor-pointer" @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
+            </div>
             <div class="flex items-end justify-between gap-5 md:flex-row flex-col">
                 <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
                     placeholder: 'Buscar dato en la Tabla...',

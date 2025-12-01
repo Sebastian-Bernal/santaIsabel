@@ -57,6 +57,7 @@ export const useVarView = defineStore('varView', {
         formComplete: false,
         camposVacios: false,
         tipoConsulta: '',
+        cambioEnApi: false
     }),
 
     getters: {

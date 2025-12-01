@@ -18,6 +18,7 @@ const api = useApiRest()
 const config = useRuntimeConfig()
 const indexedDB = useIndexedDBStore();
 const storeCodigos = useCodigos();
+const mostrarContraseña = ref(false)
 
 onMounted(async () => {
     try {
@@ -90,7 +91,8 @@ const propiedadesLogin = computed(() => {
         recuperarcontraseña: recuperarContraseña,
         validaUsuario,
         selectEmpresa: selectEmpresa,
-        opcionesCompañy: opcionesCompañy
+        opcionesCompañy: opcionesCompañy,
+        mostrarContraseña
     });
 
     const propiedadesRecuperarContraseña = useRecuperarContraseñaBuilder({

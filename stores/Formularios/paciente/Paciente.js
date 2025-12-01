@@ -61,7 +61,7 @@ export const usePacientesStore = defineStore('Pacientes', {
     
     actions: {
 
-        async listPacientes() {
+        async listPacientes(online = true) {
             const varView = useVarView()
             const rol = varView.getRol
             const apiRest = useApiRest()
@@ -70,13 +70,25 @@ export const usePacientesStore = defineStore('Pacientes', {
             if (rol === 'Profesional') {
                 return await this.listPacientesAtendidos()
             }
+
+            let usuarios = ''
+            let pacientes = ''
+            let EPSs = ''
+            if(online){
+                usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+                pacientes = await apiRest.getData('Paciente', 'pacientes')
+                EPSs = await apiRest.getData('EPS', 'eps')
+            } else {
+                store.almacen = 'InformacionUser'
+                usuarios = await store.leerdatos()
     
-            store.almacen = 'InformacionUser'
-            const usuarios = await store.leerdatos()
-            const pacientes = await apiRest.getData('Paciente', 'pacientes')
+                store.almacen = 'Paciente'
+                pacientes = await store.leerdatos()
+        
+                store.almacen = 'EPS'
+                EPSs = await store.leerdatos()
+            }
     
-            store.almacen = 'EPS'
-            const EPSs = await store.leerdatos()
     
             const mapaEPS = EPSs.reduce((acc, eps) => {
                 acc[eps.id] = eps.nombre;
@@ -140,7 +152,7 @@ export const usePacientesStore = defineStore('Pacientes', {
 
             const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
             const pacientes = await apiRest.getData('Paciente', 'pacientes')
-            const EPSs = await epsStore.listEPSes()
+            const EPSs = await epsStore.listEPS()
 
             const mapaEPS = EPSs.reduce((acc, eps) => {
                 acc[eps.id] = eps.nombre;

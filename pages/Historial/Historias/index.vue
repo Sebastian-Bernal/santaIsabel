@@ -76,7 +76,7 @@ watch(() => show.value,
 
 watch(() => showNota.value,
     async (estado) => {
-        if (!estado) {
+        if (!estado && varView.cambioEnApi) {
             await llamadatos();
             refresh.value++;
         }
@@ -106,37 +106,43 @@ const verHistoria = async (his) => {
 
 async function cargaHistorial(id) {
     varView.cargando = true
+
+    // Reiniciar valores
+    analisis.value = []
+    notas.value = []
+    tratamientos.value = []
+    medicinas.value = [];
+    evoluciones.value = [];
+    nutricion.value = [];
+    diagnosticos.value = []
+    trabajosSocial.value = []
+
     const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
     const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
 
+    // Analisis
+    let analisisDatos = []
+
+    allAnalisis.map((analisis) => {
+        if (analisis.servicio === 'Evolucion') {
+            nutricion.value.push({ ...analisis })
+        } else if(analisis.servicio === 'Trabajo Social'){
+            trabajosSocial.value.push({ ...analisis})
+        } else if(analisis.servicio === 'Medicina'){
+            analisisDatos.push({ ...analisis})
+        }
+    })
+
     // Consultas
-    analisis.value = []
-
-    // Cambiar id por id_historia
-    if (Array.isArray(historia) && historia.length > 0 && historia[0].id) {
-        const idHistoria = historia[0].id;
-
-        // Obtener datos existentes
-        const analisisDatos = await historiasStore.listDatos(idHistoria, 'Analisis', 'id_historia') || [];
+    if (allAnalisis || allAnalisis.length > 0) {
         for (const item of analisisDatos) {
             const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
 
             analisis.value.push({ ...item, ...examenFisico[0] })
         }
-
     } else {
         analisis.value = []
     }
-
-    // Nutricion
-    allAnalisis.map((analisis) => {
-        if (analisis.servicio === 'Evolucion nutricional') {
-            nutricion.value.push({ ...analisis })
-        } else if(analisis.servicio === 'Trabajo Social'){
-            trabajosSocial.value.push({ ...analisis})
-        }
-    })
-
 
     // Evoluciones
     evoluciones.value = await pacientesStore.listDatos(id, 'Terapia') || []
@@ -194,7 +200,6 @@ async function cargaHistorial(id) {
     }
 
     varView.cargando = false
-    // console.log(analisis.value, notas.value, tratamientos.value, medicinas.value)
 };
 
 // Funciones cerrar modales
@@ -291,7 +296,7 @@ function cerrarNota() {
 
 // PDF
 async function exportarNotaPDF(data) {
-    // mapCampos(data, notasStore.Formulario)
+    varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
 
     const dataPaciente = pacientes.filter(user => {
@@ -300,6 +305,7 @@ async function exportarNotaPDF(data) {
 
     propiedadesNotaPDF.value = { ...data, ...dataPaciente[0] }
     activePdfNotas.value = true
+    varView.cargando = false
 }
 
 async function exportarEvolucionPDF(data) {
@@ -443,7 +449,7 @@ const propiedades = computed(() => {
     const pdfTrabajoSocial = new PdfBuilder()
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
-        const fechaOriginal = consulta.fecha;
+        const fechaOriginal = consulta.created_at;
         const fechaObj = new Date(fechaOriginal);
         const fecha = `${fechaObj.getDate().toString().padStart(2, '0')}/${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}/${fechaObj.getFullYear()}`;
 
@@ -673,7 +679,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     styles: {
-                        backgroundColor: '#EFF6FF',
+                        backgroundColor: '#fff',
                     },
                     filas: [
                         ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
@@ -690,7 +696,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     styles: {
-                        backgroundColor: '#EFF6FF',
+                        backgroundColor: '#fff',
                     },
                     filas: [
                         ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
@@ -858,7 +864,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
-                .setFileName(`Nota_${propiedadesNotaPDF.value.name_paciente}`)
+                .setFileName(`Nota_${propiedadesNotaPDF.value.name}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
@@ -880,51 +886,34 @@ const propiedades = computed(() => {
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Datos del Paciente' })
+                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
-                    styles: { backgroundColor: '#EFF6FF' },
                     filas: [
                         [
-                            '<p class="text-xs">Nombre completo:</p>',
-                            '<p class="text-xs">Edad:</p>'
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesNotaPDF.value.name}</span></p>`,
+                            ``,
                         ],
                         [
-                            `${propiedadesHistoriaPDF.value.name}`,
-                            `${propiedadesHistoriaPDF.value.edad}`
+                            [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesNotaPDF.value.No_document}</span></p>
+                            <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesNotaPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${propiedadesNotaPDF.value.nacimiento}</span></p>
+                            <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesNotaPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            '<p class="text-xs pt-2">Tipo de identificación:</p>',
-                            '<p class="text-xs pt-2">No. Documento:</p>'
+                            `<p class="text-xs py-2">EPS: <span class="text-sm">${propiedadesNotaPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs py-2">Zona: <span class="text-sm">${propiedadesNotaPDF.value.zona}</span></p>`
                         ],
-                        [
-                            `${propiedadesHistoriaPDF.value.type_doc}`,
-                            `${propiedadesHistoriaPDF.value.No_document}`
-                        ],
-                        [
-                            '<p class="text-xs pt-2">Dirección:</p>',
-                            '<p class="text-xs pt-2">Barrio:</p>',
-                            '<p class="text-xs pt-2">Teléfono/Celular:</p>'
-                        ],
-                        [
-                            `${propiedadesHistoriaPDF.value.direccion}`,
-                            `${propiedadesHistoriaPDF.value.barrio}`,
-                            `${propiedadesHistoriaPDF.value.telefono}`
-                        ]
                     ],
                 })
 
                 // SECCIÓN: DIAGNÓSTICOS
-                .addComponente('Texto', { texto: 'Diagnósticos' })
                 .addComponente('Tabla', {
-                    container: 'w-full border rounded-xl p-3 bg-gray-50',
-                    filas: [
-                        [
-                            propiedadesHistoriaPDF.value.diagnosticos
-                                ? `<p class="text-xs leading-tight">${propiedadesHistoriaPDF.value.diagnosticos}</p>`
-                                : '<p class="text-xs text-gray-500">Sin diagnósticos registrados</p>'
-                        ]
-                    ]
+                    container: 'w-full p-3',
+                    columnas: ['Diagnostico', 'CIE-10'],
+                    filas: diagnosticosEvolucion?.length > 0
+                        ? diagnosticosEvolucion
+                        : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
                 })
 
                 .addComponente('Espacio', { alto: 16 })
@@ -940,46 +929,13 @@ const propiedades = computed(() => {
                     filas: [
                         [
                             '<p class="text-xs w-full">Fecha (DD/MM/AAAA):</p>',
-                            '<p class="text-xs w-full">Hora (Militar):</p>'
+                            '<p class="text-xs w-full">Hora (Militar):</p>',
+                            '<p class="text-xs w-full">Nota</p>'
                         ],
                         [
-                            `${propiedadesHistoriaPDF.value.fechaNota ?? ''}`,
-                            `${propiedadesHistoriaPDF.value.horaNota ?? ''}`
-                        ],
-                        ['<p class="text-xs pt-2">Subjetivo:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.subjetivo
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
-                        ],
-
-                        ['<p class="text-xs pt-2">Objetivo:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.objetivo
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
-                        ],
-
-                        ['<p class="text-xs pt-2">Actividades:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.actividades
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
-                        ],
-
-                        ['<p class="text-xs pt-2">Plan:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.plan
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
-                        ],
-
-                        ['<p class="text-xs pt-2">Intervención:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.intervencion
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
-                        ],
-
-                        ['<p class="text-xs pt-2">Evaluación:</p>'],
-                        [
-                            propiedadesHistoriaPDF.value.evaluacion
-                            ?? '<p class="text-xs text-gray-500">No registrado</p>'
+                            `${propiedadesNotaPDF.value.fecha_nota ?? ''}`,
+                            `${propiedadesNotaPDF.value.hora_nota ?? ''}`,
+                            `${propiedadesNotaPDF.value.nota ?? ''}`,
                         ],
                     ],
                 })
@@ -989,12 +945,8 @@ const propiedades = computed(() => {
                 // PIE DE FIRMA
                 .addComponente('Tabla', {
                     container: 'pt-5',
-                    filas: [
-                        [
-                            '<p class="text-xs text-center pt-6">Nombre del Auxiliar de Enfermería</p>',
-                            '<p class="text-xs text-center pt-6">Sello del Auxiliar de Enfermería</p>'
-                        ]
-                    ]
+                    border: false,
+                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido del profesional</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
                 })
             )
 
@@ -1244,7 +1196,7 @@ const propiedades = computed(() => {
 
         )
     return pagina.build()
-});console.log(propiedades)
+});
 
 </script>
 

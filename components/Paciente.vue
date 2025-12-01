@@ -7,7 +7,6 @@ import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";
 import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
-import { useUsersStore } from "~/stores/Formularios/usuarios/Users";
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { mapCampos } from "./organism/Forms/useFormulario";
 import { CIE10 } from "~/data/CIE10";
@@ -16,7 +15,6 @@ const varView = useVarView();
 const pacientesStore = usePacientesStore();
 const medicoStore = useMedicosStore()
 const MedicosList = ref([])
-const usuariosStore = useUsersStore();
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
 const pacientes = ref([]);
@@ -32,7 +30,7 @@ onMounted(async () => {
     varView.cargando = true;
     await llamadatos();
 
-    const EPS = await epsStore.listEPS;
+    const EPS = await epsStore.listEPS();
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
         value: eps.id,

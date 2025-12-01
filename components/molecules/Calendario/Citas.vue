@@ -164,13 +164,14 @@ async function activarCita(cita) {
     varView.tipoConsulta = servicios.find((s) => {
         return s.name === cita.servicio
     })
-    console.log(varView.tipoConsulta)
 
     // varView.tipoConsulta = cita.servicio
     if(varView.tipoConsulta.plantilla === 'Terapia'){
         historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
         historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
         historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
+        historiasStore.Formulario.Terapia.fecha = cita.fecha
+        historiasStore.Formulario.Terapia.hora = cita.hora
     } else if(varView.tipoConsulta.plantilla === 'Nota'){
         historiasStore.Formulario.Nota.id_paciente = cita.id_paciente
         historiasStore.Formulario.Nota.id_profesional = cita.id_medico
@@ -178,6 +179,10 @@ async function activarCita(cita) {
         historiasStore.Formulario.Nota.direccion = pacienteCita.direccion
         historiasStore.Formulario.Nota.fecha_nota = cita.fecha
         historiasStore.Formulario.Nota.hora_nota = cita.hora
+    } else if(varView.tipoConsulta.plantilla === 'Medicina'){
+        const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
+
+        historiasStore.Formulario.AntecedentesRegistrados = antecedentes
     }
     varView.showNuevaHistoria = true
 }

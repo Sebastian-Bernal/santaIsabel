@@ -990,6 +990,19 @@ export function useHistoriaBuilder({
                 ],
                 containerCampos: 'w-full'
             })
+            .addCampo({
+                component: 'GroupCampos',
+                type: 'Input',
+                labelGroup: 'Antecedentes Registrados',
+                tamaño: 'w-full col-span-2',
+                vmodel: 'AntecedentesRegistrados',
+                value: [],
+                disabled: true,
+                campos: [
+                    { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
+                ],
+                containerCampos: 'w-full'
+            })
         if (!puedePostAnalisis.value) {
             builder
                 .addCampo({

@@ -166,6 +166,7 @@ export function useFormulario(props) {
                     notificaciones.mensaje()
                     limpiarLocal()
                     limpiar()
+                    varView.cambioEnApi = true
                 }
                 return res
             } catch (err) {

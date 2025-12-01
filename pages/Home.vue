@@ -32,9 +32,11 @@ const profesional = ref([])
 watch(() => showCita.value,
     async(estado) => {
         if(!estado){
-            refresh.value++
+            varView.cargando = true
             const apiRest = useApiRest()
             await apiRest.getData('Cita', 'citas')
+            refresh.value++
+            varView.cargando = false
         }
     }
 );
@@ -99,7 +101,8 @@ onMounted(async () => {
     varView.cargando = false;
 });
 // Funcion para cargar Dashboard por rol
-function DashboardRol(rol, Historias = [], citas) {
+async function DashboardRol(rol, Historias = [], citas) {
+    varView.cargando = true
     if (rol === 'Admin') {
         if (Historias.length > 0) {
             ultimosPacientes.value = Historias.map(card => {
@@ -205,6 +208,14 @@ function DashboardRol(rol, Historias = [], citas) {
         ];
     } else if (rol === 'Profesional') {
         const usuario = varView.getUser
+            const store = useIndexedDBStore()
+            store.almacen = 'Profesion'
+            const profesiones = await store.leerdatos()
+    
+            const mapaProfesion = profesiones.reduce((acc, profesion) => {
+                acc[profesion.id] = profesion.nombre;
+                return acc;
+            }, {});
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
@@ -214,15 +225,13 @@ function DashboardRol(rol, Historias = [], citas) {
                 title: ``,
             },
             footer: {
-                status: `Profesion: ${profesional.value.profesion}`,
-                statusClass: 'text-gray-200 font-black!',
-                // buttons: [
-                //     {
-                //         text: 'Actualizar Informacion',
-                //         class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl cursor-pointer',
-                //         icon: 'fa-solid fa-file'
-                //     }
-                // ]
+                buttons: [
+                    {
+                        text: mapaProfesion[profesional.value.id_profesion],
+                        class: 'text-xs text-gray-100 font-semibold p-1 px-2 rounded-xl',
+                        icon: 'fa-solid fa-user-doctor'
+                    }
+                ]
             }
         }]
 
@@ -292,6 +301,7 @@ function DashboardRol(rol, Historias = [], citas) {
             },
         ];
     }
+    varView.cargando = false
 }
 
 // Visibilidad de Formularios en acciones rapidas

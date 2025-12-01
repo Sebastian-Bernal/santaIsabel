@@ -80,7 +80,7 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
 export const enviarFormularioPaciente = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const epsStore = useDatosEPSStore()
-    const EPSList = await epsStore.listEPS
+    const EPSList = await epsStore.listEPS()
     const mapaEPS = EPSList.reduce((acc, eps) => {
         acc[eps.id] = eps.nombre;
         return acc;

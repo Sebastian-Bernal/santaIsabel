@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { decryptData } from "~/composables/Formulario/crypto";
-import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 
 // Store para loader
 export const useApiRest = defineStore('apiRest', {
@@ -69,6 +68,7 @@ export const useApiRest = defineStore('apiRest', {
 
         async getData(almacen, nombre, time = true) {
             let datos = [];
+            const varView = useVarView()
             const token = decryptData(sessionStorage.getItem('token'));
             const config = useRuntimeConfig()
 
@@ -94,9 +94,7 @@ export const useApiRest = defineStore('apiRest', {
                         ]);
                     } else {
                         respuesta = await this.functionCall(options);
-
                     }
-
 
                     if (respuesta?.success && Array.isArray(respuesta.data)) {
                         datos = await respuesta.data;
@@ -111,6 +109,7 @@ export const useApiRest = defineStore('apiRest', {
                             await store.guardardatosID({ ...item })
                         };
                     }
+                    
                 } catch (error) {
                     console.error("Error al obtener datos desde la API:", error);
                     console.error("Fallo:", almacen)
@@ -120,6 +119,7 @@ export const useApiRest = defineStore('apiRest', {
                 datos = await this.getOfflineData(almacen);
             }
 
+            varView.cambioEnApi = false
             return datos;
         },
 

@@ -93,8 +93,8 @@ const cerrar = () => {
                         </div>
                         <div
                             class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] z-9 gap-2 items-center justify-center rounded-b-lg">
-                            <p class="text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="exportPdf">Descargar</p>
-                            <p class="text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="toggleDropdown">Configurar</p>
+                            <p class="flex gap-1 items-center text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="exportPdf"><i class="fa-solid fa-download"></i>Descargar</p>
+                            <p class="flex gap-1 items-center text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="toggleDropdown"><i class="fa-solid fa-gear"></i>Configurar</p>
                             <div v-if="showDropdown"
                                 class=" w-56 bg-white shadow-lg rounded-lg p-4 z-50 text-gray-700">
                                 <h3 class="font-semibold text-sm mb-2">Configuración PDF</h3>

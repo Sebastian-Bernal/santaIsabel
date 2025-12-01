@@ -1,5 +1,4 @@
 import { traerProfesionales } from "~/Core/Usuarios/Profesional/GETProfesionales";
-import { useUsersStore } from "../usuarios/Users";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
 
@@ -53,13 +52,24 @@ export const useMedicosStore = defineStore('Medicos', {
     },
     
     actions: {
-        async listMedicos() {
+        async listMedicos(online = true) {
             const apiRest = useApiRest()
-    
-            const medicos = await apiRest.getData('Profesional', 'profesionals')
-            const usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
-    
             const store = useIndexedDBStore()
+    
+            let medicos = ''
+            let usuarios = ''
+
+            if(online){
+                usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
+                medicos = await apiRest.getData('Profesional', 'profesionals')
+            } else {
+                store.almacen = 'InformacionUser'
+                usuarios = await store.leerdatos()
+
+                store.almacen = 'Profesional'
+                medicos = await store.leerdatos()
+            }
+    
             store.almacen = 'Profesion'
             const profesiones = await store.leerdatos()
     

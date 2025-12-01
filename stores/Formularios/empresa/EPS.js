@@ -21,29 +21,38 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
     }),
 
     getters: {
-        async listEPS(state) {
-            const apiRest = useApiRest()
-            const EPS = await apiRest.getData('EPS', 'eps')
+        // async listEPS(state) {
+        //     const apiRest = useApiRest()
+        //     const EPS = await apiRest.getData('EPS', 'eps')
 
-            const EPSActivas = EPS.filter(p => p.estado === 1)
-            state.EPSs = EPSActivas
-            return EPSActivas
-        },
+        //     const EPSActivas = EPS.filter(p => p.estado === 1)
+        //     state.EPSs = EPSActivas
+        //     return EPSActivas
+        // },
     },
 
     actions: {
 
-        async listEPSes() {
+        async listEPS(online = true) {
             const apiRest = useApiRest()
-            const EPS = await apiRest.getData('EPS', 'eps')
+            const store = useIndexedDBStore()
+            
+            let EPS = ''
+            if(online){
+                EPS = await apiRest.getData('EPS', 'eps')
+            } else {
+                store.almacen = 'EPS'
+                EPS = await store.leerdatos()
+            }
 
             const EPSActivas = EPS.filter(p => p.estado === 1)
+            this.EPSs = EPSActivas
             return EPSActivas
         },
 
         async indexDBDatos() {
             const eps = await traerdatosEPS()
-            const epsLocal = await this.listEPS
+            const epsLocal = await this.listEPS()
 
             // Crear un conjunto de IDs locales para comparación rápida
             const ids = new Set(

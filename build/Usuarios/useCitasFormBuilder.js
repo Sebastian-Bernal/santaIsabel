@@ -3,6 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { decryptData } from '~/composables/Formulario/crypto';
 import { watch } from 'vue'
+import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
 
 export function useFormularioCitaBuilder({
   storeId,
@@ -25,8 +26,14 @@ export function useFormularioCitaBuilder({
 
   watch(() => citasStore.Formulario.Cita.servicio,
     async () => {
-      if (citasStore.Formulario.Cita.servicio === 'Terapia' && citasStore.Formulario.Cita.id_paciente) {
+      const servicioStore = useDatosServicioStore()
+      const serviciosPlantilla = await servicioStore.listServicios()
+      const tipoConsulta = serviciosPlantilla.find((s) => {
+        return s.name === citasStore.Formulario.Cita.servicio
+      })?.plantilla
 
+      if (tipoConsulta === 'Terapia' && citasStore.Formulario.Cita.id_paciente) {
+        console.log('Terapia')
         const varView = useVarView()
         varView.cargando = true
 
@@ -64,7 +71,7 @@ export function useFormularioCitaBuilder({
         }
 
         varView.cargando = false
-        
+
       } else {
 
         showTratamientos.value = false
@@ -188,6 +195,7 @@ export function useFormularioCitaBuilder({
       options: medicosList,
       opciones: [{ value: 'name' }, { text: 'Profesion', value: 'profesion' }],
       seleccionarItem: seleccionarMedico,
+      upperCase: true
     })
     .addCampo({
       component: 'Select',

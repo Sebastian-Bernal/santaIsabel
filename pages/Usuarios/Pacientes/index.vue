@@ -37,14 +37,14 @@ const showVer = ref(false);
 
 async function llamadatos() {
     varView.cargando = true
-    pacientes.value = await pacientesStore.listPacientes();
+    pacientes.value = await pacientesStore.listPacientes(true);
     varView.cargando = false
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => show.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
             refresh.value++;
@@ -54,7 +54,7 @@ watch(() => show.value,
 
 watch(() => showVer.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -66,12 +66,12 @@ onMounted(async () => {
     varView.cargando = true;
 
     await llamadatos();
-    const EPS = await epsStore.listEPS;
+    const EPS = await epsStore.listEPS(false);
     opcionesEPS.value = await EPS.map((eps) => ({
         text: eps.nombre,
         value: eps.id,
     }));
-    MedicosList.value = await medicoStore.listMedicos();
+    MedicosList.value = await medicoStore.listMedicos(false);
 
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')

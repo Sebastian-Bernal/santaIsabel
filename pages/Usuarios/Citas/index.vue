@@ -38,7 +38,7 @@ async function llamadatos() {
 // Watch para actualizar citas al agregar nueva
 watch(() => show.value,
     async (estado) => {
-        if(!estado){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
             refresh.value++;
         }
@@ -55,6 +55,7 @@ watch(() => varView.showNuevaHistoria,
 );
 
 onMounted(async () => {
+    console.log('ejecutando...')
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')

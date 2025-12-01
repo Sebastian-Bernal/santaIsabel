@@ -5,7 +5,6 @@ import { ref, onMounted } from 'vue';
 import { municipios } from '~/data/municipios.js'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
-import { useUsersStore } from '~/stores/Formularios/usuarios/Users';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
@@ -16,7 +15,6 @@ const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 const profesionStore = useDatosProfesionStore()
-const usuariosStore = useUsersStore()
 const medicos = ref([]);
 const profesiones = ref([]);
 const refresh = ref(1);
@@ -30,14 +28,14 @@ async function llamadatos() {
 }
 // Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async (estado) => {
-    if(!estado){
+    if(!estado && varView.cambioEnApi){
         llamadatos()
         refresh.value++
     }
 })
 
 watch(() => showVer.value, async (estado) => {
-    if(!estado){
+    if(!estado && varView.cambioEnApi){
         llamadatos()
         refresh.value++
     }
