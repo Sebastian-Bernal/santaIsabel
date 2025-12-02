@@ -7,105 +7,14 @@ import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBMana
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarActualizarHistoria = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    const calendarioStore = useCalendarioCitas();
+    const varView = useVarView()
 
-    const errores = [];
+    notificacionesStore.options.icono = 'warning';
+    notificacionesStore.options.titulo = `Actualizar ${varView.tipoHistoria} en desarrollo.`;
+    notificacionesStore.options.texto = '';
+    notificacionesStore.options.tiempo = 5000;
+    notificacionesStore.simple();
 
-    // Validar HistoriaClinica
-    if (!datos.HistoriaClinica?.id_paciente) {
-        errores.push("El ID del paciente es obligatorio.");
-    }
-
-    // Validar Analisis
-    const analisis = datos.Analisis;
-    if (!analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
-    if (!analisis?.observacion) errores.push("La observación es obligatoria.");
-    if (!analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
-    if (!analisis?.analisis) errores.push("El análisis es obligatorio.");
-    if (!analisis?.tipoAnalisis) errores.push("El tipo de análisis es obligatorio.");
-    if (!datos.Cita?.id_medico) errores.push("El ID del médico es obligatorio.");
-
-    // Validar Examen Físico
-    const examen = datos.ExamenFisico;
-    if (!examen?.peso || isNaN(examen.peso)) errores.push("El peso debe ser un número.");
-    if (!examen?.altura || isNaN(examen.altura)) errores.push("La altura debe ser un número.");
-    if (!examen?.signosVitales) {
-        errores.push("Los signos vitales son obligatorios.");
-    } else {
-        const sv = examen.signosVitales;
-        if (!sv.ta || !sv.fc || !sv.fr || !sv.t || !sv.SATo2) {
-            errores.push("Todos los signos vitales deben estar completos.");
-        }
-    }
-
-    // Validar Plan de Medicamentos
-    if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
-        errores.push("El plan de medicamentos debe ser un arreglo.");
-    } else {
-        datos.Plan_manejo_medicamentos.forEach((m, i) => {
-            if (!m.medicamento || !m.dosis || isNaN(parseInt(m.cantidad))) {
-                errores.push(`Medicamento ${i + 1} incompleto o cantidad inválida.`);
-            }
-        });
-    }
-
-    // Validar Procedimientos
-    datos.Plan_manejo_procedimientos.forEach((p, i) => {
-        if (!p.procedimiento || !p.codigo || !p.fecha) {
-            errores.push(`Procedimiento ${i + 1} incompleto.`);
-        }
-    });
-
-    // Mostrar errores o continuar
-    // if (errores.length > 0) {
-    //     errores.forEach(msg => {
-    //         notificacionesStore.options.icono = 'error';
-    //         notificacionesStore.options.titulo = 'Informacion invalida.';
-    //         notificacionesStore.options.texto = msg;
-    //         notificacionesStore.options.tiempo = 5000;
-    //         notificacionesStore.simple();
-    //     });
-    //     return false;
-    // }
-
-    const body = {};
-
-    if (datos.Analisis && Object.values(datos.Analisis).some(v => v)) {
-        body.Analisis = datos.Analisis;
-    }
-
-    if (datos.ExamenFisico && Object.values(datos.ExamenFisico).some(v => v)) {
-        body.ExamenFisico = datos.ExamenFisico;
-    }
-
-    if (Array.isArray(datos.Plan_manejo_medicamentos) && datos.Plan_manejo_medicamentos.length > 0) {
-        body.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos;
-    }
-
-    if (Array.isArray(datos.Plan_manejo_procedimientos) && datos.Plan_manejo_procedimientos.length > 0) {
-        body.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos;
-    }
-
-    if (Array.isArray(datos.Plan_manejo_insumos) && datos.Plan_manejo_insumos.length > 0) {
-        body.Plan_manejo_insumos = datos.Plan_manejo_insumos;
-    }
-
-    if (Array.isArray(datos.Plan_manejo_equipos) && datos.Plan_manejo_equipos.length > 0) {
-        body.Plan_manejo_equipos = datos.Plan_manejo_equipos;
-    }
-
-    if (Array.isArray(datos.Diagnosticos) && datos.Diagnosticos.length > 0) {
-        body.Diagnosticos = datos.Diagnosticos;
-    }
-
-    if (Array.isArray(datos.Antecedentes) && datos.Antecedentes.length > 0) {
-        body.Antecedentes = datos.Antecedentes;
-    }
-
-    // if (datos.Enfermedad && Object.values(datos.Enfermedad).some(v => v)) {
-    //     body.Enfermedad = datos.Enfermedad;
-    // }
-    console.log(body)
     // return await enviarFormulario(body);
 };
 

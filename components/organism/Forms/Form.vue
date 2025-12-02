@@ -102,10 +102,10 @@ function limpiar() {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-2 w-full flex justify-center items-center gap-3">
+            <div class="mt-2 w-full flex justify-center items-center gap-3 px-2">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)" @keyup.enter="item.type === 'enviar' ? manejarClick(event, item, tablaStore?.Formulario, limpiar) : null"
-                    class="md:w-[200px] w-1/3 text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+                    class="md:w-[200px] sm:w-[2/3] w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>

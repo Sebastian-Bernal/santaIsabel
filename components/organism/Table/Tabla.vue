@@ -83,6 +83,14 @@ const estiloColumnas = computed(() => {
         gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
     };
 });
+
+// Tamaño tabla
+const tablaAlto = computed(() => {
+    const pixeles = (itemsPorPagina.value * 40) + 48
+    return {
+        height: `${pixeles}px`
+    }
+})
 </script>
 
 <template>
@@ -90,14 +98,15 @@ const estiloColumnas = computed(() => {
         <!-- Header -->
         <div class="flex w-[100%] justify-between items-center md:flex-row flex-col gap-3">
             <div>
-                <h1 class="font-bold text-2xl tituloTabla text-gray-800 dark:text-gray-200">
+                <h1 class="font-bold md:text-2xl text-xl tituloTabla text-gray-800 dark:text-gray-200">
                     {{ props.Propiedades.headerTabla?.titulo }}
                 </h1>
                 <p>{{ props.Propiedades.headerTabla?.descripcion }}</p>
             </div>
             <div class="flex gap-3 md:w-[45%] w-full justify-end">
 
-                <div v-if="Propiedades.headerTabla.filtros?.length > 0" class="flex items-center gap-1 cursor-pointer" @click="showFiltros = !showFiltros">
+                <div v-if="Propiedades.headerTabla.filtros?.length > 0" class="flex items-center gap-1 cursor-pointer"
+                    @click="showFiltros = !showFiltros">
                     <ButtonRounded color="bg-blue-700">
                         <i class="fa-solid fa-filter"></i>
                     </ButtonRounded>
@@ -112,13 +121,12 @@ const estiloColumnas = computed(() => {
                             </ButtonRounded>
                             <h4 class="md:block hidden">Exportar</h4>
                         </div>
-                        <div class="configExcel flex flex-col absolute top-[100%] bg-[var(--color-default-500)] text-gray-300 p-3 z-9 gap-4 items-center justify-center rounded-b-lg">
-                            
-                            <download-excel 
-                                class="flex gap-1 hover:text-white"
+                        <div
+                            class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-b-lg">
+
+                            <download-excel class="flex gap-1 hover:text-white"
                                 :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
-                                :name="props.Propiedades.headerTabla.titulo" type="xlsx"
-                            >
+                                :name="props.Propiedades.headerTabla.titulo" type="xlsx">
                                 <i class="fa-solid fa-download"></i>
                                 <p class="text-xs">Descargar</p>
                             </download-excel>
@@ -146,7 +154,8 @@ const estiloColumnas = computed(() => {
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
-                <span v-if="busqueda !== '' || filtros" class="dark:text-gray-400 text-gray-600 cursor-pointer" @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
+                <span v-if="busqueda !== '' || filtros" class="dark:text-gray-400 text-gray-600 cursor-pointer"
+                    @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
             </div>
             <div class="flex items-end justify-between gap-5 md:flex-row flex-col">
                 <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
@@ -172,8 +181,8 @@ const estiloColumnas = computed(() => {
         </div>
 
         <!-- Tabla -->
-        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow bg-white dark:bg-gray-900 rounded-b-xl">
-            <div class="w-full h-full">
+        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-b-xl">
+            <div class="w-full" :style="tablaAlto">
 
                 <!-- Header titulos de props Columnas -->
                 <div class="sticky top-0 z-1 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
@@ -202,30 +211,39 @@ const estiloColumnas = computed(() => {
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse || Propiedades.acciones.icons.length < 2" v-for="action in Propiedades.acciones.icons" :key="action"
+                        <BotonAccion v-if="!collapse || Propiedades.acciones.icons.length < 2"
+                            v-for="action in Propiedades.acciones.icons" :key="action"
                             :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
 
                         <!-- Tablas ocultas responsive  -->
-                        <button @click="activarCollapse(id)" v-if="collapse"
+                        <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
                             <i class="fa-solid fa-angle-down text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
-                        <button @click="mostrarAcciones(id)" v-if="collapse && Propiedades.acciones.icons.length > 1"
-                            class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer">
-                            <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+                        <div class="relative inline-block text-left">
+                            <button @click="mostrarAcciones(id)"
+                                v-if="collapse && Propiedades.acciones.icons.length > 1"
+                                class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:bg-gray-300">
+                                <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+                            </button>
 
-                            <div v-if="btnAcciones === id" class="acciones" :id="id">
+                            <!-- Dropdown -->
+                            <div v-if="btnAcciones === id"
+                                class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
+                                :id="id">
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
                                     :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                    @click="action.action(fila)" />
+                                    @click="action.action(fila)"
+                                    class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md" />
                             </div>
-                        </button>
+                        </div>
+
                     </div>
 
                     <!-- collapse -->
-                    <div class="collapse-text col-span-full" :id="id">
+                    <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
                         <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
                             <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
                                 <p
@@ -236,6 +254,18 @@ const estiloColumnas = computed(() => {
                         </div>
                     </div>
                 </div>
+
+                <!-- filas vacías para rellenar -->
+                <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)" :key="`empty-${n}`"
+                    class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
+                    :style="estiloColumnas">
+
+                    <div v-for="(col, key) in columnasVisibles" :key="key"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                        <p class="text-transparent select-none">.</p>
+                    </div>
+                </div>
+
 
                 <div v-if="datosPaginados?.length === 0">
                     <p class="text-gray-500 text-center my-10">No se encontraron
@@ -258,13 +288,13 @@ const estiloColumnas = computed(() => {
                 </button>
                 <div class="flex gap-2 pagina">
                     <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual - 1 }}</h2>
                     <h2
-                        class="bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        class="bg-gray-200 dark:bg-gray-800 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual }}</h2>
                     <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                         {{ paginaActual + 1 }}</h2>
                 </div>
                 <button v-if="paginaActual != totalPaginas"
@@ -336,28 +366,18 @@ const estiloColumnas = computed(() => {
 }
 
 .acciones {
-    position: relative;
-    z-index: 99;
-    left: 0px;
-    top: 160%;
     display: flex;
     flex-direction: column;
-    border-radius: 5px;
-    padding: 5px;
+    gap: 4px;
 }
 
-.acciones button {
-    width: 30px;
-    height: 25px;
-    border-radius: 0;
+.btn-accionesOcultas {
+    transition: background-color 0.2s ease;
 }
 
-.acciones button:hover {
-    opacity: 1;
-}
-
-.acciones:hover .btn-accionesOcultas {
-    border-radius: 0;
+.btn-accionesOcultas:hover {
+    background-color: #d1d5db;
+    /* gris más oscuro */
 }
 
 /* Paginador css */

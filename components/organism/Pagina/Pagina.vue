@@ -35,9 +35,9 @@ const components = {
 
 <template>
     <component :is="fondos[Propiedades.fondo]" :class="Propiedades.estilos">
-        <div v-if="Propiedades.header.titulo !== ''" class="md:pb-8 pb-4 flex items-center justify-between">
+        <div v-if="Propiedades.header.titulo !== ''" class="md:pb-8 pb-4 flex md:flex-row flex-col gap-3 items-center justify-between">
             <div>
-                <h2 class="text-2xl font-semibold">{{ Propiedades.header.titulo }}</h2>
+                <h2 class="md:text-2xl text-xl font-semibold">{{ Propiedades.header.titulo }}</h2>
                 <p class="text-gray-600 dark:text-gray-200 mt-1">{{ Propiedades.header.descripcion }}</p>
             </div>
 

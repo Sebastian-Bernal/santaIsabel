@@ -55,7 +55,6 @@ watch(() => varView.showNuevaHistoria,
 );
 
 onMounted(async () => {
-    console.log('ejecutando...')
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')

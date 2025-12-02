@@ -73,17 +73,15 @@ const emit = defineEmits(['update:modelValue']);
     <!-- Campos -->
     <div v-if="showCampos || showCampos && items.length > 0" :class="[Propiedades.tamaño]" class="max-h-[200px] overflow-y-auto scrollForm">
         <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5" :class="Propiedades.containerCampos">
-
             <div class="w-full flex justify-between absolute top-0">
                 <label class="text-xs text-gray-600">Bloque {{ index + 1 }}</label>
-                <i v-if="!Propiedades.disabled" class="fa-solid fa-close text-red-500 hover:text-red-700 cursor-pointer"
+                <i v-if="!Propiedades.disabled || !Propiedades.disabledCampo" class="fa-solid fa-close text-red-500 hover:text-red-700 cursor-pointer"
                 @click="() => removeItem(index)"></i>
             </div>
             <div v-for="campoDef in Propiedades.campos" :key="campoDef.name" class="">
                 <component :is="campos[campoDef.typeCampo]" :modelValue="input[campoDef.name]" :Propiedades="{...campoDef, disabled: Propiedades.disabled}"
                     @input="e => updateField(index, campoDef.name, e.target.value)" />
             </div>
-
         </div>
 
 

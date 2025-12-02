@@ -38,8 +38,8 @@ export function useColumnasResponsivas(columnas, espacioMargen = 200) {
     });
 
     // Collapse activo
-    const activarCollapse = (id) => {
-        const collapseElement = document.getElementById(id);
+    const activarCollapse = (id, headertabla) => {
+        const collapseElement = document.getElementById(`${id}-${headertabla}`);
 
         if (!collapseElement) return;
 

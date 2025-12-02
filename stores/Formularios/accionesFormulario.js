@@ -89,7 +89,7 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarRegistrarHistoria(data)
         return respuesta;
     },
-    ActualizarHistoria: async (data) => {
+    ActualizarHistorias: async (data) => {
         const respuesta = await validarYEnviarActualizarHistoria(data)
         return respuesta;
     },

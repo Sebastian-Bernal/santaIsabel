@@ -48,7 +48,7 @@ const props = defineProps({
 
                 <!-- BODY -->
                 <div v-if="card.body">
-                    <p class="text-sm text-gray-700 dark:text-gray-200" v-if="card.body.text">
+                    <p class="text-sm text-gray-700 dark:text-gray-200" :class="card.body.style" v-if="card.body.text">
                         {{ card.body.text }}
                     </p>
 

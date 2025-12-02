@@ -76,6 +76,24 @@ watch(() => showNuevaEPS.value,
     }
 );
 
+watch(() => showModificarServicio.value,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            Servicios.value = await apiRest.getData('Servicio', 'servicios')
+            refresh.value++;
+        }
+    }
+);
+
+watch(() => showNuevoServicio.value,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            Servicios.value = await apiRest.getData('Servicio', 'servicios')
+            refresh.value++;
+        }
+    }
+);
+
 onMounted(async () => {
     varView.cargando = true
     EPSdata.value = await storeEPS.listEPS()
@@ -307,7 +325,7 @@ const propiedades = computed(() => {
     // Tabla Profesiones
     builderTablaProfessions
         .setColumnas([
-            { titulo: 'nombre', value: 'Nombre', tamaño: 500, ordenar: true },
+            { titulo: 'nombre', value: 'Nombre', tamaño: 200, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },
         ])
         .setHeaderTabla({
@@ -326,7 +344,7 @@ const propiedades = computed(() => {
     // Tabla Profesiones
     builderTablaServicios
         .setColumnas([
-            { titulo: 'name', value: 'Nombre', tamaño: 500, ordenar: true },
+            { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
             { titulo: 'plantilla', value: 'Tipo', tamaño: 200, ordenar: true },
         ])
         .setHeaderTabla({
@@ -339,7 +357,7 @@ const propiedades = computed(() => {
         .setDatos(Servicios);
 
     if (puedePutServicio) {
-        builderTablaProfessions.setAcciones({ icons: [{ icon: 'ver', action: actualizarServicio }], botones: true });
+        builderTablaServicios.setAcciones({ icons: [{ icon: 'ver', action: actualizarServicio }], botones: true });
     }
 
     // Construcción final

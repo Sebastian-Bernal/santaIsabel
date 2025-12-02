@@ -113,7 +113,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                         subtitle: card.No_document
                     },
                     body: {
-                        html: `<i class="fa-solid fa-clock"></i> ${card.fecha_historia}`
+                        html: `<i class="fa-solid fa-clock md:text-lg text-sm"></i> ${card.fecha_historia}`
                     },
                     footer: {
                         status: 'completado',
@@ -248,7 +248,8 @@ async function DashboardRol(rol, Historias = [], citas) {
                         subtitle: card.servicio,
                     },
                     body: {
-                        text: `${usuario.name}`
+                        text: `${usuario.name}`,
+                        style: 'text-center'
                     },
                     footer: {
                         status: card.motivo,
@@ -315,7 +316,7 @@ function nuevaCita() {
 
 // Acciones rapidas
 function buscarHistoria() {
-    location.href = 'Historial/Historias'
+    location.href = '/Historial/Historias'
 }
 
 const stats = [
@@ -420,7 +421,7 @@ const propiedades = computed(() => {
                 .setCards(ultimosPacientes)
                 .setContenedor('area-info')
                 .setcontenedorCards('flex flex-col')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg')
+                .setTamaño('flex sm:flex-row justify-between items-center rounded-lg')
                 .setheaderTitle('Pacientes Recientes')
                 .setheaderHtml(`<a href="Historial/Historias" class="text-xs text-blue-500 hover:text-blue-700">Ver Todos</a>`)
                 .build()
@@ -429,7 +430,7 @@ const propiedades = computed(() => {
                 .setCards(Citas)
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
+                .setTamaño('flex sm:flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
                 .setheaderTitle('Agenda de Pendientes')
                 .setheaderHtml(`<a href="/Usuarios/Citas" class="text-xs text-blue-500 hover:text-blue-700">Ver Agenda</a>`)
                 .build()
@@ -454,7 +455,7 @@ const propiedades = computed(() => {
                 .setCards(cardPaciente)
                 .setContenedor('area-status')
                 .setcontenedorCards('')
-                .setTamaño('flex md:flex-row justify-between md:h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 rounded-lg')
+                .setTamaño('flex md:flex-row justify-between md:h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 dark:from-blue-900 to-blue-950 rounded-lg')
                 .build()
             )
             .addComponente('Card', cardsCitas

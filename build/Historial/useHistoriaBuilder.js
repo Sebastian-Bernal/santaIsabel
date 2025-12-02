@@ -997,11 +997,12 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full col-span-2',
                 vmodel: 'AntecedentesRegistrados',
                 value: [],
-                disabled: true,
+                disabledCampo: true,
                 campos: [
                     { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
+                    { name: 'tipo', id: 'tipo', typeCampo: 'Input', placeholder: 'Tipo', tamaño: 'w-full' },
                 ],
-                containerCampos: 'w-full'
+                containerCampos: 'grid grid-cols-2 gap-2'
             })
         if (!puedePostAnalisis.value) {
             builder

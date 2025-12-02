@@ -218,6 +218,7 @@ function cerrarModal() {
 // Visibilidad modal items
 function verItemMedicamentoHistoria(item) {
     formularioItem.value = 'Medicamento'
+    varView.tipoHistoria = 'Medicamento'
     actualizar.value = false
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
@@ -228,6 +229,7 @@ function verItemMedicamentoHistoria(item) {
 
 function actualizarItemMedicamentoHistoria(item) {
     formularioItem.value = 'Medicamento'
+    varView.tipoHistoria = 'Medicamento'
     actualizar.value = true
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
@@ -238,6 +240,7 @@ function actualizarItemMedicamentoHistoria(item) {
 
 function verItemTratamientoHistoria(item) {
     formularioItem.value = 'Tratamientos'
+    varView.tipoHistoria = 'Tratamientos'
     actualizar.value = false
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
@@ -248,6 +251,7 @@ function verItemTratamientoHistoria(item) {
 
 function actualizarItemTratamientoHistoria(item) {
     formularioItem.value = 'Tratamientos'
+    varView.tipoHistoria = 'Tratamientos'
     actualizar.value = true
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
@@ -258,6 +262,7 @@ function actualizarItemTratamientoHistoria(item) {
 
 function verItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
+    varView.tipoHistoria = 'Consulta'
     actualizar.value = false
     const datos = { ...item, ...item.signosVitales }
     mapCampos(datos, historiasStore.Formulario)
@@ -266,6 +271,7 @@ function verItemConsultasHistoria(item) {
 
 function actualizarItemConsultasHistoria(item) {
     formularioItem.value = 'Consulta'
+    varView.tipoHistoria = 'Consulta'
     actualizar.value = true
     const datos = { ...item, ...item.signosVitales }
     mapCampos(datos, historiasStore.Formulario)
@@ -430,8 +436,8 @@ const propiedades = computed(() => {
     const puedeVer = varView.getPermisos.includes('Historias_view');
     if (!puedeVer) return
     // const puedePost = varView.getPermisos.includes('Historias_post')
-    // const puedePUT = varView.getPermisos.includes('Historias_put')
-    const puedePUT = false
+    const puedePUT = varView.getPermisos.includes('Historias_put')
+    // const puedePUT = false
     puedePostAnalisis.value = varView.getPermisos.includes('Diagnosticos_view')
 
     const tablaConsultas = new TablaBuilder()
@@ -475,7 +481,7 @@ const propiedades = computed(() => {
 
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
-        storeId: 'ActualizarHistoriass',
+        storeId: 'ActualizarHistorias',
         storePinia: 'Historias',
         cerrarModal: cerrarModalVer,
         formularioItem,
@@ -546,10 +552,10 @@ const propiedades = computed(() => {
                 .setCards([
                     {
                         header: {
-                            icon: 'fa-solid fa-file text-white',
+                            icon: 'fa-solid fa-heart-pulse text-white',
                             iconBg: 'bg-inherit',
-                            title: 'Evoluciones',
-                            subtitle: 'Evoluciones de Historias',
+                            title: 'Terapias',
+                            subtitle: 'Evoluciones de Procedimientos',
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -618,10 +624,10 @@ const propiedades = computed(() => {
                 .setCards([
                     {
                         header: {
-                            icon: 'fa-solid fa-apple-whole text-white',
+                            icon: 'fa-solid fa-user-check text-white',
                             iconBg: 'bg-inherit',
-                            title: 'Nutricion',
-                            subtitle: 'Evolucion nutricional del paciente',
+                            title: 'Evoluciones',
+                            subtitle: 'Evolucion del paciente',
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -745,7 +751,7 @@ const propiedades = computed(() => {
                     { titulo: 'hora', value: 'Hora', tamaño: 250, ordenar: true },
                     { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
                 ])
-                .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ titulo: 'Avances de Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF },], botones: true, })
                 .setDatos(evoluciones)
             )
@@ -992,7 +998,7 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(nutricion)
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }], botones: true, })
-                .setHeaderTabla({ titulo: 'Evolucion Nutricional', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('PDFTemplate', pdfNutricion
                 .setElementId('Nutricion')

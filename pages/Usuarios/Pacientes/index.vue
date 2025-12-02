@@ -47,6 +47,7 @@ watch(() => show.value,
         if(!estado && varView.cambioEnApi){
             await llamadatos();
             await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
+            await apiRest.getData('Antecedentes', 'antecedentes')
             refresh.value++;
         }
     }
