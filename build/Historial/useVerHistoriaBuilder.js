@@ -1,5 +1,7 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
+import { CUPS } from '~/data/CUPS'
+import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 
 export function useVerHistoriaBuilder({
     storeId,
@@ -10,7 +12,7 @@ export function useVerHistoriaBuilder({
     show,
 }) {
     const builder = new FormularioBuilder()
-
+    const historiaStore = useHistoriasStore()
     builder
         .setStoreId(storeId)
         .setStorePinia(storePinia)
@@ -19,63 +21,67 @@ export function useVerHistoriaBuilder({
         .setSoloVer(!actualizar.value)
         .setEditarFormulario(actualizar.value)
         .setFormularioTipo('solo')
-        if(actualizar.value){
-            builder 
+    if (actualizar.value) {
+        builder
             .setBotones([
                 { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
                 { text: 'Actualizar', color: 'bg-blue-500', type: 'enviar' },
             ])
-        } else {
-            builder
+    } else {
+        builder
             .setBotones([
                 { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
             ])
-        }
+    }
     // 📌 Sección: Datos
     if (formularioItem.value === 'Medicamento') {
         builder
             // 📌 Sección: Diagnósticos
             .nuevaSeccion('Medicamento')
 
-            // --- Select: Tipo de Análisis ---
-            .addCampo({
-                component: 'Select',
-                vmodel: 'Analisis.tipoAnalisis',
-                id: 'rehabilitacion',
-                name: 'rehabilitacion',
-                placeholder: 'Tipo de Análisis',
-                tamaño: 'w-full',
-                options: [
-                    { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
-                    { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
-                    { text: 'Cambios críticos', value: 'Cambios criticos' },
-                    { text: 'Estado inhabilitado', value: '' }
-                ]
-            })
+        if (!actualizar.value) {
+            builder
+                // --- Select: Tipo de Análisis ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Analisis.tipoAnalisis',
+                    id: 'rehabilitacion',
+                    name: 'rehabilitacion',
+                    placeholder: 'Tipo de Análisis',
+                    tamaño: 'w-full md:col-span-1 col-span-2',
+                    options: [
+                        { text: 'Estado clínico sin cambios', value: 'Estado clinico sin cambios' },
+                        { text: 'Recomendaciones Adicionales', value: 'Recomendaciones Adicionales' },
+                        { text: 'Cambios críticos', value: 'Cambios criticos' },
+                        { text: 'Estado inhabilitado', value: '' }
+                    ]
+                })
 
-            // --- Input: Observación ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Analisis.observacion',
-                type: 'text',
-                id: 'observacion',
-                name: 'observacion',
-                placeholder: 'Observación',
-                tamaño: 'w-full',
-                minlength: 5
-            })
+                // --- Input: Observación ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'Analisis.observacion',
+                    type: 'text',
+                    id: 'observacion',
+                    name: 'observacion',
+                    placeholder: 'Observación',
+                    tamaño: 'w-full md:col-span-1 col-span-2',
+                    minlength: 5
+                })
 
-            // --- Textarea: Análisis ---
-            .addCampo({
-                component: 'Textarea',
-                vmodel: 'Analisis.analisis',
-                id: 'analisis',
-                name: 'analisis',
-                placeholder: 'Análisis',
-                tamaño: 'w-full col-span-2',
-                minlength: 10
-            })
+                // --- Textarea: Análisis ---
+                .addCampo({
+                    component: 'Textarea',
+                    vmodel: 'Analisis.analisis',
+                    id: 'analisis',
+                    name: 'analisis',
+                    placeholder: 'Análisis',
+                    tamaño: 'w-full col-span-2',
+                    minlength: 10
+                })
+        }
 
+        builder
             .addCampo({
                 component: 'Label',
                 forLabel: 'Medicamento',
@@ -85,30 +91,33 @@ export function useVerHistoriaBuilder({
 
             .addCampo({
                 component: 'Input',
+                label: 'Medicamento',
                 vmodel: 'Plan_manejo_medicamentos.medicamento',
                 type: 'text',
                 id: 'nombre',
                 name: 'nombre',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-1 col-span-2',
                 minlength: 5
             })
             .addCampo({
                 component: 'Input',
+                label: 'Dosis',
                 vmodel: 'Plan_manejo_medicamentos.dosis',
                 type: 'text',
                 id: 'presetacion',
                 name: 'presetacion',
-                tamaño: 'w-full',
-                minlength: 5
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                minlength: 2
             })
             .addCampo({
                 component: 'Input',
+                label: 'Cantidad de dias',
                 vmodel: 'Plan_manejo_medicamentos.cantidad',
                 type: 'text',
                 id: 'cantidad',
                 name: 'cantidad',
-                tamaño: 'w-full',
-                minlength: 5
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                minlength: 1
             })
     }
     else if (formularioItem.value === 'Tratamientos') {
@@ -133,13 +142,27 @@ export function useVerHistoriaBuilder({
                 minlength: 5
             })
             .addCampo({
+                component: 'SelectSearch',
+                name: 'procedimiento',
+                id: 'descripcionProcedimiento',
+                placeholder: 'Procedimiento',
+                tamaño: 'w-full',
+                UpperCase: true,
+                options: CUPS,
+                opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
+                seleccionarItem: (item) => {
+                    historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
+                    historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
+                },
+            })
+            .addCampo({
                 component: 'Input',
                 label: 'Codigo',
                 vmodel: 'Plan_manejo_procedimientos.codigo',
                 type: 'text',
                 id: 'presetacion',
                 name: 'presetacion',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-1 col-span-2',
                 minlength: 5
             })
             .addCampo({
@@ -149,7 +172,7 @@ export function useVerHistoriaBuilder({
                 id: 'rehabilitacion',
                 name: 'rehabilitacion',
                 placeholder: '0',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-1 col-span-2',
             })
     }
 
@@ -301,7 +324,7 @@ export function useVerHistoriaBuilder({
                 max: 250,
                 tamaño: 'w-full',
             })
-            
+
             // --- Input: Temperatura (Tº) ---
             .addCampo({
                 component: 'Input',

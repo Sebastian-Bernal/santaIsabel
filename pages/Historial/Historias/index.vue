@@ -16,6 +16,7 @@ import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useForm
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -235,6 +236,7 @@ function actualizarItemMedicamentoHistoria(item) {
     historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
     historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
     historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
+    historiasStore.Formulario.Plan_manejo_medicamentos.id = item.id
     showItem.value = true
 }
 
@@ -255,8 +257,8 @@ function actualizarItemTratamientoHistoria(item) {
     actualizar.value = true
     mapCampos(item, historiasStore.Formulario)
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
-    historiasStore.Formulario.Plan_manejo_procedimientos.fecha = item.fecha
     historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
+    historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
     showItem.value = true
 }
 
@@ -316,13 +318,19 @@ async function exportarNotaPDF(data) {
 
 async function exportarEvolucionPDF(data) {
     varView.cargando = true
+    const medicoStore = useMedicosStore()
     const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
 
-    const dataPaciente = pacientes.filter(user => {
+    const dataPaciente = pacientes.find(user => {
         return user.id_paciente === data.id_paciente
     });
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente[0] }
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.id_profesional
+    })
+
+    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document }
     activePdfEvolucion.value = true
     varView.cargando = false
 }
@@ -848,7 +856,17 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'pt-5',
                     border: false,
-                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
+                    columnas: [
+                            `
+                                <p class="text-xs text-center pt-6 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
+                            `, 
+                            `
+                            <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
+                            <p class="text-xs text-center pt-8 pb-5">sello Profesional</p>
+                            `
+                    ],
                 })
             )
 

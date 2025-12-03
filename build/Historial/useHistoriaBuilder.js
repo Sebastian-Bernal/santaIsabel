@@ -183,15 +183,13 @@ export function useHistoriaBuilder({
                 id: 'tipoDocumento',
                 name: 'tipoDocumento',
                 placeholder: 'Tipo de documento',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-2',
                 options: [
                     { text: 'Cedula de ciudadania', value: 'cedula' },
                     { text: 'Cedula Extranjera', value: 'extranjera' },
                     { text: 'Tarjeta de Identidad', value: 'Tarjeta de identidad' }
                 ],
             })
-
-            .nuevaSeccion(varView.tipoConsulta.name)
             // --- Label: Sesión ---
             .addCampo({
                 component: 'Label',
@@ -211,14 +209,79 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full',
             })
 
+            //--- Label: Fecha ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fechaTerapia',
+                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de la sesión',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Hora ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.hora',
+                type: 'time',
+                id: 'horaTerapia',
+                name: 'horaTerapia',
+                placeholder: 'Selecciona la hora',
+                tamaño: 'w-full',
+            })
+
+            // --- Input: Fecha ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.fecha',
+                type: 'date',
+                id: 'fechaTerapia',
+                name: 'fechaTerapia',
+                placeholder: 'Selecciona la fecha',
+                tamaño: 'w-full',
+            })
+
+
+            .nuevaSeccion(varView.tipoConsulta.name)
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Diagnosticos',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Diagnosticos',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2'
+            })
+
             // --- Label: Objetivos ---
             .addCampo({
                 component: 'Label',
                 forLabel: 'objetivos',
                 text: '<i class="fa-solid fa-bullseye text-blue-500 mr-1"></i>Objetivos de la intervención terapéutica',
-                tamaño: 'w-full md:col-span-2'
+                tamaño: 'w-full md:col-span-2 mt-3'
             })
-
+            
             // --- Input: Objetivos ---
             .addCampo({
                 component: 'Input',
@@ -228,6 +291,14 @@ export function useHistoriaBuilder({
                 name: 'objetivos',
                 placeholder: 'Describe el objetivo de la sesión terapéutica',
                 tamaño: 'w-full md:col-span-2',
+            })
+            
+            // --- Label: Evolución ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'evolucion',
+                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Evolución de la sesión',
+                tamaño: 'w-full md:col-span-2'
             })
 
             // --- TextArea: Evolución ---
@@ -240,43 +311,6 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full md:col-span-2'
             })
 
-            // --- Label: Evolución ---
-            .addCampo({
-                component: 'Label',
-                forLabel: 'evolucion',
-                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Evolución de la sesión',
-                tamaño: 'w-full md:col-span-2'
-            })
-
-
-            // --- Input: Hora ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Terapia.hora',
-                type: 'time',
-                id: 'horaTerapia',
-                name: 'horaTerapia',
-                placeholder: 'Selecciona la hora',
-                tamaño: 'w-full',
-            })
-            // --- Input: Fecha ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'Terapia.fecha',
-                type: 'date',
-                id: 'fechaTerapia',
-                name: 'fechaTerapia',
-                placeholder: 'Selecciona la fecha',
-                tamaño: 'w-full',
-            })
-
-            // --- Label: Fecha ---
-            .addCampo({
-                component: 'Label',
-                forLabel: 'fechaTerapia',
-                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de la sesión',
-                tamaño: 'w-full md:col-span-2'
-            })
     } else if (varView.tipoConsulta?.plantilla === 'Evolucion') {
         builder
             // 📌 Sección: Datos

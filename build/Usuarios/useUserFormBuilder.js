@@ -80,7 +80,6 @@ export function useUserBuilder({
         ])
         // 📌 Sección: Datos
         .nuevaSeccion('Datos usuarios')
-    builder
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Datos usuario',

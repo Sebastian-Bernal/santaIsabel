@@ -24,7 +24,15 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
             if (!datos.Terapia?.id_procedimiento) errores.push("El procedimiento es obligatoria.");
 
+            // Validar Insumos
+            datos.Diagnosticos.forEach((i, idx) => {
+                if (!i.descripcion || !i.codigo) {
+                    errores.push(`Diagnostico ${idx + 1} incompleto o codigo incompleto.`);
+                }
+            });
+
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
+
 
             return await enviarFormularioTerapia(datos);
 
@@ -354,7 +362,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             };
 
             return await enviarFormularioHistoria(body);
-
 
         default:
             errores.push("Tipo de consulta no soportado.");
@@ -696,6 +703,14 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                         id_profesional: datos.Terapia.id_profesional,
                         id_procedimiento: datos.Terapia.id_procedimiento,
                     },
+                    Analisis: {
+                        motivo: 'Terapia',
+                        id_medico: datos.Cita.id_medico
+                    },
+                    Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
+                        descripcion: d.descripcion,
+                        codigo: d.codigo
+                    })),
                     Cita: {
                         id: datos.Cita.id
                     }

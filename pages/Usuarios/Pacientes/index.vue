@@ -57,6 +57,8 @@ watch(() => showVer.value,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
             await llamadatos();
+            await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
+            await apiRest.getData('Antecedentes', 'antecedentes')
             refresh.value++;
         }
     }
@@ -306,6 +308,7 @@ const propiedades = computed(() => {
             tipoUsuario: "Paciente",
             validarFecha,
             validarTipoDoc,
+            MedicosList: MedicosList
         })
         : null;
 

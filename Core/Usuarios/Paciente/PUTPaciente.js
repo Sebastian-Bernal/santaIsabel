@@ -72,24 +72,23 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    if(!reintento){
-        // Guardar local
-        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(
-            {
-                InformacionUser: {
-                    ...datos.InformacionUser,
-                    sincronizado: 0
-                },
-                Paciente: {
-                    ...datos.Paciente,
-                    id_infoUsuario: datos.InformacionUser.id,
-                    id_eps: datos.Paciente.id_eps,
-                    Eps: mapaEPS[datos.Paciente.id_eps],
-                    sincronizado: 0
-                }
-            }
-        )))
-    }
+    // añadir solo nuevos
+    const Plan_manejo_procedimientos = (datos.Plan_manejo_procedimientos ?? [])
+    .filter(p => !p.id) // elimina los que tengan id definido
+    .map(p => ({
+        procedimiento: p.procedimiento,
+        codigo: p.codigo,
+        id_medico: p.id_medico,
+        dias_asignados: p.dias_asignados,
+    }));
+
+    const Antecedentes = (datos.Antecedentes ?? [])
+    .filter(a => !a.id) // elimina los que tengan id definido
+    .map(a => ({
+        tipo: a.tipo,
+        descripcion: a.descripcion,
+    }));
+
 
     const online = navigator.onLine;
     if (online) {
@@ -119,12 +118,22 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
                     id_eps: datos.Paciente.id_eps,
                     regimen: datos.Paciente.regimen,
                     vulnerabilidad: datos.Paciente.vulnerabilidad,
+
+                    Plan_manejo_procedimientos: (Plan_manejo_procedimientos ?? []).map(p => ({
+                        procedimiento: p.procedimiento,
+                        codigo: p.codigo,
+                        id_medico: p.id_medico,
+                        dias_asignados: p.dias_asignados,
+                    })),
+                    Antecedentes: (Antecedentes ?? []).map(a => ({
+                        tipo: a.tipo,
+                        descripcion: a.descripcion,
+                    })),
                 }
             }
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
-
                 // Actualizar local
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(
                     {
