@@ -10,7 +10,7 @@ export const validarYEnviarNuevoMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const storeMedicos = useMedicosStore();
     const medicos = await storeMedicos.listMedicos();
-
+    console.log(datos.Profesional.sello)
     const info = datos.InformacionUser;
     const profesional = datos.Profesional;
     const usuario = datos.User;
@@ -123,33 +123,42 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
     const online = navigator.onLine;
     if (online) {
         try {
-            // mandar a api
-            let options = {
-                metodo: 'POST',
-                url: config.public.profesionals,
-                token: token,
-                body: {
-                    name: datos.InformacionUser.name,
-                    No_document: datos.InformacionUser.No_document,
-                    type_doc: datos.InformacionUser.type_doc,
-                    celular: datos.InformacionUser.celular,
-                    telefono: datos.InformacionUser.telefono || null,
-                    nacimiento: datos.InformacionUser.nacimiento,
-                    direccion: datos.InformacionUser.direccion,
-                    municipio: datos.InformacionUser.municipio,
-                    departamento: datos.InformacionUser.departamento,
-                    barrio: datos.InformacionUser.barrio,
-                    zona: datos.InformacionUser.zona,
+            const formData = new FormData();
 
-                    id_profesion: datos.Profesional.id_profesion,
-                    departamento_laboral: datos.Profesional.departamento_laboral,
-                    municipio_laboral: datos.Profesional.municipio_laboral,
-                    zona_laboral: datos.Profesional.zona_laboral,
+            // Campos de texto
+            formData.append("name", datos.InformacionUser.name);
+            formData.append("No_document", datos.InformacionUser.No_document);
+            formData.append("type_doc", datos.InformacionUser.type_doc);
+            formData.append("celular", datos.InformacionUser.celular);
+            formData.append("telefono", datos.InformacionUser.telefono || "");
+            formData.append("nacimiento", datos.InformacionUser.nacimiento);
+            formData.append("direccion", datos.InformacionUser.direccion);
+            formData.append("municipio", datos.InformacionUser.municipio);
+            formData.append("departamento", datos.InformacionUser.departamento);
+            formData.append("barrio", datos.InformacionUser.barrio);
+            formData.append("zona", datos.InformacionUser.zona);
 
-                    correo: datos.User.correo,
-                }
+            formData.append("id_profesion", datos.Profesional.id_profesion);
+            formData.append("departamento_laboral", datos.Profesional.departamento_laboral);
+            formData.append("municipio_laboral", datos.Profesional.municipio_laboral);
+            formData.append("zona_laboral", datos.Profesional.zona_laboral);
+
+            formData.append("correo", datos.User.correo);
+
+            // Imagen reducida (Blob)
+            if (datos.Profesional.sello) {
+                formData.append("selloFile", datos.Profesional.sello, "sello.jpg");
             }
-            const respuesta = await api.functionCall(options)
+
+            const res = await fetch(`${config.public.api}/${config.public.profesionals}`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const respuesta = await res.json();
 
             if (respuesta.success) {
                 // Actualizar local
@@ -204,3 +213,49 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
         return true
     }
 };
+
+export function reducirImagen(file, maxWidth = 200, maxHeight = 200, calidad = 0.7) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                let width = img.width;
+                let height = img.height;
+
+                // Mantener proporción
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Exportar como Blob comprimido
+                canvas.toBlob(
+                    blob => {
+                        if (blob) resolve(blob);
+                        else reject(new Error("No se pudo generar el blob"));
+                    },
+                    "image/jpeg",
+                    calidad // 70% de calidad
+                );
+            };
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}

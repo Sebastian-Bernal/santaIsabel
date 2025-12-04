@@ -91,6 +91,7 @@ export const accionesFormularios = {
     },
     ActualizarHistorias: async (data) => {
         const respuesta = await validarYEnviarActualizarHistoria(data)
+        window.location.reload()
         return respuesta;
     },
     DatosEmpresa: async (data) => {

@@ -91,11 +91,6 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-// visibilidad nueva historia clinica
-const agregarHistoria = () => {
-    show.value = true
-};
-
 // visibilidad ver Historial
 const verHistoria = async (his) => {
     await cargaHistorial(his.id)
@@ -169,6 +164,7 @@ async function cargaHistorial(id) {
                     return {
                         ...tratamiento,
                         ...h,
+                        id: tratamiento.id
                     }
                 })
 
@@ -218,6 +214,7 @@ function cerrarModal() {
 }
 // Visibilidad modal items
 function verItemMedicamentoHistoria(item) {
+    console.log(item)
     formularioItem.value = 'Medicamento'
     varView.tipoHistoria = 'Medicamento'
     actualizar.value = false
@@ -259,6 +256,7 @@ function actualizarItemTratamientoHistoria(item) {
     historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
     historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
     historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
+    historiasStore.Formulario.Plan_manejo_procedimientos.id = item.id
     showItem.value = true
 }
 
@@ -330,7 +328,7 @@ async function exportarEvolucionPDF(data) {
         return medico.id_profesional === data.id_profesional
     })
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document }
+    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
     activePdfEvolucion.value = true
     varView.cargando = false
 }
@@ -864,7 +862,7 @@ const propiedades = computed(() => {
                             `, 
                             `
                             <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
-                            <p class="text-xs text-center pt-8 pb-5">sello Profesional</p>
+                            <img src="http://localhost/proyecto/backendThesalus/storage/app/public/profesionales/sellos/pH1NfZsOuQk7F0VWfSSV.jpg" class="w-[100px] h-[100px]"/>
                             `
                     ],
                 })

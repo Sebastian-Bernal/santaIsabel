@@ -105,32 +105,44 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
     if (online) {
         try {
             // mandar a api
-            let options = {
-                metodo: 'PUT',
-                url: config.public.profesionals + '/' + datos.Profesional.id,
-                token: token,
-                body: {
-                    name: datos.InformacionUser.name,
-                    No_document: datos.InformacionUser.No_document,
-                    type_doc: datos.InformacionUser.type_doc,
-                    celular: datos.InformacionUser.celular,
-                    telefono: datos.InformacionUser.telefono,
-                    nacimiento: datos.InformacionUser.nacimiento,
-                    direccion: datos.InformacionUser.direccion,
-                    municipio: datos.InformacionUser.municipio,
-                    departamento: datos.InformacionUser.departamento,
-                    barrio: datos.InformacionUser.barrio,
-                    zona: datos.InformacionUser.zona,
+            const formData = new FormData();
 
-                    id_profesion: datos.Profesional.id_profesion,
-                    departamento_laboral: datos.Profesional.departamento_laboral,
-                    municipio_laboral: datos.Profesional.municipio_laboral,
-                    zona_laboral: datos.Profesional.zona_laboral,
+            // Campos de texto
+            formData.append("id_infoUsuario", datos.InformacionUser.id);
+            formData.append("name", datos.InformacionUser.name);
+            formData.append("No_document", datos.InformacionUser.No_document);
+            formData.append("type_doc", datos.InformacionUser.type_doc);
+            formData.append("celular", datos.InformacionUser.celular);
+            formData.append("telefono", datos.InformacionUser.telefono || "");
+            formData.append("nacimiento", datos.InformacionUser.nacimiento);
+            formData.append("direccion", datos.InformacionUser.direccion);
+            formData.append("municipio", datos.InformacionUser.municipio);
+            formData.append("departamento", datos.InformacionUser.departamento);
+            formData.append("barrio", datos.InformacionUser.barrio);
+            formData.append("zona", datos.InformacionUser.zona);
 
-                    correo: datos.User.correo,
-                }
+            formData.append("id", datos.Profesional.id);
+            formData.append("id_profesion", datos.Profesional.id_profesion);
+            formData.append("departamento_laboral", datos.Profesional.departamento_laboral);
+            formData.append("municipio_laboral", datos.Profesional.municipio_laboral);
+            formData.append("zona_laboral", datos.Profesional.zona_laboral);
+
+            formData.append("correo", datos.User.correo);
+
+            // Imagen reducida (Blob)
+            if (datos.Profesional.sello) {
+                formData.append("selloFile", datos.Profesional.sello, "sello.jpg");
             }
-            const respuesta = await api.functionCall(options)
+
+            const res = await fetch(`${config.public.api}/${config.public.profesionals}/${datos.Profesional.id}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const respuesta = await res.json();
 
             if (respuesta.success) {
                 console.log(respuesta)

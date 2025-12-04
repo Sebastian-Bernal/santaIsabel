@@ -193,7 +193,7 @@ export function useFormularioCitaBuilder({
       tamaño: 'w-full md:col-span-1 col-span-2',
       vmodel: 'Cita.name_medico',
       options: medicosList,
-      opciones: [{ value: 'name' }, { text: 'Profesion', value: 'profesion' }],
+      opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
       seleccionarItem: seleccionarMedico,
       upperCase: true
     })

@@ -130,27 +130,18 @@ export function useVerHistoriaBuilder({
                 text: '<i class="fa-solid fa-kit-medical text-blue-500 mr-1"></i>Tratamiento',
                 tamaño: 'col-span-2 w-full'
             })
-
-            .addCampo({
-                component: 'Input',
-                label: 'Descripcion',
-                vmodel: 'Plan_manejo_procedimientos.procedimiento',
-                type: 'text',
-                id: 'nombre',
-                name: 'nombre',
-                tamaño: 'w-full col-span-2',
-                minlength: 5
-            })
             .addCampo({
                 component: 'SelectSearch',
                 name: 'procedimiento',
                 id: 'descripcionProcedimiento',
                 placeholder: 'Procedimiento',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-2',
                 UpperCase: true,
                 options: CUPS,
                 opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
+                vmodel: 'Plan_manejo_procedimientos.procedimiento',
                 seleccionarItem: (item) => {
+                    console.log(item)
                     historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
                     historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
                 },

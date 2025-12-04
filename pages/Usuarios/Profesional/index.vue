@@ -8,7 +8,7 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
-import { mapCampos } from '~/components/organism/Forms/useFormulario';
+import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
 import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/DELETEMedico';
 
 const varView = useVarView();
@@ -75,6 +75,7 @@ function cerrar() {
 
 // Funciones de formularios
 const agregarMedico = () => {
+    mapCamposLimpios(medicosStore.Formulario)
     show.value = true;
 };
 

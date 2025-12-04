@@ -218,6 +218,17 @@ export function mapCampos(tabla, pinia) {
 export function mapCamposLimpios(pinia) {
     for (const key in pinia) {
         const valor = pinia[key]
+
+        // Manejo de tipos especiales
+        if (valor instanceof Blob || valor instanceof File) {
+            pinia[key] = null; // o new Blob()
+            continue;
+        }
+        if (valor instanceof Date) {
+            pinia[key] = null; // o new Date(0)
+            continue;
+        }
+
         if (typeof valor === 'object' && valor !== null && !Array.isArray(valor)) {
             mapCamposLimpios(valor);
         } else {

@@ -255,7 +255,7 @@ export function useHistoriaBuilder({
                         id: 'descripcion',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Diagnostico',
-                        tamaño: 'w-full',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                         seleccionarItem: seleccionarCIE_10,
@@ -265,13 +265,13 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
-                        tamaño: 'w-full',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
                 ],
-                containerCampos: 'grid grid-cols-2'
+                containerCampos: 'grid grid-cols-2 gap-1'
             })
 
             // --- Label: Objetivos ---
@@ -279,7 +279,7 @@ export function useHistoriaBuilder({
                 component: 'Label',
                 forLabel: 'objetivos',
                 text: '<i class="fa-solid fa-bullseye text-blue-500 mr-1"></i>Objetivos de la intervención terapéutica',
-                tamaño: 'w-full md:col-span-2 mt-3'
+                tamaño: 'w-full col-span-2 mt-3'
             })
             
             // --- Input: Objetivos ---
@@ -290,7 +290,7 @@ export function useHistoriaBuilder({
                 id: 'objetivos',
                 name: 'objetivos',
                 placeholder: 'Describe el objetivo de la sesión terapéutica',
-                tamaño: 'w-full md:col-span-2',
+                tamaño: 'w-full col-span-2',
             })
             
             // --- Label: Evolución ---
@@ -298,7 +298,7 @@ export function useHistoriaBuilder({
                 component: 'Label',
                 forLabel: 'evolucion',
                 text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Evolución de la sesión',
-                tamaño: 'w-full md:col-span-2'
+                tamaño: 'w-full col-span-2'
             })
 
             // --- TextArea: Evolución ---
@@ -308,7 +308,7 @@ export function useHistoriaBuilder({
                 id: 'evolucion',
                 name: 'evolucion',
                 placeholder: 'Describe de manera clara la evolución del paciente durante la sesión',
-                tamaño: 'w-full md:col-span-2'
+                tamaño: 'w-full col-span-2'
             })
 
     } else if (varView.tipoConsulta?.plantilla === 'Evolucion') {

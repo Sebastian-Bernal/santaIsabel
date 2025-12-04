@@ -402,8 +402,8 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.planManejoMedicamentos,
+                metodo: 'PUT',
+                url: config.public.planManejoMedicamentos + '/' + datos.id,
                 token: token,
                 body: datos
             }
@@ -411,15 +411,15 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
 
             if (respuesta.success) {
                 // Actualizar local
-                const datosActualizar = {
-                    Plan_manejo_medicamentos: {
-                        id: respuesta.data.id,
-                        medicamento: respuesta.data.medicamento,
-                        dosis: respuesta.data.dosis,
-                        cantidad: respuesta.data.cantidad,
-                    }
-                };
-                await actualizarEnIndexedDB(JSON.stringify(datosActualizar))
+                // const datosActualizar = {
+                //     Plan_manejo_medicamentos: {
+                //         id: respuesta.data.id,
+                //         medicamento: respuesta.data.medicamento,
+                //         dosis: respuesta.data.dosis,
+                //         cantidad: respuesta.data.cantidad,
+                //     }
+                // };
+                // await actualizarEnIndexedDB(JSON.stringify(datosActualizar))
                 return true
             }
 
@@ -454,8 +454,8 @@ const enviarFormularioActualizarTratamiento = async (datos) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.planManejoProcedimientos,
+                metodo: 'PUT',
+                url: config.public.planManejoProcedimientos + '/' + datos.id,
                 token: token,
                 body: datos
             }
@@ -506,7 +506,7 @@ const enviarFormularioActualizarConsulta = async (datos) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
+                metodo: 'PUT' + '/' + datos.Analisis.id,
                 url: config.public.planManejoProcedimientos,
                 token: token,
                 body: datos

@@ -2,6 +2,8 @@
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { CUPS } from '~/data/CUPS'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
+import { reducirImagen } from '~/Core/Usuarios/Profesional/POSTMedico'
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 
 export function useUserBuilder({
     storeId,
@@ -28,6 +30,7 @@ export function useUserBuilder({
 
     const varView = useVarView()
     const pacienteStore = usePacientesStore()
+    const medicoStore = useMedicosStore()
     const user = varView.getRol
 
     const validarContraseña = (event) => {
@@ -556,8 +559,24 @@ export function useUserBuilder({
                 name: 'correo-secret',
                 tamaño: 'w-full',
                 minLength: '5',
-                mayuscula: false,
                 vmodel: 'User.correo',
+            })
+            .addCampo({
+                component: 'Input',
+                type: 'file',
+                placeholder: 'Firma y Sello',
+                id: 'sello',
+                name: 'sello',
+                tamaño: 'w-full cursor-pointer',
+                events: {
+                    onInput: async(event) => {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const imagenReducida = await reducirImagen(file);
+                            medicoStore.Formulario.Profesional.sello = imagenReducida;
+                        }
+                    }
+                }
             })
     }
 
