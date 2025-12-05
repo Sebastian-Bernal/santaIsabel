@@ -96,7 +96,7 @@ export const useApiRest = defineStore('apiRest', {
                         respuesta = await this.functionCall(options);
                     }
 
-                    if (respuesta?.success && Array.isArray(respuesta.data)) {
+                    if (respuesta?.success && Array.isArray(respuesta.data) && almacen !== '') {
                         datos = await respuesta.data;
 
                         // guardar en IndexedDB para uso offline

@@ -31,7 +31,7 @@ const {
     collapse,
     activarCollapse,
     screenWidth,
-} = useColumnasResponsivas(ref(props.Propiedades?.columnas), props.Propiedades.datos?.espacioMargen);
+} = useColumnasResponsivas(ref(props.Propiedades?.columnas), props.Propiedades.headerTabla?.espacioMargen);
 
 
 // Acomodar datos de menor a mayor segun columna, filtros
@@ -76,7 +76,9 @@ const estiloColumnas = computed(() => {
     if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
 
     const tamaños = columnasVisibles.value
-        .map(col => col.tamaño && !isNaN(col.tamaño) ? `${col.tamaño}px` : '80px')
+        .map(col => col.tamaño && !isNaN(col.tamaño) ? 
+            screenWidth.value > 748 ? `${col.tamaño}px` : '100px'
+            : '80px')
         .join(' ');
 
     return {

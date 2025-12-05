@@ -404,13 +404,6 @@ function estadoSemaforo(fila) {
     }
 }
 
-const { builder, PacientesList, id_paciente } = useHistoriaBuilder({
-    storeId: 'RegistrarHistoria',
-    storePinia: 'Historias',
-    cerrarModal: cerrar,
-    show: show,
-});
-
 const propiedadesNota = useNotasBuilder({
     storeId: 'NuevaNota',
     storePinia: 'Notas',
@@ -485,8 +478,6 @@ const propiedades = computed(() => {
         ])
     : [];
 
-
-
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
         storePinia: 'Historias',
@@ -518,7 +509,6 @@ const propiedades = computed(() => {
             .setAcciones({ icons: [{ icon: 'ver', action: verHistoria },], botones: true, })
             .setDatos(historiasList)
         )
-        .addComponente('Form', builder)
         .addComponente('Modal', modal
             .setFondo('FondoBlur')
             .setShowModal(showVerHistorial)
@@ -535,7 +525,7 @@ const propiedades = computed(() => {
                 acciones: [{ icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF }]
             })
 
-            .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col justify-center gap-1 w-full h-full content-center py-5 px-8')
+            .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col md:justify-center gap-1 w-full h-full content-center py-5 px-8')
             .addComponente('Card', consultasCard
                 .setCards([
                     {
@@ -857,15 +847,17 @@ const propiedades = computed(() => {
                     border: false,
                     columnas: [
                             `
-                            <div>
+                            <div class="min-h-[150px]">
                                 <p class="text-xs text-center pt-6 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
                             <div>
                             `, 
                             `
-                            <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
-                            <div class="flex justify-center items-center"><img src="${config.public.api}/proyecto/backendThesalus/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
+                            </div>
                             `
                     ],
                 })
@@ -882,9 +874,9 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(notas)
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'pdf', action: exportarNotaPDF }, puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''], botones: true, })
-                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', accionAgregar: nuevaNota })
+                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white' })
             )
-            .addComponente('Form', propiedadesNota)
+            // .addComponente('Form', propiedadesNota)
             .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
@@ -986,7 +978,7 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(tratamientos)
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
-                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500'})
             )
             .addComponente('Form', propiedadesItemHistoria)
 

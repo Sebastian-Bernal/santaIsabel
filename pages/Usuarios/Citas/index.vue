@@ -22,13 +22,14 @@ const refresh = ref(1);
 const pacientesStore = usePacientesStore()
 const medicosStore = useMedicosStore()
 const servicioStore = useDatosServicioStore()
-const apiRest = useApiRest()
+const storeCodigos = useCodigos()
 const pacientesList = ref([])
 const medicosList = ref([])
 const servicios = ref([])
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
 const variasCitas = ref(false)
+const CIE10 = ref([])
 
 async function llamadatos() {
     varView.cargando = true
@@ -61,6 +62,7 @@ onMounted(async () => {
 
     // Llamar datos para Cita
     medicosList.value = await medicosStore.listMedicos();
+    CIE10.value = await storeCodigos.leerdatos();
     servicios.value = await servicioStore.listServicios();
     servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
     const rol = sessionStorage.getItem('Rol')

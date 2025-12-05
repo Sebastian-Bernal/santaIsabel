@@ -44,7 +44,8 @@ export const useCodigos = defineStore('CodigosCie10', {
             if (!this.bd) {
                 await this.initialize()
             }
-            return new Promise((resolve, reject) => {
+            const apiRest = useApiRest()
+            const codigos = await new Promise((resolve, reject) => {
                 let transaccion = this.bd.transaction('CIE_10', "readonly");
                 let STlee = transaccion.objectStore('CIE_10');
                 const request = STlee.getAll();
@@ -57,6 +58,18 @@ export const useCodigos = defineStore('CodigosCie10', {
                     resolve(event.target.result)
                 }
             })
+
+            const codigosWeb = await apiRest.getData('', 'cie10')
+            const codigosWebNormalizados = codigosWeb.map(item => ({
+                code: item.codigo,
+                description: item.nombre
+            }));
+
+            // Juntar ambos arrays
+            const todosLosCodigos = [...codigos, ...codigosWebNormalizados]
+
+            this.CIE10_codes = todosLosCodigos
+            return todosLosCodigos
         },
 
         async guardardatos() {

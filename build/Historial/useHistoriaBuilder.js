@@ -3,7 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { CUPS } from '~/data/CUPS'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
-import { CIE10 } from '~/data/CIE10'
+// import { CIE10 } from '~/data/CIE10'
 import { onMounted, ref } from 'vue'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 
@@ -18,17 +18,20 @@ export function useHistoriaBuilder({
     const notificaciones = useNotificacionesStore()
     const pacienteStore = usePacientesStore()
     const medicoStore = useMedicosStore()
+    const storeCodigos = useCodigos()
     const varView = useVarView()
 
     const PacientesList = ref([])
     const MedicosList = ref([])
+    const CIE10 = ref([])
     const id_paciente = ref(null)
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
-    onMounted(() => {
+    onMounted(async() => {
         varView.cargando = true
         PacientesList.value = pacienteStore.Pacientes;
         MedicosList.value = medicoStore.Medicos;
+        CIE10.value = storeCodigos.CIE10_codes;
         varView.cargando = false
     });
 
@@ -265,6 +268,38 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-1'
+            })
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Diagnosticos Relacionados',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'DiagnosticosCIF',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIF',
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],

@@ -689,111 +689,122 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    const online = navigator.onLine;
-    if (online) {
-        try {
-            // mandar a api
-            let options = {
-                metodo: 'POST',
-                url: config.public.terapias,
-                token: token,
-                body: {
-                    Terapia: {
-                        sesion: datos.Terapia.sesion,
-                        objetivos: datos.Terapia.objetivos,
-                        fecha: datos.Terapia.fecha,
-                        hora: datos.Terapia.hora,
-                        evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
-                        id_procedimiento: datos.Terapia.id_procedimiento,
-                    },
-                    Analisis: {
-                        motivo: 'Terapia',
-                        id_medico: datos.Cita.id_medico
-                    },
-                    Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
-                        descripcion: d.descripcion,
-                        codigo: d.codigo
-                    })),
-                    Cita: {
-                        id: datos.Cita.id
-                    }
-                }
-            }
-            const respuesta = await api.functionCall(options)
+    const storeCodigos = useCodigos()
+    const codigosLocal = await storeCodigos.leerdatos()
+    const codigosSet = new Set(codigosLocal);
 
-            if (respuesta.success) {
-                // Actualizar local
-                const datosActualizar = {
-                    Terapia: {
-                        sesion: datos.Terapia.sesion,
-                        objetivos: datos.Terapia.objetivos,
-                        fecha: datos.Terapia.fecha,
-                        hora: datos.Terapia.hora,
-                        evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
-                        id_procedimiento: datos.Terapia.id_procedimiento,
-                    },
-                    Cita: {
-                        id: datos.Cita.id,
-                        estado: 'Realizada',
-                        id_analisis: respuesta.ids.Analisis,
-                        sincronizado: 1,
-                        ...datos.Cita
-                    }
-                };
-
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                return true
-            }
-        } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
-            console.error('Fallo al enviar. Guardando localmente', error);
-        }
-    } else {
-        try {
-            if (!reintento) {
-                const datosActualizar = {
-                    Terapia: {
-                        sesion: datos.Terapia.sesion,
-                        objetivos: datos.Terapia.objetivos,
-                        fecha: datos.Terapia.fecha,
-                        hora: datos.Terapia.hora,
-                        evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
-                        id_procedimiento: datos.Terapia.id_procedimiento,
-                        sinconizado: 0
-                    },
-                    Cita: {
-                        id: datos.Cita.id,
-                        estado: 'Realizada',
-                        sincronizado: 0,
-                        ...datos.Cita
-                    }
-                };
-                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)));
-            }
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = 'No hay internet';
-            notificacionesStore.options.texto = 'Datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            await notificacionesStore.simple()
-            return true
-        } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = 'Datos incorrectos';
-            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
-            notificacionesStore.options.tiempo = 3000
-            await notificacionesStore.simple()
-        }
+    const cie10 = datos.Diagnosticos
+    .filter(d => !codigosSet.has(d.codigo))
+    .map(d => ({ codigo: d.codigo, nombre: d.descripcion }));
+    console.log(cie10)
+    if(cie10.length > 0){
+        enviarDiagnostico(cie10)
     }
+    const online = navigator.onLine;
+    // if (online) {
+    //     try {
+    //         // mandar a api
+    //         let options = {
+    //             metodo: 'POST',
+    //             url: config.public.terapias,
+    //             token: token,
+    //             body: {
+    //                 Terapia: {
+    //                     sesion: datos.Terapia.sesion,
+    //                     objetivos: datos.Terapia.objetivos,
+    //                     fecha: datos.Terapia.fecha,
+    //                     hora: datos.Terapia.hora,
+    //                     evolucion: datos.Terapia.evolucion,
+    //                     id_paciente: datos.Terapia.id_paciente,
+    //                     id_profesional: datos.Terapia.id_profesional,
+    //                     id_procedimiento: datos.Terapia.id_procedimiento,
+    //                 },
+    //                 Analisis: {
+    //                     motivo: 'Terapia',
+    //                     id_medico: datos.Cita.id_medico
+    //                 },
+    //                 Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
+    //                     descripcion: d.descripcion,
+    //                     codigo: d.codigo
+    //                 })),
+    //                 Cita: {
+    //                     id: datos.Cita.id
+    //                 }
+    //             }
+    //         }
+    //         const respuesta = await api.functionCall(options)
+
+    //         if (respuesta.success) {
+    //             // Actualizar local
+    //             const datosActualizar = {
+    //                 Terapia: {
+    //                     sesion: datos.Terapia.sesion,
+    //                     objetivos: datos.Terapia.objetivos,
+    //                     fecha: datos.Terapia.fecha,
+    //                     hora: datos.Terapia.hora,
+    //                     evolucion: datos.Terapia.evolucion,
+    //                     id_paciente: datos.Terapia.id_paciente,
+    //                     id_profesional: datos.Terapia.id_profesional,
+    //                     id_procedimiento: datos.Terapia.id_procedimiento,
+    //                 },
+    //                 Cita: {
+    //                     id: datos.Cita.id,
+    //                     estado: 'Realizada',
+    //                     id_analisis: respuesta.ids.Analisis,
+    //                     sincronizado: 1,
+    //                     ...datos.Cita
+    //                 }
+    //             };
+
+    //             await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+    //             return true
+    //         }
+    //     } catch (error) {
+    //         notificacionesStore.options.icono = 'warning'
+    //         notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+    //         notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+    //         notificacionesStore.options.tiempo = 3000
+    //         notificacionesStore.simple()
+    //         console.error('Fallo al enviar. Guardando localmente', error);
+    //     }
+    // } else {
+    //     try {
+    //         if (!reintento) {
+    //             const datosActualizar = {
+    //                 Terapia: {
+    //                     sesion: datos.Terapia.sesion,
+    //                     objetivos: datos.Terapia.objetivos,
+    //                     fecha: datos.Terapia.fecha,
+    //                     hora: datos.Terapia.hora,
+    //                     evolucion: datos.Terapia.evolucion,
+    //                     id_paciente: datos.Terapia.id_paciente,
+    //                     id_profesional: datos.Terapia.id_profesional,
+    //                     id_procedimiento: datos.Terapia.id_procedimiento,
+    //                     sinconizado: 0
+    //                 },
+    //                 Cita: {
+    //                     id: datos.Cita.id,
+    //                     estado: 'Realizada',
+    //                     sincronizado: 0,
+    //                     ...datos.Cita
+    //                 }
+    //             };
+    //             await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)));
+    //         }
+    //         notificacionesStore.options.icono = 'warning'
+    //         notificacionesStore.options.titulo = 'No hay internet';
+    //         notificacionesStore.options.texto = 'Datos guardados localmente'
+    //         notificacionesStore.options.tiempo = 3000
+    //         await notificacionesStore.simple()
+    //         return true
+    //     } catch (error) {
+    //         notificacionesStore.options.icono = 'warning'
+    //         notificacionesStore.options.titulo = 'Datos incorrectos';
+    //         notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+    //         notificacionesStore.options.tiempo = 3000
+    //         await notificacionesStore.simple()
+    //     }
+    // }
 };
 
 export const enviarFormularioNutricion = async (datos, reintento = false) => {
@@ -1220,3 +1231,56 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
         }
     }
 };
+
+export async function enviarDiagnostico(datos) {
+    const notificacionesStore = useNotificacionesStore();
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.cie10,
+                token: token,
+                body: {
+                    Cie10: (datos ?? []).map(d => ({
+                        nombre: d.nombre,
+                        codigo: d.codigo
+                    })),
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                return true
+            }
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
+        }
+    } else {
+        try {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'No hay internet';
+            notificacionesStore.options.texto = 'Datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+            return true
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = 'Datos incorrectos';
+            notificacionesStore.options.texto = 'No se pudo guardar el formulario'
+            notificacionesStore.options.tiempo = 3000
+            await notificacionesStore.simple()
+        }
+    }
+
+}
