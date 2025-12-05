@@ -21,6 +21,7 @@ import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
 const notasStore = useNotasStore();
+const config = useRuntimeConfig()
 
 const historiasList = ref([]);
 
@@ -856,13 +857,15 @@ const propiedades = computed(() => {
                     border: false,
                     columnas: [
                             `
+                            <div>
                                 <p class="text-xs text-center pt-6 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
+                            <div>
                             `, 
                             `
                             <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
-                            <img src="http://localhost/proyecto/backendThesalus/storage/app/public/profesionales/sellos/pH1NfZsOuQk7F0VWfSSV.jpg" class="w-[100px] h-[100px]"/>
+                            <div class="flex justify-center items-center"><img src="${config.public.api}/proyecto/backendThesalus/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
                             `
                     ],
                 })

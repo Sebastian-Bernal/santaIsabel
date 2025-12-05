@@ -134,8 +134,9 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                 formData.append("selloFile", datos.Profesional.sello, "sello.jpg");
             }
 
+            formData.append("_method", "PUT");
             const res = await fetch(`${config.public.api}/${config.public.profesionals}/${datos.Profesional.id}`, {
-                method: 'PUT',
+                method: 'POST',
                 body: formData,
                 headers: {
                     'Accept': 'application/json',

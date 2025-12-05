@@ -19,9 +19,6 @@ onMounted(() => {
   } else {
     usuario.value = 'Usuario'
   }
-
-    // usuario.value = user.name || 'Usuario';
-    // usuario.value = usuario.value.split(' ')[0]
 })
 
 function obtenerFechaFormateada() {
@@ -33,7 +30,6 @@ function obtenerFechaFormateada() {
 
     return `${diaSemana}, ${diaMes} ${mesNombre}`;
 }
-
 
 const fechaActualFormateada = computed(() => {
     return obtenerFechaFormateada();

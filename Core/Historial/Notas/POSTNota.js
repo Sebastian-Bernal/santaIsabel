@@ -14,7 +14,12 @@ export const validarYEnviarNuevaNota = async (datos) => {
         !nota?.direccion ||
         !nota?.fecha_nota ||
         !nota?.hora_nota ||
-        !nota?.nota ||
+        !nota?.subjetivo ||
+        !nota?.objetivo ||
+        !nota?.actividades ||
+        !nota?.plan ||
+        !nota?.intervencion ||
+        !nota?.evaluacion ||
         !nota?.tipoAnalisis
     ) {
         const msg = 'Todos los campos son obligatorios. Verifica que no haya ninguno vacío.';
@@ -36,6 +41,14 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
+    datos.Nota.nota = `
+    Subjetivo: ${datos.Nota.subjetivo} 
+    Objetivo: ${datos.Nota.objetivo} 
+    Actividades: ${datos.Nota.actividades}
+    Plan: ${datos.Nota.plan}
+    Intervencion: ${datos.Nota.intervencion}
+    Evaluacion: ${datos.Nota.evaluacion}
+    `
     const online = navigator.onLine;
     if (online) {
         try {

@@ -872,10 +872,56 @@ export function useHistoriaBuilder({
             })
             .addCampo({
                 component: 'Textarea',
-                vmodel: 'Nota.nota',
-                id: 'nota',
-                name: 'nota',
-                placeholder: 'Escriba aqui las observaciones de la atención, Subjetivo, Objetivo, Actividades, Plan, Intervencion, Evaluacion...',
+                label: 'Evaluacion',
+                vmodel: 'Nota.evaluacion',
+                id: 'evaluacion',
+                name: 'evaluacion',
+                placeholder: 'Evaluacion',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Textarea',
+                label: 'Intervencion',
+                vmodel: 'Nota.intervencion',
+                id: 'intervencion',
+                name: 'intervencion',
+                placeholder: 'Intervencion',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Textarea',
+                label: 'Plan',
+                vmodel: 'Nota.plan',
+                id: 'plan',
+                name: 'plan',
+                placeholder: 'Plan',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Textarea',
+                label: 'Actividades',
+                vmodel: 'Nota.actividades',
+                id: 'objetivos',
+                name: 'objetivos',
+                placeholder: 'Actividades',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Textarea',
+                label: 'Objetivos',
+                vmodel: 'Nota.objetivo',
+                id: 'objetivo',
+                name: 'objetivo',
+                placeholder: 'Objetivos',
+                tamaño: 'w-full md:col-span-2',
+            })
+            .addCampo({
+                component: 'Textarea',
+                label: 'Subjetivo',
+                vmodel: 'Nota.subjetivo',
+                id: 'subjetivo',
+                name: 'subjetivo',
+                placeholder: 'Subjetivo',
                 tamaño: 'w-full md:col-span-2',
             })
             .addCampo({
