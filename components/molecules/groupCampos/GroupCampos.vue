@@ -4,6 +4,7 @@ import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
 import SelectSearch from '~/components/atoms/Selects/SelectSearch.vue';
+import Textarea from '~/components/atoms/Textareas/Textarea.vue';
 // Propiedades
 const props = defineProps({
     Propiedades: {
@@ -13,7 +14,7 @@ const props = defineProps({
     modelValue: [String, Number, Object]
 });
 
-const campos = { Input, SelectSearch, Select, SelectMultiple }; // Distitntos tipos de Inputs
+const campos = { Input, SelectSearch, Select, SelectMultiple, Textarea }; // Distitntos tipos de Inputs
 const items = ref([...props.modelValue]) // Variable reactiva array
 const showCampos = ref(false)
 

@@ -6,6 +6,7 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 // import { CIE10 } from '~/data/CIE10'
 import { onMounted, ref } from 'vue'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { CIF } from '~/data/CIF'
 
 export function useHistoriaBuilder({
     storeId,
@@ -289,11 +290,14 @@ export function useHistoriaBuilder({
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'SelectSearch',
-                        placeholder: 'Diagnostico',
+                        placeholder: 'Diagnostico Relacionado',
                         tamaño: 'w-full md:col-span-1 col-span-2',
-                        options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                        seleccionarItem: seleccionarCIE_10,
+                        options: CIF,
+                        opciones: [{ value: 'nombre' }, { text: 'Codigo', value: 'codigo' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).codigo = item.codigo
+                        }
                     },
                     {
                         name: 'codigo',
@@ -301,9 +305,12 @@ export function useHistoriaBuilder({
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIF',
                         tamaño: 'w-full md:col-span-1 col-span-2',
-                        options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                        seleccionarItem: seleccionarCIE_10,
+                        options: CIF,
+                        opciones: [{ value: 'codigo' }, { text: 'Descripcion:', value: 'nombre' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).codigo = item.codigo
+                        },
                     },
                 ],
                 containerCampos: 'grid grid-cols-2 gap-1'
@@ -884,6 +891,39 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full',
             })
 
+
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Diagnosticos',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Diagnosticos',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-1'
+            })
+
             .addCampo({
                 component: 'Select',
                 vmodel: 'Nota.tipoAnalisis',
@@ -906,62 +946,170 @@ export function useHistoriaBuilder({
                 tamaño: 'md:col-span-2 w-full'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Evaluacion',
+                component: 'GroupCampos',
+                labelGroup: 'Evaluacion',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'evaluacion' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.evaluacion',
-                id: 'evaluacion',
-                name: 'evaluacion',
-                placeholder: 'Evaluacion',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Intervencion',
+                component: 'GroupCampos',
+                labelGroup: 'Intervencion',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'intervencion' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.intervencion',
-                id: 'intervencion',
-                name: 'intervencion',
-                placeholder: 'Intervencion',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Plan',
+                component: 'GroupCampos',
+                labelGroup: 'Plan',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'plan' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.plan',
-                id: 'plan',
-                name: 'plan',
-                placeholder: 'Plan',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Actividades',
+                component: 'GroupCampos',
+                labelGroup: 'Actividades',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'actividades' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.actividades',
-                id: 'objetivos',
-                name: 'objetivos',
-                placeholder: 'Actividades',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Objetivos',
+                component: 'GroupCampos',
+                labelGroup: 'Objetivos',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'objetivo' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.objetivo',
-                id: 'objetivo',
-                name: 'objetivo',
-                placeholder: 'Objetivos',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Textarea',
-                label: 'Subjetivo',
+                component: 'GroupCampos',
+                labelGroup: 'Subjetivo',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'subjetivo' } }],
+                tamaño: 'w-full col-span-2',
                 vmodel: 'Nota.subjetivo',
-                id: 'subjetivo',
-                name: 'subjetivo',
-                placeholder: 'Subjetivo',
-                tamaño: 'w-full md:col-span-2',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora',
+                        tamaño: 'w-full',
+                        label: 'Hora:'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describe el proceso',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
                 component: 'Label',
-                text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Nota de enfermeria',
+                text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Notas de enfermeria',
                 forLabel: 'tipo',
                 tamaño: 'md:col-span-2 w-full'
             })

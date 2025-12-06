@@ -32,6 +32,7 @@ const medicinas = ref([]);
 const evoluciones = ref([]);
 const nutricion = ref([]);
 const diagnosticos = ref([])
+const diagnosticosCIF = ref([])
 const trabajosSocial = ref([])
 
 const show = ref(false);
@@ -41,6 +42,8 @@ const showActualizarNota = ref(false)
 const refresh = ref(1);
 
 const pacientesStore = usePacientesStore();
+const medicoStore = useMedicosStore()
+const store = useIndexedDBStore()
 const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
@@ -187,23 +190,25 @@ async function cargaHistorial(id) {
             allAnalisis.map(async (h) => {
 
                 const diagnostico = await historiasStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || []
-                return diagnostico
+                const diagnosticoCIF = await historiasStore.listDatos(h.id, 'DiagnosticosCIF', 'id_analisis') || []
+
+                return {
+                    diagnostico,
+                    diagnosticoCIF
+                }
             })
         )
 
         // Unificar todos los medicamentos en un solo array
-        diagnosticos.value = diagnosticosPorAnalisis.flat()
+        diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat()
+        diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat()
     } else {
         diagnosticos.value = []
+        diagnosticosCIF.value = []
     }
 
     varView.cargando = false
 };
-
-// Funciones cerrar modales
-function cerrar() {
-    show.value = false
-}
 
 function cerrarModalVer() {
     showItem.value = false
@@ -305,19 +310,67 @@ function cerrarNota() {
 async function exportarNotaPDF(data) {
     varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
+    
+    store.almacen = 'Descripcion_nota'
+    const descripcion = await store.leerdatos()
 
-    const dataPaciente = pacientes.filter(user => {
+    const dataPaciente = pacientes.find(user => {
         return user.id_paciente === data.id_paciente
     })
 
-    propiedadesNotaPDF.value = { ...data, ...dataPaciente[0] }
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.id_profesional
+    });
+
+    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
+
+    const tiposOrden = ["subjetivo", "objetivo", "actividades", "plan", "intervencion", "evaluacion"];
+
+    const descripcionesNota = (descripcion || []).filter(d => d.id_nota === data.id);
+
+    // Agrupar por tipo
+    const agrupadoPorTipo = descripcionesNota.reduce((acc, nota) => {
+        if (!acc[nota.tipo]) acc[nota.tipo] = [];
+        acc[nota.tipo].push(nota);
+        return acc;
+    }, {});
+
+    // Construir filas ordenadas
+    const filasNotas = tiposOrden.map(tipo => {
+        const notasTipo = (agrupadoPorTipo[tipo] || []).sort((a, b) => {
+            // Ordenar por hora ascendente
+            return (a.hora || "").localeCompare(b.hora || "");
+        });
+
+        if (notasTipo.length === 0) return ""; // si no hay notas de ese tipo, no mostrar nada
+
+        // Encabezado con el nombre del tipo
+        let contenido = `<p class="text-start text-base py-2"><strong>${tipo.toUpperCase()}:</strong></p>`;
+
+        // Filas de cada nota
+        contenido += notasTipo.map(nota => `
+            <div class="flex">
+                <p class="text-xs border-r-1 px-3 py-1">${nota.hora || ''}</p>
+                <p class="text-base w-full px-1">${nota.descripcion || ''}</p>
+            </div>
+        `).join("");
+
+        // Separador visual
+        contenido += `<hr class="w-full h-3"/>`;
+
+        return contenido;
+    }).join("");
+
+
+    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, filasNotas }
     activePdfNotas.value = true
     varView.cargando = false
 }
 
 async function exportarEvolucionPDF(data) {
     varView.cargando = true
-    const medicoStore = useMedicosStore()
+
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
 
@@ -379,8 +432,6 @@ async function exportarHistoriaPDF() {
     activePdfHistoria.value = true
 }
 
-// Funciones Formulario historia
-
 
 const fechaFormateada = () => {
     const fecha = new Date()
@@ -403,6 +454,22 @@ function estadoSemaforo(fila) {
         return ''
     }
 }
+
+function calcularEdad(fechaNacimiento) {
+  const hoy = new Date()
+  const nacimiento = new Date(fechaNacimiento)
+
+  let edad = hoy.getFullYear() - nacimiento.getFullYear()
+  const mes = hoy.getMonth() - nacimiento.getMonth()
+
+  // Ajustar si aún no ha cumplido años este año
+  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+    edad--
+  }
+
+  return edad
+}
+
 
 const propiedadesNota = useNotasBuilder({
     storeId: 'NuevaNota',
@@ -473,6 +540,13 @@ const propiedades = computed(() => {
 
     const diagnosticosEvolucion = Array.isArray(unref(diagnosticos.value))
     ? toRaw(diagnosticos.value).map(diagnostico => [
+        `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+        `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
+    ? toRaw(diagnosticosCIF.value).map(diagnostico => [
         `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
         `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
         ])
@@ -755,8 +829,8 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfEvolucion
                 .setElementId('Evolucion')
                 .setIsActive(activePdfEvolucion)
-                .setFileName(`Evolucion_${propiedadesEvolucionPDF.value.name_paciente}`)
-
+                .setFileName(`Tratamiento_${propiedadesEvolucionPDF.value.name}`)
+                .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
@@ -769,10 +843,10 @@ const propiedades = computed(() => {
                             <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
                         `,
                         `
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
-                            <p class="w-full text-end text-xs">Pagina:</p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
                         `
                     ],
                 })
@@ -789,7 +863,7 @@ const propiedades = computed(() => {
                         [
                             [`<p class="text-xs">No documento: <span class="text-sm">${propiedadesEvolucionPDF.value.No_document}</span></p>
                             <p class="text-xs">Tipo de documento: <span class="text-sm">${propiedadesEvolucionPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs">Edad: <span class="text-sm">${propiedadesEvolucionPDF.value.nacimiento}</span></p>
+                            [`<p class="text-xs">Edad: <span class="text-sm">${calcularEdad(propiedadesEvolucionPDF.value.nacimiento)}</span></p>
                             <p class="text-xs">Sexo: <span class="text-sm">${propiedadesEvolucionPDF.value.sexo}</span></p>`],
                         ],
                         [
@@ -802,10 +876,18 @@ const propiedades = computed(() => {
                 // SECCIÓN: DIAGNÓSTICOS
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
-                    columnas: ['Diagnóstico', 'CIE-10'],
+                    columnas: ['Diagnósticos', 'CIE-10'],
                     filas: diagnosticosEvolucion?.length > 0
                         ? diagnosticosEvolucion
                         : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
+                })
+                // SECCIÓN: DIAGNÓSTICOS
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Diagnósticos', 'CIF'],
+                    filas: diagnosticosCIFs?.length > 0
+                        ? diagnosticosCIFs
+                        : [['<p class="text-xs">Sin diagnósticos CIF registrados</p>', '']]
                 })
 
                 .addComponente('Espacio', { alto: 16 })
@@ -827,12 +909,12 @@ const propiedades = computed(() => {
                     filas: [
                         [
                             '<p class="text-sm w-full">Sesion</p>',
-                            '<p class="text-sm w-full">Fecha - hora:</p>',
-                            '<p class="text-sm w-full">Evolucion</p>'
+                            '<p class="text-sm w-full">Fecha y hora:</p>',
+                            '<p class="text-sm w-full">Evolucion (condición inicial, objetivo de la sesión, técnica método y/o intervención que se realice, condicion final)</p>'
                         ],
                         [
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.sesion}</p>`,
-                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.fecha}</p> - <p class="text-sm w-full">${propiedadesEvolucionPDF.value.hora}</p>`,
+                            `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.fecha}</p> </hr> <p class="text-sm w-full">${propiedadesEvolucionPDF.value.hora}</p>`,
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.evolucion}</p>`,
                         ],
 
@@ -848,15 +930,15 @@ const propiedades = computed(() => {
                     columnas: [
                             `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center pt-6 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
                             <div>
                             `, 
                             `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center pt-6 border-1">Firma y sello</p>
-                                <div class="flex justify-center items-center"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
                             </div>
                             `
                     ],
@@ -870,10 +952,14 @@ const propiedades = computed(() => {
                 .setColumnas([
                     { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
                     { titulo: 'hora_nota', value: 'Hora', tamaño: 150 },
-                    { titulo: 'nota', value: 'Nota', tamaño: 400 },
+                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 400 },
                 ])
                 .setDatos(notas)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'pdf', action: exportarNotaPDF }, puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: estadoSemaforo, action: () => { } }, 
+                    { icon: 'pdf', action: exportarNotaPDF }, 
+                    // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
+                ], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white' })
             )
             // .addComponente('Form', propiedadesNota)
@@ -882,6 +968,7 @@ const propiedades = computed(() => {
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
                 .setFileName(`Nota_${propiedadesNotaPDF.value.name}`)
+                .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
                     container: 'border-b-2 pb-3',
@@ -889,15 +976,15 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
-                            <p class="text-sm uppercase">Nota de enfermeria de atencion domiciliaria</p>
+                            <p class="text-sm border-b-1 py-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 py-1 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase py-1">Nota de enfermeria de atencion domiciliaria</p>
                         `,
                         `
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
-                            <p class="w-full text-end text-xs">Pagina:</p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
                         `
                     ],
                 })
@@ -914,7 +1001,7 @@ const propiedades = computed(() => {
                         [
                             [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesNotaPDF.value.No_document}</span></p>
                             <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesNotaPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${propiedadesNotaPDF.value.nacimiento}</span></p>
+                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${calcularEdad(propiedadesNotaPDF.value.nacimiento)}</span></p>
                             <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesNotaPDF.value.sexo}</span></p>`],
                         ],
                         [
@@ -945,14 +1032,23 @@ const propiedades = computed(() => {
                     styles: { border: '1px solid #DBEAFE' },
                     filas: [
                         [
-                            '<p class="text-xs w-full">Fecha (DD/MM/AAAA):</p>',
-                            '<p class="text-xs w-full">Hora (Militar):</p>',
-                            '<p class="text-xs w-full">Nota</p>'
+                            `
+                            <div class="w-full flex justify-between"> 
+                                <p class="text-xs w-[80px]">Fecha:</p>
+                                <div class="w-full text-center border-l-1">
+                                    <p class="text-xs w-full">Nota</p>
+                                </div>
+                            </div>
+                            `,
                         ],
                         [
-                            `${propiedadesNotaPDF.value.fecha_nota ?? ''}`,
-                            `${propiedadesNotaPDF.value.hora_nota ?? ''}`,
-                            `${propiedadesNotaPDF.value.nota ?? ''}`,
+                            `
+                            <div class="w-full flex justify-between">
+                                <p class="text-xs w-[80px]">${propiedadesNotaPDF.value.fecha_nota ?? ''}</p>
+                                <div class="w-full flex flex-col gap-2 border-l-1 pl-3">
+                                    ${propiedadesNotaPDF.value.filasNotas ?? ''}
+                                </div>
+                            </div>`,
                         ],
                     ],
                 })
@@ -963,7 +1059,21 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'pt-5',
                     border: false,
-                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido del profesional</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
+                    columnas: [
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
+                            <div>
+                            `, 
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" crossOrigin="anonymous" class="w-[100px] h-[100px]"/></div>
+                            </div>
+                            `
+                    ],
                 })
             )
 

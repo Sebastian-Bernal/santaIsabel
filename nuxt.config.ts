@@ -32,7 +32,9 @@ export default defineNuxtConfig({
       planManejoInsumos: 'api/v1/planManejoInsumos',
       antecedentes: 'api/v1/antecedentes',
       diagnosticos: 'api/v1/diagnosticos',
+      diagnosticosCIF: 'api/v1/diagnosticosCIF',
       notas: 'api/v1/notas',
+      descripcionNotas: 'api/v1/descripcionNotas',
       software: 'api/v1/software',
       facturaciones: 'api/v1/facturaciones',
       enfermedades: 'api/v1/enfermedades',
@@ -45,6 +47,7 @@ export default defineNuxtConfig({
       servicios: 'api/v1/servicios',
       administradores: 'api/v1/administradores',
       cie10: 'api/v1/cie10',
+      obtenerSelloBase64: 'api/v1/sello{filename}',
     }
   },
   app: {

@@ -1,5 +1,4 @@
 import { traerNotas } from '~/Core/Historial/Notas/GETNotas';
-import { useIndexedDBStore } from '~/stores/indexedDB';
 import { guardarEnDB } from '~/composables/Formulario/useIndexedDBManager';
 
 // Pinia NotasClinicas
@@ -19,6 +18,12 @@ export const useNotasStore = defineStore('Notas', {
                 nota: '',
                 tipoAnalisis: '',
             },
+            subjetivo: [],
+            objetivo: [],
+            actividades: [],
+            plan: [],
+            intervencion: [],
+            evaluacion: [],
         },
         Notas: [],
 
@@ -27,7 +32,7 @@ export const useNotasStore = defineStore('Notas', {
     getters: {
         async listNotas(state) {
             const apiRest = useApiRest()
-            const Notas = await apiRest.getData('Notas','notas')
+            const Notas = await apiRest.getData('Notas', 'notas')
 
             state.Notas = Notas
             return Notas

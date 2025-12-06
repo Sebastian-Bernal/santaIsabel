@@ -57,6 +57,7 @@ const exportPdf = async () => {
         .setFormat(config.value.format)
         .setOrientation(config.value.orientation)
         .setMargins(config.value.margin)
+        .setSello(props.Propiedades.sello)
 
     await pdfBuilder.export()
 
@@ -160,7 +161,7 @@ const cerrar = () => {
         </div>
     </FondoBlur>
     <div :id="props.Propiedades.elementId"
-        style="width: 794px; height: 1123px; background: white; position: absolute; top: -9999px; left: -9999px; color: black;">
+        style="width: 794px; margin-bottom: 25px; background: white; position: absolute; top: -9999px; left: -9999px; color: black;">
 
         <component v-for="component in Propiedades.components" :is="componentes[component.tipo]" :Propiedades="{
             ...component,

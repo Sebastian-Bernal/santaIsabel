@@ -19,6 +19,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 servicio: '',
             },
             Diagnosticos: [],
+            DiagnosticosCIF: [],
             Antecedentes: [],
             DiagnosticosRegistrados: [],
             AntecedentesRegistrados: [],
@@ -64,7 +65,12 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 evolucion: '',
             },
             Nota: {
-
+                subjetivo: [],
+                objetivo: [],
+                actividades: [],
+                plan: [],
+                intervencion: [],
+                evaluacion: [],
             },
             Cita: {},
         },
@@ -167,10 +173,12 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
             await apiRest.getData('Plan_manejo_insumos', 'planManejoInsumos')
             await apiRest.getData('Plan_manejo_equipos', 'planManejoEquipos')
             await apiRest.getData('Diagnosticos', 'diagnosticos')
+            await apiRest.getData('DiagnosticosCIF', 'diagnosticosCIF')
             await apiRest.getData('Antecedentes', 'antecedentes')
             await apiRest.getData('ExamenFisico', 'examenFisicos')
             await apiRest.getData('Terapia', 'terapias')
             await apiRest.getData('Nota', 'notas')
+            await apiRest.getData('Descripcion_nota', 'descripcionNotas')
 
         }
         // async indexDBDatos() {
