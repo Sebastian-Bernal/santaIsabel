@@ -318,7 +318,7 @@ async function exportarNotaPDF(data) {
 
     const profesional = profesionales.find(medico => {
         return medico.id_profesional === data.id_profesional
-    });console.log(profesional)
+    });
 
     store.almacen = 'Descripcion_nota'
     const descripcion = await store.leerdatos()
@@ -361,7 +361,16 @@ async function exportarNotaPDF(data) {
     }).join("");
 
 
-    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, filasNotas }
+    const diagnosticosNota = Array.isArray(unref(diagnosticos.value))
+    ? toRaw(diagnosticos.value)
+        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+        .map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, filasNotas, diagnosticosNota }
     activePdfNotas.value = true
     varView.cargando = false
 }
@@ -380,7 +389,16 @@ async function exportarEvolucionPDF(data) {
         return medico.id_profesional === data.id_profesional
     })
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
+    const diagnosticosTerapia = Array.isArray(unref(diagnosticos.value))
+    ? toRaw(diagnosticos.value)
+        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+        .map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTerapia }
     activePdfEvolucion.value = true
     varView.cargando = false
 }
@@ -401,13 +419,23 @@ async function exportarNutricionPDF(data) {
         return medico.id_profesional === data.id_medico
     })
 
-    propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
+    const diagnosticosEvolucion = Array.isArray(unref(diagnosticos.value))
+    ? toRaw(diagnosticos.value)
+        .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
+        .map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosEvolucion }
     activePdfNutricion.value = true
     varView.cargando = false
 }
 
 async function exportarTrabajoSocialPDF(data) {
     varView.cargando = true
+
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
 
@@ -422,7 +450,16 @@ async function exportarTrabajoSocialPDF(data) {
         return medico.id_profesional === data.id_medico
     })
 
-    propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
+    const diagnosticosTrabajoS = Array.isArray(unref(diagnosticos.value))
+    ? toRaw(diagnosticos.value)
+        .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
+        .map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTrabajoS }
     activePdfTrabajoSocial.value = true
     varView.cargando = false
 }
@@ -885,8 +922,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnósticos', 'CIE-10'],
-                    filas: diagnosticosEvolucion?.length > 0
-                        ? diagnosticosEvolucion
+                    filas: propiedadesEvolucionPDF.value.diagnosticosTerapia?.length > 0
+                        ? propiedadesEvolucionPDF.value.diagnosticosTerapia
                         : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
                 })
                 // SECCIÓN: DIAGNÓSTICOS
@@ -968,7 +1005,7 @@ const propiedades = computed(() => {
                     { icon: 'pdf', action: exportarNotaPDF }, 
                     // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
                 ], botones: true, })
-                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white' })
+                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             // .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
@@ -1022,8 +1059,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnostico', 'CIE-10'],
-                    filas: diagnosticosEvolucion?.length > 0
-                        ? diagnosticosEvolucion
+                    filas: propiedadesNotaPDF.value.diagnosticosNota?.length > 0
+                        ? propiedadesNotaPDF.value.diagnosticosNota
                         : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
                 })
 
@@ -1111,7 +1148,7 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(medicinas)
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : ''], botones: true, })
-                .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             .addComponente('Form', propiedadesItemHistoria)
 
@@ -1179,8 +1216,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnostico', 'CIE-10'],
-                    filas: diagnosticosEvolucion?.length > 0
-                        ? diagnosticosEvolucion
+                    filas: propiedadesNutricionPDF.value.diagnosticosEvolucion?.length > 0
+                        ? propiedadesNutricionPDF.value.diagnosticosEvolucion
                         : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
                 })
 
@@ -1298,8 +1335,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnostico', 'CIE-10'],
-                    filas: diagnosticosEvolucion?.length > 0
-                        ? diagnosticosEvolucion
+                    filas: propiedadesTrabajoSocialPDF.value.diagnosticosTrabajoS?.length > 0
+                        ? propiedadesTrabajoSocialPDF.value.diagnosticosTrabajoS
                         : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
                 })
 

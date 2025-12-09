@@ -103,54 +103,8 @@ const cerrar = () => {
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div class="relative drop" @mouseleave="cerrarDropdown">
                         <div
-                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
-                            <i class="fa-solid fa-download hover:text-white"></i>
-                        </div>
-                        <div
-                            class="dropdownAjuste absolute left-[-50%] top-[100%] bg-[var(--color-default-500)] z-9 gap-2 items-center justify-center rounded-b-lg">
-                            <p class="flex gap-1 items-center text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="exportPdf"><i class="fa-solid fa-download"></i>Descargar</p>
-                            <p class="flex gap-1 items-center text-xs px-4 py-3 cursor-pointer text-gray-200 hover:text-white" v-if="!showDropdown" @click="toggleDropdown"><i class="fa-solid fa-gear"></i>Configurar</p>
-                            <div v-if="showDropdown"
-                                class=" w-56 bg-white shadow-lg rounded-lg p-4 z-50 text-gray-700">
-                                <h3 class="font-semibold text-sm mb-2">Configuración PDF</h3>
-
-                                <!-- Formato -->
-                                <label class="flex items-center justify-between mb-2 text-sm">
-                                    Formato:
-                                    <select v-model="config.format" class="border rounded px-1 py-0.5 text-sm">
-                                        <option value="a4">A4</option>
-                                        <option value="letter">Letter</option>
-                                    </select>
-                                </label>
-
-                                <!-- Orientación -->
-                                <label class="flex items-center justify-between mb-2 text-sm">
-                                    Orientación:
-                                    <select v-model="config.orientation" class="border rounded px-1 py-0.5 text-sm">
-                                        <option value="p">Vertical</option>
-                                        <option value="l">Horizontal</option>
-                                    </select>
-                                </label>
-
-                                <!-- Márgenes -->
-                                <label class="flex items-center justify-between mb-2 text-sm">
-                                    Márgenes:
-                                    <input type="number" v-model="config.margin"
-                                        class="border rounded px-1 py-0.5 w-16 text-sm" min="0" /> mm
-                                </label>
-
-                                <!-- Incluir fondo -->
-                                <label class="flex items-center mb-2 text-sm">
-                                    <input type="checkbox" v-model="config.background" class="mr-2">
-                                    Incluir fondo
-                                </label>
-
-                                <!-- Botón exportar -->
-                                <button class="w-full bg-blue-600 text-white text-sm py-1.5 rounded hover:bg-blue-700"
-                                    @click="exportPdf">
-                                    Generar PDF
-                                </button>
-                            </div>
+                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
+                            @click="exportPdf"><i class="fa-solid fa-print"></i>
                         </div>
                     </div>
                     <div @click="cerrar"
