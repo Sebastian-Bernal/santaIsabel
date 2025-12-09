@@ -312,18 +312,16 @@ async function exportarNotaPDF(data) {
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
     
-    store.almacen = 'Descripcion_nota'
-    const descripcion = await store.leerdatos()
-
     const dataPaciente = pacientes.find(user => {
         return user.id_paciente === data.id_paciente
     })
 
     const profesional = profesionales.find(medico => {
         return medico.id_profesional === data.id_profesional
-    });
+    });console.log(profesional)
 
-    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
+    store.almacen = 'Descripcion_nota'
+    const descripcion = await store.leerdatos()
 
     const tiposOrden = ["subjetivo", "objetivo", "actividades", "plan", "intervencion", "evaluacion"];
 
@@ -390,6 +388,7 @@ async function exportarEvolucionPDF(data) {
 async function exportarNutricionPDF(data) {
     varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
 
     const historia = await historiasStore.listDatos(data.id_historia, 'HistoriaClinica', 'id')
     const id_paciente = historia[0]?.id_paciente
@@ -398,7 +397,11 @@ async function exportarNutricionPDF(data) {
         return user.id_paciente === id_paciente || null
     });
 
-    propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0] }
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.id_medico
+    })
+
+    propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
     activePdfNutricion.value = true
     varView.cargando = false
 }
@@ -406,6 +409,7 @@ async function exportarNutricionPDF(data) {
 async function exportarTrabajoSocialPDF(data) {
     varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
 
     const historia = await historiasStore.listDatos(data.id_historia, 'HistoriaClinica', 'id')
     const id_paciente = historia[0]?.id_paciente
@@ -414,7 +418,11 @@ async function exportarTrabajoSocialPDF(data) {
         return user.id_paciente === id_paciente || null
     });
 
-    propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0] }
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.id_medico
+    })
+
+    propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello }
     activePdfTrabajoSocial.value = true
     varView.cargando = false
 }
@@ -931,14 +939,14 @@ const propiedades = computed(() => {
                             `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
-                                <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-9">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
                             <div>
                             `, 
                             `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
-                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px]"/></div>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
                     ],
@@ -962,8 +970,7 @@ const propiedades = computed(() => {
                 ], botones: true, })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white' })
             )
-            // .addComponente('Form', propiedadesNota)
-            .addComponente('Form', propiedadesActualizarNota)
+            // .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
@@ -1063,14 +1070,14 @@ const propiedades = computed(() => {
                             `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
-                                <p class="text-xs text-center pt-8">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
-                                <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
+                                <p class="text-xs text-center pt-9">${propiedadesNotaPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesNotaPDF.value.cedulaProfesional}</p>
                             <div>
                             `, 
                             `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
-                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" crossOrigin="anonymous" class="w-[100px] h-[100px]"/></div>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNotaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
                     ],
@@ -1206,11 +1213,24 @@ const propiedades = computed(() => {
 
                 .addComponente('Espacio', { alto: 32 })
 
-                // PIE DE FIRMA
                 .addComponente('Tabla', {
                     container: 'pt-5',
                     border: false,
-                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido del profesional</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
+                    columnas: [
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-9">${propiedadesNutricionPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesNutricionPDF.value.cedulaProfesional}</p>
+                            <div>
+                            `, 
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNutricionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
+                            </div>
+                            `
+                    ],
                 })
             )
 
@@ -1315,7 +1335,21 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'pt-5',
                     border: false,
-                    columnas: ['<p class="text-xs text-center pt-6 border-t-2">Nombre y Apellido del profesional</p>', '<p class="text-xs text-center pt-6 border-t-2">Firma y sello</p>'],
+                    columnas: [
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-9">${propiedadesTrabajoSocialPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesTrabajoSocialPDF.value.cedulaProfesional}</p>
+                            <div>
+                            `, 
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesTrabajoSocialPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
+                            </div>
+                            `
+                    ],
                 })
             )
 

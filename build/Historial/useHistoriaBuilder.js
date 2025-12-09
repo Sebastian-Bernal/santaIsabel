@@ -459,16 +459,26 @@ export function useHistoriaBuilder({
                 campos: [
                     {
                         name: 'descripcion',
-                        id: 'cie-10',
+                        id: 'descripcion',
                         typeCampo: 'SelectSearch',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full md:col-span-2',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
-
-                ]
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-1'
             })
 
             .addCampo({
@@ -611,16 +621,26 @@ export function useHistoriaBuilder({
                 campos: [
                     {
                         name: 'descripcion',
-                        id: 'cie-10',
+                        id: 'descripcion',
                         typeCampo: 'SelectSearch',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full md:col-span-2',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
-
-                ]
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-1'
             })
 
             .addCampo({
@@ -1426,27 +1446,37 @@ export function useHistoriaBuilder({
                 .nuevaSeccion('Analisis')
                 // 📌 Sección: Diagnósticos
 
-                .addCampo({
-                    component: 'GroupCampos',
-                    labelGroup: 'Diagnosticos',
-                    buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
-                    tamaño: 'w-full col-span-2',
-                    vmodel: 'Diagnosticos',
-                    value: [],
-                    campos: [
-                        {
-                            name: 'descripcion',
-                            id: 'cie-10',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'CIE-10',
-                            tamaño: 'w-full md:col-span-2',
-                            options: CIE10,
-                            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                            seleccionarItem: seleccionarCIE_10,
-                        },
-
-                    ]
-                })
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Diagnosticos',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Diagnosticos',
+                value: [],
+                campos: [
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Diagnostico',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'cie-10',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'CIE-10',
+                        tamaño: 'w-full md:col-span-1 col-span-2',
+                        options: CIE10,
+                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        seleccionarItem: seleccionarCIE_10,
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-1'
+            })
 
                 // --- Select: Tipo de Análisis ---
                 .addCampo({

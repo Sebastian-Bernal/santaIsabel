@@ -58,7 +58,9 @@ export const useVarView = defineStore('varView', {
         camposVacios: false,
         tipoConsulta: '',
         tipoHistoria: '',
-        cambioEnApi: false
+        cambioEnApi: false,
+        // Impresion
+        propiedadesPDF: {}
     }),
 
     getters: {

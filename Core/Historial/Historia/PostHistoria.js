@@ -48,6 +48,13 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
+            // Validar Diagnosticos
+            datos.Diagnosticos.forEach((i, idx) => {
+                if (!i.descripcion || !i.codigo) {
+                    errores.push(`Diagnostico ${idx + 1} incompleto o codigo incompleto.`);
+                }
+            });
+
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             return await enviarFormularioNutricion(datos);
@@ -848,6 +855,10 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         id_medico: datos.Cita.id_medico,
                         servicio: datos.Cita.servicio,
                     },
+                    Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
+                        descripcion: d.descripcion,
+                        codigo: d.codigo
+                    })),
                     Cita: {
                         id: datos.Cita.id
                     }

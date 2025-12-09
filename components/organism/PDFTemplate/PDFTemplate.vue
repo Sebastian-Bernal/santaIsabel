@@ -6,10 +6,13 @@ import Firma from '~/components/atoms/html/Firma.vue'
 import Espacio from '~/components/atoms/html/Espacio.vue'
 import Imagen from '~/components/atoms/Images/Imagen.vue'
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue'
+import PDF from '~/components/organism/PDFTemplate/PDF.vue'
 
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder'
 import { cargarStore } from '../Forms/componentLoader'
 
+const varView = useVarView()
+const imprimir = ref(false)
 const props = defineProps({
     Propiedades: {
         type: [Object],
@@ -50,20 +53,30 @@ function getValue(obj, path) {
     return path.split('.').reduce((acc, key) => acc[key], obj)
 }
 
+// const exportPdf = async () => {
+//     const pdfBuilder = new PdfBuilder()
+//         .setElementId(props.Propiedades.elementId)
+//         .setFileName(props.Propiedades.filename)
+//         .setFormat(config.value.format)
+//         .setOrientation(config.value.orientation)
+//         .setMargins(config.value.margin)
+//         .setSello(props.Propiedades.sello)
+
+//     await pdfBuilder.export()
+
+
+//     cerrarDropdown()
+//     props.Propiedades.isActive.value = false
+// }
 const exportPdf = async () => {
-    const pdfBuilder = new PdfBuilder()
-        .setElementId(props.Propiedades.elementId)
-        .setFileName(props.Propiedades.filename)
-        .setFormat(config.value.format)
-        .setOrientation(config.value.orientation)
-        .setMargins(config.value.margin)
-        .setSello(props.Propiedades.sello)
+    varView.propiedadesPDF = props.Propiedades
+    imprimir.value = true
+    window.onafterprint = () => {
+        imprimir.value = false;   // cerrar impresión
+        cerrarDropdown()
+        props.Propiedades.isActive.value = false
+    };
 
-    await pdfBuilder.export()
-
-
-    cerrarDropdown()
-    props.Propiedades.isActive.value = false
 }
 
 const cerrar = () => {
@@ -79,7 +92,8 @@ const cerrar = () => {
 </script>
 
 <template>
-    <FondoBlur v-if="unref(props.Propiedades.isActive)">
+    <PDF v-if="imprimir"></PDF>
+    <FondoBlur v-if="unref(props.Propiedades.isActive) && !imprimir">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[80%] w-[90%] h-[90%]">
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
@@ -160,7 +174,7 @@ const cerrar = () => {
             </div>
         </div>
     </FondoBlur>
-    <div :id="props.Propiedades.elementId"
+    <!-- <div :id="props.Propiedades.elementId"
         style="width: 794px; margin-bottom: 25px; background: white; position: absolute; top: -9999px; left: -9999px; color: black;">
 
         <component v-for="component in Propiedades.components" :is="componentes[component.tipo]" :Propiedades="{
@@ -169,7 +183,7 @@ const cerrar = () => {
             ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
         }" />
 
-    </div>
+    </div> -->
 </template>
 
 <style scoped>

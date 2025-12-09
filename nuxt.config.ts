@@ -9,8 +9,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      api: 'https://api.ctsantaisabel.com',
-      // api: 'http://127.0.0.1:8000',
+      // api: 'https://api.ctsantaisabel.com',
+      api: 'http://127.0.0.1:8000',
       login: 'api/v1/login',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',

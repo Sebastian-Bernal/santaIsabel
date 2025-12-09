@@ -70,159 +70,96 @@ export class PdfBuilder {
     }
 
 
-async export() {
-  const { $html2canvas, $jsPDF } = useNuxtApp();
+    async export() {
+    const { $html2canvas, $jsPDF } = useNuxtApp();
 
-  if (!this.config.elementId) {
-    throw new Error("Debes definir un elementId con setElementId");
-  }
-
-  // Convertir la URL del sello a Base64
-  const selloBase64 = await this.cargarSelloComoBase64();
-
-  if (selloBase64) {
-    const selloDiv = document.getElementById("selloProfesional");
-    if (selloDiv) {
-      selloDiv.innerHTML = `<img src="${selloBase64}" style="width:80px;height:80px;" />`;
+    if (!this.config.elementId) {
+        throw new Error("Debes definir un elementId con setElementId");
     }
-  }
 
-  const element = document.getElementById(this.config.elementId);
-  if (!element) throw new Error(`No existe el elemento con id: ${this.config.elementId}`);
+    // Convertir la URL del sello a Base64
+    const selloBase64 = await this.cargarSelloComoBase64();
 
-  // Render con html2canvas
-  const canvas = await $html2canvas(element, { scale: 2, useCORS: true });
-  const imgData = canvas.toDataURL("image/png");
+    if (selloBase64) {
+        const selloDiv = document.getElementById("selloProfesional");
+        if (selloDiv) {
+        selloDiv.innerHTML = `<img src="${selloBase64}" style="width:80px;height:80px;" />`;
+        }
+    }
 
-  // Crear PDF
-  const pdf = new $jsPDF({
-    orientation: this.config.orientation,
-    unit: this.config.unit,
-    format: this.config.format
-  });
+    const element = document.getElementById(this.config.elementId);
+    if (!element) throw new Error(`No existe el elemento con id: ${this.config.elementId}`);
 
-  const pageWidth = pdf.internal.pageSize.getWidth();
-  const pageHeight = pdf.internal.pageSize.getHeight();
-  const imgWidth = pageWidth - this.config.margin * 2;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    // Render con html2canvas
+    const canvas = await $html2canvas(element, { scale: 2, useCORS: true });
+    const imgData = canvas.toDataURL("image/png");
 
-  let heightLeft = imgHeight;
-  let position = this.config.margin;
+    // Crear PDF
+    const pdf = new $jsPDF({
+        orientation: this.config.orientation,
+        unit: this.config.unit,
+        format: this.config.format
+    });
 
-  // Primera página
-  pdf.addImage(imgData, "PNG", this.config.margin, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
-  
-  // 👉 Añadir sello en la esquina inferior derecha
-  if (selloBase64) {
-    const selloWidth = 30;   // ancho del sello en mm
-    const selloHeight = 30;  // alto del sello en mm
-    const x = pageWidth - selloWidth - this.config.margin; // margen derecho
-    const y = pageHeight - selloHeight - this.config.margin; // margen inferior
-    pdf.addImage(selloBase64, "JPEG", x, y, selloWidth, selloHeight);
-  }
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - this.config.margin * 2;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  // Páginas adicionales
-  while (heightLeft > 0) {
-    pdf.addPage();
-    position = this.config.margin - (imgHeight - heightLeft); // desplazar la imagen hacia arriba
+    let heightLeft = imgHeight;
+    let position = this.config.margin;
+
+    // Primera página
     pdf.addImage(imgData, "PNG", this.config.margin, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
-  }
 
-  pdf.save(this.config.filename);
-}
+    // 👉 Calcular posición del sello según DOM
+    if (selloBase64) {
+        const selloElement = document.getElementById("selloProfesional");
+        if (selloElement) {
+        const rect = selloElement.getBoundingClientRect();
 
-// async export() {
-//   const { $html2canvas, $jsPDF } = useNuxtApp();
+        // Escala DOM → PDF
+        const scaleX = imgWidth / canvas.width;
+        const scaleY = imgHeight / canvas.height;
 
-//   if (!this.config.elementId) {
-//     throw new Error("Debes definir un elementId con setElementId");
-//   }
+        const selloX = this.config.margin + rect.left * scaleX;
+        const selloY = this.config.margin + rect.top * scaleY;
+        const selloW = rect.width * scaleX;
+        const selloH = rect.height * scaleY;
 
-//   // Convertir la URL del sello a Base64
-//   const selloBase64 = await this.cargarSelloComoBase64();
+        pdf.addImage(selloBase64, "JPEG", selloX, selloY, selloW, selloH);
+        }
+    }
 
-//   if (selloBase64) {
-//     const selloDiv = document.getElementById("selloProfesional");
-//     if (selloDiv) {
-//       selloDiv.innerHTML = `<img src="${selloBase64}" style="width:80px;height:80px;" />`;
-//     }
-//   }
+    // Páginas adicionales
+    while (heightLeft > 0) {
+        pdf.addPage();
+        position = this.config.margin - (imgHeight - heightLeft);
+        pdf.addImage(imgData, "PNG", this.config.margin, position, imgWidth, imgHeight);
 
-//   const element = document.getElementById(this.config.elementId);
-//   if (!element) throw new Error(`No existe el elemento con id: ${this.config.elementId}`);
+        // Repetir sello en cada página
+        if (selloBase64) {
+        const selloElement = document.getElementById("selloProfesional");
+        if (selloElement) {
+            const rect = selloElement.getBoundingClientRect();
+            const scaleX = imgWidth / canvas.width;
+            const scaleY = imgHeight / canvas.height;
 
-//   // Render con html2canvas
-//   const canvas = await $html2canvas(element, { scale: 2, useCORS: true });
-//   const imgData = canvas.toDataURL("image/png");
+            const selloX = this.config.margin + rect.left * scaleX;
+            const selloY = this.config.margin + rect.top * scaleY;
+            const selloW = rect.width * scaleX;
+            const selloH = rect.height * scaleY;
 
-//   // Crear PDF
-//   const pdf = new $jsPDF({
-//     orientation: this.config.orientation,
-//     unit: this.config.unit,
-//     format: this.config.format
-//   });
+            pdf.addImage(selloBase64, "JPEG", selloX, selloY, selloW, selloH);
+        }
+        }
 
-//   const pageWidth = pdf.internal.pageSize.getWidth();
-//   const pageHeight = pdf.internal.pageSize.getHeight();
-//   const imgWidth = pageWidth - this.config.margin * 2;
-//   const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        heightLeft -= pageHeight;
+    }
 
-//   let heightLeft = imgHeight;
-//   let position = this.config.margin;
-
-//   // Primera página
-//   pdf.addImage(imgData, "PNG", this.config.margin, position, imgWidth, imgHeight);
-//   heightLeft -= pageHeight;
-
-//   // 👉 Calcular posición del sello según DOM
-//   if (selloBase64) {
-//     const selloElement = document.getElementById("selloProfesional");
-//     if (selloElement) {
-//       const rect = selloElement.getBoundingClientRect();
-
-//       // Escala DOM → PDF
-//       const scaleX = imgWidth / canvas.width;
-//       const scaleY = imgHeight / canvas.height;
-
-//       const selloX = this.config.margin + rect.left * scaleX;
-//       const selloY = this.config.margin + rect.top * scaleY;
-//       const selloW = rect.width * scaleX;
-//       const selloH = rect.height * scaleY;
-
-//       pdf.addImage(selloBase64, "JPEG", selloX, selloY, selloW, selloH);
-//     }
-//   }
-
-//   // Páginas adicionales
-//   while (heightLeft > 0) {
-//     pdf.addPage();
-//     position = this.config.margin - (imgHeight - heightLeft);
-//     pdf.addImage(imgData, "PNG", this.config.margin, position, imgWidth, imgHeight);
-
-//     // Repetir sello en cada página
-//     if (selloBase64) {
-//       const selloElement = document.getElementById("selloProfesional");
-//       if (selloElement) {
-//         const rect = selloElement.getBoundingClientRect();
-//         const scaleX = imgWidth / canvas.width;
-//         const scaleY = imgHeight / canvas.height;
-
-//         const selloX = this.config.margin + rect.left * scaleX;
-//         const selloY = this.config.margin + rect.top * scaleY;
-//         const selloW = rect.width * scaleX;
-//         const selloH = rect.height * scaleY;
-
-//         pdf.addImage(selloBase64, "JPEG", selloX, selloY, selloW, selloH);
-//       }
-//     }
-
-//     heightLeft -= pageHeight;
-//   }
-
-//   pdf.save(this.config.filename);
-// }
+    pdf.save(this.config.filename);
+    }
 
 
     addComponente(tipo, input) {
