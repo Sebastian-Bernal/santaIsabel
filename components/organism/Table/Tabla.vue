@@ -213,7 +213,7 @@ const tablaAlto = computed(() => {
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse || Propiedades.acciones.icons.length < 2"
+                        <BotonAccion v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2 "
                             v-for="action in Propiedades.acciones.icons" :key="action"
                             :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
@@ -226,7 +226,7 @@ const tablaAlto = computed(() => {
                         <!-- Acciones porp props Responsive -->
                         <div class="relative inline-block text-left">
                             <button @click="mostrarAcciones(id)"
-                                v-if="collapse && Propiedades.acciones.icons.length > 1"
+                                v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
                                 class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:bg-gray-300">
                                 <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
                             </button>

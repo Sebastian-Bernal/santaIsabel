@@ -4,9 +4,11 @@ import { CUPS } from '~/data/CUPS'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 // import { CIE10 } from '~/data/CIE10'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { decryptData } from '~/composables/Formulario/crypto';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { CIF } from '~/data/CIF'
+
 
 export function useHistoriaBuilder({
     storeId,
@@ -26,6 +28,7 @@ export function useHistoriaBuilder({
     const MedicosList = ref([])
     const CIE10 = ref([])
     const id_paciente = ref(null)
+    const sugerencia = ref("")
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
     onMounted(async() => {
@@ -121,6 +124,47 @@ export function useHistoriaBuilder({
             }
         }
     }
+
+    function debounce(fn, delay) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn(...args), delay);
+        };
+    }
+
+    const sugerenciaMotivo = async (event) => {
+        let nuevoTexto = event.target.value
+        if (!nuevoTexto && nuevoTexto.length < 10) {
+            sugerencia.value = "";
+            return;
+        }
+
+        varView.cargando = true
+        const api = useApiRest()
+        const config = useRuntimeConfig()
+        const token = decryptData(sessionStorage.getItem('token'))
+
+        let options = {
+          metodo: 'POST',
+          url: config.public.obtenerSugerencia,
+          token: token,
+          body: {
+            texto: nuevoTexto
+          }
+        }
+
+        const respuesta = await api.functionCall(options)
+
+        if (respuesta.success) {
+            sugerencia.value = respuesta.sugerencia || "";
+        }
+
+        varView.cargando = false
+    };
+
+    const sugerenciaMotivoDebounced = debounce(sugerenciaMotivo, 500);
+
 
     const builder = new FormularioBuilder()
 
@@ -1232,7 +1276,7 @@ export function useHistoriaBuilder({
                 forLabel: 'motivo',
                 size: 'text-sm',
                 tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta',
             })
             .addCampo({
                 component: 'Textarea',
@@ -1240,7 +1284,10 @@ export function useHistoriaBuilder({
                 id: 'motivo',
                 name: 'motivo',
                 placeholder: 'Describa el motivo principal de la consulta...',
-                tamaño: 'w-full col-span-2'
+                tamaño: 'w-full col-span-2',
+                events: {
+                    onInput: sugerenciaMotivoDebounced
+                }
             })
             .addCampo({
                 component: 'Label',

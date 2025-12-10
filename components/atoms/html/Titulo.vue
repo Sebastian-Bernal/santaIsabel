@@ -1,5 +1,5 @@
 <template>
-  <h1 class="text-xl font-bold text-center mb-4">{{ props.Propiedades.texto }}</h1>
+  <h1 class="text-base font-bold text-center mb-4">{{ props.Propiedades.texto }}</h1>
 </template>
 
 <script setup>

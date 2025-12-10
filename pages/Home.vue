@@ -116,7 +116,8 @@ async function DashboardRol(rol, Historias = [], citas) {
                         html: `<i class="fa-solid fa-clock md:text-lg text-sm"></i> ${card.fecha_historia}`
                     },
                     footer: {
-                        status: 'completado',
+                        status: 'Completado',
+                        icon: 'fa-plus',
                         statusClass: 'bg-green-500 text-white'
                     }
                 }
@@ -146,7 +147,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                     // },
                     footer: {
                         status: card.motivo,
-                        statusClass: 'bg-blue-500'
+                        statusClass: 'bg-blue-500 text-white'
                     }
                 }
             })

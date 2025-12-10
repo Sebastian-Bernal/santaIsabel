@@ -48,14 +48,16 @@ const showVerHistorial = ref(false)
 const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
 const actualizar = ref(false)
-const propiedadesNotaPDF = ref({})
-const propiedadesEvolucionPDF = ref({})
 const activePdfNotas = ref(false)
 const activePdfEvolucion = ref(false)
 const activePdfNutricion = ref(false)
-const propiedadesNutricionPDF = ref([])
 const activePdfTrabajoSocial = ref(false)
+const activePdfMedicina = ref(false)
+const propiedadesNotaPDF = ref({})
+const propiedadesEvolucionPDF = ref({})
+const propiedadesNutricionPDF = ref([])
 const propiedadesTrabajoSocialPDF = ref([])
+const propiedadesMedicinaPDF = ref([])
 
 const propiedadesHistoriaPDF = ref({})
 const activePdfHistoria = ref(false)
@@ -403,6 +405,67 @@ async function exportarEvolucionPDF(data) {
     varView.cargando = false
 }
 
+async function exportarMedicinaPDF(data) {
+    varView.cargando = true
+
+    const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
+
+    const historia = await historiasStore.listDatos(data.id_historia, 'HistoriaClinica', 'id')
+    const id_paciente = historia[0]?.id_paciente
+
+    const dataPaciente = pacientes.find(user => {
+        return user.id_paciente === id_paciente || null
+    });
+
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.id_medico
+    })
+
+    const enfermedad = await historiasStore.listDatos(data.id_analisis, 'Enfermedad', 'id_analisis')
+    const medicamentosData = await historiasStore.listDatos(data.id_analisis, 'Plan_manejo_medicamentos', 'id_analisis')
+    const procedimientosData = await historiasStore.listDatos(id_paciente, 'Plan_manejo_procedimientos', 'id_paciente')
+    const antecedentesData = await historiasStore.listDatos(id_paciente, 'Antecedentes', 'id_paciente')
+
+    const diagnosticosMedicina = Array.isArray(unref(diagnosticos.value))
+    ? toRaw(diagnosticos.value)
+        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+        .map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ])
+    : [];
+
+    const antecedentes = antecedentesData.map(antecedente => [
+            `<p class="text-xs leading-tight text-center py-1">${antecedente.descripcion}</p>`,
+    ])
+
+    const medicamentos = medicamentosData.map(medicamento => [
+            `<p class="text-xs leading-tight py-1">${medicamento.medicamento}</p>`,
+            `<p class="text-xs leading-tight py-1">${medicamento.dosis}</p>`,
+            `<p class="text-xs leading-tight py-1">${medicamento.cantidad}</p>`,
+    ])
+
+    const procedimientos = procedimientosData.map(procedimiento => [
+            `<p class="text-xs leading-tight py-1">${procedimiento.procedimiento}</p>`,
+            `<p class="text-xs leading-tight py-1">${procedimiento.codigo}</p>`,
+            `<p class="text-xs leading-tight py-1">${procedimiento.dias_asignados}</p>`,
+    ])
+
+    propiedadesMedicinaPDF.value = { 
+        ...data, 
+        ...dataPaciente, 
+        nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, 
+        diagnosticosMedicina, 
+        Enfermedad: {...enfermedad[0]},
+        Medicamentos: medicamentos,
+        Procedimientos: procedimientos,
+        Antecedentes: antecedentes,
+    };console.log(propiedadesMedicinaPDF.value)
+    activePdfMedicina.value = true
+    varView.cargando = false
+}
+
 async function exportarNutricionPDF(data) {
     varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
@@ -565,6 +628,7 @@ const propiedades = computed(() => {
     const pdfEvolucion = new PdfBuilder()
     const pdfNutricion = new PdfBuilder()
     const pdfTrabajoSocial = new PdfBuilder()
+    const pdfMedicina = new PdfBuilder()
 
     const filasConsultas = (unref(analisis) || []).map(consulta => {
         const fechaOriginal = consulta.created_at;
@@ -854,12 +918,183 @@ const propiedades = computed(() => {
                 ])
                 .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
                 .setDatos(analisis)
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : ''], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '', { icon: 'pdf', action: exportarMedicinaPDF }], botones: true, })
             )
             .addComponente('Form', propiedadesItemHistoria)
+            .addComponente('PDFTemplate', pdfMedicina
+                .setElementId('Medicina')
+                .setIsActive(activePdfMedicina)
+                .setFileName(`Medicina_${propiedadesMedicinaPDF.value.name}`)
+                .setSello(`${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}`)
+                // ENCABEZADO PRINCIPAL
+                .addComponente('Tabla', {
+                    container: 'border-b-2 pb-3',
+                    border: true,
+                    columnas: [
+                        '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
+                        `
+                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Historia Clinica </br> Medicina general domiciliaria</p></br>
+                        `,
+                        `
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
+                        `
+                    ],
+                })
+
+                // DATOS DEL PACIENTE
+                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3',
+                    filas: [
+                        [
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesMedicinaPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full"></p>`,
+                        ],
+                        [
+                            [`<p class="text-xs">No documento: <span class="text-sm">${propiedadesMedicinaPDF.value.No_document}</span></p>
+                            <p class="text-xs">Tipo de documento: <span class="text-sm">${propiedadesMedicinaPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs">Edad: <span class="text-sm">${calcularEdad(propiedadesMedicinaPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs">Sexo: <span class="text-sm">${propiedadesMedicinaPDF.value.sexo}</span></p>`],
+                        ],
+                        [
+                            `<p class="text-xs">EPS: <span class="text-sm">${propiedadesMedicinaPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs">Zona: <span class="text-sm">${propiedadesMedicinaPDF.value.zona}</span></p>`
+                        ],
+                        [
+                            `<p class="text-xs">Regimen: <span class="text-sm">${propiedadesMedicinaPDF.value.regimen}</span></p>`,
+                            `<p class="text-xs">Direccion: <span class="text-sm">${propiedadesMedicinaPDF.value.direccion}</span></p>`
+                        ],
+                        [
+                            `<p class="text-xs">Vulnerabilidad: <span class="text-sm">${propiedadesMedicinaPDF.value.vulnerabilidad}</span></p>`,
+                            `<p class="text-xs">Celular: <span class="text-sm">${propiedadesMedicinaPDF.value.celular}</span></p>`
+                        ],
+                    ],
+                })
+
+                // SECCIÓN: DIAGNÓSTICOS
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Diagnósticos', 'CIE-10'],
+                    filas: propiedadesMedicinaPDF.value.diagnosticosMedicina?.length > 0
+                        ? propiedadesMedicinaPDF.value.diagnosticosMedicina
+                        : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
+                })
+
+                .addComponente('Espacio', { alto: 16 })
+
+                // SECCIÓN: NOTA DE ENFERMERÍA
+                .addComponente('Tabla', {
+                    filas: [
+                        [
+                            `<p class="text-sm text-center py-2 font-bold">Motivo de consulta</p>`,
+                        ],
+                        [
+                            `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.motivo}</p>`
+                        ],
+                    ],
+                })
+                .addComponente('Tabla', {
+                    filas: [
+                        [
+                            `<p class="text-sm text-center py-2 font-bold">Enfermedad Actual</p>`,
+                        ],
+                        [
+                            `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.Enfermedad?.valor}</p>`
+                        ],
+                    ],
+                })
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Antecedentes'],
+                    filas: propiedadesMedicinaPDF.value.Antecedentes?.length > 0
+                        ? propiedadesMedicinaPDF.value.Antecedentes
+                        : [['<p class="text-xs text-center">Sin antecedentes registrados</p>']]
+                })
+
+                .addComponente('Titulo', { texto: 'EXAMEN FISICO' })
+                .addComponente('Tabla', {
+                    container: 'space-y-2 rounded-xl py-3!',
+                    filas: [
+                        [
+                            '<p class="text-sm w-full">TA</p>',
+                            '<p class="text-sm w-full">FC</p>',
+                            '<p class="text-sm w-full">FR</p>',
+                            '<p class="text-sm w-full">T</p>',
+                            '<p class="text-sm w-full">SAT O2</p>',
+                        ],
+                        [
+                            `<p class="text-sm w-full">${propiedadesMedicinaPDF.value.signosVitales?.ta}</p>`,
+                            `<p class="text-sm w-full">${propiedadesMedicinaPDF.value.signosVitales?.fc}</p>`,
+                            `<p class="text-sm w-full">${propiedadesMedicinaPDF.value.signosVitales?.fr}</p>`,
+                            `<p class="text-sm w-full">${propiedadesMedicinaPDF.value.signosVitales?.t}</p>`,
+                            `<p class="text-sm w-full">${propiedadesMedicinaPDF.value.signosVitales?.SATo2}</p>`,
+                        ],
+
+                    ],
+                })
+
+                .addComponente('Espacio', { alto: 32 })
+                .addComponente('Tabla', {
+                    filas: [
+                        [
+                            `<p class="text-sm text-center py-2 font-bold">Analsis/Tratamiento</p>`,
+                        ],
+                        [
+                            `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.analisis}</p>`
+                        ],
+                    ],
+                })
+
+                .addComponente('Texto', { texto: 'PLAN DE MANEJO' })
+                .addComponente('Espacio', { alto: 16 })
+                .addComponente('Titulo', { texto: 'Medicamentos' })
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Nombre del Medicamento', 'Dosis', 'Cantidad de dias'],
+                    filas: propiedadesMedicinaPDF.value.Medicamentos?.length > 0
+                        ? propiedadesMedicinaPDF.value.Medicamentos
+                        : [['<p class="text-xs">Sin antecedentes registrados</p>']]
+                })
+
+                .addComponente('Titulo', { texto: 'Procedimientos' })
+                .addComponente('Tabla', {
+                    container: 'w-full p-3',
+                    columnas: ['Descripcion', 'CUPS', 'Dias asignados'],
+                    filas: propiedadesMedicinaPDF.value.Procedimientos?.length > 0
+                        ? propiedadesMedicinaPDF.value.Procedimientos
+                        : [['<p class="text-xs">Sin antecedentes registrados</p>']]
+                })
+                
+                .addComponente('Espacio', { alto: 32 })
+                // PIE DE FIRMA
+                .addComponente('Tabla', {
+                    container: 'pt-5',
+                    border: false,
+                    columnas: [
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-9">${propiedadesMedicinaPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesMedicinaPDF.value.cedulaProfesional}</p>
+                            <div>
+                            `, 
+                            `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
+                            </div>
+                            `
+                    ],
+                })
+            )
 
 
-            // evoluciones
+            // Terapias
             .nuevaSeccion('evoluciones', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([

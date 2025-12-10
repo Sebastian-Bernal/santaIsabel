@@ -9,8 +9,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      api: 'https://api.ctsantaisabel.com',
-      // api: 'http://127.0.0.1:8000',
+      // api: 'https://api.ctsantaisabel.com',
+      api: 'http://127.0.0.1:8000',
       login: 'api/v1/login',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
@@ -48,6 +48,7 @@ export default defineNuxtConfig({
       administradores: 'api/v1/administradores',
       cie10: 'api/v1/cie10',
       obtenerSelloBase64: 'api/v1/sello{filename}',
+      obtenerSugerencia: 'api/v1/sugerenciaIA',
     }
   },
   app: {

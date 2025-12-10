@@ -8,6 +8,21 @@ const props = defineProps({
         default: {}
     }
 });
+
+function handleInput(event) {
+  let value = event.target.value;
+
+  // Aplica transformación solo si se especifica
+  if (props.Propiedades.upperCase === true) {
+    value = value.toUpperCase();
+  } else if (props.Propiedades.lowerCase === true) {
+    value = value.toLowerCase();
+  }
+
+  // Emitimos el valor transformado (o sin transformar)
+  emit('update:modelValue', value);
+}
+
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
@@ -16,7 +31,7 @@ const emit = defineEmits(['update:modelValue']);
     :name="Propiedades.name" 
     :placeholder="Propiedades.placeholder" 
     :disabled="Propiedades.disabled"
-    @input="$emit('update:modelValue', $event.target.value)" 
+    @input="handleInput($event); Propiedades.events?.onInput?.($event)" 
     :minlength="Propiedades.minlength" :maxlength="Propiedades.maxlength"
     @click="Propiedades.events?.onClick"
     @change="Propiedades.events?.onChange"

@@ -29,7 +29,7 @@ import { validarYEnviarDatosProfesion } from '~/Core/Empresa/Datos/Profesion/POS
 import { validarYEnviarActualizarProfesion } from '~/Core/Empresa/Datos/Profesion/PUTProfesion';
 // Servicio
 import { validarYEnviarDatosServicio } from '~/Core/Empresa/Datos/Servicio/PostServicio';
-
+import { validarYEnviarPutDatosServicio } from '~/Core/Empresa/Datos/Servicio/PutServicio';
 // Login
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
@@ -150,6 +150,10 @@ export const accionesFormularios = {
     },
     Servicio: async (data) => {
         const respuesta = await validarYEnviarDatosServicio(data)
+        return respuesta
+    },
+    ActualizarServicio: async (data) => {
+        const respuesta = await validarYEnviarPutDatosServicio(data)
         return respuesta
     },
     ActualizarProfesion: async (data) => {
