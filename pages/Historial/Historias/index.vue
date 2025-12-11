@@ -286,6 +286,14 @@ function actualizarItemConsultasHistoria(item) {
     showItem.value = true
 }
 
+function actualizarItemEvolucionHistoria(item) {
+    formularioItem.value = 'Evolucion'
+    varView.tipoHistoria = 'Evolucion'
+    actualizar.value = true
+    mapCampos(item, historiasStore.Formulario)
+    showItem.value = true
+}
+
 // Visibilidad notas
 function nuevaNota() {
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
@@ -346,18 +354,18 @@ async function exportarNotaPDF(data) {
         if (notasTipo.length === 0) return ""; // si no hay notas de ese tipo, no mostrar nada
 
         // Encabezado con el nombre del tipo
-        let contenido = `<p class="text-start text-base py-2"><strong>${tipo.toUpperCase()}:</strong></p>`;
+        let contenido = `<p class="text-start text-xs py-1"><strong>${tipo.toUpperCase()}:</strong></p>`;
 
         // Filas de cada nota
         contenido += notasTipo.map(nota => `
             <div class="flex">
                 <p class="text-xs border-r-1 px-3 py-1">${nota.hora || ''}</p>
-                <p class="text-base w-full px-1">${nota.descripcion || ''}</p>
+                <p class="text-xs w-full px-1">${nota.descripcion || ''}</p>
             </div>
         `).join("");
 
         // Separador visual
-        contenido += `<hr class="w-full h-3"/>`;
+        contenido += `<hr class="w-full h-1"/>`;
 
         return contenido;
     }).join("");
@@ -647,13 +655,6 @@ const propiedades = computed(() => {
         return [contenido]
     });
 
-    const diagnosticosEvolucion = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value).map(diagnostico => [
-        `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-        `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
-
     const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
     ? toRaw(diagnosticosCIF.value).map(diagnostico => [
         `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
@@ -928,13 +929,13 @@ const propiedades = computed(() => {
                 .setSello(`${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
-                    container: 'border-b-2 pb-3',
+                    container: 'border-b-1 pb-3',
                     border: true,
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm border-b-1 pb-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-1 uppercase">Registro</p></br>
                             <p class="text-sm uppercase">Historia Clinica </br> Medicina general domiciliaria</p></br>
                         `,
                         `
@@ -947,31 +948,31 @@ const propiedades = computed(() => {
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Texto', { texto: 'Datos del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
-                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesMedicinaPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesMedicinaPDF.value.name}</span></p>`,
                             `<p class="text-xs w-full"></p>`,
                         ],
                         [
-                            [`<p class="text-xs">No documento: <span class="text-sm">${propiedadesMedicinaPDF.value.No_document}</span></p>
-                            <p class="text-xs">Tipo de documento: <span class="text-sm">${propiedadesMedicinaPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs">Edad: <span class="text-sm">${calcularEdad(propiedadesMedicinaPDF.value.nacimiento)}</span></p>
-                            <p class="text-xs">Sexo: <span class="text-sm">${propiedadesMedicinaPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs">No documento: <span class="text-xs">${propiedadesMedicinaPDF.value.No_document}</span></p>
+                            <p class="text-xs">Tipo de documento: <span class="text-xs">${propiedadesMedicinaPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs">Edad: <span class="text-xs">${calcularEdad(propiedadesMedicinaPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs">Sexo: <span class="text-xs">${propiedadesMedicinaPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs">EPS: <span class="text-sm">${propiedadesMedicinaPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs">Zona: <span class="text-sm">${propiedadesMedicinaPDF.value.zona}</span></p>`
+                            `<p class="text-xs">EPS: <span class="text-xs">${propiedadesMedicinaPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs">Zona: <span class="text-xs">${propiedadesMedicinaPDF.value.zona}</span></p>`
                         ],
                         [
-                            `<p class="text-xs">Regimen: <span class="text-sm">${propiedadesMedicinaPDF.value.regimen}</span></p>`,
-                            `<p class="text-xs">Direccion: <span class="text-sm">${propiedadesMedicinaPDF.value.direccion}</span></p>`
+                            `<p class="text-xs">Regimen: <span class="text-xs">${propiedadesMedicinaPDF.value.regimen}</span></p>`,
+                            `<p class="text-xs">Direccion: <span class="text-xs">${propiedadesMedicinaPDF.value.direccion}</span></p>`
                         ],
                         [
-                            `<p class="text-xs">Vulnerabilidad: <span class="text-sm">${propiedadesMedicinaPDF.value.vulnerabilidad}</span></p>`,
-                            `<p class="text-xs">Celular: <span class="text-sm">${propiedadesMedicinaPDF.value.celular}</span></p>`
+                            `<p class="text-xs">Vulnerabilidad: <span class="text-xs">${propiedadesMedicinaPDF.value.vulnerabilidad}</span></p>`,
+                            `<p class="text-xs">Celular: <span class="text-xs">${propiedadesMedicinaPDF.value.celular}</span></p>`
                         ],
                     ],
                 })
@@ -991,7 +992,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-2 font-bold">Motivo de consulta</p>`,
+                            `<p class="text-sm text-center py-1 font-bold">Motivo de consulta</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.motivo}</p>`
@@ -1001,7 +1002,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-2 font-bold">Enfermedad Actual</p>`,
+                            `<p class="text-sm text-center py-1 font-bold">Enfermedad Actual</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.Enfermedad?.valor}</p>`
@@ -1042,7 +1043,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-2 font-bold">Analsis/Tratamiento</p>`,
+                            `<p class="text-sm text-center py-1 font-bold">Analsis/Tratamiento</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesMedicinaPDF.value.analisis}</p>`
@@ -1103,7 +1104,7 @@ const propiedades = computed(() => {
                     { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
                 ])
                 .setHeaderTabla({ titulo: 'Avances de Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF },], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }], botones: true, })
                 .setDatos(evoluciones)
             )
             .addComponente('PDFTemplate', pdfEvolucion
@@ -1118,8 +1119,8 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2">Registro</p></br>
+                            <p class="text-sm border-b-1 pb-1">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-1">Registro</p></br>
                             <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
                         `,
                         `
@@ -1132,23 +1133,23 @@ const propiedades = computed(() => {
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Texto', { texto: 'Datos del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
-                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesEvolucionPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesEvolucionPDF.value.name}</span></p>`,
                             `<p class="text-xs w-full"></p>`,
                         ],
                         [
-                            [`<p class="text-xs">No documento: <span class="text-sm">${propiedadesEvolucionPDF.value.No_document}</span></p>
-                            <p class="text-xs">Tipo de documento: <span class="text-sm">${propiedadesEvolucionPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs">Edad: <span class="text-sm">${calcularEdad(propiedadesEvolucionPDF.value.nacimiento)}</span></p>
-                            <p class="text-xs">Sexo: <span class="text-sm">${propiedadesEvolucionPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs">No documento: <span class="text-xs">${propiedadesEvolucionPDF.value.No_document}</span></p>
+                            <p class="text-xs">Tipo de documento: <span class="text-xs">${propiedadesEvolucionPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs">Edad: <span class="text-xs">${calcularEdad(propiedadesEvolucionPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs">Sexo: <span class="text-xs">${propiedadesEvolucionPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs">EPS: <span class="text-sm">${propiedadesEvolucionPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs">Zona: <span class="text-sm">${propiedadesEvolucionPDF.value.zona}</span></p>`
+                            `<p class="text-xs">EPS: <span class="text-xs">${propiedadesEvolucionPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs">Zona: <span class="text-xs">${propiedadesEvolucionPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1176,7 +1177,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-2">Objetivos de la intervencion terapeutica</p>`,
+                            `<p class="text-sm text-center py-1">Objetivos de la intervencion terapeutica</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesEvolucionPDF.value.objetivos}</p>`
@@ -1255,9 +1256,9 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 py-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 py-1 uppercase">Registro</p></br>
-                            <p class="text-sm uppercase py-1">Nota de enfermeria de atencion domiciliaria</p>
+                            <p class="text-sm border-b-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Nota de enfermeria de atencion domiciliaria</p>
                         `,
                         `
                             <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
@@ -1269,23 +1270,23 @@ const propiedades = computed(() => {
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Texto', { texto: 'Datos del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
-                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesNotaPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesNotaPDF.value.name}</span></p>`,
                             ``,
                         ],
                         [
-                            [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesNotaPDF.value.No_document}</span></p>
-                            <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesNotaPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${calcularEdad(propiedadesNotaPDF.value.nacimiento)}</span></p>
-                            <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesNotaPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs ">No documento: <span class="text-xs">${propiedadesNotaPDF.value.No_document}</span></p>
+                            <p class="text-xs ">Tipo de documento: <span class="text-xs">${propiedadesNotaPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs ">Edad: <span class="text-xs">${calcularEdad(propiedadesNotaPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs ">Sexo: <span class="text-xs">${propiedadesNotaPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs py-2">EPS: <span class="text-sm">${propiedadesNotaPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs py-2">Zona: <span class="text-sm">${propiedadesNotaPDF.value.zona}</span></p>`
+                            `<p class="text-xs ">EPS: <span class="text-xs">${propiedadesNotaPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs ">Zona: <span class="text-xs">${propiedadesNotaPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1397,7 +1398,7 @@ const propiedades = computed(() => {
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
                 .setDatos(nutricion)
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, puedePUT ? {icon: 'editar', action: actualizarItemEvolucionHistoria} : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('PDFTemplate', pdfNutricion
@@ -1412,37 +1413,37 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
-                            <p class="text-sm uppercase">Hoja de evolucion nutricional</p>
+                            <p class="text-sm border-b-1 pb-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 pb-1 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase pb-1">Hoja de evolucion nutricional</p>
                         `,
                         `
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
-                            <p class="w-full text-end text-xs">Pagina:</p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
                         `
                     ],
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Texto', { texto: 'Datos del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
-                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesNutricionPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesNutricionPDF.value.name}</span></p>`,
                             ``,
                         ],
                         [
-                            [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesNutricionPDF.value.No_document}</span></p>
-                            <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesNutricionPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${propiedadesNutricionPDF.value.nacimiento}</span></p>
-                            <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesNutricionPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs py-1">No documento: <span class="text-xs">${propiedadesNutricionPDF.value.No_document}</span></p>
+                            <p class="text-xs py-1">Tipo de documento: <span class="text-xs">${propiedadesNutricionPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs py-1">Edad: <span class="text-xs">${propiedadesNutricionPDF.value.nacimiento}</span></p>
+                            <p class="text-xs py-1">Sexo: <span class="text-xs">${propiedadesNutricionPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs py-2">EPS: <span class="text-sm">${propiedadesNutricionPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs py-2">Zona: <span class="text-sm">${propiedadesNutricionPDF.value.zona}</span></p>`
+                            `<p class="text-xs py-1">EPS: <span class="text-xs">${propiedadesNutricionPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs py-1">Zona: <span class="text-xs">${propiedadesNutricionPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1462,10 +1463,10 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-1">Motivo de consulta</p>`,
+                            `<p class="text-sm text-center py-1 font-bold">Motivo de consulta</p>`,
                         ],
                         [
-                            `<p class="text-sm text-center py-1">${propiedadesNutricionPDF.value.motivo}</p>`
+                            `<p class="text-sm text-center py-2">${propiedadesNutricionPDF.value.motivo}</p>`
                         ],
                     ],
                 })
@@ -1474,10 +1475,10 @@ const propiedades = computed(() => {
                     container: 'space-y-2 rounded-xl py-3!',
                     filas: [
                         [
-                            '<p class="text-sm w-full text-center py-1">Recomendaciones</p>',
+                            '<p class="text-sm w-full text-center py-1 font-bold">Recomendaciones</p>',
                         ],
                         [
-                            `<p class="text-sm w-full text-center py-1">${propiedadesNutricionPDF.value.analisis}</p>`,
+                            `<p class="text-sm w-full text-center py-2">${propiedadesNutricionPDF.value.analisis}</p>`,
                         ],
 
                     ],
@@ -1531,8 +1532,8 @@ const propiedades = computed(() => {
                     columnas: [
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
-                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
+                            <p class="text-sm border-b-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 uppercase">Registro</p></br>
                             <p class="text-sm uppercase">Historia Clinica </br> Trabajo Social</p>
                         `,
                         `
@@ -1545,23 +1546,23 @@ const propiedades = computed(() => {
                 })
 
                 // DATOS DEL PACIENTE
-                .addComponente('Texto', { texto: 'Informacion de identificacion del paciente' })
+                .addComponente('Texto', { texto: 'Datos del paciente' })
                 .addComponente('Tabla', {
                     container: 'space-y-2 rounded-xl py-3',
                     filas: [
                         [
-                            `<p class="text-xs w-full">Nombre completo: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.name}</span></p>`,
+                            `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.name}</span></p>`,
                             ``,
                         ],
                         [
-                            [`<p class="text-xs py-2">No documento: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.No_document}</span></p>
-                            <p class="text-xs py-2">Tipo de documento: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-2">Edad: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.nacimiento}</span></p>
-                            <p class="text-xs py-2">Sexo: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs py-2">No documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.No_document}</span></p>
+                            <p class="text-xs py-2">Tipo de documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs py-2">Edad: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.nacimiento}</span></p>
+                            <p class="text-xs py-2">Sexo: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs py-2">EPS: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs py-2">Zona: <span class="text-sm">${propiedadesTrabajoSocialPDF.value.zona}</span></p>`
+                            `<p class="text-xs py-2">EPS: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs py-2">Zona: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1584,7 +1585,7 @@ const propiedades = computed(() => {
                             `<p class="text-sm text-center py-1">Motivo de consulta</p>`,
                         ],
                         [
-                            `<p class="text-sm text-center py-1">${propiedadesTrabajoSocialPDF.value.motivo}</p>`
+                            `<p class="text-sm text-center py-2">${propiedadesTrabajoSocialPDF.value.motivo}</p>`
                         ],
                     ],
                 })
@@ -1596,7 +1597,7 @@ const propiedades = computed(() => {
                             '<p class="text-sm w-full text-center py-1">Analisis/Tratamiento</p>',
                         ],
                         [
-                            `<p class="text-sm w-full text-center py-1">${propiedadesTrabajoSocialPDF.value.analisis}</p>`,
+                            `<p class="text-sm w-full text-center py-2">${propiedadesTrabajoSocialPDF.value.analisis}</p>`,
                         ],
                     ],
                 })

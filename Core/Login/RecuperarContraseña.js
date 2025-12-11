@@ -21,7 +21,7 @@ const enviarFormulario = async (datos) => {
                 metodo: 'POST',
                 url: config.public.recuperarContraseña,
                 body: {
-                    correo: datos.correo,
+                    correo: datos.correo.toLowerCase(),
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -34,6 +34,13 @@ const enviarFormulario = async (datos) => {
                     notificacionesStore.options.tiempo = 1500
                     notificacionesStore.mensaje()
                 return true
+            } else {
+                    notificacionesStore.options.icono = 'error'
+                    notificacionesStore.options.background = '#d33'
+                    notificacionesStore.options.position = 'top-end'
+                    notificacionesStore.options.texto = 'Correo no Registrado!'
+                    notificacionesStore.options.tiempo = 1500
+                    notificacionesStore.mensaje()
             }
         } catch (error) {
             console.error('Fallo al enviar.', error);

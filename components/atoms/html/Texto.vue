@@ -1,5 +1,5 @@
 <template>
-  <p class="text-base mb-2">{{ props.Propiedades.texto }}</p>
+  <p class="text-sm mb-2">{{ props.Propiedades.texto }}</p>
 </template>
 
 <script setup>

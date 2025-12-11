@@ -6,8 +6,6 @@ import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBMana
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarActualizarHistoria = async (datos) => {
-    console.log(datos)
-
     const notificacionesStore = useNotificacionesStore();
     const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
@@ -48,22 +46,10 @@ export const validarYEnviarActualizarHistoria = async (datos) => {
             if (!analisisT?.analisis && puedePostAnalisis) errores.push("El análisis es obligatorio.");
             if (!analisisT?.tipoAnalisis && puedePostAnalisis) errores.push("El tipo de análisis es obligatorio.");
 
-            const examenT = datos.ExamenFisico;
-            if (!examenT?.peso || isNaN(examenT.peso)) errores.push("El peso debe ser un número.");
-            if (!examenT?.altura || isNaN(examenT.altura)) errores.push("La altura debe ser un número.");
-            if (!examenT?.signosVitales) {
-                errores.push("Los signos vitales son obligatorios.");
-            } else {
-                const sv = examenT.signosVitales;
-                if (!sv.ta || !sv.fc || !sv.fr || !sv.t || !sv.SATo2) {
-                    errores.push("Todos los signos vitales deben estar completos.");
-                }
-            }
-
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             const consultas = {
-                ...datos.Plan_manejo_procedimientos
+                Analisis: {...datos.Analisis}
             }
             return await enviarFormularioActualizarConsulta(consultas);
 
@@ -507,20 +493,17 @@ const enviarFormularioActualizarConsulta = async (datos) => {
             // mandar a api
             let options = {
                 metodo: 'PUT' + '/' + datos.Analisis.id,
-                url: config.public.planManejoProcedimientos,
+                url: config.public.analisis,
                 token: token,
-                body: datos
+                body: datos.Analisis
             }
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
                 // Actualizar local
                 const datosActualizar = {
-                    Plan_manejo_procedimientos: {
-                        id: respuesta.data.id,
-                        procedimiento: respuesta.data.procedimiento,
-                        codigo: respuesta.data.codigo,
-                        dias_asignados: respuesta.data.dias_asignados,
+                    Analisis: {
+                        ...datos.Analisis
                     }
                 };
                 await actualizarEnIndexedDB(JSON.stringify(datosActualizar))

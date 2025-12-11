@@ -48,7 +48,6 @@ export default defineNuxtConfig({
       administradores: 'api/v1/administradores',
       cie10: 'api/v1/cie10',
       obtenerSelloBase64: 'api/v1/sello{filename}',
-      obtenerSugerencia: 'api/v1/sugerenciaIA',
     }
   },
   app: {

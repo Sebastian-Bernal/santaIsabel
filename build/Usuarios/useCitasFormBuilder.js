@@ -102,28 +102,32 @@ export function useFormularioCitaBuilder({
     citasStore.Formulario.Cita.id_medico = medico.id_profesional
   }
 
-  function validarFecha(event) {
-    const fechaStr = event.target.value;
-    const fechaCita = new Date(fechaStr);
-    const hoy = new Date();
-    const errorDiv = document.getElementById('error-fecha');
-    // Limpiar la hora para comparar solo fechas
-    hoy.setHours(0, 0, 0, 0);
-    fechaCita.setHours(0, 0, 0, 0);
+  // function validarFecha(event) {
+  //   const fechaStr = event.target.value;
+  //   const fechaCita = new Date(fechaStr);
+  //   const hoy = new Date();
+  //   const errorDiv = document.getElementById('error-fecha');
+  //   // Limpiar la hora para comparar solo fechas
+  //   hoy.setHours(0, 0, 0, 0);
+  //   fechaCita.setHours(0, 0, 0, 0);
 
-    if (!fechaStr) {
-      alert("Por favor ingresa una fecha.");
-      return;
-    }
-    const maxFecha = new Date(hoy);
-    maxFecha.setDate(maxFecha.getDate() - 1);
+  //   if (!fechaStr) {
+  //     alert("Por favor ingresa una fecha.");
+  //     return;
+  //   }
+  //   const maxFecha = new Date(hoy);
+  //   maxFecha.setDate(maxFecha.getDate() - 1);
 
-    if (fechaCita < maxFecha) {
-      errorDiv.innerHTML = `<p>La fecha de la cita no puede ser anterior a hoy.</p>`
-      return;
-    }
+  //   if (fechaCita < maxFecha) {
+  //     errorDiv.innerHTML = `<p>La fecha de la cita no puede ser anterior a hoy.</p>`
+  //     return;
+  //   }
 
-    errorDiv.innerHTML = ''
+  //   errorDiv.innerHTML = ''
+  // }
+
+  function validarFecha() {
+    
   }
 
   function validarHora(event) {

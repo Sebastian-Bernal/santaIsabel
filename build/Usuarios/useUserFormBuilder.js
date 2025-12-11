@@ -390,6 +390,53 @@ export function useUserBuilder({
                 vmodel: 'Paciente.vulnerabilidad',
             })
 
+                // --- Label Acompañante ---
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'nombreAcompañante',
+                    size: 'text-sm',
+                    text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Cuidador (Opcional)',
+                    tamaño: 'w-full col-span-2'
+                })
+        
+                // --- Nombre Acompañante ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'Paciente.nameCuidador',
+                    type: 'text',
+                    id: 'nombreAcompañante',
+                    name: 'nombreAcompañante',
+                    placeholder: 'Nombre completo del cuidador',
+                    tamaño: 'w-full'
+                })
+        
+                // --- Parentesco Acompañante ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Paciente.parentescoCuidador',
+                    id: 'parentesco',
+                    name: 'parentesco',
+                    placeholder: 'Seleccione el parentesco',
+                    tamaño: 'w-full',
+                    options: [
+                        { text: 'Padre', value: 'Padre' },
+                        { text: 'Madre', value: 'Madre' },
+                        { text: 'Hijo', value: 'Hijo' },
+                        { text: 'Hija', value: 'Hija' },
+                        { text: 'Cónyuge', value: 'Conyuge' },
+                        { text: 'Hermano', value: 'Hermano' },
+                        { text: 'Hermana', value: 'Hermana' },
+                        { text: 'Tío/Tía', value: 'Tio/Tia' },
+                        { text: 'Primo/Prima', value: 'Primo/Prima' },
+                        { text: 'Abuelo/Abuela', value: 'Abuelo/Abuela' },
+                        { text: 'Nieto/Nieta', value: 'Nieto/Nieta' },
+                        { text: 'Otro familiar', value: 'Otro familiar' },
+                        { text: 'Amigo/a', value: 'Amigo/a' },
+                        { text: 'Vecino/a', value: 'Vecino/a' },
+                        { text: 'Cuidador externo', value: 'Cuidador externo' }
+                    ]
+                })
+
             if(user === 'Admin'){
                 builder
                 // 📌 Sección: tratamientos
@@ -397,7 +444,7 @@ export function useUserBuilder({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
                     buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', } },],
-                    tamaño: 'w-full md:col-span-2 mb-5',
+                    tamaño: 'w-full md:col-span-2 mb-6',
                     vmodel: 'Plan_manejo_procedimientos',
                     value: [],
                     campos: [

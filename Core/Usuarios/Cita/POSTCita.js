@@ -56,30 +56,30 @@ export const validarYEnviarNuevaCita = async (datos) => {
     }
 
     // Validar fecha
-    const validarFecha = (fechaStr) => {
-        if (!fechaStr) return false;
+    // const validarFecha = (fechaStr) => {
+    //     if (!fechaStr) return false;
 
-        const fechaCita = new Date(fechaStr);
-        const hoy = new Date();
+    //     const fechaCita = new Date(fechaStr);
+    //     const hoy = new Date();
 
-        // Limpiar la hora para comparar solo fechas
-        hoy.setHours(0, 0, 0, 0);
-        fechaCita.setHours(0, 0, 0, 0);
+    //     // Limpiar la hora para comparar solo fechas
+    //     hoy.setHours(0, 0, 0, 0);
+    //     fechaCita.setHours(0, 0, 0, 0);
 
-        const maxFecha = new Date(hoy);
-        maxFecha.setDate(maxFecha.getDate() - 2);
-        return fechaCita > maxFecha;
-    };
+    //     const maxFecha = new Date(hoy);
+    //     maxFecha.setDate(maxFecha.getDate() - 2);
+    //     return fechaCita > maxFecha;
+    // };
 
 
-    if (!validarFecha(cita.fecha)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Informacion invalida.';
-        notificacionesStore.options.texto = 'La fecha de la cita no puede ser anterior a hoy.';
-        notificacionesStore.options.tiempo = 5000;
-        notificacionesStore.simple();
-        return false;
-    }
+    // if (!validarFecha(cita.fecha)) {
+    //     notificacionesStore.options.icono = 'error';
+    //     notificacionesStore.options.titulo = 'Informacion invalida.';
+    //     notificacionesStore.options.texto = 'La fecha de la cita no puede ser anterior a hoy.';
+    //     notificacionesStore.options.tiempo = 5000;
+    //     notificacionesStore.simple();
+    //     return false;
+    // }
 
     // Validar hora
     const validarHora = (horaStr) => {
@@ -137,6 +137,7 @@ if (cita.tipo) {
 
     const fechaInicial = parseFechaISO(datos.Cita.fecha);
 
+    varView.cargando = true
     // Generar todas las citas
     for (let i = 0; i < cantidad; i++) {
         // Clonar la fecha inicial
@@ -161,7 +162,7 @@ if (cita.tipo) {
         };
         await enviarFormularioCita({ Cita: { ...body } });
     }
-
+    varView.cargando = false
     return true;
 }
 

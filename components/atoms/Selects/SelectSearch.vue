@@ -1,7 +1,21 @@
 <script setup>
-import { ref, watch, unref } from 'vue';
+import { ref, watch, unref, onMounted, onBeforeUnmount } from 'vue';
 // Input con datos seleccionables
 // Props modelvalue, options = data. ej: Pacientes, opciones = valores a comparar: ej Name, seleccionarItem: funcion al seleccionar item
+
+// const handleScroll = () => {
+//     // Cierra la lista al hacer scroll
+//     mostrarLista.value = false;
+// };
+
+// onMounted(() => {
+//     // Cierra si el usuario hace scroll en la página
+//     window.addEventListener("scroll", handleScroll, true);
+// });
+
+// onBeforeUnmount(() => {
+//     window.removeEventListener("scroll", handleScroll, true);
+// });
 
 const props = defineProps({
     modelValue: {
@@ -18,8 +32,6 @@ const mostrarLista = ref(false);
 const opcionesFiltradas = ref([]);
 const errorMensaje = ref();
 const desplegarArriba = ref(false);
-const posicion = ref({ top: 0, bottom: 0, left: 0, width: 0 });
-
 
 watch(() => props.modelValue, (nuevoValor) => {
     const propiedadFiltrar1 = unref(props.Propiedades.opciones?.[0]?.value ?? '');
@@ -87,23 +99,24 @@ function handleInput(event) {
         value = value.toLowerCase();
     }
 
-
     // posición del input en la pantalla
     const rect = event.target.getBoundingClientRect();
     const mitadPantalla = window.innerHeight / 2;
 
     // si el input está debajo de la mitad, desplegamos hacia arriba
     desplegarArriba.value = rect.top > mitadPantalla;
-    posicion.value = {
-        top: rect.top,
-        bottom: rect.bottom,
-        left: rect.left,
-        width: rect.width
-    };
-
 
     // Emitimos el valor transformado (o sin transformar)
     emit('update:modelValue', value);
+}
+
+function handleBlur(event) {
+    // Esperar a que se ejecute el mousedown del ul
+    setTimeout(() => {
+        if (!mostrarLista.value) {
+            coincidencia(event);
+        }
+    }, 150);
 }
 
 </script>
@@ -111,12 +124,13 @@ function handleInput(event) {
 <template>
     <div class="relative" :class="Propiedades.tamaño">
         <input :value="modelValue"
-            class="mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="z-100 mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="Propiedades.placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)"
-            @blur="($event) => { Propiedades.events?.onBlur?.(); coincidencia($event); }"
+            @blur="handleBlur"
             @keyup.enter="Propiedades.events?.onKeyUp" />
+
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length" :class="[
             'autocomplete-list absolute left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-999999 p-0',
@@ -133,9 +147,8 @@ function handleInput(event) {
                 </div>
             </li>
         </ul>
-
         <div v-if="!Propiedades.disabled" class="absolute top-2.5 right-3">
-            <i class="fa-solid fa-search text-blue-600"></i>
+            <i class="fa-solid fa-search text-blue-600 cursor-pointer"></i>
         </div>
 
         <p class="text-xs text-red-400">{{ errorMensaje }}</p>

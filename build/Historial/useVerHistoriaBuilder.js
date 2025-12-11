@@ -166,73 +166,71 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full md:col-span-1 col-span-2',
             })
     }
-
     else if (formularioItem.value === 'Consulta') {
         builder
             .nuevaSeccion('Consulta')
+        if (!actualizar.value) {
+            builder
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'nombre',
+                    size: 'text-sm',
+                    tamaño: 'w-full col-span-2',
+                    text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
+                })
+                // --- Nombre Paciente ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'HistoriaClinica.name_paciente',
+                    id: 'nombre',
+                    name: 'nombre',
+                    placeholder: 'Nombre del paciente',
+                    tamaño: 'w-full col-span-2'
+                })
+                // --- Label Acompañante ---
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'tipo',
+                    size: 'text-sm',
+                    text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
+                    tamaño: 'w-full col-span-2'
+                })
+        
+                // --- Nombre Acompañante ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'Analisis.acompañante',
+                    type: 'text',
+                    id: 'nombreAcompañante',
+                    name: 'nombreAcompañante',
+                    placeholder: 'Nombre completo del acompañante',
+                    tamaño: 'w-full'
+                })
+        
+                // --- Parentesco Acompañante ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Analisis.acompañante',
+                    id: 'parentesco',
+                    name: 'parentesco',
+                    placeholder: 'Seleccione el parentesco',
+                    tamaño: 'w-full',
+                    options: [
+                        { text: 'Padre', value: 'Padre' },
+                        { text: 'Madre', value: 'Madre' },
+                        { text: 'Hijo', value: 'Hijo' },
+                        { text: 'Conyuge', value: 'Conyuge' },
+                        { text: 'Hermano/a', value: 'Hermano/a' }
+                    ]
+                })
+        }
 
-            .addCampo({
-                component: 'Label',
-                forLabel: 'nombre',
-                size: 'text-sm',
-                tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente'
-            })
-            // --- Nombre Paciente ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'HistoriaClinica.name_paciente',
-                id: 'nombre',
-                name: 'nombre',
-                placeholder: 'Nombre del paciente',
-                tamaño: 'w-full col-span-2'
-            })
-
-            // --- Numero de documento ---
-
-
-            // --- Label Acompañante ---
-            // .addCampo({
-            //     component: 'Label',
-            //     forLabel: 'tipo',
-            //     size: 'text-sm',
-            //     text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
-            //     tamaño: 'w-full col-span-2'
-            // })
-
-            // // --- Nombre Acompañante ---
-            // .addCampo({
-            //     component: 'Input',
-            //     vmodel: 'Analisis.acompañante',
-            //     type: 'text',
-            //     id: 'nombreAcompañante',
-            //     name: 'nombreAcompañante',
-            //     placeholder: 'Nombre completo del acompañante',
-            //     tamaño: 'w-full'
-            // })
-
-            // --- Parentesco Acompañante ---
-            // .addCampo({
-            //     component: 'Select',
-            //     vmodel: 'Analisis.acompañante',
-            //     id: 'parentesco',
-            //     name: 'parentesco',
-            //     placeholder: 'Seleccione el parentesco',
-            //     tamaño: 'w-full',
-            //     options: [
-            //         { text: 'Padre', value: 'Padre' },
-            //         { text: 'Madre', value: 'Madre' },
-            //         { text: 'Hijo', value: 'Hijo' },
-            //         { text: 'Conyuge', value: 'Conyuge' },
-            //         { text: 'Hermano/a', value: 'Hermano/a' }
-            //     ]
-            // })
-
+            builder
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
                 size: 'text-sm',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
             })
             .addCampo({
@@ -241,17 +239,18 @@ export function useVerHistoriaBuilder({
                 id: 'motivo',
                 name: 'motivo',
                 placeholder: 'Describa el motivo principal de la consulta...',
-                tamaño: 'w-full col-span-2'
+                tamaño: 'w-full md:col-span-2'
             })
             .addCampo({
                 component: 'Label',
-                forLabel: 'enfermedad',
+                forLabel: 'observacion',
                 size: 'text-sm',
-                tamaño: 'w-full col-span-2',
+                tamaño: 'w-full md:col-span-2',
                 text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Observacion'
             })
             .addCampo({
                 component: 'Input',
+                label: 'Observacion',
                 vmodel: 'Analisis.observacion',
                 id: 'observacion',
                 name: 'observacion',
@@ -259,6 +258,7 @@ export function useVerHistoriaBuilder({
             })
             .addCampo({
                 component: 'Select',
+                label: 'Tipo analisis',
                 vmodel: 'Analisis.tipoAnalisis',
                 id: 'tipoAnalisis',
                 name: 'tipoAnalisis',
@@ -271,116 +271,173 @@ export function useVerHistoriaBuilder({
                     { text: 'Estado inhabilitado', value: '' }
                 ]
             })
+            .addCampo({
+                component: 'Input',
+                label: 'Analisis/Tratamiento',
+                vmodel: 'Analisis.analisis',
+                id: 'observacion',
+                name: 'observacion',
+                tamaño: 'w-full md:col-span-2'
+            })
+            .addCampo({
+                component: 'Select',
+                label: 'Tratamiento',
+                vmodel: 'Analisis.tratamiento',
+                id: 'rehabilitacion',
+                name: 'rehabilitacion',
+                placeholder: 'Condición de rehabilitación',
+                tamaño: 'w-full md:col-span-2',
+                options: [
+                    { text: 'Total o Parcial', value: 'Total o Parcial' },
+                    { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                    { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                ]
+            })
 
+            if (!actualizar.value) {
+                builder
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'motivo',
+                    text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
+                    tamaño: 'w-full col-span-2'
+                })
+    
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.signosVitales.ta',
+                    type: 'text',
+                    id: 'ta',
+                    name: 'ta',
+                    placeholder: 'TA',
+                    tamaño: 'w-full',
+                    slot: {
+                        tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
+                    },
+                })
+    
+                // --- Input: FC ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.signosVitales.fc',
+                    type: 'number',
+                    id: 'fc',
+                    name: 'fc',
+                    placeholder: 'FC',
+                    max: 100,
+                    tamaño: 'w-full',
+                })
+    
+                // --- Input: FR ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.signosVitales.fr',
+                    type: 'number',
+                    id: 'fr',
+                    name: 'fr',
+                    placeholder: 'FR',
+                    max: 250,
+                    tamaño: 'w-full',
+                })
+    
+                // --- Input: Temperatura (Tº) ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.signosVitales.t',
+                    type: 'number',
+                    id: 't',
+                    name: 't',
+                    placeholder: 'Tº',
+                    max: 50,
+                    tamaño: 'w-full',
+                })
+    
+                // --- Input: Saturación O2 ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.signosVitales.SATo2',
+                    type: 'number',
+                    id: 'sat',
+                    name: 'sat',
+                    placeholder: 'Sat O2',
+                    max: 100,
+                    tamaño: 'w-full col-span-1',
+                })
+    
+                // --- Label: Medidas Antropométricas ---
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'peso',
+                    text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
+                    tamaño: 'w-full col-span-2'
+                })
+    
+                // --- Input: Otros ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.otros',
+                    type: 'text',
+                    id: 'otros',
+                    name: 'otros',
+                    placeholder: 'Otros (opcional)',
+                    tamaño: 'w-full col-span-1'
+                })
+    
+                // --- Input: Peso ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.peso',
+                    type: 'number',
+                    id: 'peso',
+                    name: 'peso',
+                    placeholder: 'Peso (KG)',
+                    tamaño: 'w-full col-span-1'
+                })
+    
+                // --- Input: Altura ---
+                .addCampo({
+                    component: 'Input',
+                    vmodel: 'ExamenFisico.altura',
+                    type: 'number',
+                    id: 'altura',
+                    name: 'altura',
+                    placeholder: 'Altura (CM)',
+                    tamaño: 'w-full col-span-1'
+                })
+            }
+
+    }
+    else if (formularioItem.value === 'Evolucion') {
+        builder
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
-                text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
-                tamaño: 'w-full col-span-2'
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
             })
-
             .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.ta',
-                type: 'text',
-                id: 'ta',
-                name: 'ta',
-                placeholder: 'TA',
-                tamaño: 'w-full',
-                slot: {
-                    tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
-                },
+                component: 'Textarea',
+                vmodel: 'Analisis.motivo',
+                id: 'motivo',
+                name: 'motivo',
+                placeholder: 'Describa el motivo principal de la consulta...',
+                tamaño: 'w-full md:col-span-2'
             })
-
-            // --- Input: FC ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.fc',
-                type: 'number',
-                id: 'fc',
-                name: 'fc',
-                placeholder: 'FC',
-                max: 100,
-                tamaño: 'w-full',
-            })
-
-            // --- Input: FR ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.fr',
-                type: 'number',
-                id: 'fr',
-                name: 'fr',
-                placeholder: 'FR',
-                max: 250,
-                tamaño: 'w-full',
-            })
-
-            // --- Input: Temperatura (Tº) ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.t',
-                type: 'number',
-                id: 't',
-                name: 't',
-                placeholder: 'Tº',
-                max: 50,
-                tamaño: 'w-full',
-            })
-
-            // --- Input: Saturación O2 ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.SATo2',
-                type: 'number',
-                id: 'sat',
-                name: 'sat',
-                placeholder: 'Sat O2',
-                max: 100,
-                tamaño: 'w-full col-span-1',
-            })
-
-            // --- Label: Medidas Antropométricas ---
             .addCampo({
                 component: 'Label',
-                forLabel: 'peso',
-                text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
-                tamaño: 'w-full col-span-2'
+                forLabel: 'observacion',
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Recomendaciones'
             })
-
-            // --- Input: Otros ---
             .addCampo({
                 component: 'Input',
-                vmodel: 'ExamenFisico.otros',
-                type: 'text',
-                id: 'otros',
-                name: 'otros',
-                placeholder: 'Otros (opcional)',
-                tamaño: 'w-full col-span-1'
+                vmodel: 'Analisis.observacion',
+                id: 'observacion',
+                name: 'observacion',
+                tamaño: 'w-full md:col-span-2'
             })
-
-            // --- Input: Peso ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.peso',
-                type: 'number',
-                id: 'peso',
-                name: 'peso',
-                placeholder: 'Peso (KG)',
-                tamaño: 'w-full col-span-1'
-            })
-
-            // --- Input: Altura ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.altura',
-                type: 'number',
-                id: 'altura',
-                name: 'altura',
-                placeholder: 'Altura (CM)',
-                tamaño: 'w-full col-span-1'
-            })
-
     }
     else {
         builder

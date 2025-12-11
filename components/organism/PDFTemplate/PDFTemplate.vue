@@ -94,18 +94,15 @@ const cerrar = () => {
 <template>
     <PDF v-if="imprimir"></PDF>
     <FondoBlur v-if="unref(props.Propiedades.isActive) && !imprimir">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[80%] w-[90%] h-[90%]">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[75%] md:h-[85%] w-[90%] h-[90%]">
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
                     <h2 class="text-white font-bold text-2xl">Vista previa del PDF</h2>
                 </div>
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
-                    <div class="relative drop" @mouseleave="cerrarDropdown">
-                        <div
-                            class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
-                            @click="exportPdf"><i class="fa-solid fa-print"></i>
-                        </div>
+                    <div class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
+                        @click="exportPdf"><i class="fa-solid fa-print"></i>
                     </div>
                     <div @click="cerrar"
                         class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">

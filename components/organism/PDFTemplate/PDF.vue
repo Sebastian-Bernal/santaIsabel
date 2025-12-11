@@ -53,7 +53,6 @@ function getValue(obj, path) {
   color: #222; /* tono negro suave para mejor lectura */
   background: #fff;
   line-height: 1.6;
-  font-size: 14pt;
 }
 
 /* Encabezados */
@@ -69,7 +68,6 @@ function getValue(obj, path) {
   width: 100%;
   border-collapse: collapse;
   margin: 1em 0;
-  font-size: 12pt;
 }
 
 .print-page table th {
