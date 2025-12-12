@@ -15,7 +15,6 @@ export function useLoginBuilder({
 
   const cambiarMostrarContraseña = () => {
       mostrarContraseña.value = !mostrarContraseña.value;
-      console.log(mostrarContraseña.value)
   };
 
   builder

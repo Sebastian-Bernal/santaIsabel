@@ -52,7 +52,8 @@ const {
     busqueda,
     filtros,
     filtrosConOpciones,
-    datosOrdenados
+    datosOrdenados,
+    borrarFiltros
 } = useOrdenamiento(props.Propiedades.citas || ref([]), props.Propiedades.filtros);
 
 const {
@@ -73,6 +74,11 @@ watch(busqueda, (nuevoValor, anteriorValor) => {
         paginaActual.value = 1;
     }
 });
+
+watch(filtros, (nuevoValor, anteriorValor) => {
+    paginaActual.value = 1;
+}, { deep: true });
+
 
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
@@ -148,7 +154,7 @@ async function showObservacion(cita) {
 async function activarCita(cita) {
     let pacientes = pacientesStore.Pacientes
 
-    if(pacientes.length < 1){
+    if (pacientes.length < 1) {
         pacientes = await pacientesStore.listPacientes(false)
     }
     const pacienteCita = pacientes.filter(data => {
@@ -169,20 +175,20 @@ async function activarCita(cita) {
     })
 
     // varView.tipoConsulta = cita.servicio
-    if(varView.tipoConsulta.plantilla === 'Terapia'){
+    if (varView.tipoConsulta.plantilla === 'Terapia') {
         historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
         historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
         historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
         historiasStore.Formulario.Terapia.fecha = cita.fecha
         historiasStore.Formulario.Terapia.hora = cita.hora
-    } else if(varView.tipoConsulta.plantilla === 'Nota'){
+    } else if (varView.tipoConsulta.plantilla === 'Nota') {
         historiasStore.Formulario.Nota.id_paciente = cita.id_paciente
         historiasStore.Formulario.Nota.id_profesional = cita.id_medico
         historiasStore.Formulario.Nota.id_procedimiento = cita.id_procedimiento
         historiasStore.Formulario.Nota.direccion = pacienteCita.direccion
         historiasStore.Formulario.Nota.fecha_nota = cita.fecha
         historiasStore.Formulario.Nota.hora_nota = cita.hora
-    } else if(varView.tipoConsulta.plantilla === 'Medicina'){
+    } else if (varView.tipoConsulta.plantilla === 'Medicina') {
         const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
 
         historiasStore.Formulario.AntecedentesRegistrados = antecedentes
@@ -197,7 +203,11 @@ async function activarCita(cita) {
     <div v-if="props.Propiedades.showTodas"
         class="flex md:flex-row flex-col justify-between items-end px-6 py-3 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl">
         <div class="md:w-1/3 w-full">
-            <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
+            <div class="flex gap-2">
+                <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
+                <span v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')" class="dark:text-gray-400 text-gray-600 cursor-pointer"
+                    @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
+            </div>
             <Input :Propiedades="{
                 placeholder: 'Buscar dato en citas...',
                 icon: 'fa-solid fa-search',
@@ -239,27 +249,27 @@ async function activarCita(cita) {
                 </div>
             </div>
             <div class="flex md:w-2/4 w-3/4 justify-between flex-row md:mt-0 mt-5">
-            <div class="flex flex-col gap-2">
-                <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i>
-                    {{ cita.name_medico }}</h3>
-                <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
-            </div>
-            <!-- Acciones -->
-            <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
-                <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
-                        class="fa-solid fa-check"></i></ButtonRounded>
-                <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
-                        class="fa-solid fa-xmark"></i></ButtonRounded>
-            </div>
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-sm flex gap-2 items-center"> <i class="fa-solid fa-user-doctor text-gray-500"></i>
+                        {{ cita.name_medico }}</h3>
+                    <h3 class="text-sm"><i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}</h3>
+                </div>
+                <!-- Acciones -->
+                <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
+                    <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
+                            class="fa-solid fa-check"></i></ButtonRounded>
+                    <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
+                            class="fa-solid fa-xmark"></i></ButtonRounded>
+                </div>
 
-            <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
-                <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
-                        class="fa-solid fa-info"></i></ButtonRounded>
-            </div>
-            <div class="flex flex-col gap-2" v-if="cita.estado === 'Realizada'">
-                <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
-                        class="fa-solid fa-info"></i></ButtonRounded>
-            </div>
+                <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
+                    <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
+                            class="fa-solid fa-info"></i></ButtonRounded>
+                </div>
+                <div class="flex flex-col gap-2" v-if="cita.estado === 'Realizada'">
+                    <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
+                            class="fa-solid fa-info"></i></ButtonRounded>
+                </div>
             </div>
         </div>
 
@@ -281,13 +291,13 @@ async function activarCita(cita) {
             </button>
             <div class="flex gap-2 pagina">
                 <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-600 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                     {{ paginaActual - 1 }}</h2>
                 <h2
-                    class="bg-gray-200 dark:bg-gray-700 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    class="bg-gray-300 dark:bg-gray-800 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                     {{ paginaActual }}</h2>
                 <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
+                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-600 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
                     {{ paginaActual + 1 }}</h2>
             </div>
             <button v-if="paginaActual != totalPaginas"

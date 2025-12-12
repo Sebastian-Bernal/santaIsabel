@@ -71,6 +71,10 @@ watch(busqueda, (nuevoValor, anteriorValor) => {
     }
 });
 
+watch(filtros, (nuevoValor, anteriorValor) => {
+    paginaActual.value = 1;
+}, { deep: true });
+
 // Tamaño numero de columnas
 const estiloColumnas = computed(() => {
     if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
@@ -156,7 +160,7 @@ const tablaAlto = computed(() => {
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
-                <span v-if="busqueda !== '' || filtros" class="dark:text-gray-400 text-gray-600 cursor-pointer"
+                <span v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')" class="dark:text-gray-400 text-gray-600 cursor-pointer"
                     @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
             </div>
             <div class="flex items-end justify-between gap-5 md:flex-row flex-col">

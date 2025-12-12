@@ -99,7 +99,7 @@ function validarFecha(event) {
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = pacientesStore.Formulario.InformacionUser.departamento;
 
-    const departamento = municipios.departamentos.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+    const departamento = municipios.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
 
     return departamento ? departamento.municipios : [];
 });
@@ -120,7 +120,7 @@ const propiedades = computed(() => {
         show: varView.showNuevoPaciente,
         tipoFormulario: "Wizard",
         buscarUsuario,
-        departamentos: municipios.departamentos,
+        departamentos: municipios,
         seleccionarDepartamento: () => {},
         municipios: municipiosOptions,
         seleccionarMunicipio: () => { },

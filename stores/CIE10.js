@@ -105,8 +105,7 @@ export const useCodigos = defineStore('CodigosCie10', {
             // Guardar datos en Ubicaciones
             const transaccionUbicaciones = this.bd.transaction('Ubicaciones', "readwrite");
             const STabreUbicaciones = transaccionUbicaciones.objectStore('Ubicaciones');
-            const cleanMunicipios = JSON.parse(JSON.stringify(this.municipios.departamentos));
-            console.log(this.municipios)
+            const cleanMunicipios = JSON.parse(JSON.stringify(this.municipios));
             for (let municipio of cleanMunicipios) {
                 try {
                     await new Promise((resolve, reject) => {

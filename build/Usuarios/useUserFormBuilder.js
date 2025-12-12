@@ -157,7 +157,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'SelectSearch',
             options: departamentos,
-            opciones: [{ value: "nombre" }, { text: 'nombre', value: 'nombre' }],
+            opciones: [{ value: "nombre" }, { text: 'Nombre:', value: 'nombre' }],
             seleccionarItem: seleccionarDepartamento,
             placeholder: 'Departamento',
             id: 'departamento',
@@ -174,7 +174,7 @@ export function useUserBuilder({
         .addCampo({
             component: 'SelectSearch',
             options: municipios,
-            opciones: [{ value: "nombre" }, { text: 'Codigo:', value: 'id' }],
+            opciones: [{ value: "NOMBRE" }, { text: 'Codigo:', value: 'CODIGO_MUNICIPIO' }],
             seleccionarItem: seleccionarMunicipio,
             placeholder: 'Municipio',
             id: 'municipio',

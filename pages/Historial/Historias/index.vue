@@ -1,10 +1,8 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import Formularios from '~/components/Paciente.vue';
 
 import { ref, onMounted, unref, toRaw } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
-import { useHistoriaBuilder } from '~/build/Historial/useHistoriaBuilder';
 import { useVerHistoriaBuilder } from '~/build/Historial/useVerHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
@@ -94,8 +92,36 @@ watch(() => showNota.value,
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
+    // const params = new URLSearchParams(window.location.search)
+    // const tipo = params.get('tipo')
+    // const cita = params.get('cita')
+    // const pacienteURL = parseInt(params.get('paciente'))
+
+    // if (cita) {
+    //     const historia = await historiasStore.listDatos(pacienteURL, 'HistoriaClinica', 'id_paciente')
+    //     const pacientes = await pacientesStore.listPacientes(false)
+    //     const paciente = pacientes.find(p => {
+    //         return p.id_paciente === pacienteURL
+    //     })
+    //     console.log(pacientes, paciente, pacienteURL)
+    //     const datos = {
+    //         id: historia.id,
+    //         id_paciente: pacienteURL,
+    //         cedula: paciente.No_document,
+    //         paciente: paciente.name
+    //     }
+    //     await cargaHistorial(datos.id)
+    //     historiasStore.Formulario.HistoriaClinica.name_paciente = datos.paciente
+    //     historiasStore.Formulario.HistoriaClinica.No_document_paciente = datos.cedula
+    //     historiasStore.Formulario.HistoriaClinica.id_paciente = datos.id
+    //     showVerHistorial.value = true
+    //     varView.citaRealizada = false
+    //     varView.tipoHistoria = ''
+    //     varView.datosPaciente = {}
+    // }
     varView.cargando = false
 });
+
 
 // visibilidad ver Historial
 const verHistoria = async (his) => {
@@ -128,10 +154,10 @@ async function cargaHistorial(id) {
     allAnalisis.map((analisis) => {
         if (analisis.servicio === 'Evolucion') {
             nutricion.value.push({ ...analisis })
-        } else if(analisis.servicio === 'Trabajo Social'){
-            trabajosSocial.value.push({ ...analisis})
-        } else if(analisis.servicio === 'Medicina'){
-            analisisDatos.push({ ...analisis})
+        } else if (analisis.servicio === 'Trabajo Social') {
+            trabajosSocial.value.push({ ...analisis })
+        } else if (analisis.servicio === 'Medicina') {
+            analisisDatos.push({ ...analisis })
         }
     })
 
@@ -184,7 +210,7 @@ async function cargaHistorial(id) {
         medicinas.value = []
     }
 
-// Diagnosticos
+    // Diagnosticos
 
     if (allAnalisis || allAnalisis.length > 0) {
         // Obtener todos los diagnosticos asociados a cada id_analisis de la historia
@@ -287,6 +313,7 @@ function actualizarItemConsultasHistoria(item) {
 }
 
 function actualizarItemEvolucionHistoria(item) {
+    console.log(item)
     formularioItem.value = 'Evolucion'
     varView.tipoHistoria = 'Evolucion'
     actualizar.value = true
@@ -295,14 +322,6 @@ function actualizarItemEvolucionHistoria(item) {
 }
 
 // Visibilidad notas
-function nuevaNota() {
-    notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
-    notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
-    notasStore.Formulario.Nota.id_paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
-    console.log(historiasStore.Formulario.HistoriaClinica)
-    showNota.value = true
-}
-
 function actualizarNota(nota) {
     mapCampos(nota, notasStore.Formulario)
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
@@ -321,7 +340,7 @@ async function exportarNotaPDF(data) {
     varView.cargando = true
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
-    
+
     const dataPaciente = pacientes.find(user => {
         return user.id_paciente === data.id_paciente
     })
@@ -372,13 +391,13 @@ async function exportarNotaPDF(data) {
 
 
     const diagnosticosNota = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value)
-        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
-        .map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
+        ? toRaw(diagnosticos.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
 
     propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, filasNotas, diagnosticosNota }
     activePdfNotas.value = true
@@ -400,13 +419,13 @@ async function exportarEvolucionPDF(data) {
     })
 
     const diagnosticosTerapia = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value)
-        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
-        .map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
+        ? toRaw(diagnosticos.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
 
     propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTerapia }
     activePdfEvolucion.value = true
@@ -436,40 +455,40 @@ async function exportarMedicinaPDF(data) {
     const antecedentesData = await historiasStore.listDatos(id_paciente, 'Antecedentes', 'id_paciente')
 
     const diagnosticosMedicina = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value)
-        .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
-        .map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
+        ? toRaw(diagnosticos.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
 
     const antecedentes = antecedentesData.map(antecedente => [
-            `<p class="text-xs leading-tight text-center py-1">${antecedente.descripcion}</p>`,
+        `<p class="text-xs leading-tight text-center py-1">${antecedente.descripcion}</p>`,
     ])
 
     const medicamentos = medicamentosData.map(medicamento => [
-            `<p class="text-xs leading-tight py-1">${medicamento.medicamento}</p>`,
-            `<p class="text-xs leading-tight py-1">${medicamento.dosis}</p>`,
-            `<p class="text-xs leading-tight py-1">${medicamento.cantidad}</p>`,
+        `<p class="text-xs leading-tight py-1">${medicamento.medicamento}</p>`,
+        `<p class="text-xs leading-tight py-1">${medicamento.dosis}</p>`,
+        `<p class="text-xs leading-tight py-1">${medicamento.cantidad}</p>`,
     ])
 
     const procedimientos = procedimientosData.map(procedimiento => [
-            `<p class="text-xs leading-tight py-1">${procedimiento.procedimiento}</p>`,
-            `<p class="text-xs leading-tight py-1">${procedimiento.codigo}</p>`,
-            `<p class="text-xs leading-tight py-1">${procedimiento.dias_asignados}</p>`,
+        `<p class="text-xs leading-tight py-1">${procedimiento.procedimiento}</p>`,
+        `<p class="text-xs leading-tight py-1">${procedimiento.codigo}</p>`,
+        `<p class="text-xs leading-tight py-1">${procedimiento.dias_asignados}</p>`,
     ])
 
-    propiedadesMedicinaPDF.value = { 
-        ...data, 
-        ...dataPaciente, 
-        nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, 
-        diagnosticosMedicina, 
-        Enfermedad: {...enfermedad[0]},
+    propiedadesMedicinaPDF.value = {
+        ...data,
+        ...dataPaciente,
+        nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello,
+        diagnosticosMedicina,
+        Enfermedad: { ...enfermedad[0] },
         Medicamentos: medicamentos,
         Procedimientos: procedimientos,
         Antecedentes: antecedentes,
-    };console.log(propiedadesMedicinaPDF.value)
+    }; console.log(propiedadesMedicinaPDF.value)
     activePdfMedicina.value = true
     varView.cargando = false
 }
@@ -491,13 +510,13 @@ async function exportarNutricionPDF(data) {
     })
 
     const diagnosticosEvolucion = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value)
-        .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
-        .map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
+        ? toRaw(diagnosticos.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
 
     propiedadesNutricionPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosEvolucion }
     activePdfNutricion.value = true
@@ -522,13 +541,13 @@ async function exportarTrabajoSocialPDF(data) {
     })
 
     const diagnosticosTrabajoS = Array.isArray(unref(diagnosticos.value))
-    ? toRaw(diagnosticos.value)
-        .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
-        .map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-    : [];
+        ? toRaw(diagnosticos.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
 
     propiedadesTrabajoSocialPDF.value = { ...data, ...dataPaciente[0], nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTrabajoS }
     activePdfTrabajoSocial.value = true
@@ -548,7 +567,7 @@ async function exportarHistoriaPDF() {
     activePdfHistoria.value = true
 }
 
-
+// Propiedades calculadas
 const fechaFormateada = () => {
     const fecha = new Date()
     const dia = String(fecha.getDate()).padStart(2, '0');
@@ -572,27 +591,19 @@ function estadoSemaforo(fila) {
 }
 
 function calcularEdad(fechaNacimiento) {
-  const hoy = new Date()
-  const nacimiento = new Date(fechaNacimiento)
+    const hoy = new Date()
+    const nacimiento = new Date(fechaNacimiento)
 
-  let edad = hoy.getFullYear() - nacimiento.getFullYear()
-  const mes = hoy.getMonth() - nacimiento.getMonth()
+    let edad = hoy.getFullYear() - nacimiento.getFullYear()
+    const mes = hoy.getMonth() - nacimiento.getMonth()
 
-  // Ajustar si aún no ha cumplido años este año
-  if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-    edad--
-  }
+    // Ajustar si aún no ha cumplido años este año
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--
+    }
 
-  return edad
+    return edad
 }
-
-
-const propiedadesNota = useNotasBuilder({
-    storeId: 'NuevaNota',
-    storePinia: 'Notas',
-    cerrarModal: cerrarNota,
-    show: showNota,
-})
 
 const propiedadesActualizarNota = useNotasBuilder({
     storeId: 'ActualizarNota',
@@ -616,8 +627,8 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const modal = new ModalBuilder()
 
-    const puedeVer = varView.getPermisos.includes('Historias_view');
-    if (!puedeVer) return
+    // const puedeVer = varView.getPermisos.includes('Historias_view');
+    // if (!puedeVer) return
     // const puedePost = varView.getPermisos.includes('Historias_post')
     const puedePUT = varView.getPermisos.includes('Historias_put')
     // const puedePUT = false
@@ -656,11 +667,11 @@ const propiedades = computed(() => {
     });
 
     const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
-    ? toRaw(diagnosticosCIF.value).map(diagnostico => [
-        `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-        `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+        ? toRaw(diagnosticosCIF.value).map(diagnostico => [
+            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
         ])
-    : [];
+        : [];
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
@@ -1070,21 +1081,21 @@ const propiedades = computed(() => {
                         ? propiedadesMedicinaPDF.value.Procedimientos
                         : [['<p class="text-xs">Sin antecedentes registrados</p>']]
                 })
-                
+
                 .addComponente('Espacio', { alto: 32 })
                 // PIE DE FIRMA
                 .addComponente('Tabla', {
                     container: 'pt-5',
                     border: false,
                     columnas: [
-                            `
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesMedicinaPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesMedicinaPDF.value.cedulaProfesional}</p>
                             <div>
-                            `, 
-                            `
+                            `,
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
@@ -1209,14 +1220,14 @@ const propiedades = computed(() => {
                     container: 'pt-5',
                     border: false,
                     columnas: [
-                            `
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
                             <div>
-                            `, 
-                            `
+                            `,
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
@@ -1236,11 +1247,13 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 400 },
                 ])
                 .setDatos(notas)
-                .setAcciones({ icons: [
-                    { icon: estadoSemaforo, action: () => { } }, 
-                    { icon: 'pdf', action: exportarNotaPDF }, 
-                    // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
-                ], botones: true, })
+                .setAcciones({
+                    icons: [
+                        { icon: estadoSemaforo, action: () => { } },
+                        { icon: 'pdf', action: exportarNotaPDF },
+                        // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
+                    ], botones: true,
+                })
                 .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             // .addComponente('Form', propiedadesActualizarNota)
@@ -1340,14 +1353,14 @@ const propiedades = computed(() => {
                     container: 'pt-5',
                     border: false,
                     columnas: [
-                            `
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesNotaPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesNotaPDF.value.cedulaProfesional}</p>
                             <div>
-                            `, 
-                            `
+                            `,
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNotaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
@@ -1368,7 +1381,7 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(tratamientos)
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
-                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500'})
+                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             .addComponente('Form', propiedadesItemHistoria)
 
@@ -1398,9 +1411,10 @@ const propiedades = computed(() => {
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
                 .setDatos(nutricion)
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, puedePUT ? {icon: 'editar', action: actualizarItemEvolucionHistoria} : ''], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'ver', action: actualizarItemEvolucionHistoria }], botones: true, })
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
+            .addComponente('Form', propiedadesItemHistoria)
             .addComponente('PDFTemplate', pdfNutricion
                 .setElementId('Nutricion')
                 .setIsActive(activePdfNutricion)
@@ -1436,14 +1450,14 @@ const propiedades = computed(() => {
                             ``,
                         ],
                         [
-                            [`<p class="text-xs py-1">No documento: <span class="text-xs">${propiedadesNutricionPDF.value.No_document}</span></p>
-                            <p class="text-xs py-1">Tipo de documento: <span class="text-xs">${propiedadesNutricionPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-1">Edad: <span class="text-xs">${propiedadesNutricionPDF.value.nacimiento}</span></p>
-                            <p class="text-xs py-1">Sexo: <span class="text-xs">${propiedadesNutricionPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs ">No documento: <span class="text-xs">${propiedadesNutricionPDF.value.No_document}</span></p>
+                            <p class="text-xs ">Tipo de documento: <span class="text-xs">${propiedadesNutricionPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs ">Edad: <span class="text-xs">${propiedadesNutricionPDF.value.nacimiento}</span></p>
+                            <p class="text-xs ">Sexo: <span class="text-xs">${propiedadesNutricionPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs py-1">EPS: <span class="text-xs">${propiedadesNutricionPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs py-1">Zona: <span class="text-xs">${propiedadesNutricionPDF.value.zona}</span></p>`
+                            `<p class="text-xs ">EPS: <span class="text-xs">${propiedadesNutricionPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs ">Zona: <span class="text-xs">${propiedadesNutricionPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1490,14 +1504,14 @@ const propiedades = computed(() => {
                     container: 'pt-5',
                     border: false,
                     columnas: [
-                            `
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesNutricionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesNutricionPDF.value.cedulaProfesional}</p>
                             <div>
-                            `, 
-                            `
+                            `,
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNutricionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
@@ -1609,14 +1623,14 @@ const propiedades = computed(() => {
                     container: 'pt-5',
                     border: false,
                     columnas: [
-                            `
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesTrabajoSocialPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesTrabajoSocialPDF.value.cedulaProfesional}</p>
                             <div>
-                            `, 
-                            `
+                            `,
+                        `
                             <div class="min-h-[150px]">
                                 <p class="text-xs text-center py-1 border-1">Firma y sello</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesTrabajoSocialPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
@@ -1626,7 +1640,7 @@ const propiedades = computed(() => {
                 })
             )
 
-            
+
 
         )
     return pagina.build()
@@ -1636,5 +1650,4 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
-    <Formularios v-if="showNuevoPaciente" :showPaciente="showNuevoPaciente" @ocultar="showNuevoPaciente = false" />
 </template>

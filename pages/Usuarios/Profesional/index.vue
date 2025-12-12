@@ -163,7 +163,7 @@ async function eliminarProfesional() {
 const municipiosOptions = computed(() => {
     const departamentoSeleccionado = medicosStore.Formulario.InformacionUser.departamento;
 
-    const departamento = municipios.departamentos.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+    const departamento = municipios.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
 
     return departamento ? departamento.municipios : [];
 });
@@ -189,7 +189,7 @@ const propiedades = computed(() => {
             show: showVer,
             tipoFormulario: 'Wizard',
             buscarUsuario,
-            departamentos: municipios.departamentos,
+            departamentos: municipios,
             seleccionarDepartamento,
             municipios: municipiosOptions,
             seleccionarMunicipio: () => { },
@@ -211,7 +211,7 @@ const propiedades = computed(() => {
             show: show,
             tipoFormulario: 'Wizard',
             buscarUsuario,
-            departamentos: municipios.departamentos,
+            departamentos: municipios,
             seleccionarDepartamento,
             municipios: municipiosOptions,
             seleccionarMunicipio: () => { },

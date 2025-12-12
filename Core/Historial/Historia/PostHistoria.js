@@ -4,6 +4,11 @@ import { useCalendarioCitas } from '~/stores/Calendario.js';
 import { useVarView } from '~/stores/varview.js';
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { decryptData } from '~/composables/Formulario/crypto';
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
+import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
+import { PdfBuilder } from '~/build/Constructores/PDFBuilder.js';
+import { useRouter } from 'vue-router'
+
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
@@ -162,6 +167,58 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 return;
             }
 
+            datos.Nota.objetivo.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Nota.subjetivo.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Nota.actividades.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Nota.plan.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Nota.intervencion.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Nota.evaluacion.forEach((i, idx) => {
+                if (!i.descripcion || !i.hora) {
+                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                }
+            });
+
+            datos.Diagnosticos.forEach((d, i) => {
+                if (!d.descripcion || !d.codigo) {
+                    errores.push(`Diagnóstico ${i + 1} incompleto.`);
+                }
+            });
+            // Mostrar errores o continuar
+            if (errores.length > 0) {
+                errores.forEach(msg => {
+                    notificacionesStore.options.icono = 'error';
+                    notificacionesStore.options.titulo = 'Informacion invalida.';
+                    notificacionesStore.options.texto = msg;
+                    notificacionesStore.options.tiempo = 5000;
+                    notificacionesStore.simple();
+                });
+                return false;
+            }
             return await enviarFormularioNota(datos)
 
         case 'Medicina':
@@ -407,6 +464,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     const online = navigator.onLine;
     if (online) {
@@ -701,20 +759,20 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     const storeCodigos = useCodigos()
     const codigosLocal = await storeCodigos.leerdatos()
     const codigosSet = new Set(codigosLocal);
 
     const cie10 = datos.Diagnosticos
-    .filter(d => !codigosSet.has(d.codigo))
-    .map(d => ({ codigo: d.codigo, nombre: d.descripcion }));
-    console.log(cie10)
-    if(cie10.length > 0){
+        .filter(d => !codigosSet.has(d.codigo))
+        .map(d => ({ codigo: d.codigo, nombre: d.descripcion }));
+    if (cie10.length > 0) {
         enviarDiagnostico(cie10)
     }
 
-    
+
     const online = navigator.onLine;
     if (online) {
         try {
@@ -1134,6 +1192,7 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     datos.Nota.Descripcion = [
         ...datos.Nota.objetivo,
@@ -1322,4 +1381,196 @@ export async function enviarDiagnostico(datos) {
         }
     }
 
+}
+
+async function notapdf(data) {
+    const varView = useVarView()
+    varView.cargando = true
+    const pacientesStore = usePacientesStore()
+    const medicoStore = useMedicosStore()
+
+    const pacientes = await pacientesStore.listPacientes()
+    const profesionales = await medicoStore.listMedicos(false)
+
+    const dataPaciente = pacientes.find(user => {
+        return user.id_paciente === data.HistoriaClinica.id_paciente
+    })
+
+    const profesional = profesionales.find(medico => {
+        return medico.id_profesional === data.Cita.id_medico
+    });
+
+    const tiposOrden = ["subjetivo", "objetivo", "actividades", "plan", "intervencion", "evaluacion"];
+
+    const descripcionesNota = [
+        ...datos.Nota.objetivo,
+        ...datos.Nota.subjetivo,
+        ...datos.Nota.actividades,
+        ...datos.Nota.plan,
+        ...datos.Nota.intervencion,
+        ...datos.Nota.evaluacion,
+    ]
+
+    // Agrupar por tipo
+    const agrupadoPorTipo = descripcionesNota.reduce((acc, nota) => {
+        if (!acc[nota.tipo]) acc[nota.tipo] = [];
+        acc[nota.tipo].push(nota);
+        return acc;
+    }, {});
+
+    // Construir filas ordenadas
+    const filasNotas = tiposOrden.map(tipo => {
+        const notasTipo = (agrupadoPorTipo[tipo] || []).sort((a, b) => {
+            // Ordenar por hora ascendente
+            return (a.hora || "").localeCompare(b.hora || "");
+        });
+
+        if (notasTipo.length === 0) return ""; // si no hay notas de ese tipo, no mostrar nada
+
+        // Encabezado con el nombre del tipo
+        let contenido = `<p class="text-start text-xs py-1"><strong>${tipo.toUpperCase()}:</strong></p>`;
+
+        // Filas de cada nota
+        contenido += notasTipo.map(nota => `
+            <div class="flex">
+                <p class="text-xs border-r-1 px-3 py-1">${nota.hora || ''}</p>
+                <p class="text-xs w-full px-1">${nota.descripcion || ''}</p>
+            </div>
+        `).join("");
+
+        // Separador visual
+        contenido += `<hr class="w-full h-1"/>`;
+
+        return contenido;
+    }).join("");
+
+
+    const diagnosticosNota = Array.isArray(unref(data.Diagnosticos))
+        ? toRaw(data.Diagnosticos)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
+
+    propiedadesNotaPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, filasNotas, diagnosticosNota }
+    activePdfNotas.value = true
+    const pdfNotas = new PdfBuilder()
+    pdfNotas
+        .setElementId('Nota')
+        .setIsActive(true)
+        .setFileName(`Nota_${propiedadesNotaPDF.value.name}`)
+        .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
+        // ENCABEZADO PRINCIPAL
+        .addComponente('Tabla', {
+            container: 'border-b-2 pb-3',
+            border: true,
+            columnas: [
+                '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
+                `
+                            <p class="text-sm border-b-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
+                            <p class="text-sm border-b-1 uppercase">Registro</p></br>
+                            <p class="text-sm uppercase">Nota de enfermeria de atencion domiciliaria</p>
+                        `,
+                `
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
+                        `
+            ],
+        })
+
+        // DATOS DEL PACIENTE
+        .addComponente('Texto', { texto: 'Datos del paciente' })
+        .addComponente('Tabla', {
+            container: 'space-y-2 rounded-xl py-3',
+            filas: [
+                [
+                    `<p class="text-xs w-full">Nombre completo: <span class="text-xs">${propiedadesNotaPDF.value.name}</span></p>`,
+                    ``,
+                ],
+                [
+                    [`<p class="text-xs ">No documento: <span class="text-xs">${propiedadesNotaPDF.value.No_document}</span></p>
+                            <p class="text-xs ">Tipo de documento: <span class="text-xs">${propiedadesNotaPDF.value.type_doc}</span></p>`],
+                    [`<p class="text-xs ">Edad: <span class="text-xs">${calcularEdad(propiedadesNotaPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs ">Sexo: <span class="text-xs">${propiedadesNotaPDF.value.sexo}</span></p>`],
+                ],
+                [
+                    `<p class="text-xs ">EPS: <span class="text-xs">${propiedadesNotaPDF.value.Eps}</span></p>`,
+                    `<p class="text-xs ">Zona: <span class="text-xs">${propiedadesNotaPDF.value.zona}</span></p>`
+                ],
+            ],
+        })
+
+        // SECCIÓN: DIAGNÓSTICOS
+        .addComponente('Tabla', {
+            container: 'w-full p-3',
+            columnas: ['Diagnostico', 'CIE-10'],
+            filas: propiedadesNotaPDF.value.diagnosticosNota?.length > 0
+                ? propiedadesNotaPDF.value.diagnosticosNota
+                : [['<p class="text-xs">Sin diagnósticos registrados</p>', '']]
+        })
+
+        .addComponente('Espacio', { alto: 16 })
+
+        // SECCIÓN: NOTA DE ENFERMERÍA
+        .addComponente('Texto', {
+            texto: 'Nota de Enfermería',
+        })
+
+        .addComponente('Tabla', {
+            container: 'space-y-2 rounded-xl py-3!',
+            styles: { border: '1px solid #DBEAFE' },
+            filas: [
+                [
+                    `
+                            <div class="w-full flex justify-between"> 
+                                <p class="text-xs w-[80px]">Fecha:</p>
+                                <div class="w-full text-center border-l-1">
+                                    <p class="text-xs w-full">Nota</p>
+                                </div>
+                            </div>
+                            `,
+                ],
+                [
+                    `
+                            <div class="w-full flex justify-between">
+                                <p class="text-xs w-[80px]">${propiedadesNotaPDF.value.fecha_nota ?? ''}</p>
+                                <div class="w-full flex flex-col gap-2 border-l-1 pl-3">
+                                    ${propiedadesNotaPDF.value.filasNotas ?? ''}
+                                </div>
+                            </div>`,
+                ],
+            ],
+        })
+
+        .addComponente('Espacio', { alto: 32 })
+
+        // PIE DE FIRMA
+        .addComponente('Tabla', {
+            container: 'pt-5',
+            border: false,
+            columnas: [
+                `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center pt-9">${propiedadesNotaPDF.value.nameProfesional}</p> </hr>
+                                <p class="text-xs text-center pt-3">${propiedadesNotaPDF.value.cedulaProfesional}</p>
+                            <div>
+                            `,
+                `
+                            <div class="min-h-[150px]">
+                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNotaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
+                            </div>
+                            `
+            ],
+        })
+    pdfNotas.build()
+    console.log(pdfNotas)
+
+
+    varView.cargando = false
 }
