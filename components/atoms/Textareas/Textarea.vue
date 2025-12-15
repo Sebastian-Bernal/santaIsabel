@@ -26,7 +26,7 @@ function handleInput(event) {
 const emit = defineEmits(['update:modelValue']);
 </script>
 <template>
-    <textarea :value="modelValue" 
+    <textarea :value="modelValue" lang="es" spellcheck="true" autocorrect="on" autocomplete="on"
     :id="Propiedades.id" 
     :name="Propiedades.name" 
     :placeholder="Propiedades.placeholder" 

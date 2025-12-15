@@ -24,7 +24,7 @@ export function useLoginBuilder({
     .setFormularioFondo('FondoTransparent')
     .setFormularioShow(true)
     .setBotones([
-      { text: 'Ingresar', color: 'bg-white text-black!', type: 'enviar' },
+      { text: 'Ingresar', color: 'bg-white text-black! hover:bg-gray-100', type: 'enviar' },
     ])
     .nuevaSeccion()
     .addCampo({

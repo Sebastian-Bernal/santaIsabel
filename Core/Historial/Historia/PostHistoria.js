@@ -7,8 +7,6 @@ import { decryptData } from '~/composables/Formulario/crypto';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder.js';
-import { useRouter } from 'vue-router'
-
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
@@ -643,6 +641,8 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                varView.propiedadesPDF = respuesta.Analisis
+                varView.showPDFMedicina = true
                 return true
             }
         } catch (error) {
@@ -835,6 +835,8 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                varView.propiedadesPDF = respuesta.data
+                varView.showPDFTerapia = true
                 return true
             }
         } catch (error) {
@@ -890,6 +892,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     const online = navigator.onLine;
     if (online) {
@@ -947,6 +950,8 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                varView.propiedadesPDF = respuesta.Analisis
+                varView.showPDFEvolucion = true
                 return true
             }
         } catch (error) {
@@ -1002,6 +1007,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     const online = navigator.onLine;
     if (online) {
@@ -1109,6 +1115,8 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                varView.propiedadesPDF = respuesta.Analisis
+                varView.showPDFTrabajoSocial = true
                 return true
             }
         } catch (error) {
@@ -1276,6 +1284,8 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                varView.propiedadesPDF = respuesta.data
+                varView.showPDFNota = true
                 return true
             }
         } catch (error) {

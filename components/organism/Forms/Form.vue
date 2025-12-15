@@ -68,25 +68,25 @@ function limpiar() {
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <form autocomplete="off" class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
+        <form autocomplete="off" class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg pb-4"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
-            <div class="pb-5 z-1 flex flex-col items-center h-[90%] rounded-2xl">
+            <div class="pb-5 z-1 flex flex-col items-center h-[90%]">
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
                     :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
-                <div class="w-full h-full md:px-6 py-4">
+                <div class="w-full h-full py-1">
                     <h2 v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
                         class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center py-2">
                         {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                     </h2>
                     <!-- Formulario -->
                     <div class="w-full h-full flex justify-center">
-                        <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[90%] overflow-y-auto"
-                            :class="{ 'h-[90%]!': Propiedades.formulario.tipo === 'Wizard' }">
+                        <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[95%] overflow-y-auto"
+                            :class="{ 'h-[92%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
                             <div class="w-full md:px-10 px-5 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
                                 :class="Propiedades.formulario.contenedorCampos">
@@ -102,7 +102,7 @@ function limpiar() {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-2 w-full flex justify-center items-center gap-3 px-2">
+            <div class="mt-2 w-full flex flex-row-reverse justify-center items-center gap-3 px-2">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)" @keyup.enter="item.type === 'enviar' ? (event) => manejarClick(event, item, tablaStore?.Formulario, limpiar) : null"
                     class="md:w-[200px] sm:w-[2/3] w-full text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">

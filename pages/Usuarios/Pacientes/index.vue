@@ -16,6 +16,7 @@ import { PdfBuilder } from "~/build/Constructores/PDFBuilder.js";
 import { validarYEnviarEliminarPaciente } from "~/Core/Usuarios/Paciente/DELETEPaciente.js";
 import { useHistoriasStore } from "~/stores/Formularios/historias/Historia.js";
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { CardBuilder } from "~/build/Constructores/CardBuilder.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -256,12 +257,39 @@ const propiedades = computed(() => {
     const puedeVer = varView.getPermisos.includes('Pacientes_view');
     if (!puedeVer) {
         pagina
-        .setFondo("FondoDefault")
-        .setEstilos("")
-        .setLayout("")
-        .setContenedor("w-full")
-        .addComponente("Imagen", builderCard);
-        return
+            .setFondo('FondoDefault')
+            .setEstilos('')
+            .setContenedor('w-full')
+            .addComponente('Card', new CardBuilder()
+                .setCards(
+                    [
+                        {
+                            header: {
+                                html: `<div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                <i class="fa-solid fa-user-lock text-6xl mb-4"></i>
+                                <h2 class="text-lg font-semibold">Acceso restringido</h2>
+                                <p class="text-sm text-center">
+                                    No tienes permisos para acceder a este módulo.
+                                </p>
+                                </div>`,
+                            },
+                        },
+                        {
+
+                        },
+                        {
+
+                        }
+                    ]
+                )
+                .setcontenedorCards('flex flex-col')
+                .setContenedor('w-full')
+                .setTamaño('flex sm:flex-row justify-center items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
+                .setheaderTitle('Gestión de Pacientes')
+                .setheaderHtml(`<a href="/Home" class="text-base text-blue-500 hover:text-blue-700"><i class="fa-solid fa-angle-left mr-1"></i>Volver al Inicio</a>`)
+                .build()
+            )
+        return pagina.build()
     }
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');

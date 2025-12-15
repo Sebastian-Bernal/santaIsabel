@@ -16,8 +16,8 @@ export function useNotasBuilder({
         .setFormularioShow(show)
         .setFormularioTipo('solo')
         .setBotones([
-            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
-            { text: 'Enviar', color: 'bg-blue-500', type: 'enviar' },
+            { text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
+            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar' },
         ])
     // 📌 Sección: Datos
 

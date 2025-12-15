@@ -10,6 +10,7 @@ import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
 import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/DELETEMedico';
+import { CardBuilder } from '~/build/Constructores/CardBuilder';
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -175,7 +176,42 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     // Verificar permisos específicos
     const puedeVer = varView.getPermisos.includes('Profesional_view');
-    if(!puedeVer) return
+    if (!puedeVer) {
+        pagina
+            .setFondo('FondoDefault')
+            .setEstilos('')
+            .setContenedor('w-full')
+            .addComponente('Card', new CardBuilder()
+                .setCards(
+                    [
+                        {
+                            header: {
+                                html: `<div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                <i class="fa-solid fa-user-lock text-6xl mb-4"></i>
+                                <h2 class="text-lg font-semibold">Acceso restringido</h2>
+                                <p class="text-sm text-center">
+                                    No tienes permisos para acceder a este módulo.
+                                </p>
+                                </div>`,
+                            },
+                        },
+                        {
+
+                        },
+                        {
+
+                        }
+                    ]
+                )
+                .setcontenedorCards('flex flex-col')
+                .setContenedor('w-full')
+                .setTamaño('flex sm:flex-row justify-center items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
+                .setheaderTitle('Gestión de Profesionales')
+                .setheaderHtml(`<a href="/Home" class="text-base text-blue-500 hover:text-blue-700"><i class="fa-solid fa-angle-left mr-1"></i>Volver al Inicio</a>`)
+                .build()
+            )
+        return pagina.build()
+    }
     const puedePost = varView.getPermisos.includes('Profesional_post');
     const puedePut = varView.getPermisos.includes('Profesional_put');
 

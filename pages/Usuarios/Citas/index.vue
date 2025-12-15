@@ -1,5 +1,10 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue'
+import PDFEvolucion from '~/components/paginas/PDFEvolucion.vue'
+import PDFNota from '~/components/paginas/PDFNota.vue'
+import PDFTerapia from '~/components/paginas/PDFTerapia.vue'
+import PDFMedicina from '~/components/paginas/PDFMedicina.vue'
+import PDFTrabajoSocial from '~/components/paginas/PDFTrabajoSocial.vue'
 
 import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder'
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
@@ -9,6 +14,7 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio'
 import { ref, onMounted } from 'vue'
+import { CardBuilder } from '~/build/Constructores/CardBuilder'
 
 const varView = useVarView()
 const citasStore = useCitasStore();
@@ -109,7 +115,42 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
 
     const puedeVer = varView.getPermisos.includes('Citas_view');
-    if (!puedeVer) return
+    if (!puedeVer) {
+        pagina
+            .setFondo('FondoDefault')
+            .setEstilos('')
+            .setContenedor('w-full')
+            .addComponente('Card', new CardBuilder()
+                .setCards(
+                    [
+                        {
+                            header: {
+                                html: `<div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                <i class="fa-solid fa-user-lock text-6xl mb-4"></i>
+                                <h2 class="text-lg font-semibold">Acceso restringido</h2>
+                                <p class="text-sm text-center">
+                                    No tienes permisos para acceder a este módulo.
+                                </p>
+                                </div>`,
+                            },
+                        },
+                        {
+
+                        },
+                        {
+
+                        }
+                    ]
+                )
+                .setcontenedorCards('flex flex-col')
+                .setContenedor('w-full')
+                .setTamaño('flex sm:flex-row justify-center items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
+                .setheaderTitle('Agenda de citas.')
+                .setheaderHtml(`<a href="/Home" class="text-base text-blue-500 hover:text-blue-700"><i class="fa-solid fa-angle-left mr-1"></i>Volver al Inicio</a>`)
+                .build()
+            )
+        return pagina.build()
+    }
     const puedePost = varView.getPermisos.includes('Citas_post')
 
     pagina
@@ -159,4 +200,9 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
+    <PDFEvolucion v-if="varView.showPDFEvolucion"/>
+    <PDFNota v-if="varView.showPDFNota"></PDFNota>
+    <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
+    <PDFMedicina v-if="varView.showPDFMedicina"/>
+    <PDFTrabajoSocial v-if="varView.showPDFTrabajoSocial"/>
 </template>

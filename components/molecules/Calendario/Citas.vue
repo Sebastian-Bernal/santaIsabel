@@ -3,6 +3,8 @@ import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
 import Historia from '~/components/Historia.vue';
+import PDFNota from '~/components/paginas/PDFNota.vue';
+import PDFEvolucion from '~/components/paginas/PDFEvolucion.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
@@ -79,7 +81,14 @@ watch(filtros, (nuevoValor, anteriorValor) => {
     paginaActual.value = 1;
 }, { deep: true });
 
-
+// watch(() => varView.showPDFEvolucion,
+//     async (estado) => {
+//         if (!estado) {
+//             await llamadatos();
+//             refresh.value++;
+//         }
+//     }
+// );
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
     return Citas.value?.filter(cita => {

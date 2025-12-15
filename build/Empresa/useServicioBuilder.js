@@ -16,8 +16,8 @@ export function useServicioBuilder({
       .nuevaSeccion('Formulario Servicio')
       .setFormularioShow(showModificarServicio)
       .setBotones([
-        {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500', accion: cerrar},
-        {type: 'enviar', text: 'Enviar', color: 'bg-blue-500',},
+        {type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600',},
+        {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar},
       ])
   } else {
     builder

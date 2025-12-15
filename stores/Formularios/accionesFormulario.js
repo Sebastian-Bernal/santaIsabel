@@ -87,7 +87,6 @@ export const accionesFormularios = {
     },
     RegistrarHistoria: async (data) => {
         const respuesta = await validarYEnviarRegistrarHistoria(data)
-        window.location.href = '/Historial/Historias'
         return respuesta;
     },
     ActualizarHistorias: async (data) => {

@@ -78,8 +78,8 @@ export function useUserBuilder({
         .setFormularioTipo(tipoFormulario)
         .setFormularioContenedorCampos('flex flex-col')
         .setBotones([
-            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
-            { text: 'Siguiente', color: 'bg-blue-500', type: 'enviar' },
+            { text: 'Siguiente', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
+            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar' },
         ])
         // 📌 Sección: Datos
         .nuevaSeccion('Datos usuarios')

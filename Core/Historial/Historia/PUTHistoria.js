@@ -54,14 +54,12 @@ export const validarYEnviarActualizarHistoria = async (datos) => {
             return await enviarFormularioActualizarConsulta(consultas);
 
         case 'Evolucion':
-            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
-            datos.Cita.servicio = varView.tipoConsulta.plantilla
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
-            return await enviarFormularioNutricion(datos);
+            return await enviarFormularioActualizarNutricion(datos);
 
         case 'Trabajo Social':
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
@@ -492,8 +490,57 @@ const enviarFormularioActualizarConsulta = async (datos) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'PUT' + '/' + datos.Analisis.id,
-                url: config.public.analisis,
+                metodo: 'PUT',
+                url: config.public.analisis + '/' + datos.Analisis.id,
+                token: token,
+                body: datos.Analisis
+            }
+            const respuesta = await api.functionCall(options)
+
+            if (respuesta.success) {
+                // Actualizar local
+                const datosActualizar = {
+                    Analisis: {
+                        ...datos.Analisis
+                    }
+                };
+                await actualizarEnIndexedDB(JSON.stringify(datosActualizar))
+                return true
+            }
+
+        } catch (error) {
+            notificacionesStore.options.icono = 'warning'
+            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            notificacionesStore.options.tiempo = 3000
+            notificacionesStore.simple()
+            console.error('Fallo al enviar. Guardando localmente', error);
+        }
+    } else {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'Sin conexión';
+        notificacionesStore.options.texto = 'Se guardará localmente'
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
+        await guardarEnDB(JSON.parse(JSON.stringify(datos)), "HistoriaClinica");
+        return true
+    }
+}
+
+const enviarFormularioActualizarNutricion = async (datos) => {
+    const notificacionesStore = useNotificacionesStore();
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(sessionStorage.getItem('token'))
+
+    // Guardar Local
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'PUT',
+                url: config.public.analisis + '/' + datos.Analisis.id,
                 token: token,
                 body: datos.Analisis
             }

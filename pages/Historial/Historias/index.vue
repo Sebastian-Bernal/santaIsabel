@@ -92,33 +92,6 @@ watch(() => showNota.value,
 onMounted(async () => {
     varView.cargando = true
     await llamadatos()
-    // const params = new URLSearchParams(window.location.search)
-    // const tipo = params.get('tipo')
-    // const cita = params.get('cita')
-    // const pacienteURL = parseInt(params.get('paciente'))
-
-    // if (cita) {
-    //     const historia = await historiasStore.listDatos(pacienteURL, 'HistoriaClinica', 'id_paciente')
-    //     const pacientes = await pacientesStore.listPacientes(false)
-    //     const paciente = pacientes.find(p => {
-    //         return p.id_paciente === pacienteURL
-    //     })
-    //     console.log(pacientes, paciente, pacienteURL)
-    //     const datos = {
-    //         id: historia.id,
-    //         id_paciente: pacienteURL,
-    //         cedula: paciente.No_document,
-    //         paciente: paciente.name
-    //     }
-    //     await cargaHistorial(datos.id)
-    //     historiasStore.Formulario.HistoriaClinica.name_paciente = datos.paciente
-    //     historiasStore.Formulario.HistoriaClinica.No_document_paciente = datos.cedula
-    //     historiasStore.Formulario.HistoriaClinica.id_paciente = datos.id
-    //     showVerHistorial.value = true
-    //     varView.citaRealizada = false
-    //     varView.tipoHistoria = ''
-    //     varView.datosPaciente = {}
-    // }
     varView.cargando = false
 });
 
@@ -615,6 +588,7 @@ const propiedadesActualizarNota = useNotasBuilder({
 // const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
 
+const restriccionCard = new CardBuilder()
 const consultasCard = new CardBuilder()
 const evolucionesCard = new CardBuilder()
 const notasCard = new CardBuilder()
@@ -627,8 +601,43 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const modal = new ModalBuilder()
 
-    // const puedeVer = varView.getPermisos.includes('Historias_view');
-    // if (!puedeVer) return
+    const puedeVer = varView.getPermisos.includes('Historias_view');
+    if (!puedeVer) {
+        pagina
+            .setFondo('FondoDefault')
+            .setEstilos('')
+            .setContenedor('w-full')
+            .addComponente('Card', restriccionCard
+                .setCards(
+                    [
+                        {
+                            header: {
+                                html: `<div class="flex flex-col items-center justify-center h-full text-gray-500">
+                                <i class="fa-solid fa-user-lock text-6xl mb-4"></i>
+                                <h2 class="text-lg font-semibold">Acceso restringido</h2>
+                                <p class="text-sm text-center">
+                                    No tienes permisos para acceder a este módulo.
+                                </p>
+                                </div>`,
+                            },
+                        },
+                        {
+
+                        },
+                        {
+
+                        }
+                    ]
+                )
+                .setcontenedorCards('flex flex-col')
+                .setContenedor('w-full')
+                .setTamaño('flex sm:flex-row justify-center items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
+                .setheaderTitle('Historial de Pacientes')
+                .setheaderHtml(`<a href="/Home" class="text-base text-blue-500 hover:text-blue-700"><i class="fa-solid fa-angle-left mr-1"></i>Volver al Inicio</a>`)
+                .build()
+            )
+        return pagina.build()
+    }
     // const puedePost = varView.getPermisos.includes('Historias_post')
     const puedePUT = varView.getPermisos.includes('Historias_put')
     // const puedePUT = false
@@ -1411,7 +1420,7 @@ const propiedades = computed(() => {
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
                 .setDatos(nutricion)
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'ver', action: actualizarItemEvolucionHistoria }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'actualizar', action: actualizarItemEvolucionHistoria }], botones: true, })
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
             .addComponente('Form', propiedadesItemHistoria)

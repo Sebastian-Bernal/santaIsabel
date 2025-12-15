@@ -24,8 +24,8 @@ export function useVerHistoriaBuilder({
     if (actualizar.value) {
         builder
             .setBotones([
-                { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cancelar' },
-                { text: 'Actualizar', color: 'bg-blue-500', type: 'enviar' },
+                { text: 'Actualizar', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
+                { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cancelar' },
             ])
     } else {
         builder
@@ -409,6 +409,7 @@ export function useVerHistoriaBuilder({
     }
     else if (formularioItem.value === 'Evolucion') {
         builder
+        .nuevaSeccion('Evolucion')
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
@@ -433,7 +434,7 @@ export function useVerHistoriaBuilder({
             })
             .addCampo({
                 component: 'Input',
-                vmodel: 'Analisis.observacion',
+                vmodel: 'Analisis.analisis',
                 id: 'observacion',
                 name: 'observacion',
                 tamaño: 'w-full md:col-span-2'

@@ -21,13 +21,13 @@ export function useRecuperarContraseñaBuilder({
     .setFormularioShow(show)
   if (stateCodigo) {
     builder.setBotones([
-      { text: 'Cancelar', color: 'bg-gray-500', type: 'cerrar', accion: cerrar },
-      { text: 'Siguiente', color: 'dark:bg-white dark:text-black! bg-blue-500', type: 'enviar', },
+      { text: 'Siguiente', color: 'dark:bg-white dark:text-black! dark:hover:bg-gray-100 bg-blue-500 hover:bg-blue-600 ', type: 'enviar', },
+      { text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar', accion: cerrar },
     ])
   } else {
     builder.setBotones([
-      { text: 'Cancelar', color: 'bg-gray-500', type: 'cerrar', accion: cerrar },
-      { text: 'Enviar Codigo', color: 'bg-blue-500', type: 'enviarCodigo', accion: enviarCodigo },
+      { text: 'Enviar Codigo', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviarCodigo', accion: enviarCodigo },
+      { text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar', accion: cerrar },
     ])
   }
   builder

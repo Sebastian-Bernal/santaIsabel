@@ -76,7 +76,7 @@ export function useFormularioCitaBuilder({
 
         showTratamientos.value = false
         const tratamientodiv = document.getElementById('tratamientos');
-        tratamientodiv.innerHTML = ``;
+        tratamientodiv.innerHTML = `a`;
 
       }
     }
@@ -161,8 +161,8 @@ export function useFormularioCitaBuilder({
     .setFormularioShow(show)
     .setFormulariotamaño('XS')
     .setBotones([
-      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500', type: 'cerrar' },
-      { text: 'Guardar', color: 'bg-blue-500', type: 'enviar' },
+      { text: 'Guardar', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
+      { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar' },
     ])
     .nuevaSeccion('Agregar Cita a tu Agenda')
     .addCampo({

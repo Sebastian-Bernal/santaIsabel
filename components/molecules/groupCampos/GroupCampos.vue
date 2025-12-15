@@ -79,7 +79,7 @@ const updateField = (index, field, value) => {
 
             <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
                 <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)"
-                    class="flex items-center cursor-pointer">
+                    class="flex items-center transition-all duration-300 cursor-pointer active:scale-95">
 
                     <span v-if="button.label" class="mr-1">{{ button.label }}</span>
 

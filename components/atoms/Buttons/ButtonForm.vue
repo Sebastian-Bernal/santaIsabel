@@ -6,7 +6,7 @@ const props = defineProps({
 
 <template>
     <button :class="color"
-        class="md:w-[200px] text-white font-semibold mt-2 py-2 px-4 rounded transition duration-200 cursor-pointer">
+        class="md:w-[200px] text-white mt-2 py-2 px-4 font-semibold rounded-xl shadow transition-all duration-300 cursor-pointer active:scale-95">
         <slot></slot>
     </button>
 </template>
