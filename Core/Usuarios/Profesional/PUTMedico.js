@@ -162,6 +162,13 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
                     }
                 })));
                 return true
+            } else {
+                notificacionesStore.options.icono = 'warning'
+                notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+                notificacionesStore.options.texto = respuesta.message
+                notificacionesStore.options.tiempo = 3000
+                notificacionesStore.simple()
+                return false
             }
         } catch (error) {
             notificacionesStore.options.icono = 'warning'

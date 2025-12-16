@@ -106,6 +106,10 @@ export function useFormulario(props) {
         event.preventDefault()
         varView.cargando = true
         if (item.type === 'enviar') {
+            if(props.Propiedades.formulario.soloVer && seccionActual.value === props.Propiedades.formulario.secciones.length - 1){
+                varView.cargando = false
+                return
+            }
             if (seccionActual.value < props.Propiedades.formulario.secciones.length - 1) {
                 guardarDatos(formData)
                 siguienteSeccion()

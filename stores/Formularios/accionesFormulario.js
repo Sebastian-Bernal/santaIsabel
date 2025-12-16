@@ -33,36 +33,21 @@ import { validarYEnviarPutDatosServicio } from '~/Core/Empresa/Datos/Servicio/Pu
 // Login
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
-
-import { traerDatos } from '~/Core/BDload';
+import { validarYEnviarCambiarContraseñaPrimerVez } from '~/Core/Login/CambiarContraseñaPrimerVez';
 
 
 // Importa accion de cada formulario desde el core
 export const accionesFormularios = {
     Ingresar: async (data) => {
-        const notificaciones = useNotificacionesStore()
         const respuesta = await validarYEnviarLogin(data);
-        if (respuesta.estado) {
-            notificaciones.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
-            notificaciones.loading()
-            await traerDatos()
-            const ultimaSeccion = localStorage.getItem('seccion')
-            window.location.href = ultimaSeccion || '/Home'
-        } else {
-            notificaciones.options.icono = 'error'
-            notificaciones.options.titulo = '¡No se pudo iniciar Sesion!'
-            notificaciones.options.texto = 'Informacion invalida'
-            notificaciones.options.tiempo = 3000
-            await notificaciones.simple()
-            notificaciones.options.icono = ''
-            notificaciones.options.titulo = ''
-            notificaciones.options.texto = ''
-        }
-        notificaciones.close()
         return respuesta;
     },
     RecuperarContraseña: async (data) => {
         const respuesta = await validarYEnviarCambiarContraseña(data);
+        return respuesta
+    },
+    CambiarContraseñaPrimerVez: async (data) => {
+        const respuesta = await validarYEnviarCambiarContraseñaPrimerVez(data);
         return respuesta
     },
     NuevaCita: async (data) => {

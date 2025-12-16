@@ -6,6 +6,7 @@ export function useLoginBuilder({
   storeId,
   storePinia,
   recuperarcontraseña,
+  cambiarContraseña,
   validaUsuario,
   selectEmpresa,
   opcionesCompañy,
@@ -88,7 +89,7 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Label',
       text: `
-            <p class="text-sm my-3 text-gray-100">
+            <p class="text-sm mt-3 text-gray-100">
                 Olvidaste tu contraseña?
                 <span @click="recuperarContraseña" class="underline font-semibold cursor-pointer">Recuperar</span>
             </p>
@@ -97,6 +98,19 @@ export function useLoginBuilder({
         onClick: recuperarcontraseña
       },
       tamaño: 'w-full col-span-2 flex justify-center'
+    })
+    .addCampo({
+      component: 'Label',
+      text: `
+            <p class="text-xs text-gray-300">
+                Primer Ingreso
+                <span @click="cambiarContraseña" class="underline font-semibold cursor-pointer">Crear Contraseña</span>
+            </p>
+        `,
+      events: {
+        onClick: cambiarContraseña
+      },
+      tamaño: 'w-full col-span-2 flex justify-center text-center'
     })
   return builder.build()
 }

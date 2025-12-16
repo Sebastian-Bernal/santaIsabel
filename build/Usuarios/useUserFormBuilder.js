@@ -15,6 +15,7 @@ export function useUserBuilder({
     departamentos,
     seleccionarDepartamento,
     municipios,
+    municipios_laboral,
     seleccionarMunicipio,
     EPS,
     opcionesProfesion,
@@ -390,141 +391,205 @@ export function useUserBuilder({
                 vmodel: 'Paciente.vulnerabilidad',
             })
 
-                // --- Label Acompañante ---
-                .addCampo({
-                    component: 'Label',
-                    forLabel: 'nombreAcompañante',
-                    size: 'text-sm',
-                    text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Cuidador (Opcional)',
-                    tamaño: 'w-full col-span-2'
-                })
+                // // --- Label Acompañante ---
+                // .addCampo({
+                //     component: 'Label',
+                //     forLabel: 'nombreAcompañante',
+                //     size: 'text-sm',
+                //     text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Cuidador (Opcional)',
+                //     tamaño: 'w-full col-span-2'
+                // })
         
-                // --- Nombre Acompañante ---
-                .addCampo({
-                    component: 'Input',
-                    vmodel: 'Paciente.nameCuidador',
-                    type: 'text',
-                    id: 'nombreAcompañante',
-                    name: 'nombreAcompañante',
-                    placeholder: 'Nombre completo del cuidador',
-                    tamaño: 'w-full'
-                })
+                // // --- Nombre Acompañante ---
+                // .addCampo({
+                //     component: 'Input',
+                //     vmodel: 'Paciente.nameCuidador',
+                //     type: 'text',
+                //     id: 'nombreAcompañante',
+                //     name: 'nombreAcompañante',
+                //     placeholder: 'Nombre completo del cuidador',
+                //     tamaño: 'w-full'
+                // })
         
-                // --- Parentesco Acompañante ---
-                .addCampo({
-                    component: 'Select',
-                    vmodel: 'Paciente.parentescoCuidador',
-                    id: 'parentesco',
-                    name: 'parentesco',
-                    placeholder: 'Seleccione el parentesco',
-                    tamaño: 'w-full',
-                    options: [
-                        { text: 'Padre', value: 'Padre' },
-                        { text: 'Madre', value: 'Madre' },
-                        { text: 'Hijo', value: 'Hijo' },
-                        { text: 'Hija', value: 'Hija' },
-                        { text: 'Cónyuge', value: 'Conyuge' },
-                        { text: 'Hermano', value: 'Hermano' },
-                        { text: 'Hermana', value: 'Hermana' },
-                        { text: 'Tío/Tía', value: 'Tio/Tia' },
-                        { text: 'Primo/Prima', value: 'Primo/Prima' },
-                        { text: 'Abuelo/Abuela', value: 'Abuelo/Abuela' },
-                        { text: 'Nieto/Nieta', value: 'Nieto/Nieta' },
-                        { text: 'Otro familiar', value: 'Otro familiar' },
-                        { text: 'Amigo/a', value: 'Amigo/a' },
-                        { text: 'Vecino/a', value: 'Vecino/a' },
-                        { text: 'Cuidador externo', value: 'Cuidador externo' }
-                    ]
-                })
+                // // --- Parentesco Acompañante ---
+                // .addCampo({
+                //     component: 'Select',
+                //     vmodel: 'Paciente.parentescoCuidador',
+                //     id: 'parentesco',
+                //     name: 'parentesco',
+                //     placeholder: 'Seleccione el parentesco',
+                //     tamaño: 'w-full',
+                //     options: [
+                //         { text: 'Padre', value: 'Padre' },
+                //         { text: 'Madre', value: 'Madre' },
+                //         { text: 'Hijo', value: 'Hijo' },
+                //         { text: 'Hija', value: 'Hija' },
+                //         { text: 'Cónyuge', value: 'Conyuge' },
+                //         { text: 'Hermano', value: 'Hermano' },
+                //         { text: 'Hermana', value: 'Hermana' },
+                //         { text: 'Tío/Tía', value: 'Tio/Tia' },
+                //         { text: 'Primo/Prima', value: 'Primo/Prima' },
+                //         { text: 'Abuelo/Abuela', value: 'Abuelo/Abuela' },
+                //         { text: 'Nieto/Nieta', value: 'Nieto/Nieta' },
+                //         { text: 'Otro familiar', value: 'Otro familiar' },
+                //         { text: 'Amigo/a', value: 'Amigo/a' },
+                //         { text: 'Vecino/a', value: 'Vecino/a' },
+                //         { text: 'Cuidador externo', value: 'Cuidador externo' }
+                //     ]
+                // })
 
             if(user === 'Admin'){
                 builder
                 // 📌 Sección: tratamientos
-                .addCampo({
-                    component: 'GroupCampos',
-                    labelGroup: 'Procedimientos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', } },],
-                    tamaño: 'w-full md:col-span-2 mb-6',
-                    vmodel: 'Plan_manejo_procedimientos',
-                    value: [],
-                    campos: [
-                        {
-                            name: 'procedimiento',
-                            id: 'descripcionProcedimiento',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Procedimiento',
-                            tamaño: 'w-full',
-                            UpperCase: true,
-                            options: CUPS,
-                            opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
-                            seleccionarItem: (item) => {
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
+                if(soloVer){
+                    builder
+                    .addCampo({
+                        component: 'GroupCampos',
+                        labelGroup: 'Procedimientos (opcional)',
+                        buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', } },],
+                        tamaño: 'w-full md:col-span-2 mb-6',
+                        vmodel: 'Plan_manejo_procedimientos',
+                        disabled: true,
+                        value: [],
+                        campos: [
+                            {
+                                name: 'procedimiento',
+                                id: 'descripcionProcedimiento',
+                                typeCampo: 'SelectSearch',
+                                placeholder: 'Procedimiento',
+                                tamaño: 'w-full',
+                                UpperCase: true,
+                                options: CUPS,
+                                opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
+                                seleccionarItem: (item) => {
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
+                                },
                             },
-                        },
-                        // {
-                        //     name: 'codigo',
-                        //     id: 'codigo',
-                        //     typeCampo: 'SelectSearch',
-                        //     placeholder: 'Codigo',
-                        //     tamaño: 'w-full',
-                        //     UpperCase: true,
-                        //     options: CUPS,
-                        //     opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
-                        //     seleccionarItem: (item) => {
-                        //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
-                        //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
-                        //     },
-                        // },
-                        {
-                            name: 'dias_asignados',
-                            id: 'dias_asignados',
-                            typeCampo: 'Input',
-                            placeholder: 'Numero de Veces',
-                            tamaño: 'w-full',
-                        },
-                        {
-                            name: 'profesional',
-                            id: 'profesional',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Profesional asignado',
-                            tamaño: 'w-full',
-                            options: MedicosList,
-                            UpperCase: true,
-                            opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
-                            seleccionarItem: (item) => {
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
-                                pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional
+                            {
+                                name: 'dias_asignados',
+                                id: 'dias_asignados',
+                                typeCampo: 'Input',
+                                placeholder: 'Numero de Veces',
+                                tamaño: 'w-full',
                             },
-                        },
-                    ],
-                    containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
-                })
+                            // {
+                            //     name: 'profesional',
+                            //     id: 'profesional',
+                            //     typeCampo: 'SelectSearch',
+                            //     placeholder: 'Profesional asignado',
+                            //     tamaño: 'w-full',
+                            //     options: MedicosList,
+                            //     UpperCase: true,
+                            //     opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
+                            //     seleccionarItem: (item) => {
+                            //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
+                            //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional
+                            //     },
+                            // },
+                        ],
+                        containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
+                    })
+                    // 📌 Sección: Antecedentes
+                    .addCampo({
+                        component: 'GroupCampos',
+                        labelGroup: 'Antecedentes',
+                        buttons: [
+                            { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
+                            { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
+                        ],
+                        tamaño: 'w-full md:col-span-2',
+                        vmodel: 'Antecedentes',
+                        value: [],
+                        campos: [
+                            {
+                                name: 'descripcion',
+                                id: 'antecedente',
+                                typeCampo: 'Input',
+                                type: 'text',
+                                placeholder: 'Antecedente',
+                                UpperCase: true,
+                                tamaño: 'w-full'
+                            },
+                        ],
+                        containerCampos: 'w-full'
+                    })
+                } else {
+                    builder
+                    .addCampo({
+                        component: 'GroupCampos',
+                        labelGroup: 'Procedimientos nose (opcional)',
+                        buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', } },],
+                        tamaño: 'w-full md:col-span-2 mb-6',
+                        vmodel: 'Plan_manejo_procedimientos_nuevos',
+                        disabled: true,
+                        value: [],
+                        campos: [
+                            {
+                                name: 'procedimiento',
+                                id: 'descripcionProcedimiento',
+                                typeCampo: 'SelectSearch',
+                                placeholder: 'Procedimiento',
+                                tamaño: 'w-full',
+                                UpperCase: true,
+                                options: CUPS,
+                                opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
+                                seleccionarItem: (item) => {
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos_nuevos.at(-1).procedimiento = item.DESCRIPCION
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos_nuevos.at(-1).codigo = item.CODIGO
+                                },
+                            },
+                            {
+                                name: 'dias_asignados',
+                                id: 'dias_asignados',
+                                typeCampo: 'Input',
+                                placeholder: 'Numero de Veces',
+                                tamaño: 'w-full',
+                            },
+                            {
+                                name: 'profesional',
+                                id: 'profesional',
+                                typeCampo: 'SelectSearch',
+                                placeholder: 'Profesional asignado',
+                                tamaño: 'w-full',
+                                options: MedicosList,
+                                UpperCase: true,
+                                opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
+                                seleccionarItem: (item) => {
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos_nuevos.at(-1).profesional = item.name
+                                    pacienteStore.Formulario.Plan_manejo_procedimientos_nuevos.at(-1).id_medico = item.id_profesional
+                                },
+                            },
+                        ],
+                        containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
+                    })
+                    // 📌 Sección: Antecedentes
+                    .addCampo({
+                        component: 'GroupCampos',
+                        labelGroup: 'Antecedentes',
+                        buttons: [
+                            { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
+                            { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
+                        ],
+                        tamaño: 'w-full md:col-span-2',
+                        vmodel: 'Antecedentes_nuevos',
+                        value: [],
+                        campos: [
+                            {
+                                name: 'descripcion',
+                                id: 'antecedente',
+                                typeCampo: 'Input',
+                                type: 'text',
+                                placeholder: 'Antecedente',
+                                UpperCase: true,
+                                tamaño: 'w-full'
+                            },
+                        ],
+                        containerCampos: 'w-full'
+                    })
+
+                }
     
-                // 📌 Sección: Antecedentes
-                .addCampo({
-                    component: 'GroupCampos',
-                    labelGroup: 'Antecedentes',
-                    buttons: [
-                        { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: 'Personal' } },
-                        { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
-                    ],
-                    tamaño: 'w-full md:col-span-2',
-                    vmodel: 'Antecedentes',
-                    value: [],
-                    campos: [
-                        {
-                            name: 'descripcion',
-                            id: 'antecedente',
-                            typeCampo: 'Input',
-                            type: 'text',
-                            placeholder: 'Antecedente',
-                            UpperCase: true,
-                            tamaño: 'w-full'
-                        },
-                    ],
-                    containerCampos: 'w-full'
-                })
             }
     }
 
@@ -562,15 +627,15 @@ export function useUserBuilder({
                 id: 'listDepartamento',
                 name: 'listDepartamento',
                 options: departamentos,
-                opciones: [{ value: "nombre" }, { text: 'nombre', value: 'nombre' }],
+                opciones: [{ value: "nombre" }, { text: 'Nombre: ', value: 'nombre' }],
                 seleccionarItem: seleccionarDepartamento,
                 vmodel: 'Profesional.departamento_laboral',
                 upperCase: true,
             })
             .addCampo({
                 component: 'SelectSearch',
-                options: municipios,
-                opciones: [{ value: "nombre" }, { text: 'Codigo:', value: 'id' }],
+                options: municipios_laboral,
+                opciones: [{ value: "NOMBRE" }, { text: 'Codigo:', value: 'CODIGO_MUNICIPIO' }],
                 seleccionarItem: seleccionarMunicipio,
                 placeholder: 'Municipio Laboral',
                 id: 'municipiolaboral',
@@ -598,17 +663,30 @@ export function useUserBuilder({
                 tamaño: 'w-full md:col-span-2',
                 forLabel: 'correo-secret'
             })
-            .addCampo({
-                component: 'Input',
-                type: 'text',
-                placeholder: !verUser ? 'Correo Electrónico' : 'Correo protegido (Ingresa uno nuevo)',
-                id: 'correo-secret',
-                name: 'correo-secret',
-                tamaño: 'w-full',
-                minLength: '5',
-                vmodel: 'User.correo',
-            })
-            .addCampo({
+            if(verUser){
+                builder.addCampo({
+                    component: 'Input',
+                    type: 'text',
+                    placeholder: 'Correo Electrónico',
+                    id: 'correo-secret',
+                    name: 'correo-secret',
+                    tamaño: 'w-full',
+                    minLength: '5',
+                    vmodel: 'User.correo',
+                })
+            } else {
+                builder.addCampo({
+                    component: 'Input',
+                    type: 'text',
+                    placeholder: 'Correo Electrónico',
+                    id: 'correo-secret',
+                    name: 'correo-secret',
+                    tamaño: 'w-full',
+                    minLength: '5',
+                    vmodel: 'User.correo',
+                })
+            }
+            builder.addCampo({
                 component: 'Input',
                 type: 'file',
                 placeholder: 'Firma y Sello',

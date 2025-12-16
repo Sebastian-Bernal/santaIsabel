@@ -7,6 +7,7 @@ import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
 import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
+import { useIngresoContraseñaBuilder } from '~/build/Login/useIngresoContraseñaBuilder';
 
 definePageMeta({
     layout: 'authentication'
@@ -39,6 +40,7 @@ onMounted(async () => {
 const selectEmpresa = ref(false)
 const opcionesCompañy = ref([])
 const show = ref(false)
+const showCambiar = ref(false)
 const stateCodigo = ref(false)
 
 // funcion para validar primer ingreso
@@ -67,8 +69,13 @@ function recuperarContraseña() {
     show.value = true
 }
 
+function cambiarContraseña() {
+    showCambiar.value = true
+}
+
 function cerrar() {
     show.value = false
+    showCambiar.value = false
 }
 
 function validarCodigo() {
@@ -81,7 +88,6 @@ async function enviarCodigo(data) {
     varView.cargando = false
 }
 
-
 // Builder Pagina
 const propiedadesLogin = computed(() => {
     const pagina = new ComponenteBuilder()
@@ -89,6 +95,7 @@ const propiedadesLogin = computed(() => {
         storeId: 'Ingresar',
         storePinia: 'Login',
         recuperarcontraseña: recuperarContraseña,
+        cambiarContraseña,
         validaUsuario,
         selectEmpresa: selectEmpresa,
         opcionesCompañy: opcionesCompañy,
@@ -104,11 +111,19 @@ const propiedadesLogin = computed(() => {
         validarCodigo,
         stateCodigo: stateCodigo.value
     });
+
+    const propiedadesCambiarContraseña = useIngresoContraseñaBuilder({
+        storeId: 'CambiarContraseñaPrimerVez',
+        storePinia: 'Login',
+        cerrar: cerrar,
+        show: showCambiar,
+    })
     return pagina
         .setFondo('FondoBlur')
         .setContenedor('w-1/3 flex justify-center')
         .addComponente('Form', propiedadesForm)
         .addComponente('Form', propiedadesRecuperarContraseña)
+        .addComponente('Form', propiedadesCambiarContraseña)
         .build()
 })
 </script>

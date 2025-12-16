@@ -10,7 +10,7 @@ export const validarYEnviarNuevoMedico = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const storeMedicos = useMedicosStore();
     const medicos = await storeMedicos.listMedicos();
-    console.log(datos.Profesional.sello)
+
     const info = datos.InformacionUser;
     const profesional = datos.Profesional;
     const usuario = datos.User;
@@ -96,8 +96,8 @@ export const validarYEnviarNuevoMedico = async (datos) => {
     if (medico) {
         notificacionesStore.options.icono = 'warning';
         notificacionesStore.options.titulo = 'Profesional ya existe';
-        notificacionesStore.options.texto = '¿Deseas registrar otro?';
-        notificacionesStore.options.tiempo = 5000;
+        notificacionesStore.options.texto = '';
+        notificacionesStore.options.tiempo = 3000;
         await notificacionesStore.simple();
         return false;
     }
@@ -193,6 +193,13 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                 }
                 await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
                 return true
+            } else {
+                notificacionesStore.options.icono = 'warning'
+                notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+                notificacionesStore.options.texto = respuesta.message
+                notificacionesStore.options.tiempo = 3000
+                notificacionesStore.simple()
+                return false
             }
 
         } catch (error) {

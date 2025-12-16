@@ -29,7 +29,7 @@ export const useMedicosStore = defineStore('Medicos', {
                 zona_laboral: '',
                 profesion: '',
                 id_profesion: '',
-                correo: '',
+                correoProfesional: '',
                 estado: 1,
             }
         },
@@ -109,19 +109,13 @@ export const useMedicosStore = defineStore('Medicos', {
 
         async indexDBDatos() {
             const profesionales = await traerProfesionales()
-            const profesionalesLocal = await this.listMedicos()
 
             const profesionesStore = useDatosProfesionStore()
-            const profesiones = await profesionesStore.listProfesion
+            const profesiones = await profesionesStore.listProfesiones()
             const mapaProfesion = profesiones.reduce((acc, profesion) => {
                 acc[profesion.id] = profesion.nombre;
                 return acc;
             }, {});
-
-            // Crear un conjunto de IDs locales para comparación rápida
-            const idsLocales = new Set(
-                profesionalesLocal.map(p => `${p.id_profesional}-${p.id_infoUsuario}`)
-            );
 
             const profesionalesIndexed = profesionales.map((data) => ({
                 Profesional: {
@@ -136,14 +130,8 @@ export const useMedicosStore = defineStore('Medicos', {
                 }
             }));
 
-            // Filtrar los que no están en local
-            const nuevosProfesionales = profesionalesIndexed.filter(item => {
-                const key = `${item.Profesional.id}-${item.InformacionUser.id}`;
-                return !idsLocales.has(key);
-            });
-
             // Guardar solo los nuevos
-            nuevosProfesionales.forEach(item => {
+            profesionalesIndexed.forEach(item => {
                 guardarEnDB(item);
             });
 

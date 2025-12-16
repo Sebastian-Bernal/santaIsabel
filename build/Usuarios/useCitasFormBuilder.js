@@ -76,7 +76,7 @@ export function useFormularioCitaBuilder({
 
         showTratamientos.value = false
         const tratamientodiv = document.getElementById('tratamientos');
-        tratamientodiv.innerHTML = `a`;
+        tratamientodiv.innerHTML = ` `;
 
       }
     }

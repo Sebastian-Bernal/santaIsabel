@@ -400,7 +400,26 @@ async function exportarEvolucionPDF(data) {
             ])
         : [];
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTerapia }
+    const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
+        ? toRaw(diagnosticosCIF.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
+
+    propiedadesEvolucionPDF.value = { 
+        ...data, 
+        ...dataPaciente, 
+        nameProfesional: 
+        profesional.name, 
+        cedulaProfesional: 
+        profesional.No_document, 
+        sello: profesional.sello, 
+        diagnosticosTerapia,
+        diagnosticosCIFs,
+    }
     activePdfEvolucion.value = true
     varView.cargando = false
 }
@@ -674,13 +693,6 @@ const propiedades = computed(() => {
         `
         return [contenido]
     });
-
-    const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
-        ? toRaw(diagnosticosCIF.value).map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-        : [];
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
@@ -1186,8 +1198,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnósticos', 'CIF'],
-                    filas: diagnosticosCIFs?.length > 0
-                        ? diagnosticosCIFs
+                    filas: propiedadesEvolucionPDF.value.diagnosticosCIFs?.length > 0
+                        ? propiedadesEvolucionPDF.value.diagnosticosCIFs
                         : [['<p class="text-xs">Sin diagnósticos CIF registrados</p>', '']]
                 })
 
@@ -1197,7 +1209,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-1">Objetivos de la intervencion terapeutica</p>`,
+                            `<p class="text-sm font-bold text-center py-1">Objetivos de la intervencion terapeutica</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesEvolucionPDF.value.objetivos}</p>`
@@ -1209,9 +1221,9 @@ const propiedades = computed(() => {
                     container: 'space-y-2 rounded-xl py-3!',
                     filas: [
                         [
-                            '<p class="text-sm w-full">Sesion</p>',
-                            '<p class="text-sm w-full">Fecha y hora:</p>',
-                            '<p class="text-sm w-full">Evolucion (condición inicial, objetivo de la sesión, técnica método y/o intervención que se realice, condicion final)</p>'
+                            '<p class="text-sm w-full font-bold">Sesion</p>',
+                            '<p class="text-sm w-full font-bold">Fecha y hora:</p>',
+                            '<p class="text-sm w-full font-bold">Evolucion (condición inicial, objetivo de la sesión, técnica método y/o intervención que se realice, condicion final)</p>'
                         ],
                         [
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.sesion}</p>`,
@@ -1461,7 +1473,7 @@ const propiedades = computed(() => {
                         [
                             [`<p class="text-xs ">No documento: <span class="text-xs">${propiedadesNutricionPDF.value.No_document}</span></p>
                             <p class="text-xs ">Tipo de documento: <span class="text-xs">${propiedadesNutricionPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs ">Edad: <span class="text-xs">${propiedadesNutricionPDF.value.nacimiento}</span></p>
+                            [`<p class="text-xs ">Edad: <span class="text-xs">${calcularEdad(propiedadesNutricionPDF.value.nacimiento)}</span></p>
                             <p class="text-xs ">Sexo: <span class="text-xs">${propiedadesNutricionPDF.value.sexo}</span></p>`],
                         ],
                         [
@@ -1486,7 +1498,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-1 font-bold">Motivo de consulta</p>`,
+                            `<p class="text-sm font-bold text-center py-1 font-bold">Motivo de consulta</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesNutricionPDF.value.motivo}</p>`
@@ -1498,7 +1510,7 @@ const propiedades = computed(() => {
                     container: 'space-y-2 rounded-xl py-3!',
                     filas: [
                         [
-                            '<p class="text-sm w-full text-center py-1 font-bold">Recomendaciones</p>',
+                            '<p class="text-sm font-bold w-full text-center py-1 font-bold">Recomendaciones</p>',
                         ],
                         [
                             `<p class="text-sm w-full text-center py-2">${propiedadesNutricionPDF.value.analisis}</p>`,
@@ -1578,14 +1590,14 @@ const propiedades = computed(() => {
                             ``,
                         ],
                         [
-                            [`<p class="text-xs py-2">No documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.No_document}</span></p>
-                            <p class="text-xs py-2">Tipo de documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.type_doc}</span></p>`],
-                            [`<p class="text-xs py-2">Edad: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.nacimiento}</span></p>
-                            <p class="text-xs py-2">Sexo: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.sexo}</span></p>`],
+                            [`<p class="text-xs">No documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.No_document}</span></p>
+                            <p class="text-xs">Tipo de documento: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.type_doc}</span></p>`],
+                            [`<p class="text-xs">Edad: <span class="text-xs">${calcularEdad(propiedadesTrabajoSocialPDF.value.nacimiento)}</span></p>
+                            <p class="text-xs">Sexo: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.sexo}</span></p>`],
                         ],
                         [
-                            `<p class="text-xs py-2">EPS: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.Eps}</span></p>`,
-                            `<p class="text-xs py-2">Zona: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.zona}</span></p>`
+                            `<p class="text-xs">EPS: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.Eps}</span></p>`,
+                            `<p class="text-xs">Zona: <span class="text-xs">${propiedadesTrabajoSocialPDF.value.zona}</span></p>`
                         ],
                     ],
                 })
@@ -1605,7 +1617,7 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     filas: [
                         [
-                            `<p class="text-sm text-center py-1">Motivo de consulta</p>`,
+                            `<p class="text-sm font-bold text-center py-1">Motivo de consulta</p>`,
                         ],
                         [
                             `<p class="text-sm text-center py-2">${propiedadesTrabajoSocialPDF.value.motivo}</p>`
@@ -1617,7 +1629,7 @@ const propiedades = computed(() => {
                     container: 'space-y-2 rounded-xl py-3!',
                     filas: [
                         [
-                            '<p class="text-sm w-full text-center py-1">Analisis/Tratamiento</p>',
+                            '<p class="text-sm font-bold w-full text-center py-1">Analisis/Tratamiento</p>',
                         ],
                         [
                             `<p class="text-sm w-full text-center py-2">${propiedadesTrabajoSocialPDF.value.analisis}</p>`,
@@ -1648,7 +1660,6 @@ const propiedades = computed(() => {
                     ],
                 })
             )
-
 
 
         )

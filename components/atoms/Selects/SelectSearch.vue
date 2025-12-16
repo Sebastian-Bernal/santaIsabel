@@ -33,15 +33,15 @@ watch(() => props.modelValue, (nuevoValor) => {
     }
 
     opcionesFiltradas.value = Array.isArray(opciones) ? opciones.filter(item => {
-        const val1 = item?.[propiedadFiltrar1]?.toLowerCase() ?? '';
-        const val2 = item?.[propiedadFiltrar2]?.toLowerCase() ?? '';
+        const val1 = String(item?.[propiedadFiltrar1] ?? '').toLowerCase();
+        const val2 = String(item?.[propiedadFiltrar2] ?? '').toLowerCase();
         return val1.includes(nuevoValor.toLowerCase()) || val2.includes(nuevoValor.toLowerCase());
     }).slice(0, 20) : [];
 
     const filtradas = opcionesFiltradas.value;
     const coincidenciaExacta = filtradas.find(item => {
-        const val1 = item?.[propiedadFiltrar1]?.toLowerCase() ?? '';
-        const val2 = item?.[propiedadFiltrar2]?.toLowerCase() ?? '';
+        const val1 = String(item?.[propiedadFiltrar1] ?? '').toLowerCase();
+        const val2 = String(item?.[propiedadFiltrar2] ?? '').toLowerCase();
         return val1 === nuevoValor.toLowerCase() || val2 === nuevoValor.toLowerCase();
     });
 

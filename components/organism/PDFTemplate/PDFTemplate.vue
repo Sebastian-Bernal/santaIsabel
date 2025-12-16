@@ -74,7 +74,7 @@ const exportPdf = async () => {
     window.onafterprint = () => {
         imprimir.value = false;   // cerrar impresión
         cerrarDropdown()
-        props.Propiedades.isActive.value = false
+        cerrar()
     };
 
 }
@@ -86,7 +86,6 @@ const cerrar = () => {
     varView.showPDFTerapia = false
     varView.showPDFMedicina = false
     varView.showPDFTrabajoSocial = false
-    console.log(varView.showPDFMedicina)
 }
 
 // const elementoId = document.getElementById(props.Propiedades.elementId)

@@ -82,7 +82,26 @@ async function exportarEvolucionPDF(data) {
             ])
         : [];
 
-    propiedadesEvolucionPDF.value = { ...data, ...dataPaciente, nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello, diagnosticosTerapia }
+    const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
+        ? toRaw(diagnosticosCIF.value)
+            .filter(diagnostico => diagnostico.id_analisis === data.id_analisis) // filtra solo los que aplican
+            .map(diagnostico => [
+                `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
+                `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
+            ])
+        : [];
+
+    propiedadesEvolucionPDF.value = { 
+        ...data, 
+        ...dataPaciente, 
+        nameProfesional: 
+        profesional.name, 
+        cedulaProfesional: 
+        profesional.No_document, 
+        sello: profesional.sello, 
+        diagnosticosTerapia,
+        diagnosticosCIFs
+    }
     activePdfEvolucion.value = true
     varView.cargando = false
 }
@@ -191,8 +210,8 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', {
                     container: 'w-full p-3',
                     columnas: ['Diagnósticos', 'CIF'],
-                    filas: diagnosticosCIFs?.length > 0
-                        ? diagnosticosCIFs
+                    filas: propiedadesEvolucionPDF.value.diagnosticosCIFs?.length > 0
+                        ? propiedadesEvolucionPDF.value.diagnosticosCIFs
                         : [['<p class="text-xs">Sin diagnósticos CIF registrados</p>', '']]
                 })
 
@@ -214,9 +233,9 @@ const propiedades = computed(() => {
                     container: 'space-y-2 rounded-xl py-3!',
                     filas: [
                         [
-                            '<p class="text-sm w-full">Sesion</p>',
-                            '<p class="text-sm w-full">Fecha y hora:</p>',
-                            '<p class="text-sm w-full">Evolucion (condición inicial, objetivo de la sesión, técnica método y/o intervención que se realice, condicion final)</p>'
+                            '<p class="text-sm w-full font-bold">Sesion</p>',
+                            '<p class="text-sm w-full font-bold">Fecha y hora:</p>',
+                            '<p class="text-sm w-full font-bold">Evolucion (condición inicial, objetivo de la sesión, técnica método y/o intervención que se realice, condicion final)</p>'
                         ],
                         [
                             `<p class="text-sm w-full">${propiedadesEvolucionPDF.value.sesion}</p>`,

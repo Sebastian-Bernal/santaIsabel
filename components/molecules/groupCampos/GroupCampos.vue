@@ -95,11 +95,11 @@ const updateField = (index, field, value) => {
         <div v-if="showCampos" :class="[Propiedades.tamaño]"
             >
 
-            <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5"
+            <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5 pb-3 px-1 shadow border-b-1 border-gray-200 dark:border-gray-700"
                 :class="Propiedades.containerCampos">
 
                 <!-- Header del bloque -->
-                <div class="w-full flex justify-between absolute top-0">
+                <div class="w-full flex justify-between absolute top-1">
                     <label class="text-xs text-gray-600">
                         Bloque {{ index + 1 }}
                     </label>

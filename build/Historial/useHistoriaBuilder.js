@@ -31,7 +31,7 @@ export function useHistoriaBuilder({
     const sugerencia = ref("")
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
-    onMounted(async() => {
+    onMounted(async () => {
         varView.cargando = true
         PacientesList.value = pacienteStore.Pacientes;
         MedicosList.value = medicoStore.Medicos;
@@ -146,12 +146,12 @@ export function useHistoriaBuilder({
         const token = decryptData(sessionStorage.getItem('token'))
 
         let options = {
-          metodo: 'POST',
-          url: config.public.obtenerSugerencia,
-          token: token,
-          body: {
-            texto: nuevoTexto
-          }
+            metodo: 'POST',
+            url: config.public.obtenerSugerencia,
+            token: token,
+            body: {
+                texto: nuevoTexto
+            }
         }
 
         const respuesta = await api.functionCall(options)
@@ -367,7 +367,7 @@ export function useHistoriaBuilder({
                 text: '<i class="fa-solid fa-bullseye text-blue-500 mr-1"></i>Objetivos de la intervención terapéutica',
                 tamaño: 'w-full col-span-2 mt-3'
             })
-            
+
             // --- Input: Objetivos ---
             .addCampo({
                 component: 'Input',
@@ -378,7 +378,7 @@ export function useHistoriaBuilder({
                 placeholder: 'Describe el objetivo de la sesión terapéutica',
                 tamaño: 'w-full col-span-2',
             })
-            
+
             // --- Label: Evolución ---
             .addCampo({
                 component: 'Label',
@@ -1001,7 +1001,7 @@ export function useHistoriaBuilder({
                     { text: 'Cambios críticos', value: 'Cambios criticos' }
                 ]
             })
-            
+
             .addCampo({
                 component: 'Label',
                 icon: 'fa-solid fa-comment text-blue-500',
@@ -1177,7 +1177,7 @@ export function useHistoriaBuilder({
                 forLabel: 'tipo',
                 tamaño: 'md:col-span-2 w-full'
             })
-    } else if (varView.tipoConsulta?.plantilla === 'Medicina'){
+    } else if (varView.tipoConsulta?.plantilla === 'Medicina') {
         builder
             // 📌 Sección: Datos
             .nuevaSeccion('Datos usuarios')
@@ -1493,37 +1493,37 @@ export function useHistoriaBuilder({
                 .nuevaSeccion('Analisis')
                 // 📌 Sección: Diagnósticos
 
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Diagnosticos',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Diagnosticos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'descripcion',
-                        typeCampo: 'SelectSearch',
-                        placeholder: 'Diagnostico',
-                        tamaño: 'w-full md:col-span-1 col-span-2',
-                        options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                        seleccionarItem: seleccionarCIE_10,
-                    },
-                    {
-                        name: 'codigo',
-                        id: 'cie-10',
-                        typeCampo: 'SelectSearch',
-                        placeholder: 'CIE-10',
-                        tamaño: 'w-full md:col-span-1 col-span-2',
-                        options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
-                        seleccionarItem: seleccionarCIE_10,
-                    },
-                ],
-                containerCampos: 'grid grid-cols-2 gap-1'
-            })
+                .addCampo({
+                    component: 'GroupCampos',
+                    labelGroup: 'Diagnosticos',
+                    buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
+                    tamaño: 'w-full col-span-2',
+                    vmodel: 'Diagnosticos',
+                    value: [],
+                    campos: [
+                        {
+                            name: 'descripcion',
+                            id: 'descripcion',
+                            typeCampo: 'SelectSearch',
+                            placeholder: 'Diagnostico',
+                            tamaño: 'w-full md:col-span-1 col-span-2',
+                            options: CIE10,
+                            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                            seleccionarItem: seleccionarCIE_10,
+                        },
+                        {
+                            name: 'codigo',
+                            id: 'cie-10',
+                            typeCampo: 'SelectSearch',
+                            placeholder: 'CIE-10',
+                            tamaño: 'w-full md:col-span-1 col-span-2',
+                            options: CIE10,
+                            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                            seleccionarItem: seleccionarCIE_10,
+                        },
+                    ],
+                    containerCampos: 'grid grid-cols-2 gap-1'
+                })
 
                 // --- Select: Tipo de Análisis ---
                 .addCampo({
@@ -1552,6 +1552,14 @@ export function useHistoriaBuilder({
                     minlength: 5
                 })
 
+                // --- Label: Tratamiento ---
+                .addCampo({
+                    component: 'Label',
+                    forLabel: 'rehabilitacion',
+                    text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento',
+                    tamaño: 'w-full col-span-2',
+                })
+
                 // --- Textarea: Análisis ---
                 .addCampo({
                     component: 'Textarea',
@@ -1563,11 +1571,10 @@ export function useHistoriaBuilder({
                     minlength: 10
                 })
 
-                // --- Label: Tratamiento ---
                 .addCampo({
                     component: 'Label',
-                    forLabel: 'rehabilitacion',
-                    text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Tratamiento',
+                    forLabel: '',
+                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
                     tamaño: 'w-full col-span-2',
                 })
 
@@ -1660,6 +1667,21 @@ export function useHistoriaBuilder({
                     containerCampos: 'grid grid-cols-3 gap-2'
                 })
 
+                // --- Select: Condición de rehabilitación ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Analisis.tratamiento',
+                    id: 'rehabilitacion',
+                    name: 'rehabilitacion',
+                    placeholder: 'Condición de rehabilitación',
+                    tamaño: 'w-full md:col-span-2',
+                    options: [
+                        { text: 'Total o Parcial', value: 'Total o Parcial' },
+                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                    ]
+                })
+
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
@@ -1721,27 +1743,6 @@ export function useHistoriaBuilder({
                     containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
                 })
 
-                // --- Select: Condición de rehabilitación ---
-                .addCampo({
-                    component: 'Select',
-                    vmodel: 'Analisis.tratamiento',
-                    id: 'rehabilitacion',
-                    name: 'rehabilitacion',
-                    placeholder: 'Condición de rehabilitación',
-                    tamaño: 'w-full md:col-span-2',
-                    options: [
-                        { text: 'Total o Parcial', value: 'Total o Parcial' },
-                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-                    ]
-                })
-
-                .addCampo({
-                    component: 'Label',
-                    forLabel: '',
-                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
-                    tamaño: 'w-full col-span-2',
-                })
         }
     }
     builder.build()

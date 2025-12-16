@@ -387,6 +387,7 @@ const variasCitas = ref(false)
 
 
 const propiedades = computed(() => {
+    varView.cargando = true
     if (!rol.value) return null
     const builder = useFormularioCitaBuilder({
         storeId: 'NuevaCita',
@@ -478,6 +479,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Form', builder)
     }
+    varView.cargando = false
     return paginaBase.build()
 })
 

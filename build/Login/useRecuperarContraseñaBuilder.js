@@ -17,6 +17,7 @@ export function useRecuperarContraseñaBuilder({
     .setStoreId(storeId)
     .setStorePinia(storePinia)
     .setFormulariotamaño('SM')
+    .setFormularioEstilos('h-[75vh]!')
     .setFormularioFondo(true)
     .setFormularioShow(show)
   if (stateCodigo) {
@@ -41,7 +42,7 @@ export function useRecuperarContraseñaBuilder({
     .addCampo({
       component: 'Label',
       text: `
-            <div class="flex flex-col justify-center items-center gap-1 pb-5">
+            <div class="flex flex-col justify-center items-center gap-1 pt-5 pb-10">
                 <h3 class="dark:text-white text-black text-3xl font-bold">Thesalus</h3>
                 <p>Introduce tu direccion de correo electronico para restablecer la contraseña</p>
             </div>

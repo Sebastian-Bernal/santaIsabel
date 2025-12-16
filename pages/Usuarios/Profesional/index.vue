@@ -169,6 +169,14 @@ const municipiosOptions = computed(() => {
     return departamento ? departamento.municipios : [];
 });
 
+const municipiosOptionsProfesional = computed(() => {
+    const departamentoSeleccionado = medicosStore.Formulario.Profesional.departamento_laboral;
+
+    const departamento = municipios.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
+
+    return departamento ? departamento.municipios : [];
+});
+
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
 
@@ -227,6 +235,7 @@ const propiedades = computed(() => {
             buscarUsuario,
             departamentos: municipios,
             seleccionarDepartamento,
+            municipios_laboral: municipiosOptionsProfesional,
             municipios: municipiosOptions,
             seleccionarMunicipio: () => { },
             tipoUsuario: 'Profesional',
@@ -250,6 +259,7 @@ const propiedades = computed(() => {
             departamentos: municipios,
             seleccionarDepartamento,
             municipios: municipiosOptions,
+            municipios_laboral: municipiosOptionsProfesional,
             seleccionarMunicipio: () => { },
             opcionesProfesion: profesiones,
             tipoUsuario: 'Profesional',

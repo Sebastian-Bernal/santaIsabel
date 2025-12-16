@@ -112,7 +112,16 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
             // SweetAlert2 para mostrar "Cargando..."
             this.swal.fire({
                 title: this.options.titulo || 'Cargando...',
-                html: this.options.texto || 'Por favor, espere un momento...',
+                // html: this.options.texto || 'Por favor, espere un momento...',
+                html: `
+                    <p id="swal-text">${this.options.texto || 'Inicializando...'}</p>
+                    <div style="width:100%; background:#e5e7eb; border-radius:6px; overflow:hidden; margin-top:10px;">
+                        <div id="swal-progress"
+                            style="width:0%; height:10px; background:#3b82f6; transition:width .3s;">
+                        </div>
+                    </div>
+                    <small id="swal-percent">0%</small>
+                `,
                 allowOutsideClick: false,
                 allowEscapeKey: false,   // Evita que se cierre con la tecla Esc
                 showConfirmButton: false, // Oculta el botón de Confirmar

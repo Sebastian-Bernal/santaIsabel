@@ -35,6 +35,10 @@ const fechaActualFormateada = computed(() => {
     return obtenerFechaFormateada();
 });
 
+const aplicarMargen = computed(() => {
+  return usuario.value?.length < 7;
+});
+
 const removeStorage = () => {
     sessionStorage.removeItem('seccionesGuardadas')
 };
@@ -70,7 +74,7 @@ const removeStorage = () => {
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
-                    <p class="text-xs ml-1 font-semibold md:block hidden">{{ usuario }}</p>
+                    <p class="text-xs ml-1 font-semibold md:block hidden" :class="{ 'mr-6': aplicarMargen }">{{ usuario }}</p>
                 </li>
             </ul>
 
