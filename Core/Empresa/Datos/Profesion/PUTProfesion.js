@@ -33,28 +33,6 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Convertir permisos
-    datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
-        if (typeof permiso !== 'string') return permiso;
-
-        const partes = permiso.split(' ');
-        const seccion = partes.slice(0, -1).join(' ');
-        const accion = partes[partes.length - 1];
-
-        switch (accion) {
-            case 'leer':
-                return `${seccion}_get`;
-            case 'crear':
-                return `${seccion}_post`;
-            case 'actualizar':
-                return `${seccion}_put`;
-            case 'eliminar':
-                return `${seccion}_delete`;
-            default:
-                return `${permiso}_view`;
-        }
-    });
-
     const online = navigator.onLine;
     if (online) {
         try {

@@ -409,14 +409,14 @@ async function exportarEvolucionPDF(data) {
             ])
         : [];
 
-    propiedadesEvolucionPDF.value = { 
-        ...data, 
-        ...dataPaciente, 
-        nameProfesional: 
-        profesional.name, 
-        cedulaProfesional: 
-        profesional.No_document, 
-        sello: profesional.sello, 
+    propiedadesEvolucionPDF.value = {
+        ...data,
+        ...dataPaciente,
+        nameProfesional:
+            profesional.name,
+        cedulaProfesional:
+            profesional.No_document,
+        sello: profesional.sello,
         diagnosticosTerapia,
         diagnosticosCIFs,
     }
@@ -661,6 +661,13 @@ const propiedades = computed(() => {
     const puedePUT = varView.getPermisos.includes('Historias_put')
     // const puedePUT = false
     puedePostAnalisis.value = varView.getPermisos.includes('Diagnosticos_view')
+    const puedeVerNotas = varView.getPermisos.includes('Notas_view')
+    const puedeVerEvoluciones = varView.getPermisos.includes('Evoluciones_view')
+    const puedeVerTerapias = varView.getPermisos.includes('Terapias_view')
+    const puedeVerTratamientos = varView.getPermisos.includes('Tratamientos_view')
+    const puedeVerMedicacion = varView.getPermisos.includes('Medicacion_view')
+    const puedeVerMedicina = varView.getPermisos.includes('MedicinaGeneral_view')
+    const puedeVerTrabajo = varView.getPermisos.includes('TrabajoSocial_view')
 
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
@@ -742,7 +749,7 @@ const propiedades = computed(() => {
             })
 
             .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col md:justify-center gap-1 w-full h-full content-center py-5 px-8')
-            .addComponente('Card', consultasCard
+            .addComponente('Card', puedeVerMedicina ? consultasCard
                 .setCards([
                     {
                         header: {
@@ -760,8 +767,26 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full col-span-2')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                :  consultasCard               
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-hospital text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Consultas y Analisis',
+                            subtitle: 'Registro de consultas del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('col-span-2')
+                .setheaderSubTitle('')
+                .setcontenedorCards('w-full flex justify-center w-full col-span-2')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                .build()
             )
-            .addComponente('Card', evolucionesCard
+            .addComponente('Card', puedeVerTerapias ? evolucionesCard 
                 .setCards([
                     {
                         header: {
@@ -778,8 +803,25 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                : evolucionesCard 
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-heart-pulse text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Terapias',
+                            subtitle: 'Evoluciones de Procedimientos',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                .build()
             )
-            .addComponente('Card', notasCard
+            .addComponente('Card', puedeVerNotas ? notasCard
                 .setCards([
                     {
                         header: {
@@ -796,8 +838,25 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                : notasCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-notes-medical text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Notas',
+                                subtitle: 'Registro de notas medicas',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
+                        },
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
-            .addComponente('Card', tratamientosCard
+            .addComponente('Card', puedeVerTratamientos ? tratamientosCard
                 .setCards([
                     {
                         header: {
@@ -814,8 +873,25 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                : tratamientosCard 
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-kit-medical text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Tratamientos del paciente',
+                            subtitle: 'Tratamientos del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-cursor-not-allowed text-white! w-[100%]!')
+                .build()
             )
-            .addComponente('Card', medicacionCard
+            .addComponente('Card', puedeVerMedicacion ? medicacionCard
                 .setCards([
                     {
                         header: {
@@ -832,8 +908,25 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                : medicacionCard 
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-prescription-bottle-medical text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Medicacion',
+                            subtitle: 'Medicacion del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                .build()
             )
-            .addComponente('Card', nutricionCard
+            .addComponente('Card', puedeVerEvoluciones ? nutricionCard
                 .setCards([
                     {
                         header: {
@@ -850,8 +943,25 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
+                : nutricionCard 
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-user-check text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Evoluciones',
+                            subtitle: 'Evolucion del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                .build()
             )
-            .addComponente('Card', trabajoSocialCard
+            .addComponente('Card', puedeVerTrabajo ? trabajoSocialCard
                 .setCards([
                     {
                         header: {
@@ -867,6 +977,23 @@ const propiedades = computed(() => {
                 .setContenedor('')
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
+                .build()
+                : trabajoSocialCard
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-book-medical text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Trabajo Social',
+                            subtitle: 'Trabajo Social del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
                 .build()
             )
             .addComponente('PDFTemplate', pdfHistorial
@@ -950,7 +1077,7 @@ const propiedades = computed(() => {
                     // puedePostAnalisis.value ? { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 } : { titulo: 'ta', value: 'Estado'},
                 ])
                 .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
-                .setDatos(analisis)
+                .setDatos(puedeVerMedicina ? analisis : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '', { icon: 'pdf', action: exportarMedicinaPDF }], botones: true, })
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -1137,7 +1264,7 @@ const propiedades = computed(() => {
                 ])
                 .setHeaderTabla({ titulo: 'Avances de Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }], botones: true, })
-                .setDatos(evoluciones)
+                .setDatos(puedeVerTerapias ? evoluciones : [])
             )
             .addComponente('PDFTemplate', pdfEvolucion
                 .setElementId('Evolucion')
@@ -1267,7 +1394,7 @@ const propiedades = computed(() => {
                     { titulo: 'hora_nota', value: 'Hora', tamaño: 150 },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 400 },
                 ])
-                .setDatos(notas)
+                .setDatos(puedeVerNotas ? notas : [])
                 .setAcciones({
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
@@ -1400,7 +1527,7 @@ const propiedades = computed(() => {
                     { titulo: 'codigo', value: 'CUPS', tamaño: 250, ordenar: true },
                     { titulo: 'dias_asignados', value: 'No. Dias', tamaño: 250 },
                 ])
-                .setDatos(tratamientos)
+                .setDatos(puedeVerTratamientos ? tratamientos : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
@@ -1416,7 +1543,7 @@ const propiedades = computed(() => {
                     { titulo: 'cantidad', value: 'Cantidad', tamaño: 150 },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
-                .setDatos(medicinas)
+                .setDatos(puedeVerMedicacion ? medicinas : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : ''], botones: true, })
                 .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
@@ -1431,7 +1558,7 @@ const propiedades = computed(() => {
                     { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
-                .setDatos(nutricion)
+                .setDatos(puedeVerEvoluciones ? nutricion : [])
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'actualizar', action: actualizarItemEvolucionHistoria }], botones: true, })
                 .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
             )
@@ -1551,7 +1678,7 @@ const propiedades = computed(() => {
                     { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
-                .setDatos(trabajosSocial)
+                .setDatos(puedeVerTrabajo ? trabajosSocial : [])
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarTrabajoSocialPDF }], botones: true, })
                 .setHeaderTabla({ titulo: 'Trabajo Social', color: 'bg-[var(--color-default-600)] text-white', })
             )
@@ -1663,6 +1790,7 @@ const propiedades = computed(() => {
 
 
         )
+
     return pagina.build()
 });
 

@@ -103,7 +103,8 @@ const cerrar = () => {
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
-                    <h2 class="text-white font-bold text-2xl">Vista previa del PDF</h2>
+                    <h2 class="text-white font-bold md:text-2xl text-xl">Vista previa del PDF</h2>
+                    <p class="text-gray-200 text-sm">{{ props.Propiedades.filename }}</p>
                 </div>
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"

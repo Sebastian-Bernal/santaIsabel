@@ -1,5 +1,5 @@
 import { decryptData } from '~/composables/Formulario/crypto';
-export async function traerdatosSecciones () {
+export async function traerdatosSecciones (id = null) {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
@@ -8,13 +8,23 @@ export async function traerdatosSecciones () {
     const online = navigator.onLine;
     if (online) {
         try {
-            // mandar a api
-            let options = {
-                metodo: 'GET',
-                url: config.public.secciones,
-                token: token
+            let respuesta
+            if(id){
+                let options = {
+                    metodo: 'GET',
+                    url: config.public.professions + '/' + id,
+                    token: token
+                }
+                respuesta = await api.functionCall(options)
+            } else {
+                // mandar a api
+                let options = {
+                    metodo: 'GET',
+                    url: config.public.secciones,
+                    token: token
+                }
+                respuesta = await api.functionCall(options)
             }
-            const respuesta = await api.functionCall(options)
 
             if(respuesta.success){
                 return respuesta.data

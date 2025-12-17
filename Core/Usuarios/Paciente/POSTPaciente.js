@@ -116,13 +116,13 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     regimen: datos.Paciente.regimen,
                     vulnerabilidad: datos.Paciente.vulnerabilidad,
 
-                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
+                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos_nuevos ?? []).map(p => ({
                         procedimiento: p.procedimiento,
                         codigo: p.codigo,
                         id_medico: p.id_medico,
                         dias_asignados: p.dias_asignados,
                     })),
-                    Antecedentes: (datos.Antecedentes ?? []).map(a => ({
+                    Antecedentes: (datos.Antecedentes_nuevos ?? []).map(a => ({
                         tipo: a.tipo,
                         descripcion: a.descripcion,
                     })),

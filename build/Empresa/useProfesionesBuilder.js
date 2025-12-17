@@ -17,8 +17,8 @@ export function useProfesionesBuilder({
       .nuevaSeccion('Formulario Profesion')
       .setFormularioShow(showModificarProfesion)
       .setBotones([
-        {type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600',},
-        {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar},
+        { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
+        { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar },
       ])
   } else {
     builder
@@ -64,7 +64,7 @@ export function useProfesionesBuilder({
       upperCase: true
     })
     .addCampo({
-      component: 'SelectMultiple',
+      component: 'Permisos',
       placeholder: 'Seleccione los permisos',
       id: 'permisos',
       name: 'permisos',

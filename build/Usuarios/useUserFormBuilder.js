@@ -457,7 +457,7 @@ export function useUserBuilder({
                                 id: 'descripcionProcedimiento',
                                 typeCampo: 'SelectSearch',
                                 placeholder: 'Procedimiento',
-                                tamaño: 'w-full',
+                                tamaño: 'w-full col-span-2',
                                 UpperCase: true,
                                 options: CUPS,
                                 opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
@@ -473,20 +473,6 @@ export function useUserBuilder({
                                 placeholder: 'Numero de Veces',
                                 tamaño: 'w-full',
                             },
-                            // {
-                            //     name: 'profesional',
-                            //     id: 'profesional',
-                            //     typeCampo: 'SelectSearch',
-                            //     placeholder: 'Profesional asignado',
-                            //     tamaño: 'w-full',
-                            //     options: MedicosList,
-                            //     UpperCase: true,
-                            //     opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
-                            //     seleccionarItem: (item) => {
-                            //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
-                            //         pacienteStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional
-                            //     },
-                            // },
                         ],
                         containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
                     })
@@ -518,9 +504,9 @@ export function useUserBuilder({
                     builder
                     .addCampo({
                         component: 'GroupCampos',
-                        labelGroup: 'Procedimientos nose (opcional)',
+                        labelGroup: 'Procedimientos (opcional)',
                         buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', } },],
-                        tamaño: 'w-full md:col-span-2 mb-6',
+                        tamaño: 'w-full md:cols-span-2 mb-6',
                         vmodel: 'Plan_manejo_procedimientos_nuevos',
                         disabled: true,
                         value: [],
@@ -530,7 +516,7 @@ export function useUserBuilder({
                                 id: 'descripcionProcedimiento',
                                 typeCampo: 'SelectSearch',
                                 placeholder: 'Procedimiento',
-                                tamaño: 'w-full',
+                                tamaño: 'w-full md:col-span-2',
                                 UpperCase: true,
                                 options: CUPS,
                                 opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],

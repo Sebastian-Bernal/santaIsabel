@@ -228,7 +228,7 @@ const propiedades = computed(() => {
                 { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
                 { titulo: 'No_document', value: 'Documento', tamaño: 100 },
                 { titulo: 'celular', value: 'Celular', tamaño: 100 },
-                { titulo: 'estado', value: 'Estado', tamaño: 150 },
+                { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
             ])
             .setHeaderTabla({
                 titulo: 'Gestion de Administradores',

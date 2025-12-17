@@ -146,7 +146,7 @@ function manejarTeclas(event) {
 <template>
     <div class="relative" :class="Propiedades.tamaño">
         <input :value="modelValue"
-            class="z-100 mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            class="z-100 mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="Propiedades.placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
@@ -155,7 +155,7 @@ function manejarTeclas(event) {
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length" :class="[
             'autocomplete-list absolute left-0 right-0 max-h-[200px] overflow-y-auto scrollForm bg-white dark:bg-gray-700 text-black dark:text-gray-50 border border-[#d0d7de] dark:border-gray-600 z-999999 p-0',
-            desplegarArriba ? 'bottom-full mb-1' : 'top-full mt-1'
+            desplegarArriba ? 'bottom-full mb-1 rounded-t-lg' : 'top-full mt-1 rounded-b-lg'
         ]">
             <li v-for="(opcion, index) in opcionesFiltradas" :key="opcion.documento" 
             :class="[

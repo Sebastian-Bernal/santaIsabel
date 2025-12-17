@@ -117,7 +117,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                     <p id="swal-text">${this.options.texto || 'Inicializando...'}</p>
                     <div style="width:100%; background:#e5e7eb; border-radius:6px; overflow:hidden; margin-top:10px;">
                         <div id="swal-progress"
-                            style="width:0%; height:10px; background:#3b82f6; transition:width .3s;">
+                            style="width:0%; height:10px; background:#326872; transition:width .3s;">
                         </div>
                     </div>
                     <small id="swal-percent">0%</small>

@@ -1022,15 +1022,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
+                        placeholder: 'Hora del registro',
                         tamaño: 'w-full',
-                        label: 'Hora:'
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Registre la valoración del paciente (signos, síntomas, estado general)',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1049,15 +1049,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
+                        placeholder: 'Hora del registro',
                         tamaño: 'w-full',
-                        label: 'Hora:'
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Describa la intervención realizada (procedimiento, cuidado o acción aplicada)',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1076,15 +1076,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
+                        placeholder: 'Hora del registro',
                         tamaño: 'w-full',
-                        label: 'Hora:'
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Indique el plan de cuidado a seguir según la valoración del paciente',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1103,15 +1103,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
+                        placeholder: 'Hora del registro',
                         tamaño: 'w-full',
-                        label: 'Hora:'
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Detalle las actividades de enfermería realizadas durante el turno',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1130,15 +1130,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
+                        placeholder: 'Hora del registro',
                         tamaño: 'w-full',
-                        label: 'Hora:'
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Registre el objetivo del cuidado de enfermería para el paciente',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1157,15 +1157,15 @@ export function useHistoriaBuilder({
                         id: 'hora',
                         typeCampo: 'Input',
                         type: 'time',
-                        placeholder: 'Hora',
-                        tamaño: 'w-full',
-                        label: 'Hora:'
+                        placeholder: 'Hora del registro',
+                        tamaño: 'w-full mt-1',
+                        label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Describe el proceso',
+                        placeholder: 'Registre lo manifestado por el paciente o familiar (dolor, molestias, percepción)',
                         tamaño: 'w-full',
                     },
                 ],

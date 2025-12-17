@@ -59,12 +59,12 @@ const updateField = (index, field, value) => {
 </script>
 
 <template>
-    <div class="flex flex-col col-span-2 bg-gray-100 dark:bg-gray-800 p-3 rounded-xl">
+    <div class="flex flex-col col-span-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
 
         <!-- Header -->
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
             <label v-if="Propiedades.labelGroup" @click="showCampos = !showCampos"
-                class="flex gap-2 font-medium text-gray-700 dark:text-gray-200 w-fit mb-2">
+                class="flex gap-2 font-medium text-gray-700 dark:text-gray-200 w-fit">
 
                 {{ Propiedades.labelGroup }}
 
@@ -92,15 +92,13 @@ const updateField = (index, field, value) => {
         </div>
 
         <!-- Campos -->
-        <div v-if="showCampos" :class="[Propiedades.tamaño]"
-            >
+        <div v-if="showCampos" :class="[Propiedades.tamaño]" class="border border-gray-200 dark:border-gray-800 rounded-lg">
 
-            <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5 pb-3 px-1 shadow border-b-1 border-gray-200 dark:border-gray-700"
-                :class="Propiedades.containerCampos">
+            <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5 pb-2 px-1">
 
                 <!-- Header del bloque -->
-                <div class="w-full flex justify-between absolute top-1">
-                    <label class="text-xs text-gray-600">
+                <div class="w-full flex justify-between px-4 py-2 bg-gray-200 dark:bg-gray-700 mb-1 rounded-lg">
+                    <label class="text-sm text-gray-600 dark:text-gray-300">
                         Bloque {{ index + 1 }}
                     </label>
 
@@ -110,14 +108,16 @@ const updateField = (index, field, value) => {
                     </i>
                 </div>
 
-                <!-- Campos dinámicos -->
-                <div v-for="campoDef in Propiedades.campos" :key="campoDef.name">
-
-                    <!-- Entrada dinámica con V-MODEL -->
-                    <component :is="campos[campoDef.typeCampo]" :modelValue="input[campoDef.name]"
-                        :Propiedades="{ ...campoDef, disabled: Propiedades.disabled }" 
-                        @input="e => updateField(index, campoDef.name, e.target.value)"
-                        />
+                <div :class="Propiedades.containerCampos" class="px-2">
+                    <!-- Campos dinámicos -->
+                    <div v-for="campoDef in Propiedades.campos" :key="campoDef.name">
+    
+                        <!-- Entrada dinámica con V-MODEL -->
+                        <component :is="campos[campoDef.typeCampo]" :modelValue="input[campoDef.name]"
+                            :Propiedades="{ ...campoDef, disabled: Propiedades.disabled }" 
+                            @input="e => updateField(index, campoDef.name, e.target.value)"
+                            />
+                    </div>
                 </div>
             </div>
 

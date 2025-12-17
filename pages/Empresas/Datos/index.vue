@@ -106,52 +106,18 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-watch(() => {
-    const seccionesBase = [...secciones.value]; // Copia para iterar sin modificar mientras insertamos
-
-    for (let i = 0; i < seccionesBase.length; i++) {
-        const seccion = seccionesBase[i];
-
-        // Verifica si es una sección principal (no una acción)
-        const esAccion = /(crear|actualizar|eliminar|leer)$/.test(seccion);
-        if (esAccion) continue;
-
-        const permiso = storeProfesion.Formulario.Profesion.permisos.find((s) => s === seccion);
-
-        const acciones = [
-            `${seccion} leer`,
-            `${seccion} crear`,
-            `${seccion} actualizar`,
-            `${seccion} eliminar`
-        ];
-
-        const yaInsertadas = acciones.every((accion) => secciones.value.includes(accion));
-
-        if (permiso && !yaInsertadas && permiso !== 'Diagnosticos') {
-            const index = secciones.value.indexOf(seccion);
-            secciones.value.splice(index + 1, 0, ...acciones);
-        }
-
-        // Si la sección principal ya no está en el formulario, eliminamos sus acciones
-        if (!permiso) {
-            secciones.value = secciones.value.filter((item) => {
-                return !(acciones.includes(item));
-            });
-        }
-    }
-});
-
-
 // Funciones Actualizar Profesion
 
 function nuevaProfesion() {
     showNuevaProfesion.value = true
 }
 
-function actualizarProfesion(profesion) {
+async function actualizarProfesion(profesion) {
     mapCampos(profesion, storeProfesion.Formulario)
     storeProfesion.Formulario.Profesion.id = profesion.id
     storeProfesion.Formulario.Profesion.id_temporal = profesion.id_temporal
+    const permisos = await storeProfesion.traerPermisos(profesion.id)
+    storeProfesion.Formulario.Profesion.permisos = permisos
     showModificarProfesion.value = true
 }
 
