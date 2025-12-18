@@ -232,9 +232,9 @@ const propiedades = computed(() => {
                     [
                         `
                             <div class="w-full flex justify-between"> 
-                                <p class="text-xs w-[80px]">Fecha:</p>
+                                <p class="text-xs font-bold w-[80px]">Fecha:</p>
                                 <div class="w-full text-center border-l-1">
-                                    <p class="text-xs w-full">Nota</p>
+                                    <p class="text-xs font-bold w-full">Nota</p>
                                 </div>
                             </div>
                             `,

@@ -25,7 +25,10 @@ export function useFormularioCitaBuilder({
   })
 
   watch(() => citasStore.Formulario.Cita.servicio,
-    async () => {
+    async (nuevo, anterior) => {
+
+      if(nuevo === anterior) return
+
       const servicioStore = useDatosServicioStore()
       const serviciosPlantilla = await servicioStore.listServicios()
       const tipoConsulta = serviciosPlantilla.find((s) => {
@@ -33,9 +36,7 @@ export function useFormularioCitaBuilder({
       })?.plantilla
 
       if (tipoConsulta === 'Terapia' && citasStore.Formulario.Cita.id_paciente) {
-        console.log('Terapia')
         const varView = useVarView()
-        varView.cargando = true
 
         const api = useApiRest()
         const config = useRuntimeConfig()
@@ -70,13 +71,13 @@ export function useFormularioCitaBuilder({
           tratamientodiv.innerHTML = ``;
         }
 
-        varView.cargando = false
-
       } else {
 
         showTratamientos.value = false
         const tratamientodiv = document.getElementById('tratamientos');
-        tratamientodiv.innerHTML = ` `;
+        if(tratamientodiv){
+          tratamientodiv.innerHTML = ` `;
+        }
 
       }
     }

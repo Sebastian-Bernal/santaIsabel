@@ -215,14 +215,14 @@ const propiedades = computed(() => {
                 columnas: [
                     `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesNutricionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesNutricionPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                     `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNutricionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `

@@ -1238,14 +1238,14 @@ const propiedades = computed(() => {
                     columnas: [
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesMedicinaPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesMedicinaPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
@@ -1370,14 +1370,14 @@ const propiedades = computed(() => {
                     columnas: [
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesEvolucionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesEvolucionPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
@@ -1475,9 +1475,9 @@ const propiedades = computed(() => {
                         [
                             `
                             <div class="w-full flex justify-between"> 
-                                <p class="text-xs w-[80px]">Fecha:</p>
+                                <p class="text-xs font-bold w-[80px]">Fecha:</p>
                                 <div class="w-full text-center border-l-1">
-                                    <p class="text-xs w-full">Nota</p>
+                                    <p class="text-xs font-bold w-full">Nota</p>
                                 </div>
                             </div>
                             `,
@@ -1503,14 +1503,14 @@ const propiedades = computed(() => {
                     columnas: [
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesNotaPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesNotaPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNotaPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
@@ -1654,14 +1654,14 @@ const propiedades = computed(() => {
                     columnas: [
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesNutricionPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesNutricionPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesNutricionPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `
@@ -1773,14 +1773,14 @@ const propiedades = computed(() => {
                     columnas: [
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Nombre y Apellido</p> </hr>
+                                <p class="text-xs text-center py-1 border-1">Nombre del Profesional</p> </hr>
                                 <p class="text-xs text-center pt-9">${propiedadesTrabajoSocialPDF.value.nameProfesional}</p> </hr>
                                 <p class="text-xs text-center pt-3">${propiedadesTrabajoSocialPDF.value.cedulaProfesional}</p>
                             <div>
                             `,
                         `
                             <div class="min-h-[150px]">
-                                <p class="text-xs text-center py-1 border-1">Firma y sello</p>
+                                <p class="text-xs text-center py-1 border-1">Firma o sello del Profesional</p>
                                 <div class="flex justify-center items-center" id="selloProfesional"><img src="${config.public.api}/storage/${propiedadesTrabajoSocialPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
                             </div>
                             `

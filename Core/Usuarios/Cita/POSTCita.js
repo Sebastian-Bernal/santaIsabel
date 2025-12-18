@@ -1,6 +1,7 @@
 import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
+import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
 
 // funcion para Validar campos del formulario Nueva Cita
 export const validarYEnviarNuevaCita = async (datos) => {
@@ -9,7 +10,13 @@ export const validarYEnviarNuevaCita = async (datos) => {
     const cita = datos.Cita;
 
     let camposObligatorios = []
-    if (datos.Cita.servicio === 'Terapia') {
+    const servicioStore = useDatosServicioStore()
+    const serviciosPlantilla = await servicioStore.listServicios()
+    const tipoConsulta = serviciosPlantilla.find((s) => {
+        return s.name === cita.servicio
+    })?.plantilla
+
+    if (tipoConsulta === 'Terapia') {
         camposObligatorios = [
             'id_paciente',
             'id_medico',
@@ -103,75 +110,75 @@ export const validarYEnviarNuevaCita = async (datos) => {
         return false;
     }
 
-if (cita.tipo) {
-    const cantidad = parseInt(cita.cantidadCitas) || 0;
+    if (cita.tipo) {
+        const cantidad = parseInt(cita.cantidadCitas) || 0;
 
-    if(cita.servicio === 'Terapia'){
-        const dias_restantes = varView.tratamientos.find(tratamiento => {
-            return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
-        })?.dias_restantes
-        
-        if(cantidad > dias_restantes){
-            notificacionesStore.options.icono = 'error';
-            notificacionesStore.options.titulo = 'Informacion invalida.';
-            notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
-            notificacionesStore.options.tiempo = 5000;
-            notificacionesStore.simple();
-            return false;
+        if (tipoConsulta === 'Terapia') {
+            const dias_restantes = varView.tratamientos.find(tratamiento => {
+                return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
+            })?.dias_restantes
+
+            if (cantidad > dias_restantes) {
+                notificacionesStore.options.icono = 'warning';
+                notificacionesStore.options.titulo = 'Informacion invalida.';
+                notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
+                notificacionesStore.options.tiempo = 5000;
+                notificacionesStore.simple();
+                return false;
+            }
+
         }
-        
+        // Utilidad para convertir string "YYYY-MM-DD" a Date
+        function parseFechaISO(iso) {
+            const [y, m, d] = iso.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
+
+        // Utilidad para formatear Date a "YYYY-MM-DD"
+        function formatearISO(date) {
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
+
+        const fechaInicial = parseFechaISO(datos.Cita.fecha);
+
+        varView.cargando = true
+        // Generar todas las citas
+        for (let i = 0; i < cantidad; i++) {
+            // Clonar la fecha inicial
+            const fechaCita = new Date(fechaInicial);
+
+            // Sumar el intervalo en días multiplicado por el índice
+            fechaCita.setDate(fechaCita.getDate() + (i * datos.Cita.intervaloCitas));
+
+            // Formatear la fecha en YYYY-MM-DD
+            const fechaFormateada = formatearISO(fechaCita);
+
+            const body = {
+                id_paciente: datos.Cita.id_paciente,
+                id_medico: datos.Cita.id_medico,
+                name_paciente: datos.Cita.name_paciente,
+                name_medico: datos.Cita.name_medico,
+                servicio: datos.Cita.servicio,
+                motivo: datos.Cita.motivo,
+                fecha: fechaFormateada,
+                hora: datos.Cita.hora,
+                id_procedimiento: datos.Cita.id_procedimiento
+            };
+            await enviarFormularioCita({ Cita: { ...body } });
+        }
+        varView.cargando = false
+        return true;
     }
-    // Utilidad para convertir string "YYYY-MM-DD" a Date
-    function parseFechaISO(iso) {
-        const [y, m, d] = iso.split('-').map(Number);
-        return new Date(y, m - 1, d);
-    }
-
-    // Utilidad para formatear Date a "YYYY-MM-DD"
-    function formatearISO(date) {
-        const y = date.getFullYear();
-        const m = String(date.getMonth() + 1).padStart(2, '0');
-        const d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    }
-
-    const fechaInicial = parseFechaISO(datos.Cita.fecha);
-
-    varView.cargando = true
-    // Generar todas las citas
-    for (let i = 0; i < cantidad; i++) {
-        // Clonar la fecha inicial
-        const fechaCita = new Date(fechaInicial);
-
-        // Sumar el intervalo en días multiplicado por el índice
-        fechaCita.setDate(fechaCita.getDate() + (i * datos.Cita.intervaloCitas));
-
-        // Formatear la fecha en YYYY-MM-DD
-        const fechaFormateada = formatearISO(fechaCita);
-
-        const body = {
-            id_paciente: datos.Cita.id_paciente,
-            id_medico: datos.Cita.id_medico,
-            name_paciente: datos.Cita.name_paciente,
-            name_medico: datos.Cita.name_medico,
-            servicio: datos.Cita.servicio,
-            motivo: datos.Cita.motivo,
-            fecha: fechaFormateada,
-            hora: datos.Cita.hora,
-            id_procedimiento: datos.Cita.id_procedimiento
-        };
-        await enviarFormularioCita({ Cita: { ...body } });
-    }
-    varView.cargando = false
-    return true;
-}
 
     return await enviarFormularioCita({ ...datos });
 };
 
 function parseFechaISO_UTC(iso) {
-  const [y, m, d] = iso.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d));
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d));
 }
 
 
