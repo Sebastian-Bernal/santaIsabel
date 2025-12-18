@@ -105,6 +105,7 @@ function handleBlur(event) {
             coincidencia(event);
         }
     }, 150);
+    mostrarLista.value = false
 }
 
 function manejarTeclas(event) {

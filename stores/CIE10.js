@@ -1,6 +1,7 @@
 import { CIE10 } from "~/data/CIE10";
 import { municipios } from "~/data/municipios";
 import { defineStore } from "pinia";
+import { traerCie_10 } from "~/Core/Empresa/Datos/CIE10/GetCIe10";
 
 // Store para guardar codigos CIE-10
 export const useCodigos = defineStore('CodigosCie10', {
@@ -40,26 +41,29 @@ export const useCodigos = defineStore('CodigosCie10', {
             })
         },
 
-        async leerdatos() {
+        async leerdatos(local = false) {
             if (!this.bd) {
                 await this.initialize()
             }
-            const apiRest = useApiRest()
+
             const codigos = await new Promise((resolve, reject) => {
                 let transaccion = this.bd.transaction('CIE_10', "readonly");
                 let STlee = transaccion.objectStore('CIE_10');
                 const request = STlee.getAll();
-
+                
                 request.onerror = function () {
                     reject('error al leer')
                 };
-
+                
                 request.onsuccess = function (event) {
                     resolve(event.target.result)
                 }
             })
 
-            const codigosWeb = await apiRest.getData('', 'cie10')
+            if(local){ return codigos}
+
+            const codigosWeb = await traerCie_10()
+
             const codigosWebNormalizados = codigosWeb.map(item => ({
                 code: item.codigo,
                 description: item.nombre

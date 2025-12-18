@@ -3,8 +3,7 @@ import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { CUPS } from '~/data/CUPS'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
-// import { CIE10 } from '~/data/CIE10'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { decryptData } from '~/composables/Formulario/crypto';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { CIF } from '~/data/CIF'
@@ -35,7 +34,7 @@ export function useHistoriaBuilder({
         varView.cargando = true
         PacientesList.value = pacienteStore.Pacientes;
         MedicosList.value = medicoStore.Medicos;
-        CIE10.value = storeCodigos.CIE10_codes;
+        CIE10.value = await storeCodigos.leerdatos();
         varView.cargando = false
     });
 

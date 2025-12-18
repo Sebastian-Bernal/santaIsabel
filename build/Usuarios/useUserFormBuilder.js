@@ -233,7 +233,7 @@ export function useUserBuilder({
             id: 'celular',
             name: 'celular',
             tamaño: 'md:w-full w-full',
-            max: '1000000000000',
+            max: '10000000000',
             min: '1000000000',
             vmodel: 'InformacionUser.celular',
         })

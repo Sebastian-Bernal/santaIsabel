@@ -65,7 +65,7 @@ const enviarFormulario = async (datos) => {
             console.error('Fallo al enviar. Guardando localmente', error);
             notificacionesStore.options.icono = 'warning'
             notificacionesStore.options.titulo = 'Datos invalidos';
-            notificacionesStore.options.texto = 'Intenta nuevamente con el codigo de tu correo!'
+            notificacionesStore.options.texto = 'Intenta nuevamente con el codigo enviado a tu correo!'
             notificacionesStore.options.tiempo = 3000
             await notificacionesStore.simple()
         }
