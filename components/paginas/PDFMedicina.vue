@@ -163,7 +163,7 @@ const propiedades = computed(() => {
         .addComponente('PDFTemplate', pdfMedicina
             .setElementId('Medicina')
             .setIsActive(activePdfMedicina)
-            .setFileName(`Medicina_${propiedadesMedicinaPDF.value.name}`)
+            .setFileName(`MEDICINA ${propiedadesMedicinaPDF.value.name} ${fechaFormateada()}`)
             .setSello(`${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}`)
             // ENCABEZADO PRINCIPAL
             .addComponente('Tabla', {

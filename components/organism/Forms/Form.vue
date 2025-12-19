@@ -88,7 +88,7 @@ function limpiar() {
                         <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[95%] overflow-y-auto"
                             :class="{ 'h-[92%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
-                            <div class="w-full md:px-10 px-5 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
+                            <div class="w-full md:px-10 px-5 pb-8 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
                                 :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]"

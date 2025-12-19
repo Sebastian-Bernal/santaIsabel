@@ -54,6 +54,7 @@ export const useVarView = defineStore('varView', {
         showPDFTerapia: false,
         showPDFMedicina: false,
         showPDFTrabajoSocial: false,
+        showPDFMedicamentos: false,
         // Modales Login
         showRecuperarContraseña: false,
         showCambiarContraseña: false,

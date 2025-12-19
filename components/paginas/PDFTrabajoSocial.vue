@@ -126,7 +126,7 @@ const propiedades = computed(() => {
         .addComponente('PDFTemplate', pdfTrabajoSocial
             .setElementId('TrabajoSocial')
             .setIsActive(activePdfTrabajoSocial)
-            .setFileName(`Trabajo_Social_${propiedadesTrabajoSocialPDF.value.name}`)
+            .setFileName(`TRABAJO_SOCIAL ${propiedadesTrabajoSocialPDF.value.name} ${fechaFormateada()}`)
 
             // ENCABEZADO PRINCIPAL
             .addComponente('Tabla', {

@@ -1,5 +1,5 @@
 <template>
-    <button class="border-none text-white text-center rounded-full text-xs hover:opacity-75" :class="botonClase">
+    <button class="border-none text-white text-center rounded-full text-xs hover:opacity-75 transition-all duration-300 cursor-pointer active:scale-95" :class="botonClase">
         <i :class="iconoClase"></i>
     </button>
 </template>

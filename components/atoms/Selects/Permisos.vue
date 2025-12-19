@@ -115,7 +115,7 @@ function moduloSeleccionado(modulo) {
             />
             <span class="text-sm">
                 {{ 
-                accion.key === 'get' ? 'TRAER' :
+                accion.key === 'get' ? 'LEER' :
                 accion.key === 'post' ? 'CREAR' :
                 accion.key === 'put' ? 'ACTUALIZAR' :
                 accion.key === 'delete' ? 'ELIMINAR' : 'VISTA'

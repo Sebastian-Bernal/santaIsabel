@@ -127,7 +127,7 @@ const propiedades = computed(() => {
         .addComponente('PDFTemplate', pdfNutricion
             .setElementId('Nutricion')
             .setIsActive(activePdfNutricion)
-            .setFileName(`Nutricion_${propiedadesNutricionPDF.value.name}`)
+            .setFileName(`NUTRICION ${propiedadesNutricionPDF.value.name} ${fechaFormateada()}`)
 
             // ENCABEZADO PRINCIPAL
             .addComponente('Tabla', {

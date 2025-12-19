@@ -29,6 +29,7 @@ onMounted(async () => {
     await apiRest.getData('HistoriaClinica', 'historiasClinicas')
     await apiRest.getData('Analisis', 'analisis')
     await apiRest.getData('Diagnosticos', 'diagnosticos')
+    await apiRest.getData('DiagnosticosCIF', 'diagnosticosCIF')
     await exportarEvolucionPDF(varView.propiedadesPDF)
     varView.cargando = false
 });
@@ -154,7 +155,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfEvolucion
                 .setElementId('Evolucion')
                 .setIsActive(activePdfEvolucion)
-                .setFileName(`Tratamiento_${propiedadesEvolucionPDF.value.name}`)
+                .setFileName(`TRATAMIENTO ${propiedadesEvolucionPDF.value.name} ${fechaFormateada()}`)
                 .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {

@@ -265,18 +265,18 @@ async function activarCita(cita) {
                 </div>
                 <!-- Acciones -->
                 <div class="flex flex-col gap-2" v-if="cita.estado === 'Inactiva'">
-                    <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" @click="activarCita(cita)"><i
+                    <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" tooltip="Completar Cita" tooltipPosition="left" @click="activarCita(cita)"><i
                             class="fa-solid fa-check"></i></ButtonRounded>
-                    <ButtonRounded color="bg-red-300 w-[25px]! h-[25px]!" @click="cancelarCita(cita)"><i
+                    <ButtonRounded color="bg-red-400 w-[25px]! h-[25px]!" tooltip="Eliminar registro" tooltipPosition="left" @click="cancelarCita(cita)"><i
                             class="fa-solid fa-xmark"></i></ButtonRounded>
                 </div>
 
-                <div class="flex flex-col gap-2" v-if="cita.estado === 'cancelada'">
-                    <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" @click="showMotivo(cita)"><i
+                <div class="flex flex-col gap-2 justify-center" v-if="cita.estado === 'cancelada'">
+                    <ButtonRounded color="bg-gray-400 w-[25px]! h-[25px]!" tooltip="Informacion" tooltipPosition="left" @click="showMotivo(cita)"><i
                             class="fa-solid fa-info"></i></ButtonRounded>
                 </div>
-                <div class="flex flex-col gap-2" v-if="cita.estado === 'Realizada'">
-                    <ButtonRounded color="bg-green-400 w-[25px]! h-[25px]!" @click="showObservacion(cita)"><i
+                <div class="flex flex-col gap-2 justify-center" v-if="cita.estado === 'Realizada'">
+                    <ButtonRounded color="bg-blue-600 w-[25px]! h-[25px]!" tooltip="Informacion" tooltipPosition="left" @click="showObservacion(cita)"><i
                             class="fa-solid fa-info"></i></ButtonRounded>
                 </div>
             </div>

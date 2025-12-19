@@ -1,5 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
+import PDFFormulaMedica from '~/components/paginas/PDFFormulaMedica.vue';
 
 import { ref, onMounted, unref, toRaw } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -559,6 +560,14 @@ async function exportarHistoriaPDF() {
     activePdfHistoria.value = true
 }
 
+function pdfMedicinas (data) {
+    varView.propiedadesPDF = {
+        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
+        ...data
+    }
+    varView.showPDFMedicamentos = true
+}
+
 // Propiedades calculadas
 const fechaFormateada = () => {
     const fecha = new Date()
@@ -745,7 +754,7 @@ const propiedades = computed(() => {
                         <p>Paciente: ${historiasStore.Formulario.HistoriaClinica.name_paciente}</p> 
                         <p>CC: ${historiasStore.Formulario.HistoriaClinica.No_document_paciente}</p>
                     </div>`,
-                acciones: [{ icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF }]
+                acciones: [puedeVerMedicina ? { icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF } : { icon: 'fa-solid fa-file-pdf cursor-not-allowed text-gray-400 hover:text-gray-400', accion: ()=>{} }]
             })
 
             .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col md:justify-center gap-1 w-full h-full content-center py-5 px-8')
@@ -1084,7 +1093,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfMedicina
                 .setElementId('Medicina')
                 .setIsActive(activePdfMedicina)
-                .setFileName(`Medicina_${propiedadesMedicinaPDF.value.name}`)
+                .setFileName(`MEDICINA ${propiedadesMedicinaPDF.value.name} ${fechaFormateada()}`)
                 .setSello(`${config.public.api}/storage/${propiedadesMedicinaPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
@@ -1269,7 +1278,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfEvolucion
                 .setElementId('Evolucion')
                 .setIsActive(activePdfEvolucion)
-                .setFileName(`Tratamiento_${propiedadesEvolucionPDF.value.name}`)
+                .setFileName(`TRATAMIENTO ${propiedadesEvolucionPDF.value.name} ${fechaFormateada()}`)
                 .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
@@ -1408,7 +1417,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
-                .setFileName(`Nota_${propiedadesNotaPDF.value.name}`)
+                .setFileName(`NOTA ${propiedadesNotaPDF.value.name} ${fechaFormateada()}`)
                 .setSello(`${config.public.api}/storage/${propiedadesEvolucionPDF.value.sello}`)
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
@@ -1544,7 +1553,7 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : ''], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', {icon: 'pdf', action: pdfMedicinas}], botones: true, })
                 .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -1566,7 +1575,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfNutricion
                 .setElementId('Nutricion')
                 .setIsActive(activePdfNutricion)
-                .setFileName(`Nutricion_${propiedadesNutricionPDF.value.name}`)
+                .setFileName(`NUTRICION ${propiedadesNutricionPDF.value.name} ${fechaFormateada()}`)
 
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
@@ -1685,7 +1694,7 @@ const propiedades = computed(() => {
             .addComponente('PDFTemplate', pdfTrabajoSocial
                 .setElementId('TrabajoSocial')
                 .setIsActive(activePdfTrabajoSocial)
-                .setFileName(`Trabajo_Social_${propiedadesTrabajoSocialPDF.value.name}`)
+                .setFileName(`TRABAJO_SOCIAL ${propiedadesTrabajoSocialPDF.value.name} ${fechaFormateada()}`)
 
                 // ENCABEZADO PRINCIPAL
                 .addComponente('Tabla', {
@@ -1798,4 +1807,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
+    <PDFFormulaMedica v-if="varView.showPDFMedicamentos"></PDFFormulaMedica>
 </template>

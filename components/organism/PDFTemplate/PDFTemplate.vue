@@ -86,6 +86,7 @@ const cerrar = () => {
     varView.showPDFTerapia = false
     varView.showPDFMedicina = false
     varView.showPDFTrabajoSocial = false
+    varView.showPDFMedicamentos = false
 }
 
 // const elementoId = document.getElementById(props.Propiedades.elementId)
@@ -99,12 +100,12 @@ const cerrar = () => {
 <template>
     <PDF v-if="imprimir"></PDF>
     <FondoBlur v-if="unref(props.Propiedades.isActive) && !imprimir">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[75%] md:h-[85%] w-[90%] h-[90%]">
+        <div class="bg-gray-50  rounded-2xl shadow-lg pb-7 md:w-[75%] md:h-[85%] w-[90%] h-[90%]">
             <div
                 class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
                     <h2 class="text-white font-bold md:text-2xl text-xl">Vista previa del PDF</h2>
-                    <p class="text-gray-200 text-sm">{{ props.Propiedades.filename }}</p>
+                    <p class="text-gray-200 text-xs">{{ props.Propiedades.filename }}</p>
                 </div>
                 <div class="flex h-full items-center justify-center text-xl text-gray-200">
                     <div class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
@@ -117,7 +118,7 @@ const cerrar = () => {
                 </div>
             </div>
             <!-- Contenido HTML -->
-            <div class="scrollForm w-full gap-[15px] max-h-[90%] overflow-y-auto">
+            <div class="scrollForm bg-white w-full gap-[15px] max-h-[90%] overflow-y-auto border-b-lg">
                 <div class="p-6 bg-white text-black shadow-md">
 
                     <component v-for="component in Propiedades.components" :is="componentes[component.tipo]"

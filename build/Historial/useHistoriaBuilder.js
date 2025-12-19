@@ -312,6 +312,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
+                        upperCase: true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
@@ -515,6 +516,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
+                        upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
@@ -677,6 +679,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
+                        upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
@@ -978,6 +981,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
+                        upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
@@ -1284,9 +1288,6 @@ export function useHistoriaBuilder({
                 name: 'motivo',
                 placeholder: 'Describa el motivo principal de la consulta...',
                 tamaño: 'w-full col-span-2',
-                events: {
-                    onInput: sugerenciaMotivoDebounced
-                }
             })
             .addCampo({
                 component: 'Label',
@@ -1515,6 +1516,7 @@ export function useHistoriaBuilder({
                             id: 'cie-10',
                             typeCampo: 'SelectSearch',
                             placeholder: 'CIE-10',
+                            upperCase:true,
                             tamaño: 'w-full md:col-span-1 col-span-2',
                             options: CIE10,
                             opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
@@ -1695,7 +1697,7 @@ export function useHistoriaBuilder({
                             typeCampo: 'SelectSearch',
                             placeholder: 'Procedimiento',
                             tamaño: 'w-full',
-                            UpperCase: true,
+                            upperCase: true,
                             options: CUPS,
                             opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
                             seleccionarItem: (item) => {
@@ -1709,7 +1711,7 @@ export function useHistoriaBuilder({
                             typeCampo: 'SelectSearch',
                             placeholder: 'Codigo',
                             tamaño: 'w-full',
-                            UpperCase: true,
+                            upperCase: true,
                             options: CUPS,
                             opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
                             seleccionarItem: (item) => {
@@ -1731,7 +1733,7 @@ export function useHistoriaBuilder({
                             placeholder: 'Profesional asignado',
                             tamaño: 'w-full',
                             options: MedicosList,
-                            UpperCase: true,
+                            upperCase: true,
                             opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
                             seleccionarItem: (item) => {
                                 historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name

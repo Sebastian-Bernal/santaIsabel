@@ -102,11 +102,6 @@ input:invalid {
     @apply dark:invert dark:brightness-0 dark:sepia dark:hue-rotate-180;
   }
 
-  /* Flechas de number */
-  input[type="number"]::-webkit-inner-spin-button {
-    @apply dark:invert dark:brightness-0;
-  }
-
   /* Botón de limpiar en search */
   input[type="search"]::-webkit-search-cancel-button {
     @apply dark:invert dark:brightness-0;

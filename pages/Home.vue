@@ -1,8 +1,8 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
-import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 
+import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { onMounted, ref } from 'vue';
@@ -10,6 +10,7 @@ import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
 import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
+import { traerDashboard } from '~/Core/Empresa/Dashboard/GetDashboard';
 
 const citasStore = useCitasStore();
 const varView = useVarView()
@@ -28,10 +29,12 @@ const medicosList = ref([])
 const showCita = ref(false)
 const refresh = ref(1)
 const profesional = ref([])
+const dashboardData = ref([])
+const stats = ref([])
 
 watch(() => showCita.value,
-    async(estado) => {
-        if(!estado){
+    async (estado) => {
+        if (!estado) {
             varView.cargando = true
             const apiRest = useApiRest()
             await apiRest.getData('Cita', 'citas')
@@ -53,7 +56,7 @@ onMounted(async () => {
     let Historias = []
 
     servicios.value = await apiRest.getData('Servicio', 'servicios')
-    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
+    servicios.value = servicios.value.map((s) => { return { text: s.name, value: s.name } })
     if (rol.value === 'Admin') {
         const historiaStore = useHistoriasStore();
         Historias = await historiaStore.ultimasHistorias();
@@ -66,6 +69,10 @@ onMounted(async () => {
         const profesionalesStore = useMedicosStore()
         const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
+
+        //Dashboard
+        dashboardData.value = await traerDashboard()
+        console.log(dashboardData.value)
 
     } else if (rol.value === 'Profesional') {
         // Pacientes list
@@ -117,7 +124,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                     },
                     footer: {
                         buttons: [
-                            {icon: 'fa-solid fa-check', class: 'bg-green-600 text-white w-7 h-7 rounded-full'}
+                            { icon: 'fa-solid fa-check', class: 'bg-green-600 text-white w-7 h-7 rounded-full' }
                         ],
                     }
                 }
@@ -207,16 +214,67 @@ async function DashboardRol(rol, Historias = [], citas) {
                 },
             },
         ];
+
+        stats.value = [
+            {
+                header: {
+                    html: `<div>
+                    <p class="font-semibold">Pacientes totales</p>
+                    <p class="text-base font-bold">${dashboardData.value?.pacientes.total}</p>
+                    <p class="text-sm py-2">+${dashboardData.value?.pacientes.variacion}% vs. mes anterior</p>
+                </div>`
+                },
+                body: {
+                    html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-users dark:text-white text-gray-900 text-xl "></i></div>`
+                },
+            },
+            {
+                header: {
+                    html: `<div>
+                    <p class="font-semibold">Consultas Hoy</p>
+                    <p class="text-base font-bold">${dashboardData.value?.consultas.total}</p>
+                    <p class="text-sm py-2">+${dashboardData.value?.consultas.variacion}% vs. mes anterior</p>
+                </div>`
+                },
+                body: {
+                    html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file dark:text-white text-gray-900 text-xl"></i></div>`
+                },
+            },
+            {
+                header: {
+                    html: `<div>
+                    <p class="font-semibold">Citas Programadas</p>
+                    <p class="text-base font-bold">${dashboardData.value?.citas_programadas.total}</p>
+                    <p class="text-sm py-2">+${dashboardData.value?.citas_programadas.variacion}% vs. mes anterior</p>
+                </div>`
+                },
+                body: {
+                    html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-calendar dark:text-white text-gray-900 text-xl"></i></div>`
+                },
+            },
+            {
+                header: {
+                    html: `<div>
+                    <p class="font-semibold">Rips Pendientes</p>
+                    <p class="text-sm text-gray-700">7</p>
+                    <p class="text-sm py-2">-6% vs. mes anterior</p>
+                </div>`
+                },
+                body: {
+                    html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file-medical dark:text-white text-gray-900 text-xl"></i></div>`
+                },
+            }
+        ];
     } else if (rol === 'Profesional') {
         const usuario = varView.getUser
-            const store = useIndexedDBStore()
-            store.almacen = 'Profesion'
-            const profesiones = await store.leerdatos()
-    
-            const mapaProfesion = profesiones.reduce((acc, profesion) => {
-                acc[profesion.id] = profesion.nombre;
-                return acc;
-            }, {});
+        const store = useIndexedDBStore()
+        store.almacen = 'Profesion'
+        const profesiones = await store.leerdatos()
+
+        const mapaProfesion = profesiones.reduce((acc, profesion) => {
+            acc[profesion.id] = profesion.nombre;
+            return acc;
+        }, {});
         cardPaciente.value = [{
             header: {
                 html: `<h2 class="text-xl text-white font-bold capitalize">Bienvenid@, ${usuario.name.toLowerCase()}</h2>
@@ -319,57 +377,6 @@ function nuevaCita() {
 function buscarHistoria() {
     location.href = '/Historial/Historias'
 }
-
-const stats = [
-    {
-        header: {
-            html: `<div>
-                    <p class="font-semibold">Pacientes totales</p>
-                    <p class="text-sm text-gray-700">1,234</p>
-                    <p class="text-sm py-2">+12% vs. mes anterior</p>
-                </div>`
-        },
-        body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-users dark:text-white text-gray-900 text-xl "></i></div>`
-        },
-    },
-    {
-        header: {
-            html: `<div>
-                    <p class="font-semibold">Consultas Hoy</p>
-                    <p class="text-sm text-gray-700">28</p>
-                    <p class="text-sm py-2">+8% vs. mes anterior</p>
-                </div>`
-        },
-        body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file dark:text-white text-gray-900 text-xl"></i></div>`
-        },
-    },
-    {
-        header: {
-            html: `<div>
-                    <p class="font-semibold">Citas Programadas</p>
-                    <p class="text-sm text-gray-700">45</p>
-                    <p class="text-sm py-2">+15% vs. mes anterior</p>
-                </div>`
-        },
-        body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-calendar dark:text-white text-gray-900 text-xl"></i></div>`
-        },
-    },
-    {
-        header: {
-            html: `<div>
-                    <p class="font-semibold">Rips Pendientes</p>
-                    <p class="text-sm text-gray-700">7</p>
-                    <p class="text-sm py-2">-6% vs. mes anterior</p>
-                </div>`
-        },
-        body: {
-            html: `<div class="w-full h-full flex justify-center items-center"><i class="fa-solid fa-file-medical dark:text-white text-gray-900 text-xl"></i></div>`
-        },
-    }
-];
 
 // Construccion de pagina
 const cardsState = new CardBuilder();

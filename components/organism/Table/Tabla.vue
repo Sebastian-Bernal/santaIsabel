@@ -224,14 +224,14 @@ const tablaAlto = computed(() => {
 
                         <!-- Tablas ocultas responsive  -->
                         <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:opacity-75">
+                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
                             <i class="fa-solid fa-angle-down text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
                         <div class="relative inline-block text-left">
                             <button @click="mostrarAcciones(id)"
                                 v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
-                                class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full cursor-pointer hover:bg-gray-300">
+                                class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:bg-gray-300">
                                 <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
                             </button>
 

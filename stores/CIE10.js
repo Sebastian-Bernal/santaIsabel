@@ -6,7 +6,6 @@ import { traerCie_10 } from "~/Core/Empresa/Datos/CIE10/GetCIe10";
 // Store para guardar codigos CIE-10
 export const useCodigos = defineStore('CodigosCie10', {
     state: () => ({
-        CIE10_codes: CIE10,
         municipios: municipios,
         bd: null
     }),
@@ -72,7 +71,6 @@ export const useCodigos = defineStore('CodigosCie10', {
             // Juntar ambos arrays
             const todosLosCodigos = [...codigos, ...codigosWebNormalizados]
 
-            this.CIE10_codes = todosLosCodigos
             return todosLosCodigos
         },
 
@@ -92,7 +90,7 @@ export const useCodigos = defineStore('CodigosCie10', {
             // Guardar datos en CIE_10
             const transaccionCIE = this.bd.transaction('CIE_10', "readwrite");
             const STabreCIE = transaccionCIE.objectStore('CIE_10');
-            const cleanData = JSON.parse(JSON.stringify(this.CIE10_codes));
+            const cleanData = JSON.parse(JSON.stringify(CIE10));
 
             for (let item of cleanData) {
                 try {

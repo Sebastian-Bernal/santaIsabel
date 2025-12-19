@@ -166,7 +166,7 @@ const propiedades = computed(() => {
         .addComponente('PDFTemplate', pdfNotas
             .setElementId('Nota')
             .setIsActive(activePdfNotas)
-            .setFileName(`Nota_${propiedadesNotaPDF.value.name}`)
+            .setFileName(`NOTA ${propiedadesNotaPDF.value.name} ${fechaFormateada()}`)
             // ENCABEZADO PRINCIPAL
             .addComponente('Tabla', {
                 container: 'border-b-2 pb-3',
