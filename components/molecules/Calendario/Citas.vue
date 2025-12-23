@@ -170,6 +170,15 @@ async function activarCita(cita) {
         return data.id_paciente === cita.id_paciente
     })?.[0];
 
+    if(!pacienteCita) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'No se encontro el paciente';
+        notificacionesStore.options.texto = 'Verifica si existe en la lista de pacientes.'
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
+        return
+    }
+
     historiasStore.Formulario.HistoriaClinica.name_paciente = cita.name_paciente
     historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = pacienteCita.No_document
