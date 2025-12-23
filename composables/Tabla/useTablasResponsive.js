@@ -5,6 +5,8 @@ export function useColumnasResponsivas(columnas, espacioMargen = 200) {
     const columnasVisibles = ref([]);
     const columnasSobrantes = ref([]);
     const collapse = ref(false);
+    const activeCollapse = ref(false)
+    const idActivo = ref(0)
 
     function updateWidth() {
         screenWidth.value = window.innerWidth;
@@ -44,6 +46,8 @@ export function useColumnasResponsivas(columnas, espacioMargen = 200) {
         if (!collapseElement) return;
 
         collapseElement.classList.toggle('collapseActive');
+        activeCollapse.value = !activeCollapse.value
+        idActivo.value = id
     };
 
     return {
@@ -51,6 +55,8 @@ export function useColumnasResponsivas(columnas, espacioMargen = 200) {
         columnasSobrantes,
         collapse,
         activarCollapse,
+        activeCollapse,
+        idActivo,
         screenWidth,
     };
 }

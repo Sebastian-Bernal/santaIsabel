@@ -49,7 +49,7 @@ export const validarYEnviarActualizarHistoria = async (datos) => {
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             const consultas = {
-                Analisis: {...datos.Analisis}
+                Analisis: { ...datos.Analisis }
             }
             return await enviarFormularioActualizarConsulta(consultas);
 
@@ -60,6 +60,20 @@ export const validarYEnviarActualizarHistoria = async (datos) => {
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             return await enviarFormularioActualizarNutricion(datos);
+
+        case 'Terapia':
+            if (!datos.Terapia?.id_paciente) errores.push("El paciente es obligatorio.");
+            if (!datos.Terapia?.id_profesional) errores.push("El médico es obligatorio.");
+            if (!datos.Terapia?.sesion) errores.push("La sesión es obligatoria.");
+            if (!datos.Terapia?.fecha) errores.push("La fecha es obligatoria.");
+            if (!datos.Terapia?.hora) errores.push("La hora es obligatoria.");
+            if (!datos.Terapia?.objetivos) errores.push("El objetivo es obligatorio.");
+            if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
+            if (!datos.Terapia?.id_procedimiento) errores.push("El procedimiento es obligatoria.");
+
+            if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
+
+            return await enviarFormularioActualizarTerapia(datos);
 
         case 'Trabajo Social':
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
@@ -583,17 +597,6 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
     const token = decryptData(sessionStorage.getItem('token'))
     const varView = useVarView()
 
-    const storeCodigos = useCodigos()
-    const codigosLocal = await storeCodigos.leerdatos()
-    const codigosSet = new Set(codigosLocal);
-
-    const cie10 = datos.Diagnosticos
-        .filter(d => !codigosSet.has(d.codigo))
-        .map(d => ({ codigo: d.codigo, nombre: d.descripcion }));
-    if (cie10.length > 0) {
-        enviarDiagnostico(cie10)
-    }
-
 
     const online = navigator.onLine;
     if (online) {
@@ -604,17 +607,15 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
                 url: config.public.terapias + '/' + datos.Terapia.id,
                 token: token,
                 body: {
-                    Terapia: {
-                        id: datos.Terapia.id,
-                        sesion: datos.Terapia.sesion,
-                        objetivos: datos.Terapia.objetivos,
-                        fecha: datos.Terapia.fecha,
-                        hora: datos.Terapia.hora,
-                        evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
-                        id_procedimiento: datos.Terapia.id_procedimiento,
-                    },
+                    id: datos.Terapia.id,
+                    sesion: datos.Terapia.sesion,
+                    objetivos: datos.Terapia.objetivos,
+                    fecha: datos.Terapia.fecha,
+                    hora: datos.Terapia.hora,
+                    evolucion: datos.Terapia.evolucion,
+                    id_paciente: datos.Terapia.id_paciente,
+                    id_profesional: datos.Terapia.id_profesional,
+                    id_procedimiento: datos.Terapia.id_procedimiento,
                 }
             }
             const respuesta = await api.functionCall(options)

@@ -15,6 +15,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     // --- Validaciones por tipo de consulta ---
     switch (varView.tipoConsulta.plantilla) {
         case 'Terapia':
+            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
             if (!datos.Terapia?.id_paciente) errores.push("El paciente es obligatorio.");
             if (!datos.Terapia?.id_profesional) errores.push("El médico es obligatorio.");
             if (!datos.Terapia?.sesion) errores.push("La sesión es obligatoria.");
@@ -43,7 +44,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             return await enviarFormularioTerapia(datos);
 
         case 'Evolucion':
-            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
+            datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
             datos.Cita.servicio = varView.tipoConsulta.plantilla
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
@@ -809,6 +810,10 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                 url: config.public.terapias,
                 token: token,
                 body: {
+                    HistoriaClinica: {
+                        fecha_historia: datos.HistoriaClinica.fecha_historia,
+                        id_paciente: datos.HistoriaClinica.id_paciente
+                    },
                     Terapia: {
                         sesion: datos.Terapia.sesion,
                         objetivos: datos.Terapia.objetivos,

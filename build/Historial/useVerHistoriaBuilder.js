@@ -195,7 +195,7 @@ export function useVerHistoriaBuilder({
                     text: '<i class="fa-solid fa-users text-blue-700 mr-1"></i>Acompañante (Opcional)',
                     tamaño: 'w-full col-span-2'
                 })
-        
+
                 // --- Nombre Acompañante ---
                 .addCampo({
                     component: 'Input',
@@ -206,7 +206,7 @@ export function useVerHistoriaBuilder({
                     placeholder: 'Nombre completo del acompañante',
                     tamaño: 'w-full'
                 })
-        
+
                 // --- Parentesco Acompañante ---
                 .addCampo({
                     component: 'Select',
@@ -225,7 +225,7 @@ export function useVerHistoriaBuilder({
                 })
         }
 
-            builder
+        builder
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
@@ -294,15 +294,15 @@ export function useVerHistoriaBuilder({
                 ]
             })
 
-            if (!actualizar.value) {
-                builder
+        if (!actualizar.value) {
+            builder
                 .addCampo({
                     component: 'Label',
                     forLabel: 'motivo',
                     text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
                     tamaño: 'w-full col-span-2'
                 })
-    
+
                 .addCampo({
                     component: 'Input',
                     vmodel: 'ExamenFisico.signosVitales.ta',
@@ -315,7 +315,7 @@ export function useVerHistoriaBuilder({
                         tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
                     },
                 })
-    
+
                 // --- Input: FC ---
                 .addCampo({
                     component: 'Input',
@@ -327,7 +327,7 @@ export function useVerHistoriaBuilder({
                     max: 100,
                     tamaño: 'w-full',
                 })
-    
+
                 // --- Input: FR ---
                 .addCampo({
                     component: 'Input',
@@ -339,7 +339,7 @@ export function useVerHistoriaBuilder({
                     max: 250,
                     tamaño: 'w-full',
                 })
-    
+
                 // --- Input: Temperatura (Tº) ---
                 .addCampo({
                     component: 'Input',
@@ -351,7 +351,7 @@ export function useVerHistoriaBuilder({
                     max: 50,
                     tamaño: 'w-full',
                 })
-    
+
                 // --- Input: Saturación O2 ---
                 .addCampo({
                     component: 'Input',
@@ -363,7 +363,7 @@ export function useVerHistoriaBuilder({
                     max: 100,
                     tamaño: 'w-full col-span-1',
                 })
-    
+
                 // --- Label: Medidas Antropométricas ---
                 .addCampo({
                     component: 'Label',
@@ -371,7 +371,7 @@ export function useVerHistoriaBuilder({
                     text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
                     tamaño: 'w-full col-span-2'
                 })
-    
+
                 // --- Input: Otros ---
                 .addCampo({
                     component: 'Input',
@@ -382,7 +382,7 @@ export function useVerHistoriaBuilder({
                     placeholder: 'Otros (opcional)',
                     tamaño: 'w-full col-span-1'
                 })
-    
+
                 // --- Input: Peso ---
                 .addCampo({
                     component: 'Input',
@@ -393,7 +393,7 @@ export function useVerHistoriaBuilder({
                     placeholder: 'Peso (KG)',
                     tamaño: 'w-full col-span-1'
                 })
-    
+
                 // --- Input: Altura ---
                 .addCampo({
                     component: 'Input',
@@ -404,12 +404,12 @@ export function useVerHistoriaBuilder({
                     placeholder: 'Altura (CM)',
                     tamaño: 'w-full col-span-1'
                 })
-            }
+        }
 
     }
     else if (formularioItem.value === 'Evolucion') {
         builder
-        .nuevaSeccion('Evolucion')
+            .nuevaSeccion('Evolucion')
             .addCampo({
                 component: 'Label',
                 forLabel: 'motivo',
@@ -438,6 +438,95 @@ export function useVerHistoriaBuilder({
                 id: 'observacion',
                 name: 'observacion',
                 tamaño: 'w-full md:col-span-2'
+            })
+    }
+    else if (formularioItem.value === 'Terapia') {
+        builder
+            .nuevaSeccion('Terapia')
+            // --- Label: Sesión ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'sesion',
+                text: '<i class="fa-solid fa-list-ol text-blue-500 mr-1"></i>Número de sesión',
+                tamaño: 'w-full'
+            })
+
+            // --- Input: Sesión ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.sesion',
+                type: 'number',
+                id: 'sesion',
+                name: 'sesion',
+                placeholder: 'Ej: 1, 2, 3...',
+                tamaño: 'w-full',
+            })
+
+            //--- Label: Fecha ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fechaTerapia',
+                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de la sesión',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Hora ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.hora',
+                type: 'time',
+                id: 'horaTerapia',
+                name: 'horaTerapia',
+                placeholder: 'Selecciona la hora',
+                tamaño: 'w-full',
+            })
+
+            // --- Input: Fecha ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.fecha',
+                type: 'date',
+                id: 'fechaTerapia',
+                name: 'fechaTerapia',
+                placeholder: 'Selecciona la fecha',
+                tamaño: 'w-full',
+            })
+
+            // --- Label: Objetivos ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'objetivos',
+                text: '<i class="fa-solid fa-bullseye text-blue-500 mr-1"></i>Objetivos de la intervención terapéutica',
+                tamaño: 'w-full col-span-2 mt-3'
+            })
+
+            // --- Input: Objetivos ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Terapia.objetivos',
+                type: 'text',
+                id: 'objetivos',
+                name: 'objetivos',
+                placeholder: 'Describe el objetivo de la sesión terapéutica',
+                tamaño: 'w-full col-span-2',
+            })
+
+            // --- Label: Evolución ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'evolucion',
+                text: '<i class="fa-solid fa-notes-medical text-blue-500 mr-1"></i>Evolución de la sesión',
+                tamaño: 'w-full col-span-2'
+            })
+
+            // --- TextArea: Evolución ---
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Terapia.evolucion',
+                id: 'evolucion',
+                name: 'evolucion',
+                placeholder: 'Describe de manera clara la evolución del paciente durante la sesión',
+                tamaño: 'w-full col-span-2'
             })
     }
     else {

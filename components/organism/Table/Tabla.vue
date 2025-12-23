@@ -30,6 +30,8 @@ const {
     columnasSobrantes,
     collapse,
     activarCollapse,
+    activeCollapse,
+    idActivo,
     screenWidth,
 } = useColumnasResponsivas(ref(props.Propiedades?.columnas), props.Propiedades.headerTabla?.espacioMargen);
 
@@ -225,7 +227,8 @@ const tablaAlto = computed(() => {
                         <!-- Tablas ocultas responsive  -->
                         <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
-                            <i class="fa-solid fa-angle-down text-gray-600"></i>
+                            <i v-if="!activeCollapse || id !== idActivo" class="fa-solid fa-angle-down text-gray-600"></i>
+                            <i v-if="activeCollapse && id === idActivo" class="fa-solid fa-angle-up text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
                         <div class="relative inline-block text-left">
@@ -242,7 +245,8 @@ const tablaAlto = computed(() => {
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
                                     :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                                     @click="action.action(fila)"
-                                    class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md" />
+                                    class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
+                                </BotonAccion>
                             </div>
                         </div>
 

@@ -21,6 +21,7 @@ const varView = useVarView();
 const historiasStore = useHistoriasStore();
 const notasStore = useNotasStore();
 const config = useRuntimeConfig()
+const apiRest = useApiRest();
 
 const historiasList = ref([]);
 
@@ -33,6 +34,7 @@ const nutricion = ref([]);
 const diagnosticos = ref([])
 const diagnosticosCIF = ref([])
 const trabajosSocial = ref([])
+const id_paciente = ref(0)
 
 const show = ref(false);
 const showItem = ref(false)
@@ -89,6 +91,84 @@ watch(() => showNota.value,
     }
 );
 
+watch(() => showItem.value,
+    async (estado) => {
+        if (!estado && varView.cambioEnApi) {
+            switch (varView.tipoHistoria) {
+                case 'Terapia':
+                    await apiRest.getData('Terapia', 'terapias')
+                    evoluciones.value = await pacientesStore.listDatos(id_paciente.value, 'Terapia')
+                case 'Medicamento':
+                    await apiRest.getData('Plan_manejo_medicamentos', 'planManejoMedicamentos')
+                    const historia = await pacientesStore.listDatos(id_paciente.value, 'HistoriaClinica', 'id')
+                    const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
+                    // Obtener todos los tratamientos asociados a cada id_analisis de la historia
+                    const medicamentosPorAnalisis = await Promise.all(
+                        allAnalisis.map(async (h) => {
+
+                            const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || []
+
+                            // Enriquecer cada tratamiento con su análisis correspondiente
+                            const medicamentosConAnalisis = medicamentos.map((tratamiento) => {
+                                return {
+                                    ...tratamiento,
+                                    ...h,
+                                    id: tratamiento.id
+                                }
+                            })
+
+                            return medicamentosConAnalisis
+                        })
+                    )
+
+                    // Unificar todos los medicamentos en un solo array
+                    medicinas.value = medicamentosPorAnalisis.flat()
+                case 'Tratamientos':
+                    await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
+                    tratamientos.value = await pacientesStore.listDatos(id_paciente.value, 'Plan_manejo_procedimientos')
+                case 'Consulta':
+                    await apiRest.getData('Analisis', 'analisis')
+                    await apiRest.getData('ExamenFisico', 'examenFisicos')
+                    const historiaC = await pacientesStore.listDatos(id_paciente.value, 'HistoriaClinica', 'id')
+                    const allAnalisisC = await historiasStore.listDatos(historiaC[0]?.id, 'Analisis', 'id_historia')
+                    analisis.value = []
+                    const analisisData = []
+                    allAnalisisC.map((analisis) => {
+                        if (analisis.servicio === 'Medicina') {
+                            analisisData.push({ ...analisis })
+                        }
+                    })
+                    for (const item of analisisData) {
+                        const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
+
+                        analisis.value.push({ ...item, ...examenFisico[0] })
+                    }
+                case 'Evolucion':
+                    await apiRest.getData('Analisis', 'analisis')
+                    const historiaE = await pacientesStore.listDatos(id_paciente.value, 'HistoriaClinica', 'id')
+                    const allAnalisisE = await historiasStore.listDatos(historiaE[0]?.id, 'Analisis', 'id_historia')
+                    nutricion.value = []
+                    allAnalisisE.map((analisis) => {
+                        if (analisis.servicio === 'Evolucion') {
+                            nutricion.value.push({ ...analisis })
+                        }
+                    })
+                default:
+                    console.log('Tipo de consulta no encontrado')
+    
+            }
+
+            const his = historiasList.value.find(h => {
+                return h.id === id_paciente.value
+            })
+            historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
+            historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
+            historiasStore.Formulario.HistoriaClinica.id_paciente = his.id
+
+        }
+    }
+);
+
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
@@ -96,10 +176,10 @@ onMounted(async () => {
     varView.cargando = false
 });
 
-
 // visibilidad ver Historial
 const verHistoria = async (his) => {
     await cargaHistorial(his.id)
+    id_paciente.value = his.id
     historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
     historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
     historiasStore.Formulario.HistoriaClinica.id_paciente = his.id
@@ -286,8 +366,17 @@ function actualizarItemConsultasHistoria(item) {
     showItem.value = true
 }
 
+function actualiazrItemTerapia(item) {
+    formularioItem.value = 'Terapia'
+    varView.tipoHistoria = 'Terapia'
+    actualizar.value = true
+    const datos = { ...item }
+    mapCampos(datos, historiasStore.Formulario)
+    historiasStore.Formulario.Terapia.id = item.id
+    showItem.value = true
+}
+
 function actualizarItemEvolucionHistoria(item) {
-    console.log(item)
     formularioItem.value = 'Evolucion'
     varView.tipoHistoria = 'Evolucion'
     actualizar.value = true
@@ -560,7 +649,7 @@ async function exportarHistoriaPDF() {
     activePdfHistoria.value = true
 }
 
-function pdfMedicinas (data) {
+function pdfMedicinas(data) {
     varView.propiedadesPDF = {
         id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
         ...data
@@ -754,7 +843,7 @@ const propiedades = computed(() => {
                         <p>Paciente: ${historiasStore.Formulario.HistoriaClinica.name_paciente}</p> 
                         <p>CC: ${historiasStore.Formulario.HistoriaClinica.No_document_paciente}</p>
                     </div>`,
-                acciones: [puedeVerMedicina ? { icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF } : { icon: 'fa-solid fa-file-pdf cursor-not-allowed text-gray-400 hover:text-gray-400', accion: ()=>{} }]
+                acciones: [puedeVerMedicina ? { icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF } : { icon: 'fa-solid fa-file-pdf cursor-not-allowed text-gray-400 hover:text-gray-400', accion: () => { } }]
             })
 
             .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col md:justify-center gap-1 w-full h-full content-center py-5 px-8')
@@ -776,26 +865,26 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full col-span-2')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
-                :  consultasCard               
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-hospital text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Consultas y Analisis',
-                            subtitle: 'Registro de consultas del paciente',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                : consultasCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-hospital text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Consultas y Analisis',
+                                subtitle: 'Registro de consultas del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('col-span-2')
-                .setheaderSubTitle('')
-                .setcontenedorCards('w-full flex justify-center w-full col-span-2')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('col-span-2')
+                    .setheaderSubTitle('')
+                    .setcontenedorCards('w-full flex justify-center w-full col-span-2')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
-            .addComponente('Card', puedeVerTerapias ? evolucionesCard 
+            .addComponente('Card', puedeVerTerapias ? evolucionesCard
                 .setCards([
                     {
                         header: {
@@ -812,23 +901,23 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
-                : evolucionesCard 
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-heart-pulse text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Terapias',
-                            subtitle: 'Evoluciones de Procedimientos',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                : evolucionesCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-heart-pulse text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Terapias',
+                                subtitle: 'Evoluciones de Procedimientos',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center w-full')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
             .addComponente('Card', puedeVerNotas ? notasCard
                 .setCards([
@@ -882,23 +971,23 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
-                : tratamientosCard 
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-kit-medical text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Tratamientos del paciente',
-                            subtitle: 'Tratamientos del paciente',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                : tratamientosCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-kit-medical text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Tratamientos del paciente',
+                                subtitle: 'Tratamientos del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center w-full')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
             .addComponente('Card', puedeVerMedicacion ? medicacionCard
                 .setCards([
@@ -917,23 +1006,23 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-600)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
-                : medicacionCard 
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-prescription-bottle-medical text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Medicacion',
-                            subtitle: 'Medicacion del paciente',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                : medicacionCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-prescription-bottle-medical text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Medicacion',
+                                subtitle: 'Medicacion del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center w-full')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
             .addComponente('Card', puedeVerEvoluciones ? nutricionCard
                 .setCards([
@@ -952,23 +1041,23 @@ const propiedades = computed(() => {
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
-                : nutricionCard 
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-user-check text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Evoluciones',
-                            subtitle: 'Evolucion del paciente',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                : nutricionCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-user-check text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Evoluciones',
+                                subtitle: 'Evolucion del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center w-full')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
             .addComponente('Card', puedeVerTrabajo ? trabajoSocialCard
                 .setCards([
@@ -988,22 +1077,22 @@ const propiedades = computed(() => {
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-700)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
                 .build()
                 : trabajoSocialCard
-                .setCards([
-                    {
-                        header: {
-                            icon: 'fa-solid fa-book-medical text-white',
-                            iconBg: 'bg-inherit',
-                            title: 'Trabajo Social',
-                            subtitle: 'Trabajo Social del paciente',
-                            titleClass: 'text-white',
-                            subtitleClass: 'text-gray-300!'
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-book-medical text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Trabajo Social',
+                                subtitle: 'Trabajo Social del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
                         },
-                    },
-                ])
-                .setContenedor('')
-                .setcontenedorCards('w-full flex justify-center w-full')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
-                .build()
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
             )
             .addComponente('PDFTemplate', pdfHistorial
                 .setElementId('Historia')
@@ -1272,9 +1361,10 @@ const propiedades = computed(() => {
                     { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
                 ])
                 .setHeaderTabla({ titulo: 'Avances de Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }, { icon: 'actualizar', action: actualiazrItemTerapia }], botones: true, })
                 .setDatos(puedeVerTerapias ? evoluciones : [])
             )
+            .addComponente('Form', propiedadesItemHistoria)
             .addComponente('PDFTemplate', pdfEvolucion
                 .setElementId('Evolucion')
                 .setIsActive(activePdfEvolucion)
@@ -1553,7 +1643,7 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', {icon: 'pdf', action: pdfMedicinas}], botones: true, })
+                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', { icon: 'pdf', action: pdfMedicinas }], botones: true, })
                 .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
             )
             .addComponente('Form', propiedadesItemHistoria)

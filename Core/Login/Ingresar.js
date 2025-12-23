@@ -29,7 +29,7 @@ const enviarFormulario = async (datos) => {
             }
             const respuesta = await api.functionCall(options)
             if (respuesta.success) {
-                notificacionesStore.options.titulo = 'Cargando...'
+                notificacionesStore.options.titulo = 'Iniciando Sesión...'
                 notificacionesStore.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
                 notificacionesStore.loading()
 
@@ -49,7 +49,7 @@ const enviarFormulario = async (datos) => {
                 });
                 actualizarProgreso(100, 'completado')
                 const ultimaSeccion = localStorage.getItem('seccion')
-                window.location.href = ultimaSeccion || '/Home'
+                window.location.href = ultimaSeccion || respuesta.user.rol === 'Profesional' ? '/Usuarios/Citas' : '/Home'
                 notificacionesStore.close()
                 return true
             } else {
