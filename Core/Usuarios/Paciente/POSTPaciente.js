@@ -58,6 +58,13 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
         return false;
     }
 
+    // Validar Procedimientos
+    datos.Plan_manejo_procedimientos.forEach((p, i) => {
+        if (!p.procedimiento || !p.codigo) {
+            errores.push(`Procedimiento ${i + 1} incompleto.`);
+        }
+    });
+
     // 🔁 Validación si ya existe el paciente
     const paciente = pacientes.find(
         p => parseInt(p.No_document) === parseInt(datos.InformacionUser.No_document)
@@ -116,13 +123,13 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     regimen: datos.Paciente.regimen,
                     vulnerabilidad: datos.Paciente.vulnerabilidad,
 
-                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos_nuevos ?? []).map(p => ({
+                    Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
                         procedimiento: p.procedimiento,
                         codigo: p.codigo,
                         id_medico: p.id_medico,
                         dias_asignados: p.dias_asignados,
                     })),
-                    Antecedentes: (datos.Antecedentes_nuevos ?? []).map(a => ({
+                    Antecedentes: (datos.Antecedentes ?? []).map(a => ({
                         tipo: a.tipo,
                         descripcion: a.descripcion,
                     })),

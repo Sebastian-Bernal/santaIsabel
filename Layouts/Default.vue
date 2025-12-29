@@ -65,7 +65,7 @@ onUnmounted(() => {
 @media screen and (max-width: 768px) {
     .containerMain {
         grid-template-areas: "navbar" "aside" "main" "footer";
-        grid-template-rows: 45px 60px 1fr 40px;
+        grid-template-rows: 45px 40px 1fr 40px;
         grid-template-columns: 1fr;
         max-height: 100%;
     }

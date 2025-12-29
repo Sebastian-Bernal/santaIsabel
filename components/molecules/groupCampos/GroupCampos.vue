@@ -9,128 +9,262 @@ import SelectSearch from '~/components/atoms/Selects/SelectSearch.vue';
 import Textarea from '~/components/atoms/Textareas/Textarea.vue';
 
 const props = defineProps({
-    Propiedades: {
-        type: Object,
-        default: () => ({})
-    },
-    modelValue: {
-        type: Array,
-        default: () => []
-    }
+    Propiedades: { type: Object, required: true },
+    modelValue: { type: Array, default: () => [] }
 });
 
 const emit = defineEmits(['update:modelValue']);
 
-const campos = { Input, SelectSearch, Select, SelectMultiple, Textarea };
+const campos = { Input, Select, SelectMultiple, SelectSearch, Textarea };
 
+// Registro actual del formulario
+const form = ref({ ...props.Propiedades.addItem });
+
+// Listado
 const items = ref([...props.modelValue]);
 const showCampos = ref(false);
+const draftIndex = ref(null);
 
-// Mantiene sincronía SOLO cuando el padre cambia
-watch(() => props.modelValue, (newVal) => {
-    items.value = [...newVal];
+// Índice en edición
+const editIndex = ref(null);
+
+watch(() => props.modelValue, val => {
+    items.value = [...val];
 });
 
-const addItem = (newItem = null) => {
-    showCampos.value = true;
-    items.value.push(newItem || props.Propiedades.addItem || {});
-    emit('update:modelValue', items.value);
+// Agregar o actualizar
+const saveItem = () => {
+    if (!isFormValid()) return;
+
+    draftIndex.value = null;
+    editIndex.value = null;
+
+    if (props.Propiedades.liveUpdate) {
+        // Confirmar el último item y crear uno nuevo vacío
+        const nuevoDraft = { ...props.Propiedades.addItem };
+        items.value.push(nuevoDraft);
+        draftIndex.value = items.value.length - 1;
+
+        form.value = { ...props.Propiedades.addItem };
+    } else {
+        // Modo normal
+        form.value = { ...props.Propiedades.addItem };
+    }
+
+    emit('update:modelValue', [...items.value]);
+};
+// Validacion al agregar
+const isFormValid = () => {
+    if (props.Propiedades.liveUpdate) {
+        // Validar directamente el último item
+        const lastIndex = items.value.length - 1;
+        if (lastIndex < 0) return false;
+        return props.Propiedades.campos.every(campo => {
+            const value = items.value[lastIndex][campo.name];
+            return value !== null && value !== undefined && value !== '';
+        });
+    } else {
+        // Validar contra form en modo normal
+        return props.Propiedades.campos.every(campo => {
+            const value = form.value[campo.name];
+            return value !== null && value !== undefined && value !== '';
+        });
+    }
 };
 
+// Editar
+const editItem = (index) => {
+    form.value = { ...items.value[index] };
+    editIndex.value = index;
+    draftIndex.value = null; // forzar recreación
+    showCampos.value = true;
+};
+
+// Eliminar
 const removeItem = (index) => {
     items.value.splice(index, 1);
-    emit('update:modelValue', items.value);
+    emit('update:modelValue', [...items.value]);
 };
 
-// SOLUCIÓN: modificar en sitio para evitar congelamiento
-const updateField = (index, field, value) => {
-    const updatedItems = [...items.value]; // Copia superficial del array
+// Reset
+const resetForm = () => {
+    if (props.Propiedades.liveUpdate) {
+        // Eliminar el draft actual y crear uno nuevo vacío
+        if (draftIndex.value !== null) {
+            items.value.splice(draftIndex.value, 1);
+        }
+        const nuevoDraft = { ...props.Propiedades.addItem };
+        items.value.push(nuevoDraft);
+        draftIndex.value = items.value.length - 1;
 
-    // Copia del objeto, preserva todos los demás campos
-    updatedItems[index] = {
-        ...updatedItems[index],
-        [field]: value
-    };
-
-    items.value = updatedItems; // Actualiza el estado reactivo
-
-    emit('update:modelValue', updatedItems); // Actualiza al padre
+        form.value = { ...props.Propiedades.addItem };
+        emit('update:modelValue', [...items.value]);
+    } else {
+        if (draftIndex.value !== null) {
+            items.value.splice(draftIndex.value, 1);
+            draftIndex.value = null;
+            emit('update:modelValue', [...items.value]);
+        }
+        form.value = { ...props.Propiedades.addItem };
+    }
 };
+
+const ensureDraftItem = () => {
+    if (draftIndex.value !== null) return;
+
+    const draft = { ...props.Propiedades.addItem };
+    items.value.push(draft);
+    draftIndex.value = items.value.length - 1;
+
+    emit('update:modelValue', [...items.value]);
+};
+
+const updateField = (field, value, campoDef) => {
+    // Si se edita, mover al final
+    if (editIndex.value !== null) {
+        const editedItem = items.value[editIndex.value];
+        items.value.splice(editIndex.value, 1);
+
+        const newDraft = { ...editedItem };
+        items.value.push(newDraft);
+
+        draftIndex.value = items.value.length - 1;
+        editIndex.value = null;
+    }
+
+    // Asegurar draft
+    ensureDraftItem();
+
+    const lastIndex = items.value.length - 1;
+
+    // 👉 Si liveUpdated está activo, siempre escribir en items
+    if (props.Propiedades.liveUpdated) {
+        if (campoDef.typeCampo === 'SelectSearch') {
+            if (value && typeof value === 'object') {
+                // Selección de objeto
+                Object.keys(value).forEach(key => {
+                    items.value[lastIndex][key] = value[key];
+                });
+            } else {
+                // Texto libre escrito en el input
+                items.value[lastIndex][field] = value;
+            }
+        } else {
+            items.value[lastIndex][field] = value;
+        }
+    } else {
+        // Modo normal: mantener en form y draft
+        if (campoDef.typeCampo === 'SelectSearch' && value && typeof value === 'object') {
+            Object.keys(value).forEach(key => {
+                items.value[lastIndex][key] = value[key];
+                form.value[key] = value[key];
+            });
+        } else {
+            items.value[lastIndex][field] = value;
+            form.value[field] = value;
+        }
+    }
+
+    emit('update:modelValue', [...items.value]);
+};
+
 </script>
 
 <template>
-    <div class="flex flex-col col-span-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-3">
+    <div class="col-span-2 bg-gray-100 dark:bg-gray-800 rounded-xl p-4 space-y-4">
 
-        <!-- Header -->
+        <!-- Título -->
         <div class="flex justify-between items-center">
-            <label v-if="Propiedades.labelGroup" @click="showCampos = !showCampos"
-                class="flex gap-2 font-medium text-gray-700 dark:text-gray-200 w-fit">
+            <label class="flex gap-2 font-medium text-gray-700 dark:text-gray-200 w-fit">
 
                 {{ Propiedades.labelGroup }}
 
-                <div class="w-[30px] h-[30px] flex justify-center items-center gap-1 hover:bg-gray-200 
+            </label>
+
+            <div class="flex items-center gap-1">
+                <div v-if="Propiedades.labelGroup && !Propiedades.disabled" @click="showCampos = !showCampos" class="w-[30px] h-[30px] flex justify-center items-center gap-1 hover:bg-gray-200 
                             hover:dark:bg-gray-700 cursor-pointer rounded-full">
                     <i class="fa-solid text-blue-700 font-bold"
                         :class="{ 'fa-angle-up': showCampos, 'fa-angle-down': !showCampos }">
                     </i>
-                    <span v-if="items.length > 0" class="text-sm text-blue-700">{{ items.length }}</span>
                 </div>
-            </label>
-
-            <div v-if="Propiedades.buttons && !Propiedades.disabled" class="flex gap-2 items-center">
-                <a v-for="button in Propiedades.buttons" @click="() => addItem(button.addItem)"
-                    class="flex items-center transition-all duration-300 cursor-pointer active:scale-95">
-
-                    <span v-if="button.label" class="mr-1">{{ button.label }}</span>
-
-                    <ButtonRounded :color="button.color">
-                        <i :class="button.icon"></i>
-                    </ButtonRounded>
-
-                </a>
+                <span v-if="items.length > 0" class="text-sm text-blue-700">{{ items.length }}</span>
             </div>
         </div>
 
-        <!-- Campos -->
-        <div v-if="showCampos" :class="[Propiedades.tamaño]" class="border border-gray-200 dark:border-gray-800 rounded-lg">
+        <!-- FORMULARIO ÚNICO -->
+        <div v-if="showCampos" class="grid gap-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
 
-            <div v-for="(input, index) in items" :key="index" class="relative my-2 pt-5 pb-2 px-1">
-
-                <!-- Header del bloque -->
-                <div class="w-full flex justify-between px-4 py-2 bg-gray-200 dark:bg-gray-700 mb-1 rounded-lg">
-                    <label class="text-sm text-gray-600 dark:text-gray-300">
-                        Bloque {{ index + 1 }}
-                    </label>
-
-                    <i v-if="!Propiedades.disabled && !Propiedades.disabledCampo"
-                        class="fa-solid fa-close text-red-500 hover:text-red-700 cursor-pointer"
-                        @click="() => removeItem(index)">
-                    </i>
-                </div>
-
-                <div :class="Propiedades.containerCampos" class="px-2">
-                    <!-- Campos dinámicos -->
-                    <div v-for="campoDef in Propiedades.campos" :key="campoDef.name">
-    
-                        <!-- Entrada dinámica con V-MODEL -->
-                        <component :is="campos[campoDef.typeCampo]" :modelValue="input[campoDef.name]"
-                            :Propiedades="{ ...campoDef, disabled: Propiedades.disabled }" 
-                            @input="e => updateField(index, campoDef.name, e.target.value)"
-                            />
-                    </div>
+            <div :class="Propiedades.containerCampos">
+                <div v-for="campo in Propiedades.campos" :key="campo.name">
+                    <component 
+                        :is="campos[campo.typeCampo]" 
+                        :modelValue="Propiedades.liveUpdate 
+                                        ? items.at(-1)?.[campo.name] 
+                                        : form[campo.name]"
+                        :Propiedades="campo"
+                        @update:modelValue="value => updateField(campo.name, value, campo)"
+                    />
                 </div>
             </div>
 
-            <!-- Si no hay datos -->
-            <div v-if="items.length < 1" class="flex justify-center pb-4">
-                <p class="text-gray-400 dark:text-gray-600 text-base font-medium">
-                    No hay Datos, Agrega un campo.
-                </p>
+            <!-- Acciones -->
+            <div class="flex grid-cols-2 justify-end gap-2 pt-2">
+                <button type="button" v-if="editIndex !== null" @click="resetForm"
+                    class="px-4 py-2 text-sm bg-gray-300 dark:bg-gray-700 rounded-lg">
+                    Cancelar
+                </button>
+
+                <button type="button" @click="saveItem"
+                    class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    {{ editIndex !== null ? 'Actualizar' : props.Propiedades.liveUpdate ? 'Agregar Nuevo' : 'Agregar' }}
+                </button>
             </div>
         </div>
+
+        <!-- TABLA -->
+        <div v-if="items.length" class="overflow-x-auto">
+            <table class="w-full text-sm rounded-lg overflow-hidden" border="0" >
+                <thead class="bg-gray-200 dark:bg-gray-600">
+                    <tr>
+                        <th v-for="campo in Propiedades.campos" :key="campo.name" class="px-3 py-2 text-left">
+                            {{ campo.placeholder }}
+                        </th>
+                        <th v-if="!Propiedades.disabled" class="px-3 py-2 text-center">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr v-for="(item, index) in items" :key="index"
+                        class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+
+                        <td v-for="campo in Propiedades.campos" :key="campo.name" class="px-3 py-2">
+                            {{ item[campo.name] }}
+                        </td>
+
+                        <td v-if="!Propiedades.disabled" class="px-3 py-2 text-center flex justify-center gap-2">
+                            <ButtonRounded color="bg-yellow-500" @click="editItem(index)">
+                                <i class="fa-solid fa-pen"></i>
+                            </ButtonRounded>
+
+                            <ButtonRounded color="bg-red-500" @click="removeItem(index)">
+                                <i class="fa-solid fa-trash"></i>
+                            </ButtonRounded>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Vacío -->
+        <p v-else class="text-center text-gray-400 py-4">
+            No hay registros agregados.
+        </p>
 
     </div>
 </template>
+
 
 <style scoped>
 .incompleto {

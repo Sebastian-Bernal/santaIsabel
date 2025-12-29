@@ -291,10 +291,11 @@ export function useHistoriaBuilder({
 
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Diagnosticos',
+                labelGroup: 'Diagnosticos (CIE-10)',
                 buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
+                liveUpdate: true,
                 value: [],
                 campos: [
                     {
@@ -315,19 +316,20 @@ export function useHistoriaBuilder({
                         upperCase: true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
                 ],
-                containerCampos: 'grid grid-cols-2 gap-1'
+                containerCampos: 'flex flex-col gap-1'
             })
 
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Diagnosticos Relacionados',
+                labelGroup: 'Diagnosticos Relacionados (CIF)',
                 buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'DiagnosticosCIF',
+                liveUpdate: true,
                 value: [],
                 campos: [
                     {
@@ -339,9 +341,9 @@ export function useHistoriaBuilder({
                         options: CIF,
                         opciones: [{ value: 'nombre' }, { text: 'Codigo', value: 'codigo' }],
                         seleccionarItem: (item) => {
-                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
                             historiaStore.Formulario.DiagnosticosCIF.at(-1).codigo = item.codigo
-                        }
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
+                        },
                     },
                     {
                         name: 'codigo',
@@ -350,10 +352,10 @@ export function useHistoriaBuilder({
                         placeholder: 'CIF',
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIF,
-                        opciones: [{ value: 'codigo' }, { text: 'Descripcion:', value: 'nombre' }],
+                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
                         seleccionarItem: (item) => {
-                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
                             historiaStore.Formulario.DiagnosticosCIF.at(-1).codigo = item.codigo
+                            historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre
                         },
                     },
                 ],
@@ -499,6 +501,7 @@ export function useHistoriaBuilder({
                 buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
+                liveUpdate: true,
                 value: [],
                 campos: [
                     {
@@ -519,7 +522,7 @@ export function useHistoriaBuilder({
                         upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
                 ],
@@ -662,6 +665,7 @@ export function useHistoriaBuilder({
                 buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
+                liveUpdate: true,
                 value: [],
                 campos: [
                     {
@@ -682,7 +686,7 @@ export function useHistoriaBuilder({
                         upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
                 ],
@@ -964,6 +968,7 @@ export function useHistoriaBuilder({
                 buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                 tamaño: 'w-full col-span-2',
                 vmodel: 'Diagnosticos',
+                liveUpdate: true,
                 value: [],
                 campos: [
                     {
@@ -984,7 +989,7 @@ export function useHistoriaBuilder({
                         upperCase:true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
-                        opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
                         seleccionarItem: seleccionarCIE_10,
                     },
                 ],
@@ -1317,22 +1322,25 @@ export function useHistoriaBuilder({
                 value: [],
                 campos: [
                     { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
-                ],
-                containerCampos: 'w-full'
-            })
-            .addCampo({
-                component: 'GroupCampos',
-                type: 'Input',
-                labelGroup: 'Antecedentes Registrados',
-                tamaño: 'w-full col-span-2',
-                vmodel: 'AntecedentesRegistrados',
-                value: [],
-                disabledCampo: true,
-                campos: [
-                    { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
-                    { name: 'tipo', id: 'tipo', typeCampo: 'Input', placeholder: 'Tipo', tamaño: 'w-full' },
-                ],
-                containerCampos: 'grid grid-cols-2 gap-2'
+                        {
+                            name: 'tipo',
+                            id: 'tipoAntecedente',
+                            typeCampo: 'Select',
+                            placeholder: 'Tipo Antecedente',
+                            options: [
+                                {
+                                    text: 'Personal',
+                                    value: 'Personal'
+                                },
+                                {
+                                    text: 'Familiar',
+                                    value: 'Familiar'
+                                }
+                            ],
+                            tamaño: 'w-full'
+                        },
+                    ],
+                    containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
             })
         if (!puedePostAnalisis.value) {
             builder
@@ -1499,6 +1507,7 @@ export function useHistoriaBuilder({
                     buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { descripcion: '', codigo: '', id_paciente: id_paciente } }],
                     tamaño: 'w-full col-span-2',
                     vmodel: 'Diagnosticos',
+                    liveUpdate: true,
                     value: [],
                     campos: [
                         {
@@ -1587,6 +1596,7 @@ export function useHistoriaBuilder({
                     buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
                     tamaño: 'w-full md:col-span-2',
                     vmodel: 'Plan_manejo_equipos',
+                    liveUpdate: true,
                     value: [],
                     campos: [
                         {
@@ -1613,6 +1623,7 @@ export function useHistoriaBuilder({
                     buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente } },],
                     tamaño: 'w-full md:col-span-2',
                     vmodel: 'Plan_manejo_insumos',
+                    liveUpdate: true,
                     value: [],
                     campos: [
                         {
@@ -1641,6 +1652,7 @@ export function useHistoriaBuilder({
                     tamaño: 'w-full md:col-span-2',
                     vmodel: 'Plan_manejo_medicamentos',
                     value: [],
+                    liveUpdate: true,
                     campos: [
                         {
                             name: 'medicamento',
@@ -1686,9 +1698,10 @@ export function useHistoriaBuilder({
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', profesional: '', id_medico: '', id_paciente: id_paciente } },],
+                    buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', id_paciente: id_paciente } },],
                     tamaño: 'w-full md:col-span-2 mb-5',
                     vmodel: 'Plan_manejo_procedimientos',
+                    liveUpdate: true,
                     value: [],
                     campos: [
                         {
@@ -1706,39 +1719,11 @@ export function useHistoriaBuilder({
                             },
                         },
                         {
-                            name: 'codigo',
-                            id: 'codigo',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Codigo',
-                            tamaño: 'w-full',
-                            upperCase: true,
-                            options: CUPS,
-                            opciones: [{ value: 'CODIGO' }, { text: 'Procedimento:', value: 'DESCRIPCION' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
-                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
-                            },
-                        },
-                        {
                             name: 'dias_asignados',
                             id: 'dias_asignados',
                             typeCampo: 'Input',
                             placeholder: 'Numero de Veces',
                             tamaño: 'w-full',
-                        },
-                        {
-                            name: 'profesional',
-                            id: 'profesional',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Profesional asignado',
-                            tamaño: 'w-full',
-                            options: MedicosList,
-                            upperCase: true,
-                            opciones: [{ value: 'name' }, { text: 'Cedula:', value: 'No_document' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).profesional = item.name
-                                historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).id_medico = item.id_profesional
-                            },
                         },
                     ],
                     containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'

@@ -207,9 +207,9 @@ async function activarCita(cita) {
         historiasStore.Formulario.Nota.fecha_nota = cita.fecha
         historiasStore.Formulario.Nota.hora_nota = cita.hora
     } else if (varView.tipoConsulta.plantilla === 'Medicina') {
-        const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
+        // const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
 
-        historiasStore.Formulario.AntecedentesRegistrados = antecedentes
+        // historiasStore.Formulario.Antecedentes = antecedentes
     }
     varView.showNuevaHistoria = true
 }

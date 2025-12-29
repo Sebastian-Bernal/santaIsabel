@@ -1172,9 +1172,18 @@ const propiedades = computed(() => {
                 .setColumnas([
                     { titulo: 'motivo', value: 'Motivo', tamaño: 250, ordenar: true },
                     { titulo: 'observacion', value: 'Observacion', tamaño: 250, ordenar: true },
-                    // puedePostAnalisis.value ? { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 } : { titulo: 'ta', value: 'Estado'},
+                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
-                .setHeaderTabla({ titulo: 'Consultas y Analisis', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla(
+                    { titulo: 
+                        'Consultas y Analisis', 
+                        color: 'bg-[var(--color-default-600)] text-white', 
+                        espacioMargen: '500',
+                        buscador: true,
+                        filtros: [
+                            { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        ]   
+                    })
                 .setDatos(puedeVerMedicina ? analisis : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '', { icon: 'pdf', action: exportarMedicinaPDF }], botones: true, })
             )
@@ -1360,7 +1369,15 @@ const propiedades = computed(() => {
                     { titulo: 'hora', value: 'Hora', tamaño: 250, ordenar: true },
                     { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
                 ])
-                .setHeaderTabla({ titulo: 'Avances de Tratamientos', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ 
+                    titulo: 'Avances de Tratamientos', 
+                    color: 'bg-[var(--color-default-600)] text-white', 
+                    espacioMargen: '500',
+                    buscador: true,
+                    filtros: [
+                           { columna: 'fecha', placeholder: 'Fecha' },
+                    ] 
+                })
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }, { icon: 'actualizar', action: actualiazrItemTerapia }], botones: true, })
                 .setDatos(puedeVerTerapias ? evoluciones : [])
             )
@@ -1501,7 +1518,15 @@ const propiedades = computed(() => {
                         // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
                     ], botones: true,
                 })
-                .setHeaderTabla({ titulo: 'Notas Medicas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
+                .setHeaderTabla({ 
+                    titulo: 'Notas Medicas', 
+                    color: 'bg-[var(--color-default-600)] text-white', 
+                    espacioMargen: '500',
+                    buscador: true,
+                    filtros: [
+                           { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                    ] 
+                })
             )
             // .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
@@ -1628,7 +1653,12 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(puedeVerTratamientos ? tratamientos : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
-                .setHeaderTabla({ titulo: 'Tratamientos', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
+                .setHeaderTabla({ 
+                    titulo: 'Tratamientos', 
+                    color: 'bg-[var(--color-default-600)] text-white', 
+                    espacioMargen: '500',
+                    buscador: true,  
+                })
             )
             .addComponente('Form', propiedadesItemHistoria)
 
@@ -1644,7 +1674,15 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
                 .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', { icon: 'pdf', action: pdfMedicinas }], botones: true, })
-                .setHeaderTabla({ titulo: 'Medicinas', color: 'bg-[var(--color-default-600)] text-white', espacioMargen: '500' })
+                .setHeaderTabla({ 
+                    titulo: 'Medicinas', 
+                    color: 'bg-[var(--color-default-600)] text-white', 
+                    espacioMargen: '500',
+                    buscador: true,
+                    filtros: [
+                           { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                    ] 
+                })
             )
             .addComponente('Form', propiedadesItemHistoria)
 
@@ -1659,7 +1697,14 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(puedeVerEvoluciones ? nutricion : [])
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'actualizar', action: actualizarItemEvolucionHistoria }], botones: true, })
-                .setHeaderTabla({ titulo: 'Evoluciones', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ 
+                    titulo: 'Evoluciones', 
+                    color: 'bg-[var(--color-default-600)] text-white',
+                    buscador: true,
+                    filtros: [
+                           { columna: 'created_at', placeholder: 'Fecha' },
+                    ]  
+                })
             )
             .addComponente('Form', propiedadesItemHistoria)
             .addComponente('PDFTemplate', pdfNutricion
@@ -1779,7 +1824,14 @@ const propiedades = computed(() => {
                 ])
                 .setDatos(puedeVerTrabajo ? trabajosSocial : [])
                 .setAcciones({ icons: [{ icon: 'pdf', action: exportarTrabajoSocialPDF }], botones: true, })
-                .setHeaderTabla({ titulo: 'Trabajo Social', color: 'bg-[var(--color-default-600)] text-white', })
+                .setHeaderTabla({ 
+                    titulo: 'Trabajo Social', 
+                    color: 'bg-[var(--color-default-600)] text-white',
+                    buscador: true,
+                    filtros: [
+                           { columna: 'creted_at', placeholder: 'Fecha' },
+                    ]  
+                })
             )
             .addComponente('PDFTemplate', pdfTrabajoSocial
                 .setElementId('TrabajoSocial')

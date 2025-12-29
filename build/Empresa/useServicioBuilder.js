@@ -62,7 +62,7 @@ export function useServicioBuilder({
         {text: 'Nota', value: 'Nota'},
         {text: 'Terapia', value: 'Terapia'},
         {text: 'Evolucion', value: 'Evolucion'},
-        {text: 'Medicina', value: 'Medicina'},
+        {text: 'Medicina Especializada', value: 'Medicina'},
         {text: 'Trabajo Social', value: 'Trabajo Social'},
       ],
     })

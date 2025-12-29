@@ -116,10 +116,10 @@ button {
 
     .right {
         position: fixed;
-        top: 11%;
-        right: -20px;
-        left: 20%;
-        width: 50vh;
+        top: 10%;
+        left: 0;              /* que empiece desde el borde izquierdo */
+        right: 0;             /* que llegue hasta el borde derecho */
+        width: 100%;          /* ocupa todo el ancho */
         border-radius: 10px 10px 0 0;
         padding: 10px;
     }
@@ -134,13 +134,17 @@ button {
     }
 
     .left button:hover .right {
-        transform: translate(-60px, 28%);
+        transform: translate(0, 28%);
     }
 
     .down {
+        position: fixed;       /* que se mantenga fijo */
         left: 0;
-        width: 50vh;
+        right: 0;
+        width: 100%;           /* ocupa todo el ancho */
         border-radius: 0 0 10px 10px;
+        max-height: 60vh;      /* controlas la altura máxima para scroll */
+        overflow-y: auto;      /* habilitas scroll si hay muchas opciones */
     }
 
     .down:hover {
@@ -160,5 +164,6 @@ button {
         bottom: auto;
         border-radius: 0 0 16px 16px;
     }
+
 }
 </style>

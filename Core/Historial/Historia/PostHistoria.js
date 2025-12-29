@@ -325,7 +325,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             // Validar Procedimientos
             datos.Plan_manejo_procedimientos.forEach((p, i) => {
-                if (!p.procedimiento || !p.codigo || !p.id_medico) {
+                if (!p.procedimiento || !p.codigo) {
                     errores.push(`Procedimiento ${i + 1} incompleto.`);
                 }
             });

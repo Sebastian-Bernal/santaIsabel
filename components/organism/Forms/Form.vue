@@ -32,9 +32,9 @@ const fondos = {
     FondoTransparent,
 };
 
-//  watch(tablaStore.Formulario, (newValue) => {
-//     console.log(newValue)
-//  }, {deep: true})
+ watch(tablaStore.Formulario, (newValue) => {
+    console.log(newValue)
+ }, {deep: true})
 
 // Traer datos del localStorage
 onMounted(() => {
@@ -102,7 +102,7 @@ function limpiar() {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-3 w-full flex flex-row-reverse justify-center items-center gap-3 px-2">
+            <div class="mt-7 w-full flex flex-row-reverse justify-center items-center gap-3 px-2">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)" 
                     class="md:w-[200px] sm:w-[2/3] w-full">

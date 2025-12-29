@@ -50,10 +50,10 @@ const removeStorage = () => {
         <div class="navbar__content">
 
             <a href="/Home" class="text-white md:text-xl text-lg font-extrabold ml-3">
-                <i class="fa-solid fa-laptop-medical md:text-2xl text-lg"></i>
+                <i class="fa-solid fa-laptop-medical md:text-2xl text-lg md:mt-0 mt-2"></i>
                 Thesalus
             </a>
-            <p class="text-xs text-white mr-10 mt-4 md:hidden block">{{ usuario }}</p>
+            <p class="text-xs text-white mr-10 mt-2 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
                 <h2 class="text-white transition-all duration-300 cursor-pointer active:scale-95"><i class="fa-solid fa-bars"></i></h2>
             </div>
@@ -155,13 +155,13 @@ const removeStorage = () => {
         display: block;
         position: absolute;
         right: 10px;
-        top: 10px;
+        top: 5px;
     }
 
     .navbar__content__list {
         position: absolute;
         z-index: 999;
-        top: 95px;
+        top: 85px;
         right: 0;
         width: 100%;
         background-color: var(--color-default-600);
