@@ -529,6 +529,39 @@ export function useVerHistoriaBuilder({
                 tamaño: 'w-full col-span-2'
             })
     }
+    else if (formularioItem.value === 'TrabajoSocial') {
+        builder
+            .nuevaSeccion('Trabajo Social')
+            .addCampo({
+                component: 'Label',
+                forLabel: 'motivo',
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Analisis.motivo',
+                id: 'motivo',
+                name: 'motivo',
+                placeholder: 'Describa el motivo principal de la consulta...',
+                tamaño: 'w-full md:col-span-2'
+            })
+            .addCampo({
+                component: 'Label',
+                forLabel: 'Analisis',
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Recomendaciones'
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.analisis',
+                id: 'observacion',
+                name: 'observacion',
+                tamaño: 'w-full md:col-span-2'
+            })
+    }
     else {
         builder
             .nuevaSeccion('No se encontro el Item')

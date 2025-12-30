@@ -108,7 +108,12 @@ export function useNotasBuilder({
                 { text: 'Cambios críticos', value: 'Cambios criticos' }
             ]
         })
-
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Notas de enfermeria',
+            forLabel: 'tipo',
+            tamaño: 'md:col-span-2 w-full'
+        })
         .addCampo({
             component: 'Label',
             icon: 'fa-solid fa-comment text-blue-500',
@@ -117,14 +122,175 @@ export function useNotasBuilder({
             tamaño: 'md:col-span-2 w-full'
         })
         .addCampo({
-            component: 'Textarea',
-            vmodel: 'Nota.nota',
-            id: 'nota',
-            name: 'nota',
-            placeholder: 'Nota',
-            tamaño: 'w-full md:col-span-2',
-            disabled: 'props.verNota'
+            component: 'GroupCampos',
+            labelGroup: 'Subjetivo',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'subjetivo' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.subjetivo',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full mt-1',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Registre lo manifestado por el paciente o familiar (dolor, molestias, percepción)',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
         })
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Objetivos',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'objetivo' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.objetivo',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Registre el objetivo del cuidado de enfermería para el paciente',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
+        })
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Actividades',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'actividades' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.actividades',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Detalle las actividades de enfermería realizadas durante el turno',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
+        })
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Plan',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'plan' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.plan',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Indique el plan de cuidado a seguir según la valoración del paciente',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
+        })
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Intervencion',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'intervencion' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.intervencion',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Describa la intervención realizada (procedimiento, cuidado o acción aplicada)',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
+        })
+        .addCampo({
+            component: 'GroupCampos',
+            labelGroup: 'Evaluacion',
+            buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'evaluacion' } }],
+            tamaño: 'w-full col-span-2',
+            vmodel: 'Nota.evaluacion',
+            ocultarEliminar: true,
+            value: [],
+            campos: [
+                {
+                    name: 'hora',
+                    id: 'hora',
+                    typeCampo: 'Input',
+                    type: 'time',
+                    placeholder: 'Hora del registro',
+                    tamaño: 'w-full',
+                    label: 'Hora del registro'
+                },
+                {
+                    name: 'descripcion',
+                    id: 'descripcion',
+                    typeCampo: 'Textarea',
+                    placeholder: 'Registre la valoración del paciente (signos, síntomas, estado general)',
+                    tamaño: 'w-full',
+                },
+            ],
+            containerCampos: 'flex flex-col gap-1'
+        })
+
+
 
     return builder.build()
 }

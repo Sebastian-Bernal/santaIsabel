@@ -244,11 +244,11 @@ const updateField = (field, value, campoDef) => {
                         </td>
 
                         <td v-if="!Propiedades.disabled" class="px-3 py-2 text-center flex justify-center gap-2">
-                            <ButtonRounded color="bg-yellow-500" @click="editItem(index)">
+                            <ButtonRounded v-if="!Propiedades.ocultarEditar" color="bg-yellow-500" @click="editItem(index)">
                                 <i class="fa-solid fa-pen"></i>
                             </ButtonRounded>
 
-                            <ButtonRounded color="bg-red-500" @click="removeItem(index)">
+                            <ButtonRounded v-if="!Propiedades.ocultarEliminar" color="bg-red-500" @click="removeItem(index)">
                                 <i class="fa-solid fa-trash"></i>
                             </ButtonRounded>
                         </td>

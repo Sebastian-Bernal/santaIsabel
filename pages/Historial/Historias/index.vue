@@ -38,7 +38,6 @@ const id_paciente = ref(0)
 
 const show = ref(false);
 const showItem = ref(false)
-const showNota = ref(false)
 const showActualizarNota = ref(false)
 const refresh = ref(1);
 
@@ -46,7 +45,6 @@ const pacientesStore = usePacientesStore();
 const medicoStore = useMedicosStore()
 const store = useIndexedDBStore()
 const showVerHistorial = ref(false)
-const showNuevoPaciente = ref(false)
 const formularioItem = ref('')
 const actualizar = ref(false)
 const activePdfNotas = ref(false)
@@ -82,10 +80,11 @@ watch(() => show.value,
     }
 );
 
-watch(() => showNota.value,
+watch(() => showActualizarNota.value,
     async (estado) => {
         if (!estado && varView.cambioEnApi) {
-            await llamadatos();
+            await apiRest.getData('Descripcion_nota', 'descripcionNotas')
+            notas.value = await pacientesStore.listDatos(id, 'Nota') || []
             refresh.value++;
         }
     }
@@ -151,6 +150,16 @@ watch(() => showItem.value,
                     allAnalisisE.map((analisis) => {
                         if (analisis.servicio === 'Evolucion') {
                             nutricion.value.push({ ...analisis })
+                        }
+                    })
+                case 'TrabajoSocial':
+                    await apiRest.getData('Analisis', 'analisis')
+                    const historiaT = await pacientesStore.listDatos(id_paciente.value, 'HistoriaClinica', 'id')
+                    const allAnalisisT = await historiasStore.listDatos(historiaT[0]?.id, 'Analisis', 'id_historia')
+                    trabajosSocial.value = []
+                    allAnalisisT.map((analisis) => {
+                        if (analisis.servicio === 'Trabajo Social') {
+                            trabajosSocial.value.push({ ...analisis })
                         }
                     })
                 default:
@@ -384,17 +393,42 @@ function actualizarItemEvolucionHistoria(item) {
     showItem.value = true
 }
 
-// Visibilidad notas
-function actualizarNota(nota) {
+async function actualizarNota(nota) {
     mapCampos(nota, notasStore.Formulario)
+
+    store.almacen = 'Descripcion_nota'
+    const descripcion = await store.leerdatos()
+
+    const descripcionesNota = (descripcion || []).filter(d => d.id_nota === nota.id);
+
+    // Agrupar por tipo
+    const agrupadoPorTipo = descripcionesNota.reduce((acc, nota) => {
+        if (!acc[nota.tipo]) acc[nota.tipo] = [];
+        acc[nota.tipo].push(nota);
+        return acc;
+    }, {});
+
+    notasStore.Formulario.Nota.subjetivo = agrupadoPorTipo.subjetivo
+    notasStore.Formulario.Nota.objetivo = agrupadoPorTipo.objetivo
+    notasStore.Formulario.Nota.actividades = agrupadoPorTipo.actividades
+    notasStore.Formulario.Nota.plan = agrupadoPorTipo.plan
+    notasStore.Formulario.Nota.intervencion = agrupadoPorTipo.intervencion
+    notasStore.Formulario.Nota.evaluacion = agrupadoPorTipo.evaluacion
     notasStore.Formulario.Nota.name_paciente = historiasStore.Formulario.HistoriaClinica.name_paciente
     notasStore.Formulario.Nota.No_document_paciente = historiasStore.Formulario.HistoriaClinica.No_document_paciente
     notasStore.Formulario.Nota.id_temporal = nota.id_temporal
     showActualizarNota.value = true
 }
 
+function actualizarItemTrabajoSocial(item) {
+    formularioItem.value = 'TrabajoSocial'
+    varView.tipoHistoria = 'TrabajoSocial'
+    actualizar.value = true
+    mapCampos(item, historiasStore.Formulario)
+    showItem.value = true
+}
+
 function cerrarNota() {
-    showNota.value = false
     showActualizarNota.value = false
 }
 
@@ -766,6 +800,14 @@ const propiedades = computed(() => {
     const puedeVerMedicacion = varView.getPermisos.includes('Medicacion_view')
     const puedeVerMedicina = varView.getPermisos.includes('MedicinaGeneral_view')
     const puedeVerTrabajo = varView.getPermisos.includes('TrabajoSocial_view')
+
+    const puedePutNotas = varView.getPermisos.includes('Notas_put')
+    const puedePutEvoluciones = varView.getPermisos.includes('Evoluciones_put')
+    const puedePutTerapias = varView.getPermisos.includes('Terapias_put')
+    const puedePutTratamientos = varView.getPermisos.includes('Tratamientos_put')
+    const puedePutMedicacion = varView.getPermisos.includes('Medicacion_put')
+    const puedePutMedicina = varView.getPermisos.includes('MedicinaGeneral_put')
+    const puedePutTrabajo = varView.getPermisos.includes('TrabajoSocial_put')
 
     const tablaConsultas = new TablaBuilder()
     const tablaEvoluciones = new TablaBuilder()
@@ -1185,7 +1227,12 @@ const propiedades = computed(() => {
                         ]   
                     })
                 .setDatos(puedeVerMedicina ? analisis : [])
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemConsultasHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '', { icon: 'pdf', action: exportarMedicinaPDF }], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: estadoSemaforo, action: () => { } }, 
+                    { icon: 'ver', action: verItemConsultasHistoria }, 
+                    puedePutMedicina ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '', 
+                    { icon: 'pdf', action: exportarMedicinaPDF }
+                ], botones: true, })
             )
             .addComponente('Form', propiedadesItemHistoria)
             .addComponente('PDFTemplate', pdfMedicina
@@ -1378,7 +1425,7 @@ const propiedades = computed(() => {
                            { columna: 'fecha', placeholder: 'Fecha' },
                     ] 
                 })
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }, { icon: 'actualizar', action: actualiazrItemTerapia }], botones: true, })
+                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }, puedePutTerapias ? { icon: 'actualizar', action: actualiazrItemTerapia } : ''], botones: true, })
                 .setDatos(puedeVerTerapias ? evoluciones : [])
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -1515,7 +1562,7 @@ const propiedades = computed(() => {
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
                         { icon: 'pdf', action: exportarNotaPDF },
-                        // puedePUT ? { icon: 'actualizar', action: actualizarNota } : ''
+                        puedePutNotas ? { icon: 'actualizar', action: actualizarNota } : ''
                     ], botones: true,
                 })
                 .setHeaderTabla({ 
@@ -1528,7 +1575,7 @@ const propiedades = computed(() => {
                     ] 
                 })
             )
-            // .addComponente('Form', propiedadesActualizarNota)
+            .addComponente('Form', propiedadesActualizarNota)
             .addComponente('PDFTemplate', pdfNotas
                 .setElementId('Nota')
                 .setIsActive(activePdfNotas)
@@ -1652,7 +1699,10 @@ const propiedades = computed(() => {
                     { titulo: 'dias_asignados', value: 'No. Dias', tamaño: 250 },
                 ])
                 .setDatos(puedeVerTratamientos ? tratamientos : [])
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemTratamientoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: estadoSemaforo, action: () => { } }, 
+                    { icon: 'ver', action: verItemTratamientoHistoria }, 
+                    puedePutTratamientos ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true, })
                 .setHeaderTabla({ 
                     titulo: 'Tratamientos', 
                     color: 'bg-[var(--color-default-600)] text-white', 
@@ -1673,7 +1723,11 @@ const propiedades = computed(() => {
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
-                .setAcciones({ icons: [{ icon: estadoSemaforo, action: () => { } }, { icon: 'ver', action: verItemMedicamentoHistoria }, puedePUT ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', { icon: 'pdf', action: pdfMedicinas }], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: estadoSemaforo, action: () => { } }, 
+                    { icon: 'ver', action: verItemMedicamentoHistoria }, 
+                    puedePutMedicacion ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '', 
+                    { icon: 'pdf', action: pdfMedicinas }], botones: true, })
                 .setHeaderTabla({ 
                     titulo: 'Medicinas', 
                     color: 'bg-[var(--color-default-600)] text-white', 
@@ -1696,7 +1750,10 @@ const propiedades = computed(() => {
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
                 .setDatos(puedeVerEvoluciones ? nutricion : [])
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarNutricionPDF }, { icon: 'actualizar', action: actualizarItemEvolucionHistoria }], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: 'pdf', action: exportarNutricionPDF }, 
+                    puedePutEvoluciones ? { icon: 'actualizar', action: actualizarItemEvolucionHistoria } : ''
+                ], botones: true, })
                 .setHeaderTabla({ 
                     titulo: 'Evoluciones', 
                     color: 'bg-[var(--color-default-600)] text-white',
@@ -1823,7 +1880,10 @@ const propiedades = computed(() => {
                     { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
                 ])
                 .setDatos(puedeVerTrabajo ? trabajosSocial : [])
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarTrabajoSocialPDF }], botones: true, })
+                .setAcciones({ icons: [
+                    { icon: 'pdf', action: exportarTrabajoSocialPDF },
+                    puedePutTrabajo ? {icon: 'actualizar', action: actualizarItemTrabajoSocial} : ''
+                ], botones: true, })
                 .setHeaderTabla({ 
                     titulo: 'Trabajo Social', 
                     color: 'bg-[var(--color-default-600)] text-white',
@@ -1833,6 +1893,7 @@ const propiedades = computed(() => {
                     ]  
                 })
             )
+            .addComponente('Form', propiedadesItemHistoria)
             .addComponente('PDFTemplate', pdfTrabajoSocial
                 .setElementId('TrabajoSocial')
                 .setIsActive(activePdfTrabajoSocial)
