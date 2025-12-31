@@ -6,34 +6,37 @@ export function useServicioBuilder({
   storePinia,
   actualizar,
   showModificarServicio,
-  cerrar
+  cerrar,
+  eliminar
 }) {
   const builder = new FormularioBuilder()
-
-  if (actualizar) {
+  const varView = useVarView()
+  const puedeDelete = varView.getPermisos.includes('Datos_delete');
+  
+  if (eliminar) {
     builder
       .setFormularioFondo(true)
       .nuevaSeccion('Formulario Servicio')
+      .setFormularioTipo('Wizard')
+      .setFormularioTituloFormulario('Servicio')
       .setFormularioShow(showModificarServicio)
-      .setBotones([
-        {type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600',},
-        {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar},
-      ])
   } else {
     builder
-      .setFormularioFondo(false)
+      .setFormularioFondo(true)
       .nuevaSeccion('Agregar Nuevo Servicio')
-      .setBotones([{
-        type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
-      }])
   }
 
   builder
     .setStoreId(storeId)
     .setStorePinia(storePinia)
-    .setFormulariotamaño('XS')
+    .setFormulariotamaño('SM')
+      .setBotones([
+        {type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600',},
+        {type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar},
+      ])
     .setCamposRequeridos(['Servicio.name', 'Servicio.plantilla',])
     .setEditarFormulario(actualizar)
+    .setEliminarFormulario(puedeDelete ? eliminar : false)
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Servicio',
@@ -49,7 +52,7 @@ export function useServicioBuilder({
       minlength: 5,
       tamaño: 'md:col-span-2',
       vmodel: 'Servicio.name',
-      upperCase: true
+      // upperCase: true
     })
     .addCampo({
       component: 'Select',

@@ -72,7 +72,7 @@ function moduloSeleccionado(modulo) {
     <!-- Dropdown -->
     <div
       v-show="showOptions"
-      class="absolute top-full left-0 right-0 mt-1 max-h-[280px]
+      class="absolute top-full left-0 right-0 mt-1 max-h-[300px]
              overflow-y-auto scrollForm bg-white dark:bg-gray-900
              border border-gray-200 dark:border-gray-800 rounded-lg z-50 p-3"
     >

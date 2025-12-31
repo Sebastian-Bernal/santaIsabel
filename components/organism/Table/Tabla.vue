@@ -244,7 +244,7 @@ const tablaAlto = computed(() => {
                                 :id="id">
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
                                     :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                    @click="action.action(fila)"
+                                    @click="() => { action.action(fila); mostrarAcciones(id)}"
                                     class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
                                 </BotonAccion>
                             </div>

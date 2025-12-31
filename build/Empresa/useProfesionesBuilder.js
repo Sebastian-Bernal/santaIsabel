@@ -7,34 +7,43 @@ export function useProfesionesBuilder({
   actualizar,
   permisos,
   showModificarProfesion,
-  cerrar
+  cerrar,
+  eliminar
 }) {
   const builder = new FormularioBuilder()
+  const varView = useVarView()
 
-  if (actualizar) {
+  const puedeDelete = varView.getPermisos.includes('Datos_delete');
+  if (eliminar) {
     builder
       .setFormularioFondo(true)
-      .nuevaSeccion('Formulario Profesion')
+      .nuevaSeccion('Actualizar Profesion')
       .setFormularioShow(showModificarProfesion)
+      .setFormularioTipo('Wizard')
+      .setFormularioTituloFormulario('Profesion')
       .setBotones([
         { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
         { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar },
       ])
   } else {
     builder
-      .setFormularioFondo(false)
-      .nuevaSeccion('Agregar Nueva Profesion')
-      .setBotones([{
-        type: 'enviar', text: 'Enviar', color: 'bg-blue-500',
-      }])
+      .setFormularioFondo(true)
+      .nuevaSeccion('Formulario Profesion')
+      .setFormularioShow(showModificarProfesion)
+      .setFormularioTipo('N/A')
+      .setBotones([
+        { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
+        { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar },
+      ])
   }
 
   builder
     .setStoreId(storeId)
     .setStorePinia(storePinia)
-    .setFormulariotamaño('XS')
+    .setFormulariotamaño('MD')
     .setCamposRequeridos(['Profesion.nombre', 'Profesion.permisos',])
     .setEditarFormulario(actualizar)
+    .setEliminarFormulario(puedeDelete ? eliminar : false)
     .addCampo({
       component: 'Label',
       text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',

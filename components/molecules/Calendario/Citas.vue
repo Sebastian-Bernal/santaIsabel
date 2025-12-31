@@ -192,6 +192,15 @@ async function activarCita(cita) {
         return s.name === cita.servicio
     })
 
+    if(!varView.tipoConsulta) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'No se encontro el tipo de servicio';
+        notificacionesStore.options.texto = ''
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
+        return
+    }
+
     // varView.tipoConsulta = cita.servicio
     if (varView.tipoConsulta.plantilla === 'Terapia') {
         historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente

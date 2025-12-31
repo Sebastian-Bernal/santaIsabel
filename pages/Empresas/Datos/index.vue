@@ -13,6 +13,8 @@ import { ref, onMounted } from 'vue';
 import { enviarFormularioDeleteEPS } from '~/Core/Empresa/Datos/Eps/DELETEEps';
 import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
+import { enviarFormularioDeleteProfesion } from '~/Core/Empresa/Datos/Profesion/DELETEProfesion';
+import { enviarFormularioDeleteServicio } from '~/Core/Empresa/Datos/Servicio/DeleteServicio';
 
 const storeEPS = useDatosEPSStore();
 const storeProfesion = useDatosProfesionStore();
@@ -30,6 +32,7 @@ const showNuevoServicio = ref(false)
 const showModificarProfesion = ref(false)
 const showModificarEPS = ref(false)
 const showModificarServicio = ref(false)
+const editarProfesion = ref(false)
 const secciones = ref([])
 const refresh = ref(1)
 
@@ -173,6 +176,60 @@ async function eliminarEPS() {
     }
 }
 
+async function eliminarProfesion() {
+    const Profesion = storeProfesion.Formulario.Profesion
+    
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar la Profesion?';
+    notificaciones.options.html = `Se eliminaran los Profesionales y Citas asociadas.`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+
+    if (respuestaAlert === 'confirmado') {
+        const res = await enviarFormularioDeleteProfesion(Profesion)
+        if (res) {
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Profesion eliminada con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
+            
+            cerrar()
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+}
+
+async function eliminarServicio() {
+    const Servicio = storeServicio.Formulario.Servicio
+    
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar el Servicio?';
+    notificaciones.options.html = `Se eliminaran todas las Citas asociadas.`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+
+    if (respuestaAlert === 'confirmado') {
+        const res = await enviarFormularioDeleteServicio(Servicio)
+        if (res) {
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Servicio eliminado con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
+            
+            cerrarServicio()
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+}
+
 // Funciones actualizar Servicio
 
 function nuevoServicio() {
@@ -253,6 +310,7 @@ const propiedades = computed(() => {
             permisos: secciones.value,
             showModificarProfesion: showModificarProfesion,
             actualizar: true,
+            eliminar: false,
             showModificarProfesion: showNuevaProfesion,
             cerrar
         })
@@ -264,6 +322,7 @@ const propiedades = computed(() => {
             storePinia: 'Profesion',
             permisos: secciones.value,
             actualizar: true,
+            eliminar: eliminarProfesion,
             showModificarProfesion: showModificarProfesion,
             cerrar
         })
@@ -307,6 +366,7 @@ const propiedades = computed(() => {
             actualizar: true,
             showModificarServicio: showModificarServicio,
             cerrar: cerrarServicio,
+            eliminar: eliminarServicio
         })
         : null;
 
