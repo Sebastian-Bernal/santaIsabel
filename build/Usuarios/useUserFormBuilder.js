@@ -269,35 +269,25 @@ export function useUserBuilder({
                 mayuscula: false,
                 vmodel: 'User.correo',
             })
-            // .addCampo({
-            //     component: 'Select',
-            //     placeholder: 'Rol',
-            //     id: 'rol',
-            //     name: 'rol',
-            //     tamaño: 'w-full',
-            //     options: [
-            //         { text: 'Paciente', value: 'Paciente' },
-            //         { text: 'Profesional', value: 'Profesional' },
-            //         { text: 'Administrador', value: 'Administrador' },
-            //     ],
-            //     vmodel: 'User.rol',
-            // })
-            .addCampo({
-                component: 'Input',
-                type: 'password',
-                placeholder: 'Crea una contraseña',
-                id: 'contraseña-usuario',
-                name: 'contraseña-usuario',
-                minLength: '5',
-                mayuscula: false,
-                vmodel: 'User.contraseña',
-                slot: {
-                    html: `<div id="error-password"></div>`
-                },
-                events: {
-                    onChange: validarContraseña
-                }
-            })
+            if(!verUser){
+                builder
+                .addCampo({
+                    component: 'Input',
+                    type: 'password',
+                    placeholder: 'Crea una contraseña',
+                    id: 'contraseña-usuario',
+                    name: 'contraseña-usuario',
+                    minLength: '5',
+                    mayuscula: false,
+                    vmodel: 'User.contraseña',
+                    slot: {
+                        html: `<div id="error-password"></div>`
+                    },
+                    events: {
+                        onChange: validarContraseña
+                    }
+                })
+            }
 
     }
 
@@ -307,7 +297,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Paciente',
-                tamaño: 'w-full md:col-span-2',
+                tamaño: 'w-full col-span-2',
                 forLabel: 'Sexo'
             })
             .addCampo({
@@ -315,7 +305,7 @@ export function useUserBuilder({
                 placeholder: 'Sexo al Nacer',
                 id: 'Sexo',
                 name: 'Sexo',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-1 col-span-2',
                 options: [
                     { text: 'Masculino', value: 'masculino' },
                     { text: 'Femenino', value: 'femenino' },
@@ -327,7 +317,7 @@ export function useUserBuilder({
                 placeholder: 'Identidad de Género',
                 id: 'genero',
                 name: 'genero',
-                tamaño: 'w-full',
+                tamaño: 'w-full md:col-span-1 col-span-2',
                 options: [
                     { text: 'Masculino', value: 'masculino' },
                     { text: 'Femenino', value: 'femenino' },
@@ -342,7 +332,7 @@ export function useUserBuilder({
             .addCampo({
                 component: 'Label',
                 text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Datos Adicionales',
-                tamaño: 'w-full md:col-span-2',
+                tamaño: 'w-full col-span-2',
                 forLabel: 'eps'
             })
             .addCampo({
@@ -350,7 +340,7 @@ export function useUserBuilder({
                 placeholder: 'EPS',
                 id: 'eps',
                 name: 'eps',
-                tamaño: ' w-full',
+                tamaño: ' w-full md:col-span-1 col-span-2',
                 options: EPS,
                 vmodel: 'Paciente.id_eps',
             })
@@ -359,7 +349,7 @@ export function useUserBuilder({
                 placeholder: 'Régimen',
                 id: 'regimen',
                 name: 'regimen',
-                tamaño: ' w-full',
+                tamaño: ' w-full md:col-span-1 col-span-2',
                 options: [
                     { text: 'Contributivo', value: 'Contributivo' },
                     { text: 'Subsidiado', value: 'Subsidiado' },
@@ -372,7 +362,7 @@ export function useUserBuilder({
                 placeholder: 'Población Vulnerable',
                 id: 'poblacionVulnerable',
                 name: 'poblacionVulnerable',
-                tamaño: 'md:col-span-2 w-full',
+                tamaño: 'col-span-2 w-full',
                 options: [
                     { text: 'Ninguno', value: 'Ninguno' },
                     { text: 'Adultos Mayores', value: 'Adultos Mayores' },
@@ -398,7 +388,7 @@ export function useUserBuilder({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
                     buttons: [{ icon: 'fa-solid fa-kit-medical', label: 'Agregar', color: 'bg-green-500', addItem: { procedimiento: '', codigo: '', dias_asignados: '', } },],
-                    tamaño: 'w-full md:cols-span-2 mb-6',
+                    tamaño: 'w-full cols-span-2 mb-6',
                     vmodel: 'Plan_manejo_procedimientos',
                     liveUpdate: true,
                     disabled: true,
@@ -436,7 +426,7 @@ export function useUserBuilder({
                         { icon: 'fa-solid fa-plus', color: 'bg-blue-500', label: 'Personal', addItem: { descripcion: '', tipo: '' } },
                         { icon: 'fa-solid fa-plus', color: 'bg-blue-700', label: 'Familiar', addItem: { descripcion: '', tipo: 'Familiar' } },
                     ],
-                    tamaño: 'w-full md:col-span-2',
+                    tamaño: 'w-full col-span-2',
                     vmodel: 'Antecedentes_nuevos',
                     value: [],
                     campos: [

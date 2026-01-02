@@ -20,7 +20,7 @@ import { validarYEnviarNuevaNota } from '~/Core/Historial/Notas/POSTNota';
 import { validarYEnviarActualizarNota } from '~/Core/Historial/Notas/PUTNota';
 // Usuarios
 import { validarYEnviarNuevoUsuario } from '~/Core/Empresa/Usuario/NuevoUsuario';
-import { validarYEnviarModificarUsuario } from '~/Core/Empresa/Usuario/ModificarUsuario';
+import { validarYEnviarModificarAdministrador } from '~/Core/Empresa/Usuario/ModificarAdministrador';
 // EPS
 import { validarYEnviarDatosEPS } from '~/Core/Empresa/Datos/Eps/POSTEps';
 import { validarYEnviarActualizarEps } from '~/Core/Empresa/Datos/Eps/PUTEps';
@@ -113,7 +113,7 @@ export const accionesFormularios = {
         return respuesta
     },
     ModificarUsuario: async (data) => {
-        const respuesta = await validarYEnviarModificarUsuario(data)
+        const respuesta = await validarYEnviarModificarAdministrador(data)
         return respuesta
     },
     EPS: async (data) => {

@@ -174,8 +174,8 @@ function manejarTeclas(event) {
                 </div>
             </li>
         </ul>
-        <div v-if="!Propiedades.disabled" class="absolute top-2.5 right-3">
-            <i class="fa-solid fa-search text-blue-600 transition-all duration-300 cursor-pointer active:scale-85"></i>
+        <div v-if="!Propiedades.disabled" class="absolute top-2 right-3">
+            <i class="fa-solid fa-search text-sm text-blue-600 transition-all duration-300 cursor-pointer active:scale-85"></i>
         </div>
 
         <p class="text-xs text-red-400">{{ errorMensaje }}</p>

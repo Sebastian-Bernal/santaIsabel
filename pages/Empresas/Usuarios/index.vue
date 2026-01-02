@@ -22,10 +22,23 @@ async function llamadatos() {
     await UsersStore.indexDBDatos()
 }
 // Actualizar pagina cunso se agrega Nuevo Usuario
-watch(() => varView.showNuevoUser, async () => {
-    await llamadatos()
-    refresh.value++
-})
+watch(() => show.value, 
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+)
+
+watch(() => showVer.value, 
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+)
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
@@ -48,7 +61,7 @@ function cerrar() {
 // Funciones Formulario
 const verUser = (usuario) => {
     mapCampos(usuario, UsersStore.Formulario)
-    UsersStore.Formulario.User.id = usuario.id
+    UsersStore.Formulario.InformacionUser.id = usuario.id
     showVer.value = true
 }
 
@@ -64,7 +77,7 @@ function validarFecha(event) {
     const fecha = new Date(event.target.value);
     const hoy = new Date();
 
-    let mensajeError = '' 
+    let mensajeError = ''
     // Calcular edad
     let edad = hoy.getFullYear() - fecha.getFullYear();
     const mes = hoy.getMonth() - fecha.getMonth();
@@ -98,7 +111,7 @@ function validarFecha(event) {
 function validarTipoDoc(event) {
     const tipoDoc = event.target.value
 
-    if(!UsersStore.Formulario.InformacionUser.nacimiento) return
+    if (!UsersStore.Formulario.InformacionUser.nacimiento) return
 
     const fecha = new Date(UsersStore.Formulario.InformacionUser.fecha);
     const hoy = new Date();
@@ -144,15 +157,13 @@ const municipiosOptions = computed(() => {
 
 
 // Construccion de pagina
-
-const builderTabla = new TablaBuilder()
-
-
 const propiedades = computed(() => {
+    const builderTabla = new TablaBuilder()
     const pagina = new ComponenteBuilder()
 
     // Verifica permisos específicos
     const puedeVer = varView.getPermisos.includes('Usuarios_view');
+    const puedePut = varView.getPermisos.includes('Usuarios_put');
     if (!puedeVer) {
         pagina
             .setFondo('FondoDefault')
@@ -201,7 +212,7 @@ const propiedades = computed(() => {
         departamentos: municipios,
         seleccionarDepartamento,
         municipios: municipiosOptions,
-        seleccionarMunicipio: () => {},
+        seleccionarMunicipio: () => { },
         validarFecha,
         validarTipoDoc,
     });
@@ -219,28 +230,39 @@ const propiedades = computed(() => {
         validarTipoDoc
     });
 
-    return pagina
+    builderTabla
+        .setColumnas([
+            { titulo: 'name', value: 'Nombre', tamaño: 180, ordenar: true },
+            { titulo: 'No_document', value: 'Documento', tamaño: 150 },
+            { titulo: 'celular', value: 'Celular', tamaño: 100 },
+            { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
+        ])
+        .setHeaderTabla({
+            titulo: 'Gestion de Administradores',
+            descripcion: 'Administra y consulta información de Usuarios Admin',
+            color: 'bg-[var(--color-default)] text-white',
+            accionAgregar: puedePostUsuarios ? nuevoUser : ''
+        })
+        .setDatos(Users);
+
+        const acciones = [];
+        if (puedePut) {
+            acciones.push({ icon: "ver", action: verUser });
+        }
+
+        if (acciones.length > 0) {
+            builderTabla.setAcciones({ icons: acciones, botones: true });
+        }
+
+    pagina
         .setFondo('FondoDefault')
         .setEstilos('')
         .setContenedor('w-full')
-        .addComponente('Tabla', builderTabla
-            .setColumnas([
-                { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
-                { titulo: 'No_document', value: 'Documento', tamaño: 100 },
-                { titulo: 'celular', value: 'Celular', tamaño: 100 },
-                { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
-            ])
-            .setHeaderTabla({
-                titulo: 'Gestion de Administradores',
-                descripcion: 'Administra y consulta información de Usuarios Admin',
-                color: 'bg-[var(--color-default)] text-white',
-                accionAgregar: puedePostUsuarios ? nuevoUser : ''
-            })
-            .setDatos(Users)
-        )
+        .addComponente('Tabla', builderTabla)
         .addComponente('Form', propiedadesUser)
-        // .addComponente('Form', propiedadesVerUser)
-        .build();
+        if (propiedadesVerUser) pagina.addComponente("Form", propiedadesVerUser);
+
+    return pagina.build();
 });
 
 </script>

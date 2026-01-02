@@ -1,8 +1,9 @@
+import { actualizarEnIndexedDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
 
-// funcion para Validar campos del formulario Nuevo Paciente
-export const validarYEnviarNuevoUsuario = async (datos) => {
+// funcion para Validar campos del formulario Modificar Usuario
+export const validarYEnviarModificarAdministrador = async (datos) => {
     return await enviarFormulario(datos);
 };
 
@@ -18,10 +19,11 @@ const enviarFormulario = async (datos) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.users,
+                metodo: 'PUT',
+                url: config.public.informacionUsers + '/' + datos.InformacionUser.id,
                 token: token,
                 body: {
+                    id: datos.InformacionUser.id,
                     name: datos.InformacionUser.name,
                     No_document: datos.InformacionUser.No_document,
                     type_doc: datos.InformacionUser.type_doc,
@@ -55,12 +57,14 @@ const enviarFormulario = async (datos) => {
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
         }
+
     } else {
         notificacionesStore.options.icono = 'warning'
         notificacionesStore.options.titulo = 'Sin conexión';
-        notificacionesStore.options.texto = 'Intenta crear usuario en otro momento'
+        notificacionesStore.options.texto = 'Se guardará localmente'
         notificacionesStore.options.tiempo = 3000
         await notificacionesStore.simple()
+        await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datos)));
         return true
     }
 };

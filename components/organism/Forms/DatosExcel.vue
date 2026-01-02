@@ -4,6 +4,7 @@ import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
 import ButtonForm from '~/components/atoms/Buttons/ButtonForm.vue';
+import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import { watch, reactive } from 'vue'
 import { Tablas } from '~/data/Tablas';
 
@@ -81,7 +82,6 @@ function agregarDB() {
     datosOptions.value = datos.value.map((dato) => {
         return { text: dato, value: dato }
     })
-    console.log(datosOptions.value)
 }
 
 async function InsertarTabla(tabla, id_comparar, id_compararTabla) {
@@ -104,7 +104,6 @@ const validarform = () => {
 };
 
 function mostrar() {
-    console.log(datosAExportar)
 }
 </script>
 
@@ -112,15 +111,21 @@ function mostrar() {
     <FondoBlur>
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
             <div class="py-5 h-full flex flex-col justify-between">
-                <h2 class="text-2xl font-semibold text-center py-2">Configuracion Datos a exportarr</h2>
+                <h2 class="text-2xl font-semibold text-center py-2">Configuracion datos a exportar</h2>
                 <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
                     <div class="flex justify-between items-center">
-                        <p class="text-lg text-gray-600">{{ props.tabla }} <i class="fa-solid fa-gear"></i></p>
-                        <p class="text-lg text-blue-500 cursor-pointer" @click="agregarDB">
-                            <i v-if="showInsertar" class="fa-solid fa-download mr-3 text-green-700"
-                                @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
-                            <i class="fa-solid fa-plus"></i> <i class="fa-solid fa-database"></i>
-                        </p>
+                        <p class="text-lg text-gray-600"><i class="fa-solid fa-gear"></i> {{ props.tabla }}</p>
+
+                        <div class="text-lg text-blue-500 cursor-pointer flex gap-1" @click="agregarDB">
+                            <ButtonRounded color="bg-white w-[30px]! h-[30px]! mr-3" tooltip="Descargar" tooltipPosition="left">
+                                <i v-if="showInsertar" class="fa-solid fa-download text-green-700"
+                                    @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
+                            </ButtonRounded>
+                            <ButtonRounded color="bg-white w-[30px]! h-[30px]! gap-1" tooltip="Agregar Datos" tooltipPosition="left">
+                                <i class="fa-solid fa-plus text-blue-600"></i> 
+                                <i class="fa-solid fa-database text-blue-600"></i> 
+                            </ButtonRounded>
+                        </div>
                     </div>
                     <div v-if="insertarTabla" class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
                         <Select v-model="tablaInsert.tabla" :Propiedades="{
@@ -143,6 +148,7 @@ function mostrar() {
                             name: 'campoCompararTabla',
                             options: datosOptionsTabla,
                         }" />
+                        <div class="bg-gray-300 dark:bg-gray-700 h-[2px] w-full col-span-3"></div>
                     </div>
                     <div class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
                         <Input v-model="excel.nombreArchivo" :Propiedades="{
@@ -176,13 +182,12 @@ function mostrar() {
                         }" />
                     </div>
                 </div>
-                <div class="flex ">
-                    <div class="w-full flex justify-center items-center gap-3">
-                        <ButtonForm color="bg-gray-500 " @click="cerrar">
+                    <div class="w-full flex justify-center items-center gap-3 px-2">
+                        <ButtonForm color="bg-gray-500 md:w-[200px] sm:w-[2/3] w-full" @click="cerrar">
                             Cancelar
                         </ButtonForm>
 
-                        <ButtonForm color="bg-blue-500" @click="validarform">
+                        <ButtonForm color="bg-blue-500 md:w-[200px] sm:w-[2/3] w-full" @click="validarform">
                             <download-excel v-if="varView.formComplete" :data="datosAExportar"
                                 :name="excel.nombreArchivo" :type="excel.tipoArchivo" :fields="jsonfields"
                                 :worksheet="excel.worksheet" :before-finish="cerrar" :before-generate="mostrar">
@@ -193,7 +198,6 @@ function mostrar() {
                             </div>
                         </ButtonForm>
                     </div>
-                </div>
             </div>
         </div>
     </FondoBlur>

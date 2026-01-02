@@ -55,7 +55,9 @@ const removeStorage = () => {
             </a>
             <p class="text-xs text-white mr-10 mt-2 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
-                <h2 class="text-white transition-all duration-300 cursor-pointer active:scale-95"><i class="fa-solid fa-bars"></i></h2>
+                <div :class="{'text-white': !showNavbarBurguer, 'text-gray-300' : showNavbarBurguer}">
+                    <i class="fa-solid fa-bars transition-all duration-300 cursor-pointer active:scale-95"></i>
+                </div>
             </div>
 
             <ul class="navbar__content__list" @click="removeStorage()"

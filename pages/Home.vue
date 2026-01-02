@@ -143,9 +143,10 @@ async function DashboardRol(rol, Historias = [], citas) {
                 return {
                     header: {
                         html: `<div class="flex flex-col items-center">
-                     <h3 class="text-xl font-bold text-blue-600">${card.hora ? card.hora.substring(0, 5) : ''}</h3>
-                     <p class="text-xs font-thin">${card.fecha}</p>
-                     <div/>`,
+                                <h3 class="text-xl font-bold text-blue-600">${card.hora ? card.hora.substring(0, 5) : ''}</h3>
+                                <p class="text-xs font-thin">${card.fecha}</p>
+                                <div/>
+                            `,
                         title: card.name_paciente,
                         subtitle: card.servicio,
                     },
@@ -221,7 +222,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                     html: `<div>
                     <p class="font-semibold">Pacientes totales</p>
                     <p class="text-base font-bold">${dashboardData.value?.pacientes.total}</p>
-                    <p class="text-sm py-2">+${dashboardData.value?.pacientes.variacion}% vs. mes anterior</p>
+                    <p class="text-sm py-2">${dashboardData.value?.pacientes.variacion}% vs. mes anterior</p>
                 </div>`
                 },
                 body: {
@@ -233,7 +234,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                     html: `<div>
                     <p class="font-semibold">Consultas Hoy</p>
                     <p class="text-base font-bold">${dashboardData.value?.consultas.total}</p>
-                    <p class="text-sm py-2">+${dashboardData.value?.consultas.variacion}% vs. mes anterior</p>
+                    <p class="text-sm py-2">${dashboardData.value?.consultas.variacion}% vs. mes anterior</p>
                 </div>`
                 },
                 body: {
@@ -245,7 +246,7 @@ async function DashboardRol(rol, Historias = [], citas) {
                     html: `<div>
                     <p class="font-semibold">Citas Programadas</p>
                     <p class="text-base font-bold">${dashboardData.value?.citas_programadas.total}</p>
-                    <p class="text-sm py-2">+${dashboardData.value?.citas_programadas.variacion}% vs. mes anterior</p>
+                    <p class="text-sm py-2">${dashboardData.value?.citas_programadas.variacion}% vs. mes anterior</p>
                 </div>`
                 },
                 body: {

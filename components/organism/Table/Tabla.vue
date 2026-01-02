@@ -122,7 +122,7 @@ const tablaAlto = computed(() => {
                 </div>
 
                 <client-only v-if="Propiedades.headerTabla.excel">
-                    <div class="flex relative dropdown cursor-pointer">
+                    <div class="flex relative dropdown cursor-pointer ">
                         <div class="flex gap-1 items-center">
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
@@ -130,7 +130,7 @@ const tablaAlto = computed(() => {
                             <h4 class="md:block hidden">Exportar</h4>
                         </div>
                         <div
-                            class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-b-lg">
+                            class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-lg">
 
                             <download-excel class="flex gap-1 hover:text-white"
                                 :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
@@ -317,7 +317,7 @@ const tablaAlto = computed(() => {
             <div class="flex gap-2 items-center">
                 <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
                 <p class="text-sm text-gray-500 md:hidden block">N. registros</p>
-                <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
+                <select name="numRegistros" class="text-black bg-gray-100 rounded-xl p-1 cursor-pointer"
                     @change="cambiarItemsPorPagina($event.target.value)">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>

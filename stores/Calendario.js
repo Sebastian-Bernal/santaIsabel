@@ -50,7 +50,7 @@ export const useCalendarioCitas = defineStore('CalendarioCitas', {
             dias: dia,
             meses: parseInt(mes),
             años: año,
-            añoDesde: desde,
+            añoDesde: 2025,
         };
     },
 

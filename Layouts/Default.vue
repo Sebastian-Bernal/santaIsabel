@@ -72,6 +72,7 @@ onUnmounted(() => {
 
     .section-content {
         padding: 5px 15px;
+        margin: 0 3px;
     }
 }
 
