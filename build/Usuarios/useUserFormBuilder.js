@@ -19,7 +19,6 @@ export function useUserBuilder({
     seleccionarMunicipio,
     EPS,
     opcionesProfesion,
-    MedicosList,
     show,
     tipoUsuario,
     verUser,

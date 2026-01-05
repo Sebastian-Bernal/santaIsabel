@@ -74,7 +74,7 @@ export function useLoginBuilder({
   builder
     .addCampo({
       component: 'Input',
-      placeholder: 'Contraseñaaa',
+      placeholder: 'Contraseña',
       type: !mostrarContraseña.value ? 'password' : 'text',
       id: 'password',
       name: 'contraseña',

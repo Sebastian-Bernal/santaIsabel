@@ -8,9 +8,9 @@ import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
-import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario';
-import { validarYEnviarEliminarMedico } from '~/Core/Usuarios/Profesional/DELETEMedico';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
+import { useUsuarioValidaciones } from "~/composables/Usuarios/Usuarios.js";
+import { useProfesionalActions } from '~/composables/Usuarios/Profesional';
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -19,6 +19,7 @@ const profesionStore = useDatosProfesionStore()
 const medicos = ref([]);
 const profesiones = ref([]);
 const refresh = ref(1);
+
 const show = ref(false)
 const showVer = ref(false)
 
@@ -27,16 +28,42 @@ async function llamadatos() {
     medicos.value = await medicosStore.listMedicos();
     varView.cargando = false
 }
+
+const {
+    validarFecha,
+    validarTipoDoc,
+    buscarUsuarioPorDocumento,
+    municipiosOptions,
+    municipiosOptionsProfesional
+} = useUsuarioValidaciones(medicosStore.Formulario);
+
+const {
+    agregarMedico,
+    modificarMedico,
+    cerrar,
+    eliminarProfesional
+} = useProfesionalActions({
+    medicosStore,
+    varView,
+    notificaciones,
+    show,
+    showVer,
+    refrescar: async () => {
+        await llamadatos();
+        refresh.value++;
+    }
+});
+
 // Watch para actualizar informacion al agregar o actualizar
 watch(() => show.value, async (estado) => {
-    if(!estado && varView.cambioEnApi){
+    if (!estado && varView.cambioEnApi) {
         llamadatos()
         refresh.value++
     }
 })
 
 watch(() => showVer.value, async (estado) => {
-    if(!estado && varView.cambioEnApi){
+    if (!estado && varView.cambioEnApi) {
         llamadatos()
         refresh.value++
     }
@@ -55,126 +82,6 @@ onMounted(async () => {
     refresh.value++
 
     varView.cargando = false
-});
-
-// Variable para controlar la visibilidad del formulario de ingreso de profesional
-const modificarMedico = (medico) => {
-    mapCampos(medico, medicosStore.Formulario)
-    medicosStore.Formulario.Profesional.id = medico.id_profesional
-    medicosStore.Formulario.Profesional.id_temporal = medico.id_temporal
-    medicosStore.Formulario.Profesional.id_infoUsuario = medico.id_infoUsuario
-    medicosStore.Formulario.InformacionUser.id = medico.id_infoUsuario
-    medicosStore.Formulario.InformacionUser.id_temporal = medico.id_temporalUsuario
-    showVer.value = true;
-};
-
-function cerrar() {
-    show.value = false
-    showVer.value = false
-    varView.soloVer = false
-}
-
-// Funciones de formularios
-const agregarMedico = () => {
-    mapCamposLimpios(medicosStore.Formulario)
-    show.value = true;
-};
-
-async function buscarUsuario(event) {
-    const document = event.target.value
-    const store = useIndexedDBStore()
-    store.almacen = 'InformacionUser'
-    const usuarios = await store.leerdatos()
-
-    const usuarioExistente = usuarios.filter((user) => {
-        return user.No_document === document
-    });
-
-    if (usuarioExistente[0]) {
-        mapCampos(usuarioExistente[0], medicosStore.Formulario)
-    }
-
-}
-
-function seleccionarDepartamento(item) {
-    // formData.InformacionUser.departamento = item.nombre;
-}
-
-function validarFecha(event) {
-    const fecha = new Date(event.target.value);
-    const hoy = new Date();
-
-    let mensajeError = ''
-    // Calcular edad
-    let edad = hoy.getFullYear() - fecha.getFullYear();
-    const mes = hoy.getMonth() - fecha.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fecha.getDate())) {
-        edad--;
-    }
-
-    if (edad < 18 || edad > 100) {
-        mensajeError = "La edad debe estar entre 18 y 100 años";
-    }
-
-    // Validación según tipo de documento
-    if (medicosStore.Formulario.InformacionUser.type_doc === "cedula" && edad < 18) {
-        mensajeError = "Para cédula, la edad mínima es 18 años";
-    }
-
-    if (medicosStore.Formulario.InformacionUser.type_doc === "Tarjeta de identidad" && edad > 17) {
-        mensajeError = "Para tarjeta de identidad, la edad máxima es 17 años";
-    }
-
-    const errorDiv = document.getElementById(`error-fecha`);
-    if (errorDiv) {
-        if (mensajeError) {
-            errorDiv.innerHTML = `<p>${mensajeError}</p>`;
-        } else {
-            errorDiv.innerHTML = ''; // Limpia el mensaje si no hay error
-        }
-    }
-}
-
-async function eliminarProfesional() {
-    const profesional = medicosStore.Formulario
-
-    notificaciones.options.icono = 'warning';
-    notificaciones.options.titulo = 'Deseas Eliminar Profesional?';
-    notificaciones.options.html = `Se eliminará el profesional: <span>${profesional.InformacionUser.name}</span>`;
-    notificaciones.options.confirmtext = 'Si, Eliminar'
-    notificaciones.options.canceltext = 'Atras'
-    const respuestaAlert = await notificaciones.alertRespuesta()
-
-    if (respuestaAlert === 'confirmado') {
-
-        const res = await validarYEnviarEliminarMedico(profesional)
-
-        if (res) {
-            notificaciones.options.position = 'top-end';
-            notificaciones.options.texto = "Profesional eliminado con exito.";
-            notificaciones.options.background = '#6bc517'
-            notificaciones.options.tiempo = 1500
-            notificaciones.mensaje()
-            notificaciones.options.background = '#d33'
-            window.location.reload()
-        }
-    }
-}
-
-const municipiosOptions = computed(() => {
-    const departamentoSeleccionado = medicosStore.Formulario.InformacionUser.departamento;
-
-    const departamento = municipios.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
-
-    return departamento ? departamento.municipios : [];
-});
-
-const municipiosOptionsProfesional = computed(() => {
-    const departamentoSeleccionado = medicosStore.Formulario.Profesional.departamento_laboral;
-
-    const departamento = municipios.find(dep => dep.nombre.toUpperCase() === departamentoSeleccionado.toUpperCase());
-
-    return departamento ? departamento.municipios : [];
 });
 
 // Construccion de pagina
@@ -228,13 +135,12 @@ const propiedades = computed(() => {
         ? useUserBuilder({
             storeId: 'ModificarProfesional',
             storePinia: 'Profesionales',
-            camposRequeridos: [],
             cerrarModal: cerrar,
             show: showVer,
             tipoFormulario: 'Wizard',
-            buscarUsuario,
+            buscarUsuario: buscarUsuarioPorDocumento,
             departamentos: municipios,
-            seleccionarDepartamento,
+            seleccionarDepartamento: () => { },
             municipios_laboral: municipiosOptionsProfesional,
             municipios: municipiosOptions,
             seleccionarMunicipio: () => { },
@@ -255,9 +161,9 @@ const propiedades = computed(() => {
             cerrarModal: cerrar,
             show: show,
             tipoFormulario: 'Wizard',
-            buscarUsuario,
+            buscarUsuario: buscarUsuarioPorDocumento,
             departamentos: municipios,
-            seleccionarDepartamento,
+            seleccionarDepartamento: () => { },
             municipios: municipiosOptions,
             municipios_laboral: municipiosOptionsProfesional,
             seleccionarMunicipio: () => { },

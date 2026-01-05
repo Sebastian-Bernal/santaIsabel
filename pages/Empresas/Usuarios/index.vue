@@ -9,8 +9,10 @@ import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { mapCampos } from '~/components/organism/Forms/useFormulario';
 import { traerAdministradores } from '~/Core/Empresa/Usuario/GetAdministradores';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
+import { validarYEnviarEliminarUsuario } from '~/Core/Empresa/Usuario/EliminarUsuario';
 
 const varView = useVarView();
+const notificaciones = useNotificacionesStore();
 const UsersStore = useUsersStore();
 const Users = ref([]);
 const refresh = ref(1)
@@ -155,6 +157,33 @@ const municipiosOptions = computed(() => {
     return departamento ? departamento.municipios : [];
 });
 
+async function eliminarUsuario() {
+    const Usuario = UsersStore.Formulario
+    console.log(Usuario)
+    notificaciones.options.icono = 'warning';
+    notificaciones.options.titulo = 'Deseas Eliminar Usuario?';
+    notificaciones.options.html = `Se descativara el administrador ${Usuario.InformacionUser.name}.`;
+    notificaciones.options.confirmtext = 'Si, Eliminar'
+    notificaciones.options.canceltext = 'Atras'
+    const respuestaAlert = await notificaciones.alertRespuesta()
+
+    if (respuestaAlert === 'confirmado') {
+        const res = await validarYEnviarEliminarUsuario(Usuario.InformacionUser)
+        if (res) {
+            notificaciones.options.position = 'top-end';
+            notificaciones.options.texto = "Usuario eliminado con exito.";
+            notificaciones.options.background = '#6bc517'
+            notificaciones.options.tiempo = 1500
+            notificaciones.mensaje()
+            notificaciones.options.background = '#d33'
+            
+            cerrar()
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+}
+
 
 // Construccion de pagina
 const propiedades = computed(() => {
@@ -227,7 +256,8 @@ const propiedades = computed(() => {
         soloVer: varView.soloVer,
         tipoUsuario: "Administrador",
         validarFecha,
-        validarTipoDoc
+        validarTipoDoc,
+        eliminar: eliminarUsuario
     });
 
     builderTabla
