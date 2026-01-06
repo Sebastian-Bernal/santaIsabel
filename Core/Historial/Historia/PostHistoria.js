@@ -45,7 +45,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
         case 'Evolucion':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
-            datos.Cita.servicio = varView.tipoConsulta.plantilla
+            datos.Analisis.nombreServicio = datos.Cita.servicio
+            datos.Analisis.servicio = varView.tipoConsulta.plantilla
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
@@ -118,6 +119,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
                     servicio: varView.tipoConsulta.plantilla,
+                    nombreServicio: datos.Cita.servicio
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -375,6 +377,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
                     servicio: varView.tipoConsulta.plantilla,
+                    nombreServicio: datos.Cita.servicio,
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -581,6 +584,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
                         servicio: datos.Cita.servicio,
+                        nombreServicio: datos.Analisis.nombreServicio,
                         sincronizado: 1
                     },
                     Diagnosticos: datos.Diagnosticos.map((d, i) => ({
@@ -825,9 +829,10 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                         id_procedimiento: datos.Terapia.id_procedimiento,
                     },
                     Analisis: {
-                        motivo: 'Terapia',
+                        motivo: datos.Cita.servicio,
                         id_medico: datos.Cita.id_medico,
                         servicio: 'Terapia',
+                        nombreServicio: datos.Cita.servicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -964,6 +969,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
                         servicio: datos.Cita.servicio,
+                        nombreServicio: datos.Analisis.nombreServicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -1096,6 +1102,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Analisis.id_medico,
                         servicio: datos.Analisis.servicio,
+                        nombreServicio: datos.Analisis.nombreServicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -1320,7 +1327,8 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                         motivo: 'Nota Medica',
                         tipoAnalisis: datos.Nota.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
-                        servicio: 'Nota'
+                        servicio: 'Nota',
+                        nombreServicio: datos.Cita.servicio
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,

@@ -15,6 +15,7 @@ const estructuraCita = {
         name_medico: '',
         estado: 'Inactiva',
     },
+    Plan_manejo_procedimientos: []
 }
 
 // Pinia Citas

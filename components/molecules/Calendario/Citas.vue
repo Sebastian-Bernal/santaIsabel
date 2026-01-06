@@ -161,6 +161,23 @@ async function showObservacion(cita) {
 }
 
 async function activarCita(cita) {
+    if(!cita.fechaHasta) {
+        cita.fechaHasta = cita.fecha
+    }
+
+    const fecha = new Date();
+    const fechaHasta = new Date(cita.fechaHasta)
+
+    if (fechaHasta < fecha) {
+        notificacionesStore.options.icono = 'warning'
+        notificacionesStore.options.titulo = 'Rango vencido';
+        notificacionesStore.options.texto = 'Consulta con un administrador para habilitar Cita!'
+        notificacionesStore.options.tiempo = 3000
+        await notificacionesStore.simple()
+        return
+    }
+
+
     let pacientes = pacientesStore.Pacientes
 
     if (pacientes.length < 1) {
@@ -266,7 +283,9 @@ async function activarCita(cita) {
             :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
             <div class="flex gap-5 items-center md:flex-col lg:flex-row flex-row">
                 <div class="flex flex-col items-center">
-                    <h2 class="text-blue-500 text-lg font-bold">{{ cita.hora ? cita.hora.substring(0, 5) : '' }}</h2>
+                    <h2 class="text-blue-500 text-lg font-bold">{{ 
+                        cita.hora === '00:00:00' ? cita.fechaHasta.substring(5, 11)
+                        : cita.hora ? cita.hora.substring(0, 5) : '' }}</h2>
                     <p class="text-xs text-gray-500 dark:text-gray-200">{{ props.Propiedades.showTodas ? cita.fecha :
                         fechaCita }}</p>
                 </div>

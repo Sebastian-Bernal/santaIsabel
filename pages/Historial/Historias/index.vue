@@ -532,9 +532,12 @@ async function exportarEvolucionPDF(data) {
                 `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
             ])
         : [];
+    
+    const analisis = await historiasStore.listDatos(data.id_analisis, 'Analisis', 'id')
 
     propiedadesEvolucionPDF.value = {
         ...data,
+        ...analisis[0],
         ...dataPaciente,
         nameProfesional:
             profesional.name,
@@ -1442,7 +1445,7 @@ const propiedades = computed(() => {
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
                             <p class="text-sm border-b-1 pb-1">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-1">Registro</p></br>
+                            <p class="text-sm border-b-1 pb-1">Registro ${propiedadesEvolucionPDF.value.nombreServicio}</p></br>
                             <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
                         `,
                         `

@@ -143,7 +143,9 @@ async function DashboardRol(rol, Historias = [], citas) {
                 return {
                     header: {
                         html: `<div class="flex flex-col items-center">
-                                <h3 class="text-xl font-bold text-blue-600">${card.hora ? card.hora.substring(0, 5) : ''}</h3>
+                                <h3 class="text-xl font-bold text-blue-600">${
+                                    card.hora === '00:00:00' ? card.fechaHasta.substring(5, 11)
+                                    : card.hora ? card.hora.substring(0, 5) : ''}</h3>
                                 <p class="text-xs font-thin">${card.fecha}</p>
                                 <div/>
                             `,
@@ -301,7 +303,9 @@ async function DashboardRol(rol, Historias = [], citas) {
                 return {
                     header: {
                         html: `<div class="flex flex-col items-center">
-                         <h3 class="text-xl font-bold text-blue-600">${card.hora ? card.hora.substring(0, 5) : ''}</h3>
+                         <h3 class="text-xl font-bold text-blue-600">${
+                                    card.hora === '00:00:00' ? card.fechaHasta.substring(5, 11)
+                                    :card.hora ? card.hora.substring(0, 5) : ''}</h3>
                          <p class="text-xs font-thin">${card.fecha}</p>
                          <div/>`,
                         title: card.name_paciente,

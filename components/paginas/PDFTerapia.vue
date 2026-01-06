@@ -92,8 +92,11 @@ async function exportarEvolucionPDF(data) {
             ])
         : [];
 
+    const analisis = await historiasStore.listDatos(data.id_analisis, 'Analisis', 'id')
+
     propiedadesEvolucionPDF.value = { 
-        ...data, 
+        ...data,
+        ...analisis[0],
         ...dataPaciente, 
         nameProfesional: 
         profesional.name, 
@@ -137,15 +140,6 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     const pdfEvolucion = new PdfBuilder()
 
-
-
-    const diagnosticosCIFs = Array.isArray(unref(diagnosticosCIF.value))
-        ? toRaw(diagnosticosCIF.value).map(diagnostico => [
-            `<p class="text-xs leading-tight py-1">${diagnostico.descripcion}</p>`,
-            `<p class="text-xs leading-tight py-1">${diagnostico.codigo}</p>`
-        ])
-        : [];
-
     pagina
         .setFondo('FondoDefault')
         .setEstilos('')
@@ -165,7 +159,7 @@ const propiedades = computed(() => {
                         '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                         `
                             <p class="text-sm border-b-1 pb-1">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-1">Registro</p></br>
+                            <p class="text-sm border-b-1 pb-1">Registro ${propiedadesEvolucionPDF.value.nombreServicio}</p></br>
                             <p class="text-sm">Reporte de la atencion terapeutica realizada por especialidad</p></br>
                         `,
                         `

@@ -35,6 +35,7 @@ const servicios = ref([])
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
 const variasCitas = ref(false)
+const rangoFecha = ref(false)
 const CIE10 = ref([])
 
 async function llamadatos() {
@@ -108,7 +109,8 @@ const propiedades = computed(() => {
         servicios,
         optionsTratamientos: optionsTratamientos,
         showTratamientos: showTratamientos,
-        variasCitas: variasCitas
+        variasCitas: variasCitas,
+        rangoFecha: rangoFecha
     });
 
     const builderCitas = new CitasBuilder()

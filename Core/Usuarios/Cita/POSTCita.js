@@ -25,8 +25,6 @@ export const validarYEnviarNuevaCita = async (datos) => {
             'servicio',
             'motivo',
             'fecha',
-            'hora',
-            'id_procedimiento'
         ];
     } else {
         camposObligatorios = [
@@ -37,7 +35,6 @@ export const validarYEnviarNuevaCita = async (datos) => {
             'servicio',
             'motivo',
             'fecha',
-            'hora'
         ];
     }
 
@@ -101,33 +98,33 @@ export const validarYEnviarNuevaCita = async (datos) => {
         return horaIngresada >= horaMinima && horaIngresada <= horaMaxima;
     };
 
-    if (!validarHora(cita.hora)) {
-        notificacionesStore.options.icono = 'error';
-        notificacionesStore.options.titulo = 'Informacion invalida.';
-        notificacionesStore.options.texto = 'La hora debe estar entre las 5:00 AM y las 10:00 PM.';
-        notificacionesStore.options.tiempo = 5000;
-        notificacionesStore.simple();
-        return false;
-    }
+    // if (!validarHora(cita.hora)) {
+    //     notificacionesStore.options.icono = 'error';
+    //     notificacionesStore.options.titulo = 'Informacion invalida.';
+    //     notificacionesStore.options.texto = 'La hora debe estar entre las 5:00 AM y las 10:00 PM.';
+    //     notificacionesStore.options.tiempo = 5000;
+    //     notificacionesStore.simple();
+    //     return false;
+    // }
 
     if (cita.tipo) {
         const cantidad = parseInt(cita.cantidadCitas) || 0;
 
-        if (tipoConsulta === 'Terapia') {
-            const dias_restantes = varView.tratamientos.find(tratamiento => {
-                return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
-            })?.dias_restantes
+        // if (tipoConsulta === 'Terapia') {
+        //     const dias_restantes = varView.tratamientos.find(tratamiento => {
+        //         return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
+        //     })?.dias_restantes
 
-            if (cantidad > dias_restantes) {
-                notificacionesStore.options.icono = 'warning';
-                notificacionesStore.options.titulo = 'Informacion invalida.';
-                notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
-                notificacionesStore.options.tiempo = 5000;
-                notificacionesStore.simple();
-                return false;
-            }
+        //     if (cantidad > dias_restantes) {
+        //         notificacionesStore.options.icono = 'warning';
+        //         notificacionesStore.options.titulo = 'Informacion invalida.';
+        //         notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
+        //         notificacionesStore.options.tiempo = 5000;
+        //         notificacionesStore.simple();
+        //         return false;
+        //     }
 
-        }
+        // }
         // Utilidad para convertir string "YYYY-MM-DD" a Date
         function parseFechaISO(iso) {
             const [y, m, d] = iso.split('-').map(Number);
@@ -164,8 +161,11 @@ export const validarYEnviarNuevaCita = async (datos) => {
                 servicio: datos.Cita.servicio,
                 motivo: datos.Cita.motivo,
                 fecha: fechaFormateada,
+                fechaHasta: datos.Cita.fechaHasta,
                 hora: datos.Cita.hora,
-                id_procedimiento: datos.Cita.id_procedimiento
+
+                procedimiento: datos.Cita.procedimiento,
+                codigo: datos.Cita.codigo,
             };
             await enviarFormularioCita({ Cita: { ...body } });
         }
@@ -205,8 +205,13 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                     servicio: datos.Cita.servicio,
                     motivo: datos.Cita.motivo,
                     fecha: datos.Cita.fecha,
+                    fechaHasta: datos.Cita.fechaHasta,
                     hora: datos.Cita.hora,
-                    id_procedimiento: datos.Cita.id_procedimiento
+                    id_procedimiento: datos.Cita.id_procedimiento,
+
+                    procedimiento: datos.Cita.procedimiento,
+                    codigo: datos.Cita.codigo,
+                    dias_asignados: datos.Cita.cantidadCitas
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -223,6 +228,7 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                         servicio: respuesta.data.servicio,
                         motivo: respuesta.data.motivo,
                         fecha: respuesta.data.fecha,
+                        fechaHasta: respuesta.data.fechaHasta,
                         hora: respuesta.data.hora,
                         estado: respuesta.data.estado,
                         id_procedimiento: respuesta.data.id_procedimiento
