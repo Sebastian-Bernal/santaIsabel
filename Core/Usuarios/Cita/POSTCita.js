@@ -8,7 +8,7 @@ export const validarYEnviarNuevaCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const varView = useVarView()
     const cita = datos.Cita;
-
+console.log(cita)
     let camposObligatorios = []
     const servicioStore = useDatosServicioStore()
     const serviciosPlantilla = await servicioStore.listServicios()
@@ -107,7 +107,7 @@ export const validarYEnviarNuevaCita = async (datos) => {
     //     return false;
     // }
 
-    if (cita.tipo) {
+    if (cita.cantidadCitas > 1) {
         const cantidad = parseInt(cita.cantidadCitas) || 0;
 
         // if (tipoConsulta === 'Terapia') {
@@ -163,6 +163,7 @@ export const validarYEnviarNuevaCita = async (datos) => {
                 fecha: fechaFormateada,
                 fechaHasta: datos.Cita.fechaHasta,
                 hora: datos.Cita.hora,
+                id_procedimiento: datos.Cita.id_procedimiento,
 
                 procedimiento: datos.Cita.procedimiento,
                 codigo: datos.Cita.codigo,

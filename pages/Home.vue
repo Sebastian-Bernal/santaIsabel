@@ -2,7 +2,6 @@
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import Paciente from '~/components/Paciente.vue';
 
-import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 import { onMounted, ref } from 'vue';
@@ -369,16 +368,16 @@ async function DashboardRol(rol, Historias = [], citas) {
     varView.cargando = false
 }
 
-// Visibilidad de Formularios en acciones rapidas
+// Acciones rapidas
 function nuevoPaciente() {
     varView.showNuevoPaciente = true
 }
 
 function nuevaCita() {
     showCita.value = true
+    varView.showNuevaCita = true
 }
 
-// Acciones rapidas
 function buscarHistoria() {
     location.href = '/Historial/Historias'
 }
@@ -389,30 +388,10 @@ const cardsPacientes = new CardBuilder();
 const cardsCitas = new CardBuilder();
 const cardsAcciones = new CardBuilder();
 
-function cerrar() {
-    showCita.value = false
-}
-
-const optionsTratamientos = ref(null)
-const showTratamientos = ref(false)
-const variasCitas = ref(false)
-
 
 const propiedades = computed(() => {
     varView.cargando = true
     if (!rol.value) return null
-    const builder = useFormularioCitaBuilder({
-        storeId: 'NuevaCita',
-        storePinia: 'Citas',
-        cerrarModal: cerrar,
-        show: showCita,
-        pacientesList,
-        medicosList,
-        servicios,
-        optionsTratamientos: optionsTratamientos,
-        showTratamientos: showTratamientos,
-        variasCitas: variasCitas
-    });
 
     const pagina = new ComponenteBuilder();
     const paginaBase = pagina
@@ -457,7 +436,6 @@ const propiedades = computed(() => {
                 .setheaderTitle('Acciones Rapidas')
                 .build()
             )
-            .addComponente('Form', builder)
     }
     else if (rol.value === 'Profesional') {
         paginaBase
@@ -489,7 +467,6 @@ const propiedades = computed(() => {
                 .setheaderTitle('Acciones Rapidas')
                 .build()
             )
-            .addComponente('Form', builder)
     }
     varView.cargando = false
     return paginaBase.build()
@@ -500,4 +477,5 @@ const propiedades = computed(() => {
 <template>
     <Pagina v-if="propiedades" :Propiedades="propiedades" :key="refresh"></Pagina>
     <Paciente v-if="varView.showNuevoPaciente" />
+    <Cita v-if="varView.showNuevaCita"></Cita>
 </template>

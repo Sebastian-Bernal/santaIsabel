@@ -45,7 +45,7 @@ onMounted(() => {
 function limpiar() {
     mapCamposLimpios(tablaStore?.Formulario)
     localStorage.removeItem(props.Propiedades.content.storeId)
-    
+
     const show = props.Propiedades.formulario.show
 
     if (unref(show)) {
@@ -79,10 +79,20 @@ function limpiar() {
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
                 <!-- Body -->
                 <div class="w-full h-full py-1">
-                    <h2 v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
-                        class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center py-2 pt-5">
-                        {{ Propiedades.formulario.secciones[seccionActual].nombre }}
-                    </h2>
+                    <div v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
+                        class="relative py-2 pt-5">
+                        <h2
+                            class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center">
+                            {{ Propiedades.formulario.secciones[seccionActual].nombre }}
+                        </h2>
+                        <div class="absolute top-[2px] right-[2px]">
+                            <div @click="limpiar"
+                                class="w-7 h-7 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                                <i
+                                    class="fa-solid fa-close dark:text-gray-300 dark:hover:text-gray-400 text-gray-800 hover:text-gray-900 md:text-base text-base"></i>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Formulario -->
                     <div class="w-full h-full flex justify-center">
                         <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[95%] overflow-y-auto"
@@ -104,12 +114,12 @@ function limpiar() {
             <!-- Botones -->
             <div class="mt-5 w-full flex flex-row-reverse justify-center items-center gap-3 px-2">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
-                    @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)" 
+                    @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)"
                     class="md:w-[200px] sm:w-[2/3] w-full">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>
         </form>
-        
+
     </component>
 </template>

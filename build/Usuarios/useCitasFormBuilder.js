@@ -17,7 +17,8 @@ export function useFormularioCitaBuilder({
   showTratamientos,
   optionsTratamientos,
   variasCitas,
-  rangoFecha
+  rangoFecha,
+  nuevoProcedimiento
 }) {
   const citasStore = useCitasStore()
   const calendarioCitasStore = useCalendarioCitas();
@@ -25,74 +26,6 @@ export function useFormularioCitaBuilder({
   watch(() => calendarioCitasStore.fecha, () => {
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
   })
-
-  // watch(() => citasStore.Formulario.Cita.servicio,
-  //   async (nuevo, anterior) => {
-
-  //     if (nuevo === anterior) return
-  //     const servicioStore = useDatosServicioStore()
-  //     const serviciosPlantilla = await servicioStore.listServicios()
-  //     const tipoConsulta = serviciosPlantilla.find((s) => {
-  //       return s.name === citasStore.Formulario.Cita.servicio
-  //     })?.plantilla
-
-  //     if(tipoConsulta === 'Terapia'){
-  //       showTratamientos.value = true
-  //     }
-
-  //     // const servicioStore = useDatosServicioStore()
-  //     // const serviciosPlantilla = await servicioStore.listServicios()
-  //     // const tipoConsulta = serviciosPlantilla.find((s) => {
-  //     //   return s.name === citasStore.Formulario.Cita.servicio
-  //     // })?.plantilla
-
-  //     // if (tipoConsulta === 'Terapia' && citasStore.Formulario.Cita.id_paciente) {
-  //     //   const varView = useVarView()
-
-  //     //   const api = useApiRest()
-  //     //   const config = useRuntimeConfig()
-  //     //   const token = decryptData(sessionStorage.getItem('token'))
-
-  //     //   let options = {
-  //     //     metodo: 'POST',
-  //     //     url: config.public.diasAsignadosRestantes,
-  //     //     token: token,
-  //     //     body: {
-  //     //       id_paciente: citasStore.Formulario.Cita.id_paciente
-  //     //     }
-  //     //   }
-
-  //     //   const respuesta = await api.functionCall(options)
-
-  //     //   if (respuesta.success) {
-  //     //     varView.tipoConsulta = 'Terapia'
-  //     //     varView.tratamientos = respuesta.data
-
-  //     //     optionsTratamientos.value = respuesta.data.map(data => {
-  //     //       return { text: `${data.tratamiento} - ${data.dias_restantes}`, value: data.id }
-  //     //     })
-  //     //     showTratamientos.value = varView.tratamientos.length > 0
-  //     //   }
-
-  //     //   const tratamientodiv = document.getElementById('tratamientos');
-
-  //     //   if (tratamientodiv) {
-  //     //     tratamientodiv.innerHTML = `<p>Tratamientos activos: ${varView.tratamientos.length || 0}</p>`;
-  //     //   } else {
-  //     //     tratamientodiv.innerHTML = ``;
-  //     //   }
-
-  //     // } else {
-
-  //     //   showTratamientos.value = false
-  //     //   const tratamientodiv = document.getElementById('tratamientos');
-  //     //   if (tratamientodiv) {
-  //     //     tratamientodiv.innerHTML = ` `;
-  //     //   }
-
-  //     // }
-  //   }
-  // );
 
   async function changeServicio(event) {
     const servicio = event.target.value
@@ -104,8 +37,51 @@ export function useFormularioCitaBuilder({
     })?.plantilla
 
     if (tipoConsulta === 'Terapia') {
+      const varView = useVarView()
+
+      const api = useApiRest()
+      const config = useRuntimeConfig()
+      const token = decryptData(sessionStorage.getItem('token'))
+
+      let options = {
+        metodo: 'POST',
+        url: config.public.diasAsignadosRestantes,
+        token: token,
+        body: {
+          id_paciente: citasStore.Formulario.Cita.id_paciente
+        }
+      }
+
+      const respuesta = await api.functionCall(options)
+
+      if (respuesta.success) {
+        varView.tipoConsulta = 'Terapia'
+        varView.tratamientos = respuesta.data
+
+        optionsTratamientos.value = respuesta.data.map(data => {
+          return { text: `${data.tratamiento} - ${data.dias_restantes}`, value: data.id }
+        })
+      }
+
       showTratamientos.value = true
+      // const tratamientodiv = document.getElementById('tratamientos');
+
+      // if (tratamientodiv) {
+      //   tratamientodiv.innerHTML = `<p>Tratamientos activos: ${varView.tratamientos.length || 0}</p>`;
+      // } else {
+      //   tratamientodiv.innerHTML = ``;
+      // }
+
+    } else {
+
+      showTratamientos.value = false
+      // const tratamientodiv = document.getElementById('tratamientos');
+      // if (tratamientodiv) {
+      //   tratamientodiv.innerHTML = ` `;
+      // }
+
     }
+
   }
 
   watch(() => citasStore.Formulario.Cita.motivo,
@@ -125,6 +101,17 @@ export function useFormularioCitaBuilder({
         variasCitas.value = true
       } else {
         variasCitas.value = false
+      }
+    }
+  );
+
+  watch(() => citasStore.Formulario.Cita.nuevoProcedimiento,
+    async () => {
+      if (citasStore.Formulario.Cita.nuevoProcedimiento === true) {
+        citasStore.Formulario.Cita.id_procedimiento = null
+        nuevoProcedimiento.value = true
+      } else {
+        nuevoProcedimiento.value = false
       }
     }
   );
@@ -240,21 +227,6 @@ export function useFormularioCitaBuilder({
     })
     .addCampo({
       component: 'Select',
-      placeholder: 'Servicio',
-      id: 'servicio',
-      name: 'servicio',
-      tamaño: 'w-full md:col-span-1 col-span-2',
-      options: servicios,
-      vmodel: 'Cita.servicio',
-      slot: {
-        tooltip: `<div id="tratamientos" class="text-green-600 dark:text-green-300 text-xs mt-1"></div>`
-      },
-      events: {
-        onChange: changeServicio
-      }
-    })
-    .addCampo({
-      component: 'Select',
       placeholder: 'Motivo',
       id: 'motivo',
       name: 'motivo',
@@ -276,32 +248,60 @@ export function useFormularioCitaBuilder({
       ],
       vmodel: 'Cita.motivo',
     })
+    .addCampo({
+      component: 'Select',
+      placeholder: 'Servicio',
+      id: 'servicio',
+      name: 'servicio',
+      tamaño: 'w-full md:col-span-1 col-span-2',
+      options: servicios,
+      vmodel: 'Cita.servicio',
+      slot: {
+        tooltip: `<div id="tratamientos" class="text-green-600 dark:text-green-300 text-xs mt-1"></div>`
+      },
+      events: {
+        onChange: changeServicio
+      }
+    })
   if (showTratamientos?.value) {
     builder
-      // 📌 Sección: tratamientos
       .addCampo({
-        name: 'procedimiento',
-        id: 'descripcionProcedimiento',
-        vmodel: 'Cita.procedimiento',
-        component: 'SelectSearch',
-        placeholder: 'Procedimiento (CUPS)',
-        tamaño: 'w-full col-span-2',
-        UpperCase: true,
-        options: CUPS,
-        opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
-        seleccionarItem: (item) => {
-          citasStore.Formulario.Cita.procedimiento = item.DESCRIPCION
-          citasStore.Formulario.Cita.codigo = item.CODIGO
-        },
-      },)
+        component: 'Checkbox',
+        placeholder: 'Nuevo Procedimiento',
+        tamaño: 'w-full col-span-2 py-3',
+        vmodel: 'Cita.nuevoProcedimiento',
+      })
+    if (nuevoProcedimiento?.value || optionsTratamientos.value.length < 1) {
+      builder
+        .addCampo({
+          name: 'procedimiento',
+          id: 'descripcionProcedimiento',
+          vmodel: 'Cita.procedimiento',
+          component: 'SelectSearch',
+          placeholder: 'Procedimiento (CUPS)',
+          tamaño: 'w-full col-span-2',
+          UpperCase: true,
+          options: CUPS,
+          opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
+          seleccionarItem: (item) => {
+            citasStore.Formulario.Cita.procedimiento = item.DESCRIPCION
+            citasStore.Formulario.Cita.codigo = item.CODIGO
+          },
+        },)
+    } else {
+      builder
+        // 📌 Sección: tratamientos
+        .addCampo({
+          component: 'Select',
+          placeholder: 'Seleccione procedimiento',
+          name: 'procedimientoActivo',
+          id: 'procedimientoActivo',
+          vmodel: 'Cita.id_procedimiento',
+          tamaño: 'w-full col-span-2',
+          options: optionsTratamientos
+        })
+    }
   }
-  builder
-    .addCampo({
-      component: 'Checkbox',
-      placeholder: 'Agendar varias Citas',
-      tamaño: 'w-full col-span-2 py-3',
-      vmodel: 'Cita.tipo',
-    })
   if (rangoFecha?.value) {
     builder
       .addCampo({
@@ -343,6 +343,12 @@ export function useFormularioCitaBuilder({
   } else {
     builder
       .addCampo({
+        component: 'Checkbox',
+        placeholder: 'Agendar varias Citas',
+        tamaño: 'w-full col-span-2 py-3',
+        vmodel: 'Cita.tipo',
+      })
+      .addCampo({
         component: 'Label',
         text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',
         tamaño: 'w-full col-span-2',
@@ -379,11 +385,18 @@ export function useFormularioCitaBuilder({
         },
       })
   }
-  if (variasCitas?.value) {
+  if (variasCitas?.value || rangoFecha?.value) {
     builder
+      .addCampo({
+        component: 'Label',
+        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
+        tamaño: 'w-full col-span-2',
+        forLabel: 'fechaInicial',
+      })
       .addCampo({
         component: 'Input',
         type: 'number',
+        label: 'Dias de separacion',
         placeholder: 'Intervalo de Agendamiento (dias)',
         id: 'intervaloCitas',
         name: 'intervaloCitas',
@@ -399,27 +412,6 @@ export function useFormularioCitaBuilder({
         name: 'cantidadCitas',
         tamaño: 'w-full md:col-span-1 col-span-2',
         vmodel: 'Cita.cantidadCitas',
-      })
-      .addCampo({
-        component: 'Input',
-        type: 'date',
-        label: 'Fecha Inicial',
-        id: 'fechaInicial',
-        name: 'fechaInicial',
-        tamaño: 'w-full md:col-span-1 col-span-2',
-        vmodel: 'Cita.fecha',
-        events: {
-          onChange: validarFecha
-        },
-        slot: {
-          tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
-        },
-      })
-      .addCampo({
-        component: 'Label',
-        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
-        tamaño: 'w-full col-span-2',
-        forLabel: 'fechaInicial',
       })
   }
   builder.build()

@@ -6,13 +6,9 @@ import PDFTerapia from '~/components/paginas/PDFTerapia.vue'
 import PDFMedicina from '~/components/paginas/PDFMedicina.vue'
 import PDFTrabajoSocial from '~/components/paginas/PDFTrabajoSocial.vue'
 
-import { useFormularioCitaBuilder } from '~/build/Usuarios/useCitasFormBuilder'
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
 import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/CalendarioBuilder'
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
-import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
-import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio'
 import { ref, onMounted } from 'vue'
 import { CardBuilder } from '~/build/Constructores/CardBuilder'
 
@@ -25,26 +21,13 @@ const show = ref(false);
 const showEnFila = ref(false);
 const refresh = ref(1);
 
-const pacientesStore = usePacientesStore()
-const medicosStore = useMedicosStore()
-const servicioStore = useDatosServicioStore()
-const storeCodigos = useCodigos()
-const pacientesList = ref([])
-const medicosList = ref([])
-const servicios = ref([])
-const optionsTratamientos = ref(null)
-const showTratamientos = ref(false)
-const variasCitas = ref(false)
-const rangoFecha = ref(false)
-const CIE10 = ref([])
-
 async function llamadatos() {
     varView.cargando = true
     citas.value = await citasStore.listCitas();
     varView.cargando = false
 }
 // Watch para actualizar citas al agregar nueva
-watch(() => show.value,
+watch(() => varView.showNuevaCita,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
             await llamadatos();
@@ -66,28 +49,13 @@ onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
-
-    // Llamar datos para Cita
-    medicosList.value = await medicosStore.listMedicos();
-    CIE10.value = await storeCodigos.leerdatos();
-    servicios.value = await servicioStore.listServicios();
-    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
-    const rol = sessionStorage.getItem('Rol')
-    if (rol === 'Profesional') {
-        pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
-    } else {
-        pacientesList.value = await pacientesStore.listPacientes();
-    }
 });
 
 // Funciones para manejar la visibilidad de los formularios
 const agregarCita = () => {
     show.value = true
+    varView.showNuevaCita = true
 };
-
-function cerrar() {
-    show.value = false
-}
 
 // Funciones para manejar visibilidad de Pagina
 const showFila = () => {
@@ -98,20 +66,6 @@ const showFila = () => {
 const builderCalendario = new CalendarioBuilder()
 
 const propiedades = computed(() => {
-
-    const builder = useFormularioCitaBuilder({
-        storeId: 'NuevaCita',
-        storePinia: 'Citas',
-        cerrarModal: cerrar,
-        show: show,
-        pacientesList,
-        medicosList,
-        servicios,
-        optionsTratamientos: optionsTratamientos,
-        showTratamientos: showTratamientos,
-        variasCitas: variasCitas,
-        rangoFecha: rangoFecha
-    });
 
     const builderCitas = new CitasBuilder()
     const pagina = new ComponenteBuilder()
@@ -157,7 +111,6 @@ const propiedades = computed(() => {
 
     pagina
         .setFondo('FondoDefault')
-        .addComponente('Form', builder)
     if (!showEnFila.value) {
         pagina
             .setHeaderPage({
@@ -202,6 +155,7 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
+    <Cita v-if="varView.showNuevaCita"></Cita>
     <PDFEvolucion v-if="varView.showPDFEvolucion"/>
     <PDFNota v-if="varView.showPDFNota"></PDFNota>
     <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
