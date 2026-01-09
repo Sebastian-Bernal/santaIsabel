@@ -10,6 +10,7 @@ export const useApiRest = defineStore('apiRest', {
 
     actions: {
         async functionCall(opcion) {
+            const notificacionesStore = useNotificacionesStore()
             const config = useRuntimeConfig()
             this.baseUrl = config.public.api // URL API
 
@@ -56,13 +57,39 @@ export const useApiRest = defineStore('apiRest', {
                     const data = await response.json();
                     this.data = data
                 } else {
-                    throw new Error(response.message || 'Error en la solicitud')
+                    let errorData;
+                    try {
+                        errorData = await response.json();
+                    } catch {
+                        errorData = { message: 'Error en la solicitud' };
+                    }
+
+                    console.log('Error response:', errorData);
+
+                    // Notificación con el mensaje del backend o fallback
+                    notificacionesStore.options.icono = 'warning';
+                    notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';
+                    notificacionesStore.options.texto = errorData.message || 'No se pudo enviar formulario, intenta de nuevo en un momento';
+                    notificacionesStore.options.tiempo = 3000;
+                    notificacionesStore.simple();
+
+                    throw new Error(errorData.message || 'Error en la solicitud');
+
                 }
 
                 return this.data
             } catch (error) {
-                console.error('Error en functionCall:', error)
-                throw error
+                console.error('Error en functionCall:', error);
+
+                // Notificación genérica si algo falla fuera del bloque anterior
+                // notificacionesStore.options.icono = 'warning';
+                // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';
+                // notificacionesStore.options.texto = error.message || 'No se pudo enviar formulario, intenta de nuevo en un momento';
+                // notificacionesStore.options.tiempo = 3000;
+                // notificacionesStore.simple();
+
+                throw error;
+
             }
         },
 
@@ -81,12 +108,12 @@ export const useApiRest = defineStore('apiRest', {
                     };
 
                     let respuesta
-                    if(time){
+                    if (time) {
                         // Promesa de timeout
                         const timeout = new Promise((_, reject) =>
                             setTimeout(() => reject(new Error("Timeout")), 10000) // 10 segundos
                         );
-    
+
                         // Correr la llamada y el timeout en paralelo
                         respuesta = await Promise.race([
                             this.functionCall(options),
@@ -109,7 +136,7 @@ export const useApiRest = defineStore('apiRest', {
                             await store.guardardatosID({ ...item })
                         };
                     }
-                    
+
                 } catch (error) {
                     console.error("Error al obtener datos desde la API:", error);
                     console.error("Fallo:", almacen)

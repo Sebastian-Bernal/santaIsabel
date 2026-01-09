@@ -16,6 +16,8 @@ import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 import { usePaginacion } from '~/composables/Tabla/usePaginacion';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita';
+import { mapCampos } from '~/components/organism/Forms/useFormulario';
 
 const props = defineProps({
     citas: {
@@ -32,6 +34,7 @@ const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
 const historiasStore = useHistoriasStore();
 const pacientesStore = usePacientesStore();
+const citasStore = useCitasStore();
 const servicioStore = useDatosServicioStore();
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
@@ -89,13 +92,26 @@ watch(filtros, (nuevoValor, anteriorValor) => {
 //         }
 //     }
 // );
+
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
-    return Citas.value?.filter(cita => {
-        const fechaFormateada = cita.fecha?.split('-')?.reverse()?.join('/');
-        return fechaFormateada === fecha.value;
-    });
+  return Citas.value?.filter(cita => {
+    if (!cita.fecha) return false;
+
+    // Convertir fechas a objetos Date
+    const fechaInicio = new Date(cita.fecha);       // formato esperado: YYYY-MM-DD
+    const fechaFin = cita.fechaHasta ? new Date(cita.fechaHasta) : null;
+    const fechaSeleccionada = new Date(fecha.value.split('/').reverse().join('-')); // fecha seleccionada
+    if (fechaFin) {
+      // Si existe fechaHasta, verificar que la fecha seleccionada esté dentro del rango
+      return fechaSeleccionada >= fechaInicio && fechaSeleccionada <= fechaFin;
+    } else {
+      // Si no hay fechaHasta, comparar solo con la fecha exacta
+      return fechaSeleccionada.getTime() === fechaInicio.getTime();
+    }
+  });
 });
+
 
 
 // Nombre del mes
@@ -142,6 +158,16 @@ async function cancelarCita(cita) {
     }
 }
 
+const actualizarCita = (cita) => {
+    mapCampos(cita, citasStore.Formulario);
+    if(cita.motivo === 'Atención domiciliaria'){
+        varView.rangoCita = true
+    } else {
+        varView.rangoCita = false
+    }
+    varView.showActualizarCita = true
+}
+
 function showMotivo(cita) {
     options.icono = "info";
     options.titulo = "Motivo de cancelacion";
@@ -165,10 +191,17 @@ async function activarCita(cita) {
         cita.fechaHasta = cita.fecha
     }
 
-    const fecha = new Date();
+    const fechaHoy = new Date();
+    // Obtener horas y minutos
+    const horas = fechaHoy.getHours().toString().padStart(2, '0');
+    const minutos = fechaHoy.getMinutes().toString().padStart(2, '0');
+
+    // Formato HH:MM
+    const horaActual = `${horas}:${minutos}`;
+
     const fechaHasta = new Date(cita.fechaHasta)
 
-    if (fechaHasta < fecha) {
+    if (fechaHasta < fechaHoy) {
         notificacionesStore.options.icono = 'warning'
         notificacionesStore.options.titulo = 'Rango vencido';
         notificacionesStore.options.texto = 'Consulta con un administrador para habilitar Cita!'
@@ -223,15 +256,15 @@ async function activarCita(cita) {
         historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
         historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
         historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
-        historiasStore.Formulario.Terapia.fecha = cita.fecha
-        historiasStore.Formulario.Terapia.hora = cita.hora
+        historiasStore.Formulario.Terapia.fecha = fecha.value.split('/').reverse().join('-') || cita.fecha
+        historiasStore.Formulario.Terapia.hora = horaActual || cita.hora
     } else if (varView.tipoConsulta.plantilla === 'Nota') {
         historiasStore.Formulario.Nota.id_paciente = cita.id_paciente
         historiasStore.Formulario.Nota.id_profesional = cita.id_medico
         historiasStore.Formulario.Nota.id_procedimiento = cita.id_procedimiento
         historiasStore.Formulario.Nota.direccion = pacienteCita.direccion
-        historiasStore.Formulario.Nota.fecha_nota = cita.fecha
-        historiasStore.Formulario.Nota.hora_nota = cita.hora
+        historiasStore.Formulario.Nota.fecha_nota = fecha.value.split('/').reverse().join('-') || cita.fecha
+        historiasStore.Formulario.Nota.hora_nota = horaActual || cita.hora
     } else if (varView.tipoConsulta.plantilla === 'Medicina') {
         // const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
 
@@ -280,8 +313,9 @@ async function activarCita(cita) {
         <!-- Card Citas -->
         <div class="py-4 mx-5 lg:px-10 md:px-5 px-2 flex flex-col md:flex-row justify-between items-center pb-2 rounded-2xl border border-gray-200 dark:border-gray-600 shadow-lg dark:shadow-gray-800"
             v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
-            :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
-            <div class="flex gap-5 items-center md:flex-col lg:flex-row flex-row">
+            :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]"
+            >
+            <div class="flex gap-5 items-center md:flex-col lg:flex-row flex-row cursor-pointer" @click="actualizarCita(cita)">
                 <div class="flex flex-col items-center">
                     <h2 class="text-blue-500 text-lg font-bold">{{ 
                         cita.hora === '00:00:00' ? cita.fechaHasta.substring(5, 11)

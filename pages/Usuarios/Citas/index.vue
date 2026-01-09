@@ -155,7 +155,7 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
-    <Cita v-if="varView.showNuevaCita"></Cita>
+    <Cita v-if="varView.showNuevaCita || varView.showActualizarCita"></Cita>
     <PDFEvolucion v-if="varView.showPDFEvolucion"/>
     <PDFNota v-if="varView.showPDFNota"></PDFNota>
     <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>

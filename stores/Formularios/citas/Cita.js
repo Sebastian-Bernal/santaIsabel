@@ -5,6 +5,7 @@ import { useMedicosStore } from "../profesional/Profesionales";
 // Estructura de datos de Citas
 const estructuraCita = {
     Cita: {
+        id: '',
         fecha: '',
         servicio: '',
         motivo: '',
@@ -14,6 +15,9 @@ const estructuraCita = {
         id_medico: '',
         name_medico: '',
         estado: 'Inactiva',
+        intervaloCitas: '',
+        cantidadCitas: '',
+        fechaHasta: '',
     },
     Plan_manejo_procedimientos: []
 }

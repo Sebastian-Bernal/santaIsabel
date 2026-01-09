@@ -1276,13 +1276,13 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
     const varView = useVarView()
 
     datos.Nota.Descripcion = [
-        ...datos.Nota.objetivo,
-        ...datos.Nota.subjetivo,
-        ...datos.Nota.actividades,
-        ...datos.Nota.plan,
-        ...datos.Nota.intervencion,
-        ...datos.Nota.evaluacion,
-    ]
+    ...(datos.Nota.objetivo ?? []).map(d => ({ ...d, tipo: 'objetivo' })),
+    ...(datos.Nota.subjetivo ?? []).map(d => ({ ...d, tipo: 'subjetivo' })),
+    ...(datos.Nota.actividades ?? []).map(d => ({ ...d, tipo: 'actividades' })),
+    ...(datos.Nota.plan ?? []).map(d => ({ ...d, tipo: 'plan' })),
+    ...(datos.Nota.intervencion ?? []).map(d => ({ ...d, tipo: 'intervencion' })),
+    ...(datos.Nota.evaluacion ?? []).map(d => ({ ...d, tipo: 'evaluacion' })),
+    ];
 
     const storeCodigos = useCodigos()
     const codigosLocal = await storeCodigos.leerdatos(true)

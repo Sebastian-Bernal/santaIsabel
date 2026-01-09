@@ -18,7 +18,8 @@ export function useFormularioCitaBuilder({
   optionsTratamientos,
   variasCitas,
   rangoFecha,
-  nuevoProcedimiento
+  nuevoProcedimiento,
+  verUser
 }) {
   const citasStore = useCitasStore()
   const calendarioCitasStore = useCalendarioCitas();
@@ -88,6 +89,7 @@ export function useFormularioCitaBuilder({
     async () => {
       console.log(citasStore.Formulario.Cita.motivo)
       if (citasStore.Formulario.Cita.motivo === 'Atención domiciliaria') {
+        variasCitas.value = false
         rangoFecha.value = true
       } else {
         rangoFecha.value = false
@@ -183,11 +185,18 @@ export function useFormularioCitaBuilder({
     .setStoreId(storeId)
     .setStorePinia(storePinia)
     .setFormularioShow(show)
+    .setEditarFormulario(verUser)
     .setFormulariotamaño('XS')
     .setBotones([
       { text: 'Guardar', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
       { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar' },
     ])
+    if(verUser){
+      builder
+      .setFormularioTipo('Wizard')
+      .setFormularioTituloFormulario('Actualizar Cita')
+    }
+    builder
     .nuevaSeccion('Agregar Cita a tu Agenda')
     .addCampo({
       component: 'Label',
@@ -302,7 +311,7 @@ export function useFormularioCitaBuilder({
         })
     }
   }
-  if (rangoFecha?.value) {
+  if (unref(rangoFecha)) {
     builder
       .addCampo({
         component: 'Label',
@@ -340,14 +349,31 @@ export function useFormularioCitaBuilder({
           tooltip: `<div id="error-fecha" class="text-red-300 text-xs mt-1"></div>`
         },
       })
+      if(!verUser){
+        builder
+        .addCampo({
+          component: 'Input',
+          type: 'number',
+          label: 'No. Citas',
+          placeholder: 'Cantidad de Citas',
+          id: 'cantidadCitas',
+          name: 'cantidadCitas',
+          tamaño: 'w-full md:col-span-1 col-span-2',
+          vmodel: 'Cita.cantidadCitas',
+        })
+      }
   } else {
     builder
+    if(!verUser){
+      builder
       .addCampo({
         component: 'Checkbox',
         placeholder: 'Agendar varias Citas',
         tamaño: 'w-full col-span-2 py-3',
         vmodel: 'Cita.tipo',
       })
+    }
+    builder
       .addCampo({
         component: 'Label',
         text: '<i class="fa-solid fa-calendar text-blue-500 mr-1"></i>Fecha y Hora',
@@ -385,14 +411,8 @@ export function useFormularioCitaBuilder({
         },
       })
   }
-  if (variasCitas?.value || rangoFecha?.value) {
+  if (variasCitas?.value) {
     builder
-      .addCampo({
-        component: 'Label',
-        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
-        tamaño: 'w-full col-span-2',
-        forLabel: 'fechaInicial',
-      })
       .addCampo({
         component: 'Input',
         type: 'number',
@@ -412,6 +432,12 @@ export function useFormularioCitaBuilder({
         name: 'cantidadCitas',
         tamaño: 'w-full md:col-span-1 col-span-2',
         vmodel: 'Cita.cantidadCitas',
+      })
+      .addCampo({
+        component: 'Label',
+        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
+        tamaño: 'w-full col-span-2',
+        forLabel: 'fechaInicial',
       })
   }
   builder.build()

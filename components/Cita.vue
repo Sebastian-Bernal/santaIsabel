@@ -23,7 +23,7 @@ const servicios = ref([])
 const optionsTratamientos = ref(null)
 const showTratamientos = ref(false)
 const variasCitas = ref(false)
-const rangoFecha = ref(false)
+const rangoFecha = ref(varView.rangoCita)
 const nuevoProcedimiento = ref(false)
 const CIE10 = ref([])
 
@@ -47,8 +47,8 @@ onMounted(async () => {
 // Funciones para manejar la visibilidad de los formularios
 function cerrar() {
     varView.showNuevaCita = false
+    varView.showActualizarCita = false
 }
-
 
 // Construccion de pagina
 const propiedades = computed(() => {
@@ -57,6 +57,23 @@ const propiedades = computed(() => {
         storePinia: 'Citas',
         cerrarModal: cerrar,
         show: varView.showNuevaCita,
+        verUser: false,
+        pacientesList,
+        medicosList,
+        servicios,
+        optionsTratamientos: optionsTratamientos,
+        showTratamientos: showTratamientos,
+        variasCitas: variasCitas,
+        rangoFecha: rangoFecha,
+        nuevoProcedimiento: nuevoProcedimiento,
+    });
+
+    const propiedadesActualizarCita = useFormularioCitaBuilder({
+        storeId: 'ActualizarCita',
+        storePinia: 'Citas',
+        cerrarModal: cerrar,
+        show: varView.showActualizarCita,
+        verUser: true,
         pacientesList,
         medicosList,
         servicios,
@@ -71,6 +88,7 @@ const propiedades = computed(() => {
     pagina
         .setFondo('FondoDefault')
         .addComponente('Form', propiedadesCita)
+        .addComponente('Form', propiedadesActualizarCita)
     return pagina.build()
 })
 

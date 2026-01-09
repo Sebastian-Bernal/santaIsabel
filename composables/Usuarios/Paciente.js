@@ -38,8 +38,7 @@ export function usePacienteActions({
     pacientesStore.Formulario.Paciente.id_temporal = paciente.id_temporal;
 
     pacientesStore.Formulario.InformacionUser.id = paciente.id_infoUsuario;
-    pacientesStore.Formulario.InformacionUser.id_temporal =
-      paciente.id_temporalUsuario;
+    pacientesStore.Formulario.InformacionUser.id_temporal = paciente.id_temporalUsuario;
 
     const historiaStore = useHistoriasStore();
 

@@ -4,7 +4,7 @@ import { decryptData } from '~/composables/Formulario/crypto';
 import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
 
 // funcion para Validar campos del formulario Nueva Cita
-export const validarYEnviarNuevaCita = async (datos) => {
+export const validarYEnviarActualizarCita = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const varView = useVarView()
     const cita = datos.Cita;
@@ -58,54 +58,6 @@ export const validarYEnviarNuevaCita = async (datos) => {
         notificacionesStore.simple();
         return false;
     }
-
-    // Validar fecha
-    // const validarFecha = (fechaStr) => {
-    //     if (!fechaStr) return false;
-
-    //     const fechaCita = new Date(fechaStr);
-    //     const hoy = new Date();
-
-    //     // Limpiar la hora para comparar solo fechas
-    //     hoy.setHours(0, 0, 0, 0);
-    //     fechaCita.setHours(0, 0, 0, 0);
-
-    //     const maxFecha = new Date(hoy);
-    //     maxFecha.setDate(maxFecha.getDate() - 2);
-    //     return fechaCita > maxFecha;
-    // };
-
-
-    // if (!validarFecha(cita.fecha)) {
-    //     notificacionesStore.options.icono = 'error';
-    //     notificacionesStore.options.titulo = 'Informacion invalida.';
-    //     notificacionesStore.options.texto = 'La fecha de la cita no puede ser anterior a hoy.';
-    //     notificacionesStore.options.tiempo = 5000;
-    //     notificacionesStore.simple();
-    //     return false;
-    // }
-
-    // Validar hora
-    const validarHora = (horaStr) => {
-        if (!horaStr) return false;
-
-        const [hora, minutos] = horaStr.split(":").map(Number);
-        const horaIngresada = hora + minutos / 60;
-
-        const horaMinima = 5;   // 5:00 AM
-        const horaMaxima = 22;  // 10:00 PM
-
-        return horaIngresada >= horaMinima && horaIngresada <= horaMaxima;
-    };
-
-    // if (!validarHora(cita.hora)) {
-    //     notificacionesStore.options.icono = 'error';
-    //     notificacionesStore.options.titulo = 'Informacion invalida.';
-    //     notificacionesStore.options.texto = 'La hora debe estar entre las 5:00 AM y las 10:00 PM.';
-    //     notificacionesStore.options.tiempo = 5000;
-    //     notificacionesStore.simple();
-    //     return false;
-    // }
 
     if (cita.cantidadCitas > 1) {
         const cantidad = parseInt(cita.cantidadCitas) || 0;
@@ -177,14 +129,9 @@ export const validarYEnviarNuevaCita = async (datos) => {
     return await enviarFormularioCita({ ...datos });
 };
 
-function parseFechaISO_UTC(iso) {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(Date.UTC(y, m - 1, d));
-}
-
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-export const enviarFormularioCita = async (datos, reintento = false) => {
+const enviarFormularioCita = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
@@ -195,16 +142,17 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.citas,
+                metodo: 'PUT',
+                url: config.public.citas + '/' + datos.Cita.id,
                 token: token,
                 body: {
+                    id: datos.Cita.id,
                     id_paciente: datos.Cita.id_paciente,
                     id_medico: datos.Cita.id_medico,
                     name_paciente: datos.Cita.name_paciente,
                     name_medico: datos.Cita.name_medico,
                     servicio: datos.Cita.servicio,
-                    // motivo: datos.Cita.motivo,
+                    motivo: datos.Cita.motivo,
                     fecha: datos.Cita.fecha,
                     fechaHasta: datos.Cita.fechaHasta,
                     hora: datos.Cita.hora,

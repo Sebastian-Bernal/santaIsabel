@@ -2,6 +2,7 @@
 
 // Citas
 import { validarYEnviarNuevaCita } from '~/Core/Usuarios/Cita/POSTCita';
+import { validarYEnviarActualizarCita } from '~/Core/Usuarios/Cita/PUTCita';
 // Pacientes
 import { validarYEnviarNuevoPaciente } from "~/Core/Usuarios/Paciente/POSTPaciente";
 import { validarYEnviarModificarPaciente } from '~/Core/Usuarios/Paciente/PUTPaciente';
@@ -52,6 +53,10 @@ export const accionesFormularios = {
     },
     NuevaCita: async (data) => {
         const respuesta = await validarYEnviarNuevaCita(data);
+        return respuesta;
+    },
+    ActualizarCita: async (data) => {
+        const respuesta = await validarYEnviarActualizarCita(data);
         return respuesta;
     },
     NuevoPaciente: async (data) => {
