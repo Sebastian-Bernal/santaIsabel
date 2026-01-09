@@ -104,7 +104,11 @@ const citasFiltradas = computed(() => {
     const fechaSeleccionada = new Date(fecha.value.split('/').reverse().join('-')); // fecha seleccionada
     if (fechaFin) {
       // Si existe fechaHasta, verificar que la fecha seleccionada esté dentro del rango
-      return fechaSeleccionada >= fechaInicio && fechaSeleccionada <= fechaFin;
+      if(cita.estado === 'Inactiva'){
+          return fechaSeleccionada >= fechaInicio && fechaSeleccionada <= fechaFin;
+      } else {
+        return fechaSeleccionada.getTime() === fechaInicio.getTime()
+      }
     } else {
       // Si no hay fechaHasta, comparar solo con la fecha exacta
       return fechaSeleccionada.getTime() === fechaInicio.getTime();

@@ -204,7 +204,7 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                     name_paciente: datos.Cita.name_paciente,
                     name_medico: datos.Cita.name_medico,
                     servicio: datos.Cita.servicio,
-                    // motivo: datos.Cita.motivo,
+                    motivo: datos.Cita.motivo,
                     fecha: datos.Cita.fecha,
                     fechaHasta: datos.Cita.fechaHasta,
                     hora: datos.Cita.hora,

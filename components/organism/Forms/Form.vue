@@ -85,7 +85,7 @@ function limpiar() {
                             class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center">
                             {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                         </h2>
-                        <div class="absolute top-[2px] right-[2px]">
+                        <div class="absolute top-[4px] right-[5px]">
                             <div @click="limpiar"
                                 class="w-7 h-7 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
                                 <i
