@@ -353,11 +353,11 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
             }
 
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -405,11 +405,11 @@ const enviarFormularioActualizarTratamiento = async (datos) => {
             }
 
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -454,11 +454,11 @@ const enviarFormularioActualizarConsulta = async (datos) => {
             }
 
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -503,11 +503,11 @@ const enviarFormularioActualizarNutricion = async (datos) => {
             }
 
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -552,11 +552,11 @@ const enviarFormularioActualizarTrabajoSocial = async (datos) => {
             }
 
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -646,11 +646,11 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
                 };
                 await guardarEnDB(JSON.parse(JSON.stringify(datosActualizar)));
             }
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = 'No hay internet';
-            notificacionesStore.options.texto = 'Datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            await notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = 'No hay internet';
+            // notificacionesStore.options.texto = 'Datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // await notificacionesStore.simple()
             return true
         } catch (error) {
             notificacionesStore.options.icono = 'warning'

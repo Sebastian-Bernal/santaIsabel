@@ -164,11 +164,11 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
         }
     } else {
         try {

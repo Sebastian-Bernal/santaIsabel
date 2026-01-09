@@ -672,11 +672,11 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -877,11 +877,11 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -1010,11 +1010,11 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -1193,11 +1193,11 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -1380,11 +1380,11 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
+            // notificacionesStore.options.icono = 'warning'
+            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
+            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
+            // notificacionesStore.options.tiempo = 3000
+            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {

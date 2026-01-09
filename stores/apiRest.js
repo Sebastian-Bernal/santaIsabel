@@ -64,13 +64,20 @@ export const useApiRest = defineStore('apiRest', {
                         errorData = { message: 'Error en la solicitud' };
                     }
 
+                    // Asegurarte de que sea string
+                    const mensajeCompleto = errorData.message || 'Error en la solicitud';
+
+                    // Cortar hasta el primer paréntesis
+                    const mensajeCorto = mensajeCompleto.split('(')[0].trim();
+
+
                     console.log('Error response:', errorData);
 
                     // Notificación con el mensaje del backend o fallback
                     notificacionesStore.options.icono = 'warning';
                     notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';
-                    notificacionesStore.options.texto = errorData.message || 'No se pudo enviar formulario, intenta de nuevo en un momento';
-                    notificacionesStore.options.tiempo = 3000;
+                    notificacionesStore.options.texto = mensajeCorto;
+                    notificacionesStore.options.tiempo = 5000;
                     notificacionesStore.simple();
 
                     throw new Error(errorData.message || 'Error en la solicitud');
