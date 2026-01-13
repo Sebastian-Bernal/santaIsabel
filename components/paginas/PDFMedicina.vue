@@ -40,7 +40,7 @@ onMounted(async () => {
 
 async function exportarMedicinaPDF(data) {
     varView.cargando = true
-
+console.log(data)
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
 
@@ -57,6 +57,7 @@ async function exportarMedicinaPDF(data) {
 
     const enfermedad = await historiasStore.listDatos(data.id, 'Enfermedad', 'id_analisis')
     const signosVitalesData = await historiasStore.listDatos(data.id, 'ExamenFisico', 'id_analisis')
+    console.log(signosVitalesData)
     const medicamentosData = await historiasStore.listDatos(data.id, 'Plan_manejo_medicamentos', 'id_analisis')
     const procedimientosData = await historiasStore.listDatos(id_paciente, 'Plan_manejo_procedimientos', 'id_paciente')
     const antecedentesData = await historiasStore.listDatos(id_paciente, 'Antecedentes', 'id_paciente')
@@ -116,11 +117,11 @@ async function exportarMedicinaPDF(data) {
         nameProfesional: profesional.name, cedulaProfesional: profesional.No_document, sello: profesional.sello,
         diagnosticosMedicina,
         Enfermedad: { ...enfermedad[0] },
-        signosVitales: {...signosVitalesData[0].signosVitales},
+        signosVitales: signosVitalesData[0] ? {...signosVitalesData[0].signosVitales} : data.signosVitales,
         Medicamentos: medicamentos,
         Procedimientos: procedimientos,
         Antecedentes: antecedentes,
-    };console.log(propiedadesMedicinaPDF)
+    };
     activePdfMedicina.value = true
     varView.cargando = false
 }

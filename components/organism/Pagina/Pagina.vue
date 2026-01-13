@@ -9,6 +9,7 @@ import PDFTemplate from '../PDFTemplate/PDFTemplate.vue';
 
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
+import FondoForm from '~/components/atoms/Fondos/FondoForm.vue';
 
 const props = defineProps({
     Propiedades: {
@@ -18,7 +19,8 @@ const props = defineProps({
 
 const fondos = {
     FondoDefault,
-    FondoBlur
+    FondoBlur,
+    FondoForm
 }
 
 const components = {

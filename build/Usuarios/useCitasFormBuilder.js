@@ -87,7 +87,6 @@ export function useFormularioCitaBuilder({
 
   watch(() => citasStore.Formulario.Cita.motivo,
     async () => {
-      console.log(citasStore.Formulario.Cita.motivo)
       if (citasStore.Formulario.Cita.motivo === 'Atención domiciliaria') {
         variasCitas.value = false
         rangoFecha.value = true

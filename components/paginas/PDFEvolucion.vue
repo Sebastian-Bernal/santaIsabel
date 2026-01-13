@@ -137,8 +137,8 @@ const propiedades = computed(() => {
                     '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
                     `
                             <p class="text-sm border-b-1 pb-1 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-1 uppercase">Registro</p></br>
-                            <p class="text-sm uppercase pb-1">Hoja de evolucion nutricional</p>
+                            <p class="text-sm border-b-1 pb-1 uppercase">Registro ${propiedadesNutricionPDF.value.nombreServicio}</p></br>
+                            <p class="text-sm uppercase pb-1">Hoja de evolucion</p>
                         `,
                     `
                             <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>

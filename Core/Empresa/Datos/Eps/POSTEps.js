@@ -67,11 +67,6 @@ export const enviarFormulario = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            notificacionesStore.options.icono = 'warning'
-            notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            notificacionesStore.options.texto = 'No se pudo enviar formulario, intente nuevamente'
-            notificacionesStore.options.tiempo = 3000
-            notificacionesStore.simple()
             console.error('Fallo al enviar. Guardado localmente', error);
         }
     } else {

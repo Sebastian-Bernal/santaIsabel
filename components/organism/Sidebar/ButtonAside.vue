@@ -84,7 +84,7 @@ button {
 .down {
     opacity: 0.75;
     transform: translateX(10%) translateY(0);
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(20px);
     transition: all 0.3s ease;
     overflow-x: hidden;

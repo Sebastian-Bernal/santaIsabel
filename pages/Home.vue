@@ -217,6 +217,7 @@ async function DashboardRol(rol, Historias = [], citas) {
             },
         ];
 
+        
         stats.value = [
             {
                 header: {

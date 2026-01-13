@@ -86,7 +86,7 @@ const propiedades = computed(() => {
 
     const pagina = new ComponenteBuilder()
     pagina
-        .setFondo('FondoDefault')
+        .setFondo('FondoForm')
         .addComponente('Form', propiedadesCita)
         .addComponente('Form', propiedadesActualizarCita)
     return pagina.build()

@@ -82,7 +82,7 @@ const estiloColumnas = computed(() => {
     if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
 
     const tamaños = columnasVisibles.value
-        .map(col => col.tamaño && !isNaN(col.tamaño) ? 
+        .map(col => col.tamaño && !isNaN(col.tamaño) ?
             screenWidth.value > 748 ? `${col.tamaño}px` : '100px'
             : '80px')
         .join(' ');
@@ -158,12 +158,14 @@ const tablaAlto = computed(() => {
             </div>
         </div>
         <!-- Filtos -->
-        <div class="w-full mt-4 py-4 px-5 dark:bg-[rgba(0,0,0,0.1)] bg-gray-100 rounded-xl"
+        <div class="w-full mt-4 py-4 px-5 bg-white dark:bg-gray-700 border-1 border-gray-300 dark:border-gray-600 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
-                <span v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')" class="dark:text-gray-400 text-gray-600 cursor-pointer"
-                    @click="borrarFiltros"> <i class="fa-solid fa-close"></i> Borrar filtros</span>
+                <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
+                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros" tooltipPosition="left" @click="borrarFiltros"> 
+                    <i class="fa-solid fa-close"></i>
+                </ButtonRounded>
             </div>
             <div class="flex items-end justify-between gap-5 md:flex-row flex-col">
                 <Input v-if="Propiedades.headerTabla.buscador" :Propiedades="{
@@ -189,7 +191,8 @@ const tablaAlto = computed(() => {
         </div>
 
         <!-- Tabla -->
-        <div class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-b-xl">
+        <div
+            class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-b-xl">
             <div class="w-full" :style="tablaAlto">
 
                 <!-- Header titulos de props Columnas -->
@@ -203,6 +206,23 @@ const tablaAlto = computed(() => {
                     </h2>
                     <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
                 </div>
+
+                <!-- Skeleton cuando no hay datos -->
+                <template v-if="!datosPaginados || datosPaginados.length === 0 && busqueda === '' || datosPaginados.length === 0 && Object.values(filtros).some(v => v === '')">
+                    <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
+                        class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnas">
+                        <div v-for="(col, key) in columnasVisibles" :key="key"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                            <div class="h-3 pt-1 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                        </div>
+                        <div v-if="Propiedades.acciones.botones"
+                            class="flex items-center justify-center accionesTabla text-center gap-2"
+                            :class="Propiedades.acciones.class">
+                            <div class="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                        </div>
+                    </div>
+                </template>
+
 
                 <!-- Body tabla -->
                 <div v-for="(fila, id) in datosPaginados"
@@ -219,7 +239,8 @@ const tablaAlto = computed(() => {
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
                         <!-- Acciones por props -->
-                        <BotonAccion v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2 "
+                        <BotonAccion
+                            v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
                             v-for="action in Propiedades.acciones.icons" :key="action"
                             :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                             @click="action.action(fila)" />
@@ -227,7 +248,8 @@ const tablaAlto = computed(() => {
                         <!-- Tablas ocultas responsive  -->
                         <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse"
                             class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
-                            <i v-if="!activeCollapse || id !== idActivo" class="fa-solid fa-angle-down text-gray-600"></i>
+                            <i v-if="!activeCollapse || id !== idActivo"
+                                class="fa-solid fa-angle-down text-gray-600"></i>
                             <i v-if="activeCollapse && id === idActivo" class="fa-solid fa-angle-up text-gray-600"></i>
                         </button>
                         <!-- Acciones porp props Responsive -->
@@ -244,7 +266,7 @@ const tablaAlto = computed(() => {
                                 :id="id">
                                 <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
                                     :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                    @click="() => { action.action(fila); mostrarAcciones(id)}"
+                                    @click="() => { action.action(fila); mostrarAcciones(id) }"
                                     class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
                                 </BotonAccion>
                             </div>
@@ -266,7 +288,8 @@ const tablaAlto = computed(() => {
                 </div>
 
                 <!-- filas vacías para rellenar -->
-                <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)" :key="`empty-${n}`"
+                <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
+                    :key="`empty-${n}`"
                     class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
                     :style="estiloColumnas">
 
@@ -277,7 +300,7 @@ const tablaAlto = computed(() => {
                 </div>
 
 
-                <div v-if="datosPaginados?.length === 0">
+                <div v-if="datosPaginados.length === 0 && busqueda !== '' || Object.values(filtros).some(v => v !== '')">
                     <p class="text-gray-500 text-center my-10">No se encontraron
                         resultados. <i class="fa-solid fa-search-minus"></i></p>
                 </div>

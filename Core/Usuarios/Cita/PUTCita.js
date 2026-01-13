@@ -59,36 +59,35 @@ export const validarYEnviarActualizarCita = async (datos) => {
         return false;
     }
 
+    const fechaInicial = parseFechaISO(datos.Cita.fecha)
+    const fechaFinal = parseFechaISO(datos.Cita.fechaHasta)
+
+    if (fechaFinal < fechaInicial) {
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Informacion invalida.';
+        notificacionesStore.options.texto = `Valida el Rango de fecha de cumplimiento de Cita.`;
+        notificacionesStore.options.tiempo = 5000;
+        notificacionesStore.simple();
+        return false;
+    }
+
     if (cita.cantidadCitas > 1) {
         const cantidad = parseInt(cita.cantidadCitas) || 0;
 
-        // if (tipoConsulta === 'Terapia') {
-        //     const dias_restantes = varView.tratamientos.find(tratamiento => {
-        //         return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
-        //     })?.dias_restantes
+        if (tipoConsulta === 'Terapia' && cita.id_procedimiento) {
+            const dias_restantes = varView.tratamientos.find(tratamiento => {
+                return parseInt(tratamiento.id) === parseInt(cita.id_procedimiento)
+            })?.dias_restantes
 
-        //     if (cantidad > dias_restantes) {
-        //         notificacionesStore.options.icono = 'warning';
-        //         notificacionesStore.options.titulo = 'Informacion invalida.';
-        //         notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
-        //         notificacionesStore.options.tiempo = 5000;
-        //         notificacionesStore.simple();
-        //         return false;
-        //     }
+            if (cantidad > dias_restantes) {
+                notificacionesStore.options.icono = 'warning';
+                notificacionesStore.options.titulo = 'Informacion invalida.';
+                notificacionesStore.options.texto = 'Cantidad de Citas mayor a las restantes';
+                notificacionesStore.options.tiempo = 5000;
+                notificacionesStore.simple();
+                return false;
+            }
 
-        // }
-        // Utilidad para convertir string "YYYY-MM-DD" a Date
-        function parseFechaISO(iso) {
-            const [y, m, d] = iso.split('-').map(Number);
-            return new Date(y, m - 1, d);
-        }
-
-        // Utilidad para formatear Date a "YYYY-MM-DD"
-        function formatearISO(date) {
-            const y = date.getFullYear();
-            const m = String(date.getMonth() + 1).padStart(2, '0');
-            const d = String(date.getDate()).padStart(2, '0');
-            return `${y}-${m}-${d}`;
         }
 
         const fechaInicial = parseFechaISO(datos.Cita.fecha);
@@ -129,6 +128,19 @@ export const validarYEnviarActualizarCita = async (datos) => {
     return await enviarFormularioCita({ ...datos });
 };
 
+// Utilidad para convertir string "YYYY-MM-DD" a Date
+function parseFechaISO(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d);
+}
+
+// Utilidad para formatear Date a "YYYY-MM-DD"
+function formatearISO(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 const enviarFormularioCita = async (datos, reintento = false) => {
@@ -188,11 +200,6 @@ const enviarFormularioCita = async (datos, reintento = false) => {
                 return true
             }
         } catch (error) {
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, intenta de nuevo en un momento'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {

@@ -49,6 +49,7 @@ onMounted(async () => {
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
+
 });
 
 // Funciones para manejar la visibilidad de los formularios
@@ -155,7 +156,7 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
-    <Cita v-if="varView.showNuevaCita || varView.showActualizarCita"></Cita>
+    <Cita></Cita>
     <PDFEvolucion v-if="varView.showPDFEvolucion"/>
     <PDFNota v-if="varView.showPDFNota"></PDFNota>
     <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
