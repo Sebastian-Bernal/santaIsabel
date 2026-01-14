@@ -193,6 +193,7 @@ export function useFormularioCitaBuilder({
     if(verUser){
       builder
       .setFormularioTipo('Wizard')
+      .setFormulariotamaño('MD')
       .setFormularioTituloFormulario('Actualizar Cita')
     }
     builder
@@ -437,6 +438,19 @@ export function useFormularioCitaBuilder({
         text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
         tamaño: 'w-full col-span-2',
         forLabel: 'fechaInicial',
+      })
+  }
+  if(verUser){
+    builder
+      .addCampo({
+        component: 'Input',
+        type: 'text',
+        label: 'Motivo de edición',
+        placeholder: 'Describa brevemente el motivo de la edicion de cita.',
+        id: 'motivoEdicion',
+        name: 'motivoEdicion',
+        tamaño: 'w-full col-span-2',
+        vmodel: 'Cita.motivo_edicion',
       })
   }
   builder.build()

@@ -28,6 +28,7 @@ const {
 const {
     calendario,
     fecha,
+    fechaActual,
     dias,
     meses,
     años,
@@ -64,11 +65,34 @@ const diasDelMes = computed(() => {
     return [...espacios, ...dias];
 });
 
+function parseFechaISO(iso) {
+    const [y, m, d] = iso.split('-').map(Number);
+    return new Date(y, m - 1, d); // siempre local, sin UTC
+}
+
 // Propiedad devuelve array de fechas de todas las citas
 const diasConCitas = computed(() => {
     const arrayCitas = [];
     Citas.value.map((cita) => {
-        arrayCitas.push(cita.fecha.split('-').reverse().join('/'))
+        if(cita.estado === 'Inactiva'){
+            arrayCitas.push(cita.fecha.split('-').reverse().join('/'))
+        }
+    })
+    return arrayCitas
+})
+
+const diasVencidos = computed(() => {
+    const arrayCitas = [];
+    Citas.value.map((cita) => {
+        if (!cita.fechaHasta) {
+            cita.fechaHasta = cita.fecha
+        }
+
+        const fechaHoyC = parseFechaISO(new Date().toISOString().split('T')[0]);
+        const fechaHasta = parseFechaISO(cita.fechaHasta);
+        if(cita.estado === 'Inactiva' && fechaHoyC > fechaHasta){
+            arrayCitas.push(cita.fecha.split('-').reverse().join('/'))
+        }
     })
     return arrayCitas
 })
@@ -103,6 +127,7 @@ const siguienteMes = () => {
         meses.value ++
     }
 };
+
 </script>
 
 <template>
@@ -126,8 +151,13 @@ const siguienteMes = () => {
 
             <div v-for="(num, index) in diasDelMes" @click="calendarioCitasStore.cambiarFecha(num.fecha)"
                 class="px-5 py-3 flex justify-center items-center border border-gray-200 dark:border-gray-500 rounded-xl cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-500"
-                :class="{ 'bg-red-200 dark:bg-red-400': num.fecha === fecha, 'text-gray-300': num.dia === dias.value }">
-                <h2 :class="{ 'border-b-3 border-b-blue-500': diasConCitas.includes(num.fecha) }">{{ num.dia }}</h2>
+                :class="{ 'bg-red-200 dark:bg-red-400': num.fecha === fecha, 'bg-blue-200 dark:bg-blue-400': num.fecha === fechaActual }">
+                <h2 :class="{ 
+                    'border-b-3 border-b-blue-500': diasConCitas.includes(num.fecha),
+                    'text-red-600 dark:text-red-300': diasVencidos?.includes(num.fecha)
+                    }">
+                    {{ num.dia }}
+                </h2>
             </div>
         </div>
     </div>

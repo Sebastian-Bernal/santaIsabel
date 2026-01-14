@@ -11,7 +11,7 @@
     --color-azul: #0dcaf0;
     --color-info: #0dcaf0;
     --color-warning: #ffc107;
-    --color-danger: #dc3545;
+    --color-danger: #bc2e15;
     --color-green: #94c53d;
 
     --color-default: #326872;
@@ -73,6 +73,9 @@
     box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 }
 
+.bg-danger {
+  background-color: var(--color-danger);
+}
 
 @layer utilities {
   .scrollForm::-webkit-scrollbar-thumb {

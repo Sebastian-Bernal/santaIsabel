@@ -25,6 +25,7 @@ export const validarYEnviarActualizarCita = async (datos) => {
             'servicio',
             'motivo',
             'fecha',
+            'motivo_edicion'
         ];
     } else {
         camposObligatorios = [
@@ -35,6 +36,7 @@ export const validarYEnviarActualizarCita = async (datos) => {
             'servicio',
             'motivo',
             'fecha',
+            'motivo_edicion'
         ];
     }
 
@@ -115,6 +117,7 @@ export const validarYEnviarActualizarCita = async (datos) => {
                 fechaHasta: datos.Cita.fechaHasta,
                 hora: datos.Cita.hora,
                 id_procedimiento: datos.Cita.id_procedimiento,
+                motivo_edicion: datos.Cita.motivo_edicion,
 
                 procedimiento: datos.Cita.procedimiento,
                 codigo: datos.Cita.codigo,
@@ -172,7 +175,8 @@ const enviarFormularioCita = async (datos, reintento = false) => {
 
                     procedimiento: datos.Cita.procedimiento,
                     codigo: datos.Cita.codigo,
-                    dias_asignados: datos.Cita.cantidadCitas
+                    dias_asignados: datos.Cita.cantidadCitas,
+                    motivo_edicion: datos.Cita.motivo_edicion,
                 }
             }
             const respuesta = await api.functionCall(options)

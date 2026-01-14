@@ -18,7 +18,6 @@ const citas = ref([]);
 
 const calendarioCitasStore = useCalendarioCitas();
 const show = ref(false);
-const showEnFila = ref(false);
 const refresh = ref(1);
 
 async function llamadatos() {
@@ -60,7 +59,7 @@ const agregarCita = () => {
 
 // Funciones para manejar visibilidad de Pagina
 const showFila = () => {
-    showEnFila.value = !showEnFila.value
+    varView.showEnFila = !varView.showEnFila
 };
 
 // Construccion de pagina
@@ -112,7 +111,7 @@ const propiedades = computed(() => {
 
     pagina
         .setFondo('FondoDefault')
-    if (!showEnFila.value) {
+    if (!varView.showEnFila) {
         pagina
             .setHeaderPage({
                 titulo: 'Calendario de tu Agenda',
@@ -131,7 +130,7 @@ const propiedades = computed(() => {
             .addComponente('Calendario', builderCalendario
                 .setCitas(citas)
             )
-    } else if (showEnFila.value) {
+    } else if (varView.showEnFila) {
         pagina
             .setHeaderPage({
                 titulo: 'Calendario de tu Agenda',
