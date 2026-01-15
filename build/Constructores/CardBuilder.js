@@ -2,6 +2,7 @@ export class CardBuilder {
     constructor() {
         this.propiedades = {
             cards: [], // Lista de Cards
+            numeroCards: 0,
             contenedorCards: '', // CSS
             contenedor: '', // CSS
             header: { // Header carta
@@ -15,6 +16,11 @@ export class CardBuilder {
 
     setCards(cards) {
         this.propiedades.cards = cards
+        return this
+    }
+
+    setNumeroCards(numero) {
+        this.propiedades.numeroCards = numero
         return this
     }
 

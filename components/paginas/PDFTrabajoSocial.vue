@@ -142,7 +142,7 @@ const propiedades = computed(() => {
                     `
                             <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
                             <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${propiedadesTrabajoSocialPDF.value.created_at?.slice(0,10)}</p>
                             <p class="w-full text-end text-xs">Pagina:</p>
                         `
                 ],

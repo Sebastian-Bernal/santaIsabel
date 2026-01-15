@@ -23,26 +23,26 @@ const props = defineProps({
         <div class="space-y-4" :class="Propiedades.contenedorCards">
             <!-- Skeleton cuando no hay datos -->
             <template v-if="!unref(props.Propiedades.cards) || unref(props.Propiedades.cards).length === 0">
-                <div v-for="i in 4" :key="i" :class="Propiedades.tamaño"
+                <div v-for="i in props.Propiedades.numeroCards || 1" :key="i" :class="Propiedades.tamaño"
                     class="w-full p-4 shadow-md bg-white dark:bg-gray-700 flex flex-col gap-4 animate-pulse">
-                <!-- HEADER -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div class="flex flex-col gap-2">
-                    <div class="w-32 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                    <div class="w-20 h-3 bg-gray-200 dark:bg-gray-500 rounded"></div>
+                    <!-- HEADER -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                        <div class="flex flex-col gap-2">
+                        <div class="w-32 h-4 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                        <div class="w-20 h-3 bg-gray-200 dark:bg-gray-500 rounded"></div>
+                        </div>
                     </div>
-                </div>
-                <!-- BODY -->
-                <div class="space-y-2">
-                    <div class="w-full h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
-                    <div class="w-3/4 h-3 bg-gray-200 dark:bg-gray-500 rounded"></div>
-                </div>
-                <!-- FOOTER -->
-                <div class="flex gap-2 pt-2">
-                    <div class="w-16 h-6 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-                    <div class="w-16 h-6 bg-gray-200 dark:bg-gray-500 rounded-full"></div>
-                </div>
+                    <!-- BODY -->
+                    <div class="space-y-2">
+                        <div class="w-full h-3 bg-gray-300 dark:bg-gray-600 rounded"></div>
+                        <div class="w-3/4 h-3 bg-gray-200 dark:bg-gray-500 rounded"></div>
+                    </div>
+                    <!-- FOOTER -->
+                    <div class="flex gap-2 pt-2">
+                        <div class="w-16 h-6 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+                        <div class="w-16 h-6 bg-gray-200 dark:bg-gray-500 rounded-full"></div>
+                    </div>
                 </div>
             </template>
 

@@ -21,6 +21,7 @@ export const useVarView = defineStore('varView', {
         rangoCita: false,
         tratamientos: [],
         showEnFila: false,
+        showCalendario: true,
         // formularios Notas
         showNuevaNota: false,
         // formularios Datos Empresa

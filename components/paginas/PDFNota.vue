@@ -181,7 +181,7 @@ const propiedades = computed(() => {
                     `
                             <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
                             <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
-                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${ propiedadesNotaPDF.value.fecha_nota }</p>
                             <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
                         `
                 ],

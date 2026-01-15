@@ -406,6 +406,7 @@ const propiedades = computed(() => {
             })
             .addComponente('Card', cardsState
                 .setCards(stats)
+                .setNumeroCards(4)
                 .setContenedor('area-status')
                 .setcontenedorCards('grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5')
                 .setTamaño('grid grid-cols-[1fr_0.5fr] place-items-center h-[160px] bg-white dark:bg-gray-700')
@@ -413,6 +414,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsPacientes
                 .setCards(ultimosPacientes)
+                .setNumeroCards(3)
                 .setContenedor('area-info')
                 .setcontenedorCards('flex flex-col')
                 .setTamaño('flex sm:flex-row justify-between items-center rounded-lg')
@@ -422,6 +424,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
+                .setNumeroCards(3)
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-infoCitas')
                 .setTamaño('flex sm:flex-row justify-between items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200')
@@ -431,6 +434,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsAcciones
                 .setCards(actions)
+                .setNumeroCards(4)
                 .setContenedor('area-actions')
                 .setcontenedorCards('flex flex-col area-actions')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')
@@ -446,6 +450,7 @@ const propiedades = computed(() => {
             })
             .addComponente('Card', cardsState
                 .setCards(cardPaciente)
+                .setNumeroCards(1)
                 .setContenedor('area-status')
                 .setcontenedorCards('')
                 .setTamaño('flex md:flex-row justify-between md:h-[100px] bg-gradient-to-r from-blue-600 to-blue-900 dark:from-blue-900 to-blue-950 rounded-lg')
@@ -453,6 +458,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsCitas
                 .setCards(Citas)
+                .setNumeroCards(4)
                 .setcontenedorCards('flex flex-col')
                 .setContenedor('area-info bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl')
                 .setTamaño('flex md:flex-row justify-between md:items-center rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200 hover:bg-white! dark:hover:bg-gray-900!')
@@ -462,6 +468,7 @@ const propiedades = computed(() => {
             )
             .addComponente('Card', cardsAcciones
                 .setCards(actions)
+                .setNumeroCards(3)
                 .setContenedor('area-actions bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl h-fit')
                 .setcontenedorCards('flex flex-col area-actions')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-500)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white!')

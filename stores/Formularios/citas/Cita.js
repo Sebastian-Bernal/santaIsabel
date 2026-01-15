@@ -1,5 +1,3 @@
-import { traerCitas } from "~/Core/Usuarios/Cita/GETCita";
-import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useMedicosStore } from "../profesional/Profesionales";
 
 // Estructura de datos de Citas
@@ -46,7 +44,7 @@ export const useCitasStore = defineStore('Citas', {
                 return fechaA - fechaB;
             });
 
-            // Filtrar por id_medico si el rol es Profesional
+            // Filtrar por medico si el rol es Profesional
             const rol = varView.getRol;
             if (rol === 'Profesional') {
                 const idUsuario = varView.getUser.id;
@@ -67,21 +65,17 @@ export const useCitasStore = defineStore('Citas', {
             const apiRest = useApiRest()
             let citas = await apiRest.getData('Cita', 'citas')
 
-            // Obtener la fecha actual en formato YYYY-MM-DD
-            // const hoy = new Date().toISOString().split('T')[0];
-
-            // Filtrar solo las citas con fecha igual a hoy
-            let citasHoy = citas.filter(cita => cita.estado === "Inactiva");
+            let citasPendientes = citas.filter(cita => cita.estado === "Inactiva");
 
             // Ordenar por hora
-            citasHoy = citasHoy.sort((a, b) => {
+            citasPendientes = citasPendientes.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);
                 const fechaB = new Date(`${b.fecha}T${b.hora}`);
                 return fechaA - fechaB;
             }).slice(0, 3);
 
-            this.Citas = citasHoy;
-            return citasHoy;
+            this.Citas = citasPendientes;
+            return citasPendientes;
         },
 
 
@@ -90,41 +84,8 @@ export const useCitasStore = defineStore('Citas', {
         },
 
         async indexDBDatos() {
-            const citas = await traerCitas()
-            const citasLocal = await this.listCitas()
-
-            // Crear un conjunto de IDs locales para comparación rápida
-            const ids = new Set(
-                citasLocal.map(data => data.id)
-            );
-
-            const citasIndexed = citas.map((data) => ({
-                Cita: {
-                    id: data.id,
-                    id_paciente: data.id_paciente,
-                    id_medico: data.id_medico,
-                    name_paciente: data.name_paciente,
-                    name_medico: data.name_medico,
-                    servicio: data.servicio,
-                    motivo: data.motivo,
-                    fecha: data.fecha,
-                    hora: data.hora,
-                    estado: data.estado,
-                    motivo_cancelacion: data.motivo_cancelacion,
-                    id_examen_fisico: data.id_examen_fisico,
-                }
-            }));
-
-            // Filtrar los que no están en local
-            const nuevasCitas = citasIndexed.filter(item => {
-                const key = item.Cita.id;
-                return !ids.has(key);
-            });
-
-            // Guardar solo los nuevos
-            nuevasCitas.forEach(item => {
-                guardarEnDB(item);
-            });
+            const api = useApiRest()
+            await api.getData('Cita', 'citas')
         },
 
     }

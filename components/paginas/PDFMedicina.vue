@@ -40,7 +40,7 @@ onMounted(async () => {
 
 async function exportarMedicinaPDF(data) {
     varView.cargando = true
-console.log(data)
+
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
 
@@ -57,7 +57,7 @@ console.log(data)
 
     const enfermedad = await historiasStore.listDatos(data.id, 'Enfermedad', 'id_analisis')
     const signosVitalesData = await historiasStore.listDatos(data.id, 'ExamenFisico', 'id_analisis')
-    console.log(signosVitalesData)
+
     const medicamentosData = await historiasStore.listDatos(data.id, 'Plan_manejo_medicamentos', 'id_analisis')
     const procedimientosData = await historiasStore.listDatos(id_paciente, 'Plan_manejo_procedimientos', 'id_paciente')
     const antecedentesData = await historiasStore.listDatos(id_paciente, 'Antecedentes', 'id_paciente')
@@ -180,7 +180,7 @@ const propiedades = computed(() => {
                     `
                             <p class="w-full text-start text-xs border-b-1 pb-2">Codigo: </p>
                             <p class="w-full text-start text-xs border-b-1 pb-2">version: </p>
-                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
+                            <p class="w-full text-start text-xs border-b-1 pb-2">Fecha: ${propiedadesMedicinaPDF.value.created_at?.slice(0,10)}</p>
                             <p class="w-full text-start text-xs">Pagina: 1 de 1</p>
                         `
                 ],

@@ -35,6 +35,15 @@ watch(() => varView.showNuevaCita,
     }
 );
 
+watch(() => varView.showActualizarCita,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+);
+
 watch(() => varView.showNuevaHistoria,
     async (estado) => {
         if(!estado){
@@ -60,6 +69,10 @@ const agregarCita = () => {
 // Funciones para manejar visibilidad de Pagina
 const showFila = () => {
     varView.showEnFila = !varView.showEnFila
+};
+
+const showCalendario = () => {
+    varView.showCalendario = !varView.showCalendario
 };
 
 // Construccion de pagina
@@ -117,19 +130,26 @@ const propiedades = computed(() => {
                 titulo: 'Calendario de tu Agenda',
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
+                    { text: 'Calendario', icon: 'fa-solid fa-calendar', color: varView.showCalendario ? 'bg-blue-700' : 'bg-gray-700', action: showCalendario },
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-gray-700', action: showFila },
                     puedePost ? { text: 'Agendar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
                 ]
             })
-            .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-10 gap-3')
             .addComponente('Citas', builderCitas
                 .setCitas(citas)
                 .setShowTodas(false)
                 .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }])
             )
-            .addComponente('Calendario', builderCalendario
-                .setCitas(citas)
-            )
+            if(varView.showCalendario){
+                pagina
+                .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-6 gap-3')
+                .addComponente('Calendario', builderCalendario
+                    .setCitas(citas)
+                )
+            } else {
+                pagina
+                .setContenedor('grid grid-cols-1 gap-3')
+            }
     } else if (varView.showEnFila) {
         pagina
             .setHeaderPage({

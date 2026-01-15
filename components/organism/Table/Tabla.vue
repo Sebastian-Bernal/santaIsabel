@@ -14,6 +14,7 @@ import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 // Variables
 const btnAcciones = ref(null)
 const showFiltros = ref(false)
+const tiempoLoading = ref(true)
 const varView = useVarView()
 // funciones
 const props = defineProps({
@@ -65,6 +66,14 @@ const {
 const mostrarAcciones = (id) => {
     btnAcciones.value = btnAcciones.value === id ? null : id;
 };
+
+onMounted(() => {
+    // timepoCArgando
+    setTimeout(() => {
+      tiempoLoading.value = false
+    }, 5000)
+
+})
 
 // Al buscar cambia a primera pagina
 watch(busqueda, (nuevoValor, anteriorValor) => {
@@ -208,7 +217,8 @@ const tablaAlto = computed(() => {
                 </div>
 
                 <!-- Skeleton cuando no hay datos -->
-                <template v-if="!datosPaginados || datosPaginados.length === 0 && busqueda === '' || datosPaginados.length === 0 && Object.values(filtros).some(v => v === '')">
+                <template v-if="!datosPaginados && tiempoLoading || (datosPaginados.length === 0 && busqueda === '' && tiempoLoading) ||
+                                    (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
                     <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
                         class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnas">
                         <div v-for="(col, key) in columnasVisibles" :key="key"
@@ -300,9 +310,11 @@ const tablaAlto = computed(() => {
                 </div>
 
 
-                <div v-if="datosPaginados.length === 0 && busqueda !== '' || Object.values(filtros).some(v => v !== '')">
-                    <p class="text-gray-500 text-center my-10">No se encontraron
-                        resultados. <i class="fa-solid fa-search-minus"></i></p>
+                <div v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
+                    <p class="text-gray-500 text-center my-10">
+                        No se encontraron resultados. 
+                        <i class="fa-solid fa-search-minus"></i>
+                    </p>
                 </div>
 
             </div>
