@@ -19,6 +19,8 @@ const opcionesFiltradas = ref([]);
 const errorMensaje = ref();
 const desplegarArriba = ref(false);
 const opcionActiva = ref(-1);
+const showOptions = ref(false);
+const placeholder = ref(props.Propiedades.placeholder || 'Buscar por nombre o valor...');
 
 watch(() => props.modelValue, (nuevoValor) => {
     opcionActiva.value = -1;
@@ -46,7 +48,8 @@ watch(() => props.modelValue, (nuevoValor) => {
     });
 
     mostrarLista.value = opcionesFiltradas.value.length > 0 && !coincidenciaExacta;
-
+    placeholder.value = props.Propiedades.placeholder || 'Buscar por nombre o valor...';
+    showOptions.value = false;
     // Mostrar error si no hay coincidencia exacta
     errorMensaje.value = coincidenciaExacta || opcionesFiltradas.value.length > 0
         ? ''
@@ -55,6 +58,15 @@ watch(() => props.modelValue, (nuevoValor) => {
 
 function coincidencia(event) {
     const nuevoValor = event.target.value;
+
+    if(nuevoValor.length === 0 && showOptions.value) {
+        placeholder.value = 'Buscar por nombre o valor...';
+        const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? [])
+        opcionesFiltradas.value = Array.isArray(opciones) ? opciones.slice(0, 20) : []
+        mostrarLista.value = true;
+        return
+    }
+
     const propiedadFiltrar1 = unref(props.Propiedades.opciones?.[0]?.value ?? '');
     const propiedadFiltrar2 = unref(props.Propiedades.opciones?.[1]?.value ?? '');
 
@@ -142,6 +154,10 @@ function manejarTeclas(event) {
     }
 }
 
+function desplegarOptions() {
+    showOptions.value = !showOptions.value;
+}
+
 </script>
 
 <template>
@@ -149,7 +165,7 @@ function manejarTeclas(event) {
         <input :value="modelValue"
             class="z-100 mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
-            :placeholder="Propiedades.placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
+            :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
             @keyup.enter="Propiedades.events?.onKeyUp" @keydown="manejarTeclas" />
 
@@ -174,7 +190,7 @@ function manejarTeclas(event) {
                 </div>
             </li>
         </ul>
-        <div v-if="!Propiedades.disabled" class="absolute top-2 right-3">
+        <div v-if="!Propiedades.disabled" @click="desplegarOptions" class="absolute top-2 right-3">
             <i class="fa-solid fa-search text-sm text-blue-600 transition-all duration-300 cursor-pointer active:scale-85"></i>
         </div>
 

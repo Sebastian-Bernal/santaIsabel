@@ -73,6 +73,9 @@ export const useApiRest = defineStore('apiRest', {
 
                     console.log('Error response:', errorData);
 
+                    if (opcion.metodo === 'GET') {
+                        return
+                    }
                     // Notificación con el mensaje del backend o fallback
                     notificacionesStore.options.icono = 'warning';
                     notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';

@@ -72,7 +72,9 @@ export const useVarView = defineStore('varView', {
         citaRealizada: false,
         datosPaciente: {},
         // Impresion
-        propiedadesPDF: {}
+        propiedadesPDF: {},
+        //layout
+        expandido: false,
     }),
 
     getters: {

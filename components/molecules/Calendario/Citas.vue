@@ -368,10 +368,34 @@ async function activarCita(cita) {
                     </div>
                     <!-- FOOTER -->
                     <div class="flex gap-2 pt-2">
+                        <div class="gap-2 flex">
+                            <div class="flex gap-2" v-if="cita.estado === 'Inactiva'">
+                                <ButtonRounded
+                                    color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! gap-1 shadow-sm"
+                                    tooltip="Cancelar" tooltipPosition="top"
+                                    @click="puedeDelete ? cancelarCita(cita) : () => { }">
+                                    <i class="fa-solid fa-xmark"></i> Cancelar
+                                </ButtonRounded>
+                                <ButtonRounded
+                                    color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! gap-1 shadow-sm"
+                                    tooltip="Editar" tooltipPosition="top"
+                                    @click="puedePut ? actualizarCita(cita) : () => { }">
+                                    <i class="fa-solid fa-pencil"></i> Editar
+                                </ButtonRounded>
+                            </div>
+                            <!-- Estado Editada -->
+                            <template v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
+                                <ButtonRounded
+                                    color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
+                                    tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
+                                    <i class="fa-solid fa-info"></i>
+                                </ButtonRounded>
+                            </template>
+                        </div>
                         <div class="">
                             <template v-if="cita.estado === 'Inactiva'">
                                 <ButtonRounded
-                                    color="bg-green-500 hover:bg-green-500 text-white w-[80px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                                    color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
                                     tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
                                     <i class="fa-solid fa-check"></i> Asistir
                                 </ButtonRounded>
@@ -391,30 +415,6 @@ async function activarCita(cita) {
                                 <ButtonRounded
                                     color="bg-blue-600 hover:bg-blue-700 text-white w-[30px]! h-[30px]! shadow-sm"
                                     tooltip="Observación" tooltipPosition="top" @click="showObservacion(cita)">
-                                    <i class="fa-solid fa-info"></i>
-                                </ButtonRounded>
-                            </template>
-                        </div>
-                        <div class="">
-                            <div class="flex" v-if="cita.estado === 'Inactiva'">
-                                <ButtonRounded
-                                    color="bg-danger hover:bg-red-600 text-white w-[35px]! h-[28px]! !rounded-l-full !rounded-r-[0px] shadow-sm"
-                                    tooltip="Cancelar" tooltipPosition="top"
-                                    @click="puedeDelete ? cancelarCita(cita) : () => { }">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </ButtonRounded>
-                                <ButtonRounded
-                                    color="bg-amber-500 hover:bg-amber-600 text-white w-[35px]! h-[28px]! !rounded-r-full !rounded-l-[0px] shadow-sm"
-                                    tooltip="Editar" tooltipPosition="top"
-                                    @click="puedePut ? actualizarCita(cita) : () => { }">
-                                    <i class="fa-solid fa-pencil"></i>
-                                </ButtonRounded>
-                            </div>
-                            <!-- Estado Editada -->
-                            <template v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
-                                <ButtonRounded
-                                    color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
-                                    tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
                                     <i class="fa-solid fa-info"></i>
                                 </ButtonRounded>
                             </template>
@@ -489,10 +489,34 @@ async function activarCita(cita) {
                 </div>
                 <!-- FOOTER -->
                 <div class="flex gap-2 pt-2">
+                    <div class="flex gap-2">
+                        <div v-if="cita.estado === 'Inactiva'" class="flex gap-2">
+                            <ButtonRounded
+                                color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! gap-1 !rounded-full shadow-sm"
+                                tooltip="Cancelar" tooltipPosition="top"
+                                @click="puedeDelete ? cancelarCita(cita) : () => { }">
+                                <i class="fa-solid fa-xmark"></i> Eliminar
+                            </ButtonRounded>
+                            <ButtonRounded
+                                color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! gap-1 !rounded-full shadow-sm"
+                                tooltip="Editar" tooltipPosition="top"
+                                @click="puedePut ? actualizarCita(cita) : () => { }">
+                                <i class="fa-solid fa-pencil"></i> Editar
+                            </ButtonRounded>
+                        </div>
+
+                        <!-- Estado Editada -->
+                        <div v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
+                            <ButtonRounded color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
+                                tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
+                                <i class="fa-solid fa-info"></i>
+                            </ButtonRounded>
+                        </div>
+                    </div>
                     <div class="">
                         <template v-if="cita.estado === 'Inactiva'">
                             <ButtonRounded
-                                color="bg-green-500 hover:bg-green-500 text-white w-[80px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                                color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
                                 tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
                                 <i class="fa-solid fa-check"></i> Asistir
                             </ButtonRounded>
@@ -515,30 +539,6 @@ async function activarCita(cita) {
                                 <i class="fa-solid fa-info"></i>
                             </ButtonRounded>
                         </template>
-                    </div>
-                    <div class="flex gap-2">
-                        <div v-if="cita.estado === 'Inactiva'" class="flex">
-                            <ButtonRounded
-                                color="bg-danger hover:bg-red-600 text-white w-[35px]! h-[28px]! !rounded-l-full !rounded-r-[0px] shadow-sm"
-                                tooltip="Cancelar" tooltipPosition="top"
-                                @click="puedeDelete ? cancelarCita(cita) : () => { }">
-                                <i class="fa-solid fa-xmark"></i>
-                            </ButtonRounded>
-                            <ButtonRounded
-                                color="bg-amber-500 hover:bg-amber-600 text-white w-[35px]! h-[28px]! !rounded-r-full !rounded-l-[0px] shadow-sm"
-                                tooltip="Editar" tooltipPosition="top"
-                                @click="puedePut ? actualizarCita(cita) : () => { }">
-                                <i class="fa-solid fa-pencil"></i>
-                            </ButtonRounded>
-                        </div>
-
-                        <!-- Estado Editada -->
-                        <div v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
-                            <ButtonRounded color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
-                                tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
-                                <i class="fa-solid fa-info"></i>
-                            </ButtonRounded>
-                        </div>
                     </div>
                 </div>
 

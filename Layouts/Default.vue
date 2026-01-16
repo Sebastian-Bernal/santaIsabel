@@ -1,5 +1,5 @@
 <template>
-    <div class="containerMain">
+    <div class="containerMain" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[60px_1fr]': !varView.expandido}">
         <Loader v-if="varView.cargando"></Loader>
         <Navbar></Navbar>
         <Aside></Aside>
@@ -56,7 +56,6 @@ onUnmounted(() => {
         "aside main"
         "footer footer";
     grid-template-rows: 60px 1fr 40px;
-    grid-template-columns: 80px 1fr;
     height: 100vh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
     overflow-y: none;

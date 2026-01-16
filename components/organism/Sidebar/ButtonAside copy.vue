@@ -16,12 +16,13 @@ onMounted(() => {
 
 <template>
     <button :class="{ 'active': data.active }"
-        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] h-full px-[15px] py-[15px] flex items-center relative hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
+        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] h-full p-[15px] flex items-center relative hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
         <!-- Icono boton -->
         <a class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all md:text-black text-white">
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </a>
 
+        <!-- Desplegable nombre de seccion, "right" -->
         <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px]"
             :class="{ 'rounded-[0_30px_0_0] ': !data.showUp, 'rounded-[0_0_30px_0]': data.showUp }"
             @click="storeAside.activeButton(data.id)">
@@ -29,6 +30,19 @@ onMounted(() => {
                 <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
                 </h3>
             </a>
+
+            <!-- Desplegable submenu, "down" -->
+            <div id="data.id"
+                class="down overflow-y-auto fixed top-[100%] left-[-10%] flex flex-col justify-center gap-1 items-center z-1 p-[10px] py-[15px] w-[150px] rounded-br-3xl "
+                :class="[data.tamaño, { 'up': data.showUp }]">
+                <a class="cursor-pointer w-full text-base font-bold text-[var(--color-default-claro)] hover:text-green-500"
+                    v-for="seccion in data.secciones" :href="`/${data.nombre}/${seccion.titulo}`"
+                        @click="footer.cambiarSecciones(seccion.subSecciones)">
+                    <span>
+                        {{ seccion.titulo }}
+                    </span>
+                </a>
+            </div>
 
         </div>
     </button>
@@ -84,7 +98,7 @@ button {
     /* ajusta bordes si quieres */
 }
 
-.left:hover .down {
+.right:hover .down {
     opacity: 1;
 }
 

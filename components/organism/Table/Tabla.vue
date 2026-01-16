@@ -167,7 +167,7 @@ const tablaAlto = computed(() => {
             </div>
         </div>
         <!-- Filtos -->
-        <div class="w-full mt-4 py-4 px-5 bg-white dark:bg-gray-700 border-1 border-gray-300 dark:border-gray-600 rounded-xl"
+        <div class="w-full mt-4 py-4 px-5 bg-white dark:bg-gray-800 border-1 border-gray-300 dark:border-gray-600 rounded-xl"
             v-if="Propiedades.headerTabla.bucador && showFiltros || Propiedades.headerTabla.filtros && showFiltros">
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
