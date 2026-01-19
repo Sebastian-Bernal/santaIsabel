@@ -103,7 +103,7 @@ export class ModalBuilder {
 };
 
 const tamañosDisponibles = {
-    LG: 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[90%] h-[90%]',
-    XS: 'md:w-[65%] md:h-[70%] w-[90%] h-[80%]',
-    SM: 'lg:w-[45%] lg:h-[65%] md:w-[50%] md:h-[70%]  w-[90%] h-[60%]',
+    LG: 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[98%] h-[80%]',
+    XS: 'md:w-[65%] md:h-[70%] w-[98%] h-[80%]',
+    SM: 'lg:w-[45%] lg:h-[65%] md:w-[50%] md:h-[70%] w-[98%] h-[80%]',
 }

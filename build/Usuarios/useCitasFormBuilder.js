@@ -214,7 +214,8 @@ export function useFormularioCitaBuilder({
       options: pacientesList,
       opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
       seleccionarItem: seleccionarPaciente,
-      upperCase: true
+      upperCase: true,
+      disabled: verUser
     })
     .addCampo({
       component: 'Label',
@@ -232,7 +233,8 @@ export function useFormularioCitaBuilder({
       options: medicosList,
       opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
       seleccionarItem: seleccionarMedico,
-      upperCase: true
+      upperCase: true,
+      disabled: verUser
     })
     .addCampo({
       component: 'Select',

@@ -102,7 +102,7 @@ function limpiar() {
                                 :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]"
-                                    :Propiedades="{ ...item, disabled: Propiedades.formulario.soloVer }"
+                                    :Propiedades="{ ...item, disabled: Propiedades.formulario.soloVer || item.disabled }"
                                     :modelValue="getValue(tablaStore?.Formulario, item.vmodel)"
                                     @update:modelValue="val => setValue(tablaStore?.Formulario, item.vmodel, val)" />
                                 <slot></slot>

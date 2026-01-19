@@ -3,8 +3,8 @@ import { defineStore } from "pinia";
 export const useNotificacionesStore = defineStore("Notificaciones", {
     // state
     state: () => {
-        let theme = 'light'
-
+        let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        console.log('Tema de notificaciones:', theme);
         return {
             swal: null,
             respuesta: null,
@@ -67,6 +67,11 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 showCancelButton: true,
                 confirmButtonText: this.options.confirmtext,
                 cancelButtonText: this.options.canceltext,
+                
+                customClass: {
+                    // Opcional: aplica la clase de tema
+                    popup: this.options.theme === 'dark' ? 'swal-dark' : 'swal-light',
+                },
             })
             if (result.isConfirmed) {
                 return 'confirmado'
@@ -88,6 +93,11 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
                 showCancelButton: true,
                 confirmButtonText: this.options.confirmtext,
                 cancelButtonText: this.options.canceltext,
+                
+                customClass: {
+                    // Opcional: aplica la clase de tema
+                    popup: this.options.theme === 'dark' ? 'swal-dark' : 'swal-light',
+                },
             })
             if (result.isConfirmed) {
                 return {

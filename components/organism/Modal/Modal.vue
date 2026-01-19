@@ -49,7 +49,7 @@ function cambiarAInicio() {
             :class="[Propiedades.estilos, Propiedades.tamaño]">
             <!-- Header Modal -->
             <div
-                class="w-full flex md:flex-row flex-col justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
+                class="w-full flex justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
                 <div>
                     <h2 class="text-white font-bold text-2xl">{{ Propiedades.headerModal.titulo }}</h2>
                     <div class="flex text-gray-100 font-medium">
@@ -93,7 +93,7 @@ function cambiarAInicio() {
                 </div>
             </div>
             <!-- Componentes -->
-            <div :class="Propiedades.secciones[seccionActual].contenedor" class="scrollForm w-full gap-[15px] max-h-[80%] overflow-y-auto">
+            <div :class="Propiedades.secciones[seccionActual].contenedor" class="scrollForm w-full gap-[15px] max-h-[90%] overflow-y-auto">
 
                 <component v-for="(component, index) in Propiedades.secciones[seccionActual].componentes" :key="index"
                     :is="components[component.tipo]" :Propiedades="component"

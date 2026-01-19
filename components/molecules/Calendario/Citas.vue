@@ -35,10 +35,10 @@ const pacientesStore = usePacientesStore();
 const citasStore = useCitasStore();
 const servicioStore = useDatosServicioStore();
 const Citas = ref(props.Propiedades.citas);
-const pendientes = ref([])
 const notificacionesStore = useNotificacionesStore();
 const puedePut = ref(varView.getPermisos.includes('Citas_put'))
 const puedeDelete = ref(varView.getPermisos.includes('Citas_delete'))
+const showPendientes = ref(true)
 
 const {
     fechaActual,
@@ -79,7 +79,7 @@ watch(busqueda, (nuevoValor, anteriorValor) => {
     if (nuevoValor !== anteriorValor) {
         paginaActual.value = 1;
     }
-});
+}, { deep: true });
 
 watch(filtros, (nuevoValor, anteriorValor) => {
     paginaActual.value = 1;
@@ -90,11 +90,9 @@ const citasFiltradas = computed(() => {
     return Citas.value?.filter(cita => {
         if (!cita.fecha) return false;
 
-        // Convertir fechas a objetos Date
         const fechaInicio = new Date(cita.fecha);
         const fechaFin = cita.fechaHasta ? new Date(cita.fechaHasta) : null;
         const fechaSeleccionada = new Date(fecha.value.split('/').reverse().join('-'));
-        const fechaActualDate = new Date(fechaActual.value.split('/').reverse().join('-'))
 
         if (fechaFin) {
             if (cita.estado === 'Inactiva' && fecha.value === fechaActual.value) {
@@ -103,13 +101,19 @@ const citasFiltradas = computed(() => {
                 return fechaSeleccionada.getTime() === fechaInicio.getTime();
             }
         } else {
-            if (fechaInicio < fechaActualDate && cita.estado === 'Inactiva') {
-                pendientes.value.push({ ...cita })
-            }
-            // Si no hay fechaHasta, comparar solo con la fecha exacta
             return fechaSeleccionada.getTime() === fechaInicio.getTime();
         }
     });
+});
+
+// Pendientes
+const pendientes = computed(() => {
+    return Citas.value?.filter(cita => {
+        if (!cita.fecha) return false;
+        const fechaInicio = new Date(cita.fecha);
+        const fechaActualDate = new Date(fechaActual.value.split('/').reverse().join('-'));
+        return fechaInicio < fechaActualDate && cita.estado === 'Inactiva';
+    }) ?? [];
 });
 
 // Nombre del mes
@@ -196,6 +200,10 @@ async function showObservacion(cita) {
 function parseFechaISO(iso) {
     const [y, m, d] = iso.split('-').map(Number);
     return new Date(y, m - 1, d); // siempre local, sin UTC
+}
+
+function changeShowPendientes() {
+    showPendientes.value = !showPendientes.value
 }
 
 async function activarCita(cita) {
@@ -296,7 +304,8 @@ async function activarCita(cita) {
             <div class="flex gap-2">
                 <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
                 <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
-                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros" tooltipPosition="left" @click="borrarFiltros"> 
+                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros"
+                    tooltipPosition="right" @click="borrarFiltros">
                     <i class="fa-solid fa-close"></i>
                 </ButtonRounded>
             </div>
@@ -326,19 +335,36 @@ async function activarCita(cita) {
         <h2 v-if="!props.Propiedades.showTodas" class="text-xl font-semibold my-2 px-10">
             {{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}
         </h2>
+
+        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
+            class="w-full py-8 flex justify-center">
+            <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
+        </div>
+
         <!-- Citas Pendientes -->
         <div v-if="fechaActual === fecha && pendientes.length > 1 && !props.Propiedades.showTodas">
-            <h2 class="text-lg font-semibold my-2 px-5">Citas Pendientes</h2>
+            <div class="flex items-center justify-between my-2 px-5">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-hourglass-half text-red-300"></i>
+                    <h2 class="text-xl font-semibold">Citas Pendientes</h2>
+                </div>
+                <ButtonRounded
+                    :color="!showPendientes ? 'bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-gray-400' : 'bg-blue-500 hover:bg-blue-600 text-white'"
+                    tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes">
+                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                </ButtonRounded>
+            </div>
 
-            <div class="grid gap-2 px-4"
-                :class="{ 'lg:grid-cols-3 sm:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'md:grid-cols-2': !varView.showEnFila }">
+            <div class="grid gap-2 px-4" v-if="showPendientes"
+                :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2': !varView.showEnFila }">
                 <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                     v-for="cita in pendientes.reverse()"
                     :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
 
                     <!-- HEADER -->
                     <div class="flex items-center gap-4">
-                        <div class="flex flex-col items-center text-blue-600 ml-1">
+                        <div
+                            class="flex flex-col items-center text-blue-600 ml-1 border-r-2 border-gray-300 dark:border-gray-700 pr-3">
                             <h2 class="text-blue-600 text-lg font-extrabold">
                                 {{ cita.hora === '00:00:00' ? cita.fechaHasta.substring(5, 11) : cita.hora ?
                                     cita.hora.substring(0, 5) : '' }}
@@ -357,76 +383,80 @@ async function activarCita(cita) {
                     <div class="space-y-2">
                         <div class="w-full h-3">
                             <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                <i class="fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
+                                <i class="w-[25px] fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
                             </h3>
                         </div>
                         <div class="w-3/4 h-3">
                             <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                <i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
+                                <i class="w-[25px] fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
                             </h3>
                         </div>
                     </div>
                     <!-- FOOTER -->
                     <div class="flex gap-2 pt-2">
-                        <div class="gap-2 flex">
-                            <div class="flex gap-2" v-if="cita.estado === 'Inactiva'">
-                                <ButtonRounded
-                                    color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! gap-1 shadow-sm"
-                                    tooltip="Cancelar" tooltipPosition="top"
-                                    @click="puedeDelete ? cancelarCita(cita) : () => { }">
-                                    <i class="fa-solid fa-xmark"></i> Cancelar
-                                </ButtonRounded>
-                                <ButtonRounded
-                                    color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! gap-1 shadow-sm"
-                                    tooltip="Editar" tooltipPosition="top"
-                                    @click="puedePut ? actualizarCita(cita) : () => { }">
-                                    <i class="fa-solid fa-pencil"></i> Editar
-                                </ButtonRounded>
-                            </div>
+                        <div class="flex gap-2 w-full justify-between" v-if="cita.estado === 'Inactiva'">
+                            <ButtonRounded
+                                color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                                tooltip="Cancelar" tooltipPosition="top"
+                                @click="puedeDelete ? cancelarCita(cita) : () => { }">
+                                <i class="fa-solid fa-xmark"></i> Cancelar
+                            </ButtonRounded>
+
+                            <ButtonRounded
+                                color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                                tooltip="Editar" tooltipPosition="top"
+                                @click="puedePut ? actualizarCita(cita) : () => { }">
+                                <i class="fa-solid fa-pencil"></i> Editar
+                            </ButtonRounded>
+
+                            <ButtonRounded
+                                color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                                tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
+                                <i class="fa-solid fa-check"></i> Asistir
+                            </ButtonRounded>
+                        </div>
+                        <div class="">
                             <!-- Estado Editada -->
-                            <template v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
+                            <div v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
                                 <ButtonRounded
                                     color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
                                     tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
                                     <i class="fa-solid fa-info"></i>
                                 </ButtonRounded>
-                            </template>
-                        </div>
-                        <div class="">
-                            <template v-if="cita.estado === 'Inactiva'">
-                                <ButtonRounded
-                                    color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
-                                    tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
-                                    <i class="fa-solid fa-check"></i> Asistir
-                                </ButtonRounded>
-                            </template>
+                            </div>
 
                             <!-- Estado Cancelada -->
-                            <template v-if="cita.estado === 'cancelada'">
+                            <div v-if="cita.estado === 'cancelada'">
                                 <ButtonRounded
                                     color="bg-gray-500 hover:bg-gray-600 text-white w-[30px]! h-[30px]! shadow-sm"
                                     tooltip="Información" tooltipPosition="top" @click="showMotivo(cita)">
                                     <i class="fa-solid fa-info"></i>
                                 </ButtonRounded>
-                            </template>
+                            </div>
 
                             <!-- Estado Realizada -->
-                            <template v-if="cita.estado === 'Realizada'">
+                            <div v-if="cita.estado === 'Realizada'">
                                 <ButtonRounded
                                     color="bg-blue-600 hover:bg-blue-700 text-white w-[30px]! h-[30px]! shadow-sm"
                                     tooltip="Observación" tooltipPosition="top" @click="showObservacion(cita)">
                                     <i class="fa-solid fa-info"></i>
                                 </ButtonRounded>
-                            </template>
+                            </div>
                         </div>
                     </div>
 
                 </div>
             </div>
 
-            <h2 class="text-lg font-semibold my-2 px-5">Citas de Hoy</h2>
+            <div class="flex items-center my-2 px-5 gap-2">
+                <i class="fa-solid fa-calendar-day text-blue-300"></i>
+                <h2 class="text-xl font-semibold">Citas de Hoy</h2>
+            </div>
         </div>
-        <div class="grid gap-2 px-4" :class="{ 'lg:grid-cols-3 sm:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'sm:grid-cols-2': !varView.showEnFila }">
+
+        <!-- Citas de Hoy -->
+        <div class="grid gap-2 px-4"
+            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
             <template v-if="!unref(props.Propiedades.citas) || unref(props.Propiedades.citas).length === 0">
@@ -459,7 +489,8 @@ async function activarCita(cita) {
 
                 <!-- HEADER -->
                 <div class="flex items-center gap-4">
-                    <div class="flex flex-col items-center text-blue-600 ml-1">
+                    <div
+                        class="flex flex-col items-center text-blue-600 ml-1 border-r-2 border-gray-300 dark:border-gray-700 pr-3">
                         <h2 class="text-blue-600 text-lg font-extrabold">
                             {{ cita.hora === '00:00:00' ? cita.fechaHasta.substring(5, 11) : cita.hora ?
                                 cita.hora.substring(0, 5) : '' }}
@@ -478,77 +509,71 @@ async function activarCita(cita) {
                 <div class="space-y-2">
                     <div class="w-full h-3">
                         <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <i class="fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
+                            <i class=" w-[25px] fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
                         </h3>
                     </div>
-                    <div class="w-3/4 h-3">
+                    <div class="w-3/4 h-3 mt-1">
                         <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <i class="fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
+                            <i class="w-[25px] fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
                         </h3>
                     </div>
                 </div>
                 <!-- FOOTER -->
-                <div class="flex gap-2 pt-2">
-                    <div class="flex gap-2">
-                        <div v-if="cita.estado === 'Inactiva'" class="flex gap-2">
-                            <ButtonRounded
-                                color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! gap-1 !rounded-full shadow-sm"
-                                tooltip="Cancelar" tooltipPosition="top"
-                                @click="puedeDelete ? cancelarCita(cita) : () => { }">
-                                <i class="fa-solid fa-xmark"></i> Eliminar
-                            </ButtonRounded>
-                            <ButtonRounded
-                                color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! gap-1 !rounded-full shadow-sm"
-                                tooltip="Editar" tooltipPosition="top"
-                                @click="puedePut ? actualizarCita(cita) : () => { }">
-                                <i class="fa-solid fa-pencil"></i> Editar
-                            </ButtonRounded>
-                        </div>
+                <div class="flex flex-col gap-2 pt-2">
+                    <div class="flex gap-2 w-full justify-between" v-if="cita.estado === 'Inactiva'">
+                        <ButtonRounded
+                            color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                            tooltip="Cancelar" tooltipPosition="top"
+                            @click="puedeDelete ? cancelarCita(cita) : () => { }">
+                            <i class="fa-solid fa-xmark"></i> Cancelar
+                        </ButtonRounded>
 
+                        <ButtonRounded
+                            color="bg-amber-500 hover:bg-amber-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                            tooltip="Editar" tooltipPosition="top" @click="puedePut ? actualizarCita(cita) : () => { }">
+                            <i class="fa-solid fa-pencil"></i> Editar
+                        </ButtonRounded>
+
+                        <ButtonRounded
+                            color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
+                            tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
+                            <i class="fa-solid fa-check"></i> Asistir
+                        </ButtonRounded>
+                    </div>
+                    <div class="flex">
                         <!-- Estado Editada -->
                         <div v-if="cita.estado === 'Inactiva' && cita.motivo_edicion">
-                            <ButtonRounded color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
+                            <ButtonRounded
+                                color="bg-amber-500 hover:bg-amber-700 text-white w-[30px]! h-[30px]! shadow-sm"
                                 tooltip="Observación" tooltipPosition="top" @click="showMotivoEdicion(cita)">
                                 <i class="fa-solid fa-info"></i>
                             </ButtonRounded>
                         </div>
-                    </div>
-                    <div class="">
-                        <template v-if="cita.estado === 'Inactiva'">
-                            <ButtonRounded
-                                color="bg-green-500 hover:bg-green-500 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
-                                tooltip="Completar Cita" tooltipPosition="top" @click="activarCita(cita)">
-                                <i class="fa-solid fa-check"></i> Asistir
-                            </ButtonRounded>
-                        </template>
 
                         <!-- Estado Cancelada -->
-                        <template v-if="cita.estado === 'cancelada'">
+                        <div v-if="cita.estado === 'cancelada'">
                             <ButtonRounded
                                 color="bg-gray-500 hover:bg-gray-600 text-white w-[30px]! h-[30px]! shadow-sm"
                                 tooltip="Información" tooltipPosition="top" @click="showMotivo(cita)">
                                 <i class="fa-solid fa-info"></i>
                             </ButtonRounded>
-                        </template>
+                        </div>
 
                         <!-- Estado Realizada -->
-                        <template v-if="cita.estado === 'Realizada'">
+                        <div v-if="cita.estado === 'Realizada'">
                             <ButtonRounded
                                 color="bg-blue-600 hover:bg-blue-700 text-white w-[30px]! h-[30px]! shadow-sm"
                                 tooltip="Observación" tooltipPosition="top" @click="showObservacion(cita)">
                                 <i class="fa-solid fa-info"></i>
                             </ButtonRounded>
-                        </template>
+                        </div>
                     </div>
                 </div>
 
             </div>
+
         </div>
 
-        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
-            class="w-full py-8 flex justify-center">
-            <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
-        </div>
     </div>
     <!-- Paginador -->
     <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex justify-between items-center h-[30px] px-10">

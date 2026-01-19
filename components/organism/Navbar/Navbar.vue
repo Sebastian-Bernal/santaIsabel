@@ -64,7 +64,7 @@ const removeStorage = () => {
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
                     <a href="/Usuarios/Citas" class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-[10px] shadow-lg">
-                        <i class="fa-solid fa-calendar"></i>
+                        <i class="fa-solid fa-calendar-day"></i>
                         <p class="text-white md:text-white">{{fechaActualFormateada }}</p>
                     </a>
                 </li>

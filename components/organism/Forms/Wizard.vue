@@ -35,16 +35,16 @@ function editar() {
             <div class="flex items-center md:ml-5 ml-2 md:gap-0 gap-1">
                 <div v-if="props.Propiedades?.eliminar" @click="props.Propiedades.eliminar?.()"
                     class="md:w-10 w-5 md:h-10 h-5 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
-                    <i class="fa-solid fa-trash text-gray-100 md:text-xl text-base"></i>
+                    <i class="fa-solid fa-trash text-gray-100 md:text-xl text-lg"></i>
                 </div>
                 <div v-if="props.Propiedades?.editarFormulario" @click="editar"
                     class="md:w-10 w-5 md:h-10 h-5 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer"
                     :class="{'bg-[rgba(0,0,0,0.1)] text-white' : !varView.soloVer}">
-                    <i class="fa-solid fa-pencil text-gray-100 md:text-xl text-base"></i>
+                    <i class="fa-solid fa-pencil text-gray-100 md:text-xl text-lg"></i>
                 </div>
                 <div @click="props.cerrar"
                     class="md:w-10 w-5 md:h-10 h-5 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
-                    <i class="fa-solid fa-close text-gray-100 hover:text-white md:text-xl text-base"></i>
+                    <i class="fa-solid fa-close text-gray-100 hover:text-white md:text-xl text-lg"></i>
                 </div>
             </div>
         </div>

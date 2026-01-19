@@ -1,40 +1,106 @@
-<script setup>
-const props = defineProps({
-    color: 'String',
-    tooltip: {
-        type: String,
-        default: null
-    },
-    tooltipPosition: {
-        type: String,
-        default: 'top' // top | bottom | left | right
-    }
-});
-</script>
-
 <template>
-    <div class="relative inline-flex group">
-        <button
-            type="button"
-            :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95']"
-            class="w-[30px] h-[30px] flex justify-center items-center text-white rounded-full hover:opacity-75"
-        >
-            <slot />
-        </button>
+  <div class="relative inline-flex">
+    <button
+      type="button"
+      :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95 w-[30px] h-[30px] flex justify-center items-center text-white rounded-full hover:opacity-75']"
+      ref="buttonRef"
+      @mouseenter="show()"
+      @mouseleave="hide()"
+      @focus="show()"
+      @blur="hide()"
+    >
+      <slot />
+    </button>
 
-        <!-- Tooltip -->
-        <div
-            v-if="tooltip"
-            class="absolute z-50 px-2 py-1 text-xs text-white font-semibold bg-[var(--color-default-600)] rounded-lg shadow-lg 
-                   opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap"
-            :class="{
-                'bottom-full mb-1 left-1/2 -translate-x-1/2': tooltipPosition === 'top',
-                'top-full mt-1 left-1/2 -translate-x-1/2': tooltipPosition === 'bottom',
-                'right-full mr-1 top-1/2 -translate-y-1/2': tooltipPosition === 'left',
-                'left-full ml-1 top-1/2 -translate-y-1/2': tooltipPosition === 'right'
-            }"
-        >
-            {{ tooltip }}
-        </div>
-    </div>
+    <!-- Teleport al body -->
+    <teleport to="body">
+      <div
+        v-if="tooltip && isVisible"
+        class="fixed z-[9999] px-2 py-1 text-xs text-white font-semibold bg-[var(--color-default-600)] rounded-lg shadow-lg whitespace-nowrap"
+        :style="tooltipStyle"
+        role="tooltip"
+      >
+        {{ tooltip }}
+      </div>
+    </teleport>
+  </div>
 </template>
+
+<script setup>
+import { ref, reactive, onMounted, onBeforeUnmount, watch } from 'vue'
+
+const props = defineProps({
+  tooltip: String,
+  tooltipPosition: {
+    type: String,
+    default: 'top' // 'top' | 'bottom' | 'left' | 'right'
+  },
+  color: {
+    type: String,
+    default: 'bg-blue-500'
+  },
+  offset: {
+    type: Number,
+    default: 8
+  }
+})
+
+const buttonRef = ref(null)
+const isVisible = ref(false)
+const tooltipStyle = reactive({
+  top: '0px',
+  left: '0px',
+  transform: 'none'
+})
+
+function updateTooltipPosition() {
+  const el = buttonRef.value
+  if (!el) return
+  const rect = el.getBoundingClientRect()
+
+  // Posicionamiento base
+  if (props.tooltipPosition === 'top') {
+    tooltipStyle.top = `${rect.top - props.offset}px`
+    tooltipStyle.left = `${rect.left + rect.width / 2}px`
+    tooltipStyle.transform = 'translate(-50%, -100%)'
+  } else if (props.tooltipPosition === 'bottom') {
+    tooltipStyle.top = `${rect.bottom + props.offset}px`
+    tooltipStyle.left = `${rect.left + rect.width / 2}px`
+    tooltipStyle.transform = 'translate(-50%, 0)'
+  } else if (props.tooltipPosition === 'left') {
+    tooltipStyle.top = `${rect.top + rect.height / 2}px`
+    tooltipStyle.left = `${rect.left - props.offset}px`
+    tooltipStyle.transform = 'translate(-100%, -50%)'
+  } else if (props.tooltipPosition === 'right') {
+    tooltipStyle.top = `${rect.top + rect.height / 2}px`
+    tooltipStyle.left = `${rect.right + props.offset}px`
+    tooltipStyle.transform = 'translate(0, -50%)'
+  }
+}
+
+function show() {
+  isVisible.value = true
+  updateTooltipPosition()
+}
+
+function hide() {
+  isVisible.value = false
+}
+
+onMounted(() => {
+  // Recalcular en cambios de viewport/scroll
+  const handler = () => isVisible.value && updateTooltipPosition()
+  window.addEventListener('resize', handler)
+  window.addEventListener('scroll', handler, true)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateTooltipPosition)
+  window.removeEventListener('scroll', updateTooltipPosition, true)
+})
+
+// Si cambia la posición, recalcula
+watch(() => props.tooltipPosition, () => {
+  if (isVisible.value) updateTooltipPosition()
+})
+</script>

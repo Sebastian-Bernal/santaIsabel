@@ -64,7 +64,11 @@ export const validarYEnviarActualizarCita = async (datos) => {
     const fechaInicial = parseFechaISO(datos.Cita.fecha)
     const fechaFinal = parseFechaISO(datos.Cita.fechaHasta)
 
-    if (fechaFinal < fechaInicial) {
+    if(datos.Cita.motivo !== 'Atención domiciliaria') {
+        cita.fechaHasta = null
+    }
+
+    if (fechaFinal < fechaInicial && datos.Cita.motivo === 'Atención domiciliaria') {
         notificacionesStore.options.icono = 'error';
         notificacionesStore.options.titulo = 'Informacion invalida.';
         notificacionesStore.options.texto = `Valida el Rango de fecha de cumplimiento de Cita.`;

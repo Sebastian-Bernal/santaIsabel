@@ -57,6 +57,7 @@ onUnmounted(() => {
         "footer footer";
     grid-template-rows: 60px 1fr 40px;
     height: 100vh;
+    min-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
     overflow-y: none;
 }
@@ -66,7 +67,7 @@ onUnmounted(() => {
         grid-template-areas: "navbar" "aside" "main" "footer";
         grid-template-rows: 45px 40px 1fr 40px;
         grid-template-columns: 1fr;
-        max-height: 100%;
+        min-height: 100dvh;
     }
 
     .section-content {
@@ -79,15 +80,13 @@ onUnmounted(() => {
     grid-area: main;
     overflow-y: hidden;
     margin: 0 10px;
-    padding: 0 0 10px 0;
-    border-radius: 15px 15px 15px 0;
+    padding: 0 0 5px 0;
+    border-radius: 15px 15px 15px 15px;
     background-color: rgba(0,0,0,0.3);
 }
 
 .container-content {
     height: 100%;
-    /* height: 98%;
-    margin-bottom: 2%; */
     overflow-y: scroll;
 }
 

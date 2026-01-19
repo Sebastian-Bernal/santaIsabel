@@ -7,7 +7,7 @@
     <!-- <div class="bg-[rgba(0,0,0,0.7)] absolute inset-0 z-20"></div> -->
 
     <Loader v-if="varView.cargando"></Loader>
-    <div class="relative z-30 flex flex-col justify-center items-center h-[100vh]">
+    <div class="containerAuthentication relative z-30 flex flex-col justify-center items-center">
         <slot></slot>
     </div>
 
@@ -19,3 +19,10 @@ import Loader from '~/components/molecules/Spinner/Loader.vue';
 const varView = useVarView();
 
 </script>
+
+<style scoped>
+    .containerAuthentication {
+        min-height: 100vh;
+        min-height: 100dvh;
+    }
+</style>
