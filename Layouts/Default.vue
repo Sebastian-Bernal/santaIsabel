@@ -56,8 +56,9 @@ onUnmounted(() => {
         "aside main"
         "footer footer";
     grid-template-rows: 60px 1fr 40px;
-    height: 100vh;
+    min-height: 100vh;
     min-height: 100dvh;
+    max-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
     overflow-y: none;
 }
@@ -67,7 +68,6 @@ onUnmounted(() => {
         grid-template-areas: "navbar" "aside" "main" "footer";
         grid-template-rows: 45px 40px 1fr 40px;
         grid-template-columns: 1fr;
-        min-height: 100dvh;
     }
 
     .section-content {

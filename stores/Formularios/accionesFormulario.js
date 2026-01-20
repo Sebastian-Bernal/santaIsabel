@@ -149,4 +149,7 @@ export const accionesFormularios = {
         const respuesta = await validarYEnviarActualizarProfesion(data)
         return respuesta
     },
+    NuevoInsumo: async (data) => {
+
+    },
 };

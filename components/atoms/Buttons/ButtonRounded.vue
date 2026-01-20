@@ -16,7 +16,7 @@
     <teleport to="body">
       <div
         v-if="tooltip && isVisible"
-        class="fixed z-[9999] px-2 py-1 text-xs text-white font-semibold bg-[var(--color-default-600)] rounded-lg shadow-lg whitespace-nowrap"
+        class="fixed z-[9999] px-2 py-1 text-xs text-white font-semibold bg-[var(--color-default-600)] rounded-lg shadow-lg whitespace-nowrap sm:flex hidden"
         :style="tooltipStyle"
         role="tooltip"
       >

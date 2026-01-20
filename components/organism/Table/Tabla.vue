@@ -71,7 +71,7 @@ onMounted(() => {
     // timepoCArgando
     setTimeout(() => {
       tiempoLoading.value = false
-    }, 5000)
+    }, 10000)
 
 })
 
@@ -201,7 +201,7 @@ const tablaAlto = computed(() => {
 
         <!-- Tabla -->
         <div
-            class="mt-[20px] h-[80%] overflow-y-scroll containerTable shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-b-xl">
+            class="mt-[20px] overflow-y-scroll containerTable shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-b-xl">
             <div class="w-full" :style="tablaAlto">
 
                 <!-- Header titulos de props Columnas -->

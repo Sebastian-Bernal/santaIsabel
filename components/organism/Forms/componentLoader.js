@@ -13,6 +13,7 @@ export function loadComponent(name) {
     GroupCampos: () => import('~/components/molecules/groupCampos/GroupCampos.vue'),
     Imagen: () => import('~/components/atoms/Images/Imagen.vue'),
     Permisos: () => import('~/components/atoms/Selects/Permisos.vue'),
+    Card: () => import('~/components/molecules/Cards/Card.vue'),
   };
 
   const loader = componentMap[name];
@@ -96,6 +97,11 @@ export async function cargarStore(storeName) {
     case 'DocumentosEquivalentes': {
       const { useSoftwareDEStore } = await import('~/stores/Formularios/empresa/DocumentosEquivalentes');
       tablaStore = useSoftwareDEStore();
+      break;
+    }
+    case 'Insumos': {
+      const { useInsumosStore } = await import('~/stores/Formularios/insumos/Insumos');
+      tablaStore = useInsumosStore();
       break;
     }
     default:

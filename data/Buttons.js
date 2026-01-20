@@ -131,6 +131,9 @@ export const buttons = ref([
             {
                 titulo: "Historias",
             },
+            {
+                titulo: "Insumos",
+            },
         ],
         icon: "fa-file",
         tamaño: 'max-h-[25vh]',
