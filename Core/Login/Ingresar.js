@@ -13,11 +13,13 @@ const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
+    const varView = useVarView();
 
     sessionStorage.setItem('Empresa', datos.empresa)
     const online = navigator.onLine;
     if (online) {
         try {
+            varView.cargando = true
             // mandar a api
             let options = {
                 metodo: 'POST',
@@ -29,6 +31,7 @@ const enviarFormulario = async (datos) => {
             }
             const respuesta = await api.functionCall(options)
             if (respuesta.success) {
+                varView.cargando = false
                 notificacionesStore.options.titulo = 'Iniciando Sesión...'
                 notificacionesStore.options.texto = "Iniciando sesion, espere un momento mientras se cargan todos los datos"
                 notificacionesStore.loading()
@@ -53,6 +56,7 @@ const enviarFormulario = async (datos) => {
                 notificacionesStore.close()
                 return true
             } else {
+                varView.cargando = false
                 notificacionesStore.options.icono = 'error'
                 notificacionesStore.options.titulo = '¡No se pudo iniciar Sesion!'
                 notificacionesStore.options.texto = respuesta.message
@@ -61,6 +65,7 @@ const enviarFormulario = async (datos) => {
                 return false
             }
         } catch (error) {
+            varView.cargando = false
             notificacionesStore.options.icono = 'error'
             notificacionesStore.options.titulo = '¡No se pudo iniciar Sesion!'
             notificacionesStore.options.texto = 'Informacion invalida'

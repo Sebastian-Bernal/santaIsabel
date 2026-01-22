@@ -11,7 +11,7 @@ import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { CardBuilder } from "~/build/Constructores/CardBuilder.js";
 import { useUsuarioValidaciones } from "~/composables/Usuarios/Usuarios.js";
-import { usePacienteActions } from "~/composables/Usuarios/Paciente.js";
+import { usePacienteActions } from "~/composables/Usuarios/Paciente/Paciente.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();

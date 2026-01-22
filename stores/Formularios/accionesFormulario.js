@@ -35,6 +35,8 @@ import { validarYEnviarPutDatosServicio } from '~/Core/Empresa/Datos/Servicio/Pu
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
 import { validarYEnviarCambiarContraseñaPrimerVez } from '~/Core/Login/CambiarContraseñaPrimerVez';
+// Movimientos Insumos
+import { validarYEnviarNuevoMovimiento } from '~/Core/Historial/Insumos/PostInsumos';
 
 
 // Importa accion de cada formulario desde el core
@@ -152,4 +154,8 @@ export const accionesFormularios = {
     NuevoInsumo: async (data) => {
 
     },
+    NuevoMovimiento: async (data) => {
+        const respuesta = await validarYEnviarNuevoMovimiento(data)
+        return respuesta
+    }
 };

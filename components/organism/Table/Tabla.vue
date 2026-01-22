@@ -157,13 +157,22 @@ const tablaAlto = computed(() => {
                     </div>
                 </client-only>
 
-                <nuxt-link v-if="props.Propiedades.headerTabla?.accionAgregar"
+                <div v-if="props.Propiedades.headerTabla?.accionAgregar"
                     @click="props.Propiedades.headerTabla.accionAgregar" class="flex gap-1 items-center cursor-pointer">
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </ButtonRounded>
                     <h4 class="md:block hidden">Agregar</h4>
-                </nuxt-link>
+                </div>
+
+                <div v-for="boton in props.Propiedades.headerTabla?.acciones"
+                    @click="boton.accion" class="flex gap-1 items-center cursor-pointer">
+                    <ButtonRounded :color="boton.color || 'bg-blue-500'">
+                        <i class="fa-solid" :class="boton.icon"></i>
+                    </ButtonRounded>
+                    <h4 class="md:block hidden">{{ boton.text }}</h4>
+                </div>
+
             </div>
         </div>
         <!-- Filtos -->

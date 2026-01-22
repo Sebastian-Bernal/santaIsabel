@@ -82,7 +82,15 @@ const editItem = (index) => {
 
 // Eliminar
 const removeItem = (index) => {
-    items.value.splice(index, 1);
+    // Si es el único item, limpiar valores en lugar de eliminar
+    if (items.value.length === 1) {
+        const emptyItem = { ...props.Propiedades.addItem };
+        items.value[index] = emptyItem;
+        draftIndex.value = index;
+    } else {
+        // Si hay más items, eliminar normalmente
+        items.value.splice(index, 1);
+    }
     emit('update:modelValue', [...items.value]);
 };
 
@@ -168,6 +176,14 @@ const updateField = (field, value, campoDef) => {
     emit('update:modelValue', [...items.value]);
 };
 
+// Computada que filtra solo los completos
+const itemsCompletos = computed(() =>
+    items.value.filter(item =>
+        props.Propiedades.campos.every(campo => item[campo.name] !== '' && item[campo.name] != null)
+    )
+)
+
+
 </script>
 
 <template>
@@ -197,14 +213,10 @@ const updateField = (field, value, campoDef) => {
 
             <div :class="Propiedades.containerCampos">
                 <div v-for="campo in Propiedades.campos" :key="campo.name">
-                    <component 
-                        :is="campos[campo.typeCampo]" 
-                        :modelValue="Propiedades.liveUpdate 
-                                        ? items.at(-1)?.[campo.name] 
-                                        : form[campo.name]"
-                        :Propiedades="campo"
-                        @update:modelValue="value => updateField(campo.name, value, campo)"
-                    />
+                    <component :is="campos[campo.typeCampo]" :modelValue="Propiedades.liveUpdate
+                        ? items.at(-1)?.[campo.name]
+                        : form[campo.name]" :Propiedades="campo"
+                        @update:modelValue="value => updateField(campo.name, value, campo)" @keyup.enter="saveItem" />
                 </div>
             </div>
 
@@ -218,14 +230,14 @@ const updateField = (field, value, campoDef) => {
                 <button type="button" @click="saveItem"
                     class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 cursor-pointer active:scale-95">
                     <i class="fa-solid fa-plus"></i>
-                    {{ editIndex !== null ? 'Actualizar' : props.Propiedades.liveUpdate ? 'Agregar Nuevo' : 'Agregar' }}
+                    {{ editIndex !== null ? 'Actualizar' : 'Guardar' }}
                 </button>
             </div>
         </div>
 
         <!-- TABLA -->
-        <div v-if="items.length" class="overflow-x-auto">
-            <table class="w-full text-sm rounded-lg overflow-hidden" border="0" >
+        <div v-if="itemsCompletos.length" class="overflow-x-auto">
+            <table class="w-full text-sm rounded-lg overflow-hidden" border="0">
                 <thead class="bg-gray-200 dark:bg-gray-600">
                     <tr>
                         <th v-for="campo in Propiedades.campos" :key="campo.name" class="px-3 py-2 text-left">
@@ -236,7 +248,7 @@ const updateField = (field, value, campoDef) => {
                 </thead>
 
                 <tbody>
-                    <tr v-for="(item, index) in items" :key="index"
+                    <tr v-for="(item, index) in itemsCompletos" :key="index"
                         class="border-t border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
 
                         <td v-for="campo in Propiedades.campos" :key="campo.name" class="px-3 py-2">
@@ -244,14 +256,18 @@ const updateField = (field, value, campoDef) => {
                         </td>
 
                         <td v-if="!Propiedades.disabled" class="px-3 py-2 text-center flex justify-center gap-2">
-                            <ButtonRounded v-if="!Propiedades.ocultarEditar" color="bg-yellow-500" @click="editItem(index)">
+                            <ButtonRounded v-if="!Propiedades.ocultarEditar" color="bg-yellow-500"
+                                @click="editItem(index)">
                                 <i class="fa-solid fa-pen"></i>
                             </ButtonRounded>
 
-                            <ButtonRounded v-if="!Propiedades.ocultarEliminar" color="bg-red-500" @click="removeItem(index)">
+                            <ButtonRounded v-if="!Propiedades.ocultarEliminar" color="bg-red-500"
+                                @click="removeItem(index)">
                                 <i class="fa-solid fa-trash"></i>
                             </ButtonRounded>
                         </td>
+
+
                     </tr>
                 </tbody>
             </table>

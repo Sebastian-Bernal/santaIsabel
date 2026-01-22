@@ -71,12 +71,11 @@ onMounted(async () => {
 
         //Dashboard
         dashboardData.value = await traerDashboard()
-        console.log(dashboardData.value)
 
     } else if (rol.value === 'Profesional') {
         // Pacientes list
         const pacientesStore = usePacientesStore()
-        pacientesList.value = await pacientesStore.listPacientesAtendidos()
+        pacientesList.value = await pacientesStore.listPacientes(true, true)
 
         // Profesionales list
         const profesionalesStore = useMedicosStore()

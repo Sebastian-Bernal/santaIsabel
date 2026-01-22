@@ -69,7 +69,9 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
     }, {});
 
     datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos
+    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).every(v => v === '' || v == null))
     datos.Antecedentes = datos.Antecedentes
+    datos.Antecedentes = datos.Antecedentes.filter(d => !Object.values(d).every(v => v === '' || v == null))
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))

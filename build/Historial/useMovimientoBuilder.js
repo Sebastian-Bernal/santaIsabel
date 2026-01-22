@@ -75,8 +75,8 @@ export function useMovimientoBuilder({
             id: 'cantidadMovimiento',
             name: 'cantidadMovimiento',
             tamaño: 'md:col-span-1 col-span-3',
-            minlength: 3,
-            vmodel: 'Insumos.cantidadMovimiento'
+            minlength: 1,
+            vmodel: 'Movimiento.cantidadMovimiento'
         })
         .addCampo({
             component: 'Select',
@@ -91,13 +91,13 @@ export function useMovimientoBuilder({
             name: 'tipoMovimiento',
             tamaño: 'md:col-span-1 col-span-3',
             minlength: 3,
-            vmodel: 'Insumos.tipoMovimiento'
+            vmodel: 'Movimiento.tipoMovimiento'
         })
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Encargado del Movimiento',
             tamaño: 'w-full col-span-2',
-            forLabel: 'activo'
+            forLabel: 'nombreM'
         })
         .addCampo({
             component: 'SelectSearch',
@@ -106,7 +106,7 @@ export function useMovimientoBuilder({
             id: 'nombreM',
             name: 'nombreM',
             tamaño: 'w-full md:col-span-1 col-span-2',
-            vmodel: 'Insumos.name_medico',
+            vmodel: 'Movimiento.name_medico',
             options: medicosList,
             opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
             seleccionarItem: seleccionarMedico,
@@ -114,12 +114,12 @@ export function useMovimientoBuilder({
         })
         .addCampo({
             component: 'Input',
-            type: 'text',
-            placeholder: 'Fecha de Movimiento',
+            type: 'date',
+            label: 'Fecha de Movimiento',
             id: 'movimiento',
             name: 'movimiento',
-            tamaño: 'md:col-span-1 col-span-2',
-            vmodel: 'Insumos.fechaMovimiento',
+            tamaño: 'md:col-span-1 col-span-2 md:mt-[-15px]',
+            vmodel: 'Movimiento.fechaMovimiento',
         })
 
     builder.build()

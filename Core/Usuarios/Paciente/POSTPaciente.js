@@ -58,6 +58,7 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
         return false;
     }
 
+    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).every(v => v === '' || v == null)),
     // Validar Procedimientos
     datos.Plan_manejo_procedimientos.forEach((p, i) => {
         if (!p.procedimiento || !p.codigo) {
@@ -132,7 +133,7 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                     Antecedentes: (datos.Antecedentes ?? []).map(a => ({
                         tipo: a.tipo,
                         descripcion: a.descripcion,
-                    })),
+                    })).filter(d => !Object.values(d).every(v => v === '' || v == null)),
                 }
             }
             const respuesta = await api.functionCall(options)

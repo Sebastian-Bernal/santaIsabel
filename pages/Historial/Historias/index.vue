@@ -6,6 +6,7 @@ import PDFNota from '~/components/paginas/PDFNota.vue'
 import PDFTerapia from '~/components/paginas/PDFTerapia.vue'
 import PDFMedicina from '~/components/paginas/PDFMedicina.vue'
 import PDFTrabajoSocial from '~/components/paginas/PDFTrabajoSocial.vue'
+import ExportarPDFs from '~/components/paginas/ExportarPDFs.vue';
 
 import { ref, onMounted, unref } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
@@ -1057,11 +1058,13 @@ const propiedades = computed(() => {
                     buscador: true,
                     filtros: [
                            { columna: 'tipoAnalisis', placeholder: 'Estado' },
-                    ] 
+                    ],
+                    acciones: [
+                        { icon: 'fa-solid fa-file', accion: () => {varView.showExportarPDFs = true}, color: 'bg-black text-[var(--color-default-600)] hover:bg-gray-100', text: 'Exportar' }
+                    ]
                 })
             )
             .addComponente('Form', propiedadesActualizarNota)
-
 
 
             //  tratamientos
@@ -1180,4 +1183,5 @@ const propiedades = computed(() => {
     <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
     <PDFMedicina v-if="varView.showPDFMedicina"/>
     <PDFTrabajoSocial v-if="varView.showPDFTrabajoSocial"/>
+    <ExportarPDFs v-if="varView.showExportarPDFs" :datos="analisis"/>
 </template>

@@ -33,30 +33,47 @@ const editIndex = ref(null);
 // Items mostrados en tabla (solo confirmados)
 const displayItems = computed(() => items.value);
 
+// Flag para evitar ejecución duplicada de seleccionarItem
+const isExecutingSelect = ref(false);
+
 watch(() => props.modelValue, val => {
     items.value = [...val];
 });
 
-// Función para envolver seleccionarItem y actualizar draftForm automáticamente
+// Función para envolver seleccionarItem en campos y evitar ejecución duplicada
 const wrapSelectItem = () => {
-    if (props.Propiedades.seleccionarItem) {
-        const originalSelectFunction = props.Propiedades.seleccionarItem;
-        
-        props.Propiedades.seleccionarItem = (item) => {
-            // Actualizar draftForm automáticamente con los datos del item
-            const formTarget = props.Propiedades.liveUpdate ? draftForm : form;
-            
-            if (item && typeof item === 'object') {
-                Object.keys(item).forEach(key => {
-                    if (key in formTarget.value) {
-                        formTarget.value[key] = item[key];
+    // Buscar seleccionarItem dentro de los campos
+    if (props.Propiedades.campos && Array.isArray(props.Propiedades.campos)) {
+        props.Propiedades.campos.forEach(campo => {
+            if (campo.seleccionarItem && typeof campo.seleccionarItem === 'function') {
+                const originalSelectFunction = campo.seleccionarItem;
+                
+                campo.seleccionarItem = (item) => {
+                    // Evitar ejecución duplicada
+                    if (isExecutingSelect.value) return;
+                    
+                    isExecutingSelect.value = true;
+                    
+                    try {
+                        // Actualizar draftForm automáticamente con los datos del item
+                        const formTarget = props.Propiedades.liveUpdate ? draftForm : form;
+                        
+                        if (item && typeof item === 'object') {
+                            Object.keys(item).forEach(key => {
+                                if (key in formTarget.value) {
+                                    formTarget.value[key] = item[key];
+                                }
+                            });
+                        }
+                        
+                        // Ejecutar la función original solo una vez
+                        return originalSelectFunction(item);
+                    } finally {
+                        isExecutingSelect.value = false;
                     }
-                });
+                };
             }
-            
-            // Ejecutar la función original
-            return originalSelectFunction(item);
-        };
+        });
     }
 };
 
@@ -209,7 +226,7 @@ const updateField = (field, value, campoDef) => {
                                         ? draftForm[campo.name]
                                         : (editIndex !== null ? form[campo.name] : form[campo.name])"
                         :Propiedades="campo"
-                        @update:modelValue="value => updateField(campo.name, value, campo)"
+                        @update:modelValue="value => updateField(campo.name, value, )"
                     />
                 </div>
             </div>

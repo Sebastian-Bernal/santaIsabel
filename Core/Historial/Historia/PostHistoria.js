@@ -25,6 +25,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
             if (!datos.Terapia?.id_procedimiento) errores.push("El procedimiento es obligatoria.");
 
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Diagnosticos
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
@@ -50,6 +51,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Diagnosticos
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
@@ -68,6 +70,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Analisis?.tipoAnalisis) errores.push("El tipo de analisis es obligatorio.");
             if (!datos.Analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
 
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Diagnosticos
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
@@ -208,6 +211,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 }
             });
 
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
             datos.Diagnosticos.forEach((d, i) => {
                 if (!d.descripcion || !d.codigo) {
                     errores.push(`Diagnóstico ${i + 1} incompleto.`);
@@ -275,6 +280,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             // Validar Profesional
             if (!datos.Cita?.id_medico) errores.push("El médico que registra historia es obligatorio.");
 
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Diagnosticos
             if (datos.Diagnosticos.length === 0 && puedePostAnalisis) {
                 errores.push("Debe haber por lo menos un diagnostico.");
@@ -1276,13 +1282,31 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
     const varView = useVarView()
 
     datos.Nota.Descripcion = [
-    ...(datos.Nota.objetivo ?? []).map(d => ({ ...d, tipo: 'objetivo' })),
-    ...(datos.Nota.subjetivo ?? []).map(d => ({ ...d, tipo: 'subjetivo' })),
-    ...(datos.Nota.actividades ?? []).map(d => ({ ...d, tipo: 'actividades' })),
-    ...(datos.Nota.plan ?? []).map(d => ({ ...d, tipo: 'plan' })),
-    ...(datos.Nota.intervencion ?? []).map(d => ({ ...d, tipo: 'intervencion' })),
-    ...(datos.Nota.evaluacion ?? []).map(d => ({ ...d, tipo: 'evaluacion' })),
+    ...(datos.Nota.objetivo ?? [])
+        .map(d => ({ ...d, tipo: 'objetivo' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+    ...(datos.Nota.subjetivo ?? [])
+        .map(d => ({ ...d, tipo: 'subjetivo' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+    ...(datos.Nota.actividades ?? [])
+        .map(d => ({ ...d, tipo: 'actividades' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+    ...(datos.Nota.plan ?? [])
+        .map(d => ({ ...d, tipo: 'plan' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+    ...(datos.Nota.intervencion ?? [])
+        .map(d => ({ ...d, tipo: 'intervencion' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+    ...(datos.Nota.evaluacion ?? [])
+        .map(d => ({ ...d, tipo: 'evaluacion' }))
+        .filter(d => !Object.values(d).every(v => v === '' || v == null)),
     ];
+
 
     const storeCodigos = useCodigos()
     const codigosLocal = await storeCodigos.leerdatos(true)
@@ -1333,7 +1357,8 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
                         codigo: d.codigo
-                    })),
+                    }))
+                    .filter(d => !Object.values(d).every(v => v === '' || v == null)),
                     Descripcion: (datos.Nota.Descripcion ?? []).map(d => ({
                         descripcion: d.descripcion,
                         hora: d.hora,

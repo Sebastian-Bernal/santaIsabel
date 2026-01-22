@@ -14,6 +14,13 @@ const estructura = {
         ubicacion: '',
         precio: '',
     },
+    Movimiento: {
+        cantidadMovimiento: '',
+        tipoMovimiento: '',
+        fechaMovimiento: '',
+        id_medico: '',
+        name_medico: '',
+    }
 }
 
 // Pinia Insumos

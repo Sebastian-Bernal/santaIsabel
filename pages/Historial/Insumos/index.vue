@@ -10,6 +10,7 @@ import { mapCampos } from '~/components/organism/Forms/useFormulario'
 import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 import { useMovimientoBuilder } from '~/build/Historial/useMovimientoBuilder'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import PDFMovimientoInsumo from '~/components/paginas/PDFMovimientoInsumo.vue'
 
 const varView = useVarView()
 
@@ -143,7 +144,7 @@ const propiedades = computed(() => {
 
     const formularioRegistrarMovimiento = puedePut
         ? useMovimientoBuilder({
-            storeId: "AgregrarMovimientoInsumo",
+            storeId: "NuevoMovimiento",
             storePinia: "Insumos",
             show: showMovimiento.value,
             medicosList: medicosList,
@@ -198,4 +199,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
+    <PDFMovimientoInsumo v-if="varView.showPDFInsumo" />
 </template>

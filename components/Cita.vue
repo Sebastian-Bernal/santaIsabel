@@ -30,11 +30,7 @@ const CIE10 = ref([])
 onMounted(async () => {
     varView.cargando = true
     const rol = sessionStorage.getItem('Rol')
-    if (rol === 'Profesional') {
-        pacientesList.value = await pacientesStore.listPacientesAtendidos(false);
-    } else {
-        pacientesList.value = await pacientesStore.listPacientes();
-    }
+    pacientesList.value = await pacientesStore.listPacientes(true, true);
     medicosList.value = await medicosStore.listMedicos();
 
     CIE10.value = await storeCodigos.leerdatos();
