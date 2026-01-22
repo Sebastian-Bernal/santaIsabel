@@ -88,7 +88,7 @@ watch(filtros, (nuevoValor, anteriorValor) => {
 // Citas filtradas segun dia seleccionado
 const citasFiltradas = computed(() => {
     return Citas.value?.filter(cita => {
-        if (!cita.fecha) return false;
+        if (!cita.fecha || cita.estado === 'cancelada') return false;
 
         const fechaInicio = new Date(cita.fecha);
         const fechaFin = cita.fechaHasta ? new Date(cita.fechaHasta) : null;
@@ -336,11 +336,6 @@ async function activarCita(cita) {
             {{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}
         </h2>
 
-        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
-            class="w-full py-8 flex justify-center">
-            <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
-        </div>
-
         <!-- Citas Pendientes -->
         <div v-if="fechaActual === fecha && pendientes.length > 1 && !props.Propiedades.showTodas">
             <div class="flex items-center justify-between my-2 px-5">
@@ -356,7 +351,7 @@ async function activarCita(cita) {
             </div>
 
             <div class="grid gap-2 px-4" v-if="showPendientes"
-                :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2': !varView.showEnFila }">
+                :class="{ 'xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 lg:grid-cols-1': !varView.showEnFila }">
                 <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                     v-for="cita in pendientes.reverse()"
                     :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
@@ -456,7 +451,7 @@ async function activarCita(cita) {
 
         <!-- Citas de Hoy -->
         <div class="grid gap-2 px-4"
-            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
+            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
             <template v-if="!unref(props.Propiedades.citas) || unref(props.Propiedades.citas).length === 0">
@@ -572,6 +567,11 @@ async function activarCita(cita) {
 
             </div>
 
+        </div>
+
+        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
+            class="w-full py-8 flex justify-center">
+            <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>
 
     </div>

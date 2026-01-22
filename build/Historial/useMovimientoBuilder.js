@@ -105,7 +105,7 @@ export function useMovimientoBuilder({
             label: 'Nombre del profesional',
             id: 'nombreM',
             name: 'nombreM',
-            tamaño: 'w-full col-span-2',
+            tamaño: 'w-full md:col-span-1 col-span-2',
             vmodel: 'Insumos.name_medico',
             options: medicosList,
             opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],

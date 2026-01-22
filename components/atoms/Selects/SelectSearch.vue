@@ -167,7 +167,7 @@ function desplegarOptions() {
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
-            @keyup.enter="Propiedades.events?.onKeyUp" @keydown="manejarTeclas" />
+            @keyup.enter="handleBlur" @keydown="manejarTeclas" />
 
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length" :class="[

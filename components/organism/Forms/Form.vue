@@ -68,7 +68,7 @@ function limpiar() {
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <form autocomplete="off" class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg pb-4"
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg pb-4"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
             <div class="pb-5 z-1 flex flex-col items-center h-[90%]">
@@ -119,7 +119,7 @@ function limpiar() {
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>
-        </form>
+        </div>
 
     </component>
 </template>

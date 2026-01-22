@@ -390,7 +390,6 @@ export function useUserBuilder({
                     tamaño: 'w-full cols-span-2 mb-6',
                     vmodel: 'Plan_manejo_procedimientos',
                     liveUpdate: true,
-                    disabled: true,
                     value: [],
                     campos: [
                         {

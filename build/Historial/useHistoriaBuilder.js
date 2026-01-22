@@ -1528,7 +1528,7 @@ export function useHistoriaBuilder({
                             upperCase:true,
                             tamaño: 'w-full md:col-span-1 col-span-2',
                             options: CIE10,
-                            opciones: [{ value: 'description' }, { text: 'Codigo', value: 'code' }],
+                            opciones: [{ value: 'code' }, { text: 'Descripcion:', value: 'description' }],
                             seleccionarItem: seleccionarCIE_10,
                         },
                     ],

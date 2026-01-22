@@ -44,7 +44,7 @@ const emit = defineEmits(['update:modelValue']);
             @click="Propiedades.events?.onClick"
             @change="Propiedades.events?.onChange?.($event)"
             @blur="Propiedades.events?.onBlur"
-            @keyup.f2="Propiedades.events?.onKeyUp"
+            @keyup.enter="Propiedades.events?.onKeyUp"
             :disabled="Propiedades.disabled"
             :class="[{ 'inputIcon': Propiedades.icon, 'inputSlot': Propiedades.slot && Propiedades.slot.label, 'input-disabled': Propiedades.disabled }, Propiedades.estilo]" 
             class="mt-1 w-full h-[35px] block px-3 py-2 border text-black border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
@@ -94,7 +94,7 @@ input:invalid {
 
 .input-disabled {
     background-color: var(--color-gray-100);
-    cursor: !important not-allowed;
+    cursor: not-allowed;
 }
 
 @layer utilities {

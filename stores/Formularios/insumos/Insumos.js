@@ -11,6 +11,8 @@ const estructura = {
         stock: '',
         lote: '',
         vencimiento: '',
+        ubicacion: '',
+        precio: '',
     },
 }
 

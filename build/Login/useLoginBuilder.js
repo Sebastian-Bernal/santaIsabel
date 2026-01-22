@@ -1,6 +1,8 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
+import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import CrossImg from '~/assets/img/cross.png'
+import { useUsuariosStore } from '~/stores/Formularios/login/Login';
 
 export function useLoginBuilder({
   storeId,
@@ -13,6 +15,7 @@ export function useLoginBuilder({
   mostrarContraseña
 }) {
   const builder = new FormularioBuilder()
+  const usuarioStore = useUsuariosStore()
 
   const cambiarMostrarContraseña = () => {
       mostrarContraseña.value = !mostrarContraseña.value;
@@ -84,7 +87,10 @@ export function useLoginBuilder({
       slot: {
         label: mostrarContraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-gray-200"></i>`,
         action: cambiarMostrarContraseña
-      }
+      },
+      events: {
+        onKeyUp: () => validarYEnviarLogin(usuarioStore.Formulario)
+      },
     })
     .addCampo({
       component: 'Label',

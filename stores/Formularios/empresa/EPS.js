@@ -51,34 +51,8 @@ export const useDatosEPSStore = defineStore('DatosEPS', {
         },
 
         async indexDBDatos() {
-            const eps = await traerdatosEPS()
-            const epsLocal = await this.listEPS()
-
-            // Crear un conjunto de IDs locales para comparación rápida
-            const ids = new Set(
-                epsLocal.map(data => data.id)
-            );
-
-            const EPSIndexed = eps?.map((data) => ({
-                EPS: {
-                    id: data.id,
-                    nombre: data.nombre,
-                    codigo: data.codigo,
-                    nit: data.nit,
-                    estado: data.estado,
-                }
-            }));
-
-            // Filtrar los que no están en local
-            const nuevasEPS = EPSIndexed.filter(item => {
-                const key = item.EPS.id;
-                return !ids.has(key);
-            });
-
-            // Guardar solo los nuevos
-            nuevasEPS.forEach(item => {
-                guardarEnDB(item);
-            });
+            const api = useApiRest()
+            await api.getData('EPS', 'eps')        
         },
     }
 });
