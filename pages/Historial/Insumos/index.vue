@@ -178,7 +178,7 @@ const propiedades = computed(() => {
     const acciones = [];
     if (puedePut) {
         acciones.push({ icon: "ver", action: verInsumo });
-        acciones.push({ icon: "actualizar", action: agregarMovimiento });
+        acciones.push({ icon: "movimiento", action: agregarMovimiento });
     }
     if (acciones.length > 0) {
         tablaBuilder.setAcciones({ icons: acciones, botones: true });

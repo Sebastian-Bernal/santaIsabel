@@ -23,6 +23,8 @@ const iconoClase = computed(() => {
             return 'fa-solid fa-download';
         case 'pdf':
             return 'fa-solid fa-file-pdf text-xl text-gray-700 dark:text-gray-200';
+        case 'movimiento':
+            return 'fa-solid fa-cart-plus text-xs text-white dark:text-gray-700';
         default:
             return '';
     }
@@ -42,6 +44,8 @@ const botonClase = computed(() => {
             return 'bg-blue-700 w-[24px] h-[24px] cursor-pointer';
         case 'pdf':
             return 'w-[24px] h-[24px] cursor-pointer md:bg-inherit bg-gray-200 dark:bg-gray-700';
+        case 'movimiento':
+            return 'w-[24px] h-[24px] cursor-pointer bg-amber-600 dark:bg-amber-700';
         case 'Rojo':
             return 'bg-red-500 w-[10px] h-[10px]';        
         case 'Naranja':

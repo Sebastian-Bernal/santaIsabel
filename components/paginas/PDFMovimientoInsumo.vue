@@ -160,7 +160,10 @@ const propiedades = computed(() => {
             `
                 <div class="min-h-[150px]">
                     <p class="text-xs text-center py-1 border-1">Firma o sello del Responsable</p>
-                    <div class="flex justify-center items-center" id="selloResponsable"><img src="${config.public.api}/storage/${propiedadesInsumoPDF.value.sello}" class="w-[100px] h-[100px] pt-1"/></div>
+                    <div class="flex items-center justify-center gap-2 py-5">
+                        <input type="checkbox" id="firmar" name="firmar" checked="modelValue" />
+                        <label for="firmar" class="text-black dark:text-white">Firmar</label>
+                    </div>
                 </div>
             `
         ],
