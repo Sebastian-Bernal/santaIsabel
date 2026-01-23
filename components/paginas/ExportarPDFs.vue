@@ -43,7 +43,7 @@ const file = reactive({
 });
 
 const camposRequeridos = [
-    'fechaInicio', 'fechaFin', 'worksheet'
+    'fechaInicio', 'fechaFin'
 ];
 
 watch(file, (newValue) => {
@@ -77,7 +77,7 @@ const filtrarAnalisisPorFecha = (analisis, fechaInicio, fechaFin) => {
 
     return analisis.filter(analisis => {
         const fechaCreacion = new Date(analisis.created_at);
-        return fechaCreacion >= inicio && fechaCreacion <= fin;
+        return fechaCreacion >= inicio && fechaCreacion <= fin && analisis.servicio === 'Nota';
     });
 };
 
@@ -109,7 +109,11 @@ const calcularEdad = (fechaNacimiento) => {
 const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diagnosticos, diagnosticosCIF) => {
     const tiposOrden = ["subjetivo", "objetivo", "actividades", "plan", "intervencion", "evaluacion"];
 
-    const descripcionesNota = (descripcion || []).filter(d => d.id_nota === data.id);
+    const nota = await historiasStore.listDatos(data.id, 'Nota', 'id_analisis');
+
+    const descripcionesNota = descripcion.filter(d => {
+        return Number(d.id_nota) === Number(nota[0]?.id);
+    });
 
     // Agrupar por tipo
     const agrupadoPorTipo = descripcionesNota.reduce((acc, nota) => {
@@ -128,10 +132,10 @@ const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diag
 
         let contenido = `<p class="text-start text-xs py-1"><strong>${tipo.toUpperCase()}:</strong></p>`;
 
-        contenido += notasTipo.map(nota => `
+        contenido += notasTipo.map(n => `
             <div class="flex">
-                <p class="text-xs border-r-1 px-3 py-1">${nota.hora || ''}</p>
-                <p class="text-xs w-full px-1">${nota.descripcion || ''}</p>
+                <p class="text-xs border-r-1 px-3 py-1">${n.hora || ''}</p>
+                <p class="text-xs w-full px-1">${n.descripcion || ''}</p>
             </div>
         `).join("");
 
@@ -154,31 +158,44 @@ const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diag
     const htmlContent = `
         <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
             <!-- ENCABEZADO -->
-            <div style="border-bottom: 2px solid #000; padding-bottom: 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div style="text-align: center; flex: 1;">
-                        <img src="/logo.png" style="width: 60px; height: auto;" />
-                        <p style="margin: 5px 0; font-size: 12px;"><strong>Santa Isabel IPS</strong></p>
+            <table class="w-full text-sm mb-4 border-b-2 pb-3 border-custom" style="width:100%; border-bottom:2px solid #000; margin-bottom:15px; font-size:12px;">
+            <thead>
+                <tr>
+                <!-- Logo y nombre -->
+                <th style="width:20%; text-align:center; padding:5px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <img src="/logo.png" style="width:60px; height:auto;" />
+                    <p style="margin:5px 0; font-size:12px;"><strong>Santa Isabel IPS</strong></p>
                     </div>
-                    <div style="flex: 2; padding-left: 20px;">
-                        <p style="font-size: 11px; margin: 5px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">
-                            <strong>Proceso:</strong> Programa de Atención Domiciliaria
-                        </p>
-                        <p style="font-size: 11px; margin: 5px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">
-                            <strong>Registro</strong>
-                        </p>
-                        <p style="font-size: 11px; margin: 5px 0;">
-                            <strong>Nota de Enfermería de Atención Domiciliaria</strong>
-                        </p>
-                    </div>
-                    <div style="flex: 1; text-align: right; font-size: 10px;">
-                        <p style="margin: 5px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">Código: </p>
-                        <p style="margin: 5px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">Versión: </p>
-                        <p style="margin: 5px 0; border-bottom: 1px solid #000; padding-bottom: 5px;">Fecha: ${data.fecha_nota || formatearFecha(new Date())}</p>
-                        <p style="margin: 5px 0;">Página: 1 de 1</p>
-                    </div>
-                </div>
-            </div>
+                </th>
+
+                <!-- Proceso / Registro / Nota -->
+                <th style="width:50%; text-align:left; padding:5px;">
+                    <p style="font-size:11px; margin:5px 0; border-bottom:1px solid #000; padding-bottom:5px; text-transform:uppercase;">
+                    <strong>Proceso:</strong> Programa de Atención Domiciliaria
+                    </p>
+                    <p style="font-size:11px; margin:5px 0; border-bottom:1px solid #000; padding-bottom:5px; text-transform:uppercase;">
+                    <strong>Registro</strong>
+                    </p>
+                    <p style="font-size:11px; margin:5px 0; text-transform:uppercase;">
+                    <strong>Nota de Enfermería de Atención Domiciliaria</strong>
+                    </p>
+                </th>
+
+                <!-- Código / Versión / Fecha / Página -->
+                <th style="width:30%; text-align:right; font-size:10px; padding:5px;">
+                    <p style="margin:5px 0; border-bottom:1px solid #000; padding-bottom:5px;">Código: </p>
+                    <p style="margin:5px 0; border-bottom:1px solid #000; padding-bottom:5px;">Versión: </p>
+                    <p style="margin:5px 0; border-bottom:1px solid #000; padding-bottom:5px;">
+                    Fecha: ${nota[0].fecha_nota || formatearFecha(new Date())}
+                    </p>
+                    <p style="margin:5px 0;">Página: 1 de 1</p>
+                </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            </table>
+
 
             <!-- DATOS DEL PACIENTE -->
             <div style="margin-bottom: 20px;">
@@ -220,15 +237,15 @@ const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diag
                         <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Diagnóstico</th>
                         <th style="padding: 8px; border: 1px solid #ddd; text-align: left; width: 15%;">CIE-10</th>
                     </tr>
-                    ${diagnosticosNota.length > 0 
-                        ? diagnosticosNota.map(diag => `
+                    ${diagnosticosNota.length > 0
+            ? diagnosticosNota.map(diag => `
                             <tr>
                                 <td style="padding: 8px; border: 1px solid #ddd;">${diag[0]}</td>
                                 <td style="padding: 8px; border: 1px solid #ddd;">${diag[1]}</td>
                             </tr>
                         `).join('')
-                        : '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd;">Sin diagnósticos registrados</td></tr>'
-                    }
+            : '<tr><td colspan="2" style="padding: 8px; border: 1px solid #ddd;">Sin diagnósticos registrados</td></tr>'
+        }
                 </table>
             </div>
 
@@ -245,7 +262,7 @@ const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diag
                         </div>
                     </div>
                     <div style="display: flex; gap: 10px;">
-                        <p style="font-size: 10px; width: 80px; margin: 0;">${data.fecha_nota || formatearFecha(new Date())}</p>
+                        <p style="font-size: 10px; width: 80px; margin: 0;">${nota[0].fecha_nota || formatearFecha(new Date())}</p>
                         <div style="flex: 1; border-left: 1px solid #ddd; padding-left: 10px; font-size: 9px;">
                             ${filasNotas}
                         </div>
@@ -277,8 +294,8 @@ const generarPDFNota = async (data, dataPaciente, profesional, descripcion, diag
     return htmlContent;
 };
 
-// Convertir HTML a PDF usando html2canvas y jsPDF
-const htmlToPDF = async (html, filename) => {
+// Imprimir html generado con window.print
+const htmlToPrint = async (html, filename) => {
     return new Promise(async (resolve, reject) => {
         try {
             // Crear un elemento temporal para renderizar el HTML
@@ -323,9 +340,12 @@ const htmlToPDF = async (html, filename) => {
                 heightLeft -= 297;
             }
 
-            resolve(pdf.output('arraybuffer'));
+            // Descargar directamente el PDF
+            pdf.save(filename || 'documento.pdf');
+
+            resolve(true);
         } catch (error) {
-            console.error('Error al generar PDF:', error);
+            console.error('Error al imprimir:', error);
             reject(error);
         }
     });
@@ -379,11 +399,12 @@ const enviarPDFs = async () => {
         for (let i = 0; i < analisisFiltrados.length; i++) {
             const analisis = analisisFiltrados[i];
 
+            const historia = await historiasStore.listDatos(analisis.id_historia, 'HistoriaClinica', 'id');
             // Obtener datos del paciente asociado a esta nota
-            const paciente = pacientes.find(p => p.id_paciente === analisis.id_paciente);
+            const paciente = pacientes.find(p => p.id_paciente === historia[0]?.id_paciente);
             if (!paciente) continue;
 
-            const profesional = profesionales.find(med => med.id_profesional === analisis.id_profesional);
+            const profesional = profesionales.find(med => med.id_profesional === analisis.id_medico);
             if (!profesional) continue;
 
             // Obtener diagnósticos para este análisis
@@ -400,22 +421,10 @@ const enviarPDFs = async () => {
             );
 
             // Convertir a PDF
-            const pdfBuffer = await htmlToPDF(
+            const pdfBuffer = await htmlToPrint(
                 htmlContent,
-                `NOTA_${paciente.name}_${formatearFecha(new Date(analisis.created_at))}`
+                `${paciente.name}_${analisis.id}.pdf`
             );
-
-            // Descargar PDF individual
-            const nombreArchivo = `NOTA_${paciente.name.replace(/\s+/g, '_')}_${formatearFecha(new Date(analisis.created_at))}.pdf`;
-            const blob = new Blob([pdfBuffer], { type: 'application/pdf' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = nombreArchivo;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
 
             // Pequeña pausa entre descargas (500ms)
             await new Promise(resolve => setTimeout(resolve, 500));
@@ -426,6 +435,7 @@ const enviarPDFs = async () => {
         // Mensaje de éxito
         options.position = 'top-end';
         options.texto = `${totalAnalisis} PDFs generados y descargados exitosamente`;
+        options.background = '#22c55e'
         options.tiempo = 2000;
         mensaje();
 
@@ -445,6 +455,7 @@ const enviarPDFs = async () => {
 
 <template>
     <FondoBlur>
+        <div class="bg-[rgba(0,0,0,0.5)] w-full h-full flex justify-center items-center">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[50%] md:h-[50%] w-[90%] h-[80%]">
             <div class="py-5 h-full flex flex-col justify-between">
                 <h2 class="text-2xl font-semibold text-center py-2">Configuración datos a exportar</h2>
@@ -477,31 +488,24 @@ const enviarPDFs = async () => {
                             <span class="text-sm font-bold text-blue-600">{{ progreso }}%</span>
                         </div>
                         <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
-                            <div 
-                                class="bg-blue-500 h-full transition-all duration-300"
-                                :style="{ width: progreso + '%' }"
-                            ></div>
+                            <div class="bg-blue-500 h-full transition-all duration-300"
+                                :style="{ width: progreso + '%' }"></div>
                         </div>
                     </div>
                 </div>
-                    <div class="w-full flex justify-center items-center gap-3 px-2">
-                        <ButtonForm 
-                            color="bg-gray-500 md:w-[200px] sm:w-[2/3] w-full" 
-                            @click="cerrar"
-                            :disabled="generandoPDFs"
-                        >
-                            Cancelar
-                        </ButtonForm>
+                <div class="w-full flex justify-center items-center gap-3 px-2">
+                    <ButtonForm color="bg-gray-500 md:w-[200px] sm:w-[2/3] w-full" @click="cerrar"
+                        :disabled="generandoPDFs">
+                        Cancelar
+                    </ButtonForm>
 
-                        <ButtonForm 
-                            color="bg-blue-500 md:w-[200px] sm:w-[2/3] w-full" 
-                            @click="validarform"
-                            :disabled="generandoPDFs"
-                        >
-                            {{ generandoPDFs ? 'Procesando...' : 'Generar' }}
-                        </ButtonForm>
-                    </div>
+                    <ButtonForm color="bg-blue-500 md:w-[200px] sm:w-[2/3] w-full" @click="validarform"
+                        :disabled="generandoPDFs">
+                        {{ generandoPDFs ? 'Procesando...' : 'Generar' }}
+                    </ButtonForm>
+                </div>
             </div>
+        </div>
         </div>
     </FondoBlur>
 </template>

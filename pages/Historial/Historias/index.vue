@@ -1060,7 +1060,7 @@ const propiedades = computed(() => {
                            { columna: 'tipoAnalisis', placeholder: 'Estado' },
                     ],
                     acciones: [
-                        { icon: 'fa-solid fa-file', accion: () => {varView.showExportarPDFs = true}, color: 'bg-black text-[var(--color-default-600)] hover:bg-gray-100', text: 'Exportar' }
+                        { icon: 'fa-solid fa-file', accion: () => {varView.showExportarPDFs = true}, color: 'bg-black text-white hover:bg-gray-900', text: 'Exportar' }
                     ]
                 })
             )
