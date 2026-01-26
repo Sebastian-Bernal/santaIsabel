@@ -389,7 +389,7 @@ async function activarCita(cita) {
                     </div>
                     <!-- FOOTER -->
                     <div class="flex gap-2 pt-2">
-                        <div class="flex gap-2 w-full justify-between" v-if="cita.estado === 'Inactiva'">
+                        <div class="flex w-full justify-between gap-3 mt-3 bg-gray-50 rounded-full" v-if="cita.estado === 'Inactiva'">
                             <ButtonRounded
                                 color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
                                 tooltip="Cancelar" tooltipPosition="top"

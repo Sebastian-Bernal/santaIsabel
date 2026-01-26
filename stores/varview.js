@@ -49,6 +49,9 @@ export const useVarView = defineStore('varView', {
         datosPaciente: {},
         // Impresion
         propiedadesPDF: {},
+        onlyPaciente: false,
+        id_pacientePDF: '',
+        servicioPDF: '',
         //layout
         expandido: false,
     }),
@@ -76,7 +79,7 @@ export const useVarView = defineStore('varView', {
             try {
                 const usuario = decryptData(sessionStorage.getItem('user'));
                 return usuario || {};
-            } catch (error) {Aside
+            } catch (error) {
                 console.error('Error al obtener usuario desde sessionStorage:', error);
                 return {};
             }

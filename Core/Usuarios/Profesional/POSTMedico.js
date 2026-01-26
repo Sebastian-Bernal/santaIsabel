@@ -112,6 +112,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     const profesionesStore = useDatosProfesionStore()
     const profesiones = await profesionesStore.listProfesion
@@ -144,6 +145,9 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
             formData.append("zona_laboral", datos.Profesional.zona_laboral);
 
             formData.append("correo", datos.User.correo);
+
+            const usuario = varView.getUser
+            formData.append("id_correoCreador", usuario.id);
 
             // Imagen reducida (Blob)
             if (datos.Profesional.sello) {
@@ -204,11 +208,6 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
 
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             return true
         }
     } else {

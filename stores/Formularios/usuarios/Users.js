@@ -9,6 +9,7 @@ export const useUsersStore = defineStore('Users', {
                 id_usuario: '',
                 name: '',
                 No_document: '',
+                type_doc: '',
                 tipo: '',
                 celular: '',
                 telefono: '',
