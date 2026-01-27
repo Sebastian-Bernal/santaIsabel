@@ -516,6 +516,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Analisis.id_medico,
                         servicio: datos.Analisis.servicio,
+                        nombreServicio: datos.Analisis.nombreServicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,

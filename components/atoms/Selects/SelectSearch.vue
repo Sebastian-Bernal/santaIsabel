@@ -158,6 +158,17 @@ function desplegarOptions() {
     showOptions.value = !showOptions.value;
 }
 
+function handleEnter(event) {
+    if (opcionesFiltradas.value.length > 0 && opcionesFiltradas.value.length < 2) {
+        // Si hay opciones, seleccionar la primera
+        event.preventDefault();
+        seleccionar(opcionesFiltradas.value[0]);
+    } else {
+        // Si no hay opciones, ejecutar handleBlur
+        handleBlur(event);
+    }
+}
+
 </script>
 
 <template>
@@ -167,7 +178,7 @@ function desplegarOptions() {
             :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
-            @keyup.enter="handleBlur" @keydown="manejarTeclas" />
+            @keyup.enter="handleEnter" @keydown="manejarTeclas" />
 
 
         <ul v-show="mostrarLista && opcionesFiltradas?.length" :class="[

@@ -1,11 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
 import PDFFormulaMedica from '~/components/paginas/PDFFormulaMedica.vue';
-import PDFEvolucion from '~/components/paginas/PDFEvolucion.vue'
-import PDFNota from '~/components/paginas/PDFNota.vue'
-import PDFTerapia from '~/components/paginas/PDFTerapia.vue'
-import PDFMedicina from '~/components/paginas/PDFMedicina.vue'
-import PDFTrabajoSocial from '~/components/paginas/PDFTrabajoSocial.vue'
 import ExportarPDFs from '~/components/paginas/ExportarPDFs.vue';
 
 import { ref, onMounted, unref } from 'vue';
@@ -22,6 +17,7 @@ import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
 import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
+import { decryptData } from '~/composables/Formulario/crypto';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -430,43 +426,23 @@ function cerrarNota() {
 
 // PDF
 async function exportarNotaPDF(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFNota = true
+    exportarServicioPDF('Nota', data.id_analisis)
 }
 
 async function exportarEvolucionPDF(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFTerapia = true
+    exportarServicioPDF('Terapia', data.id_analisis)
 }
 
 async function exportarMedicinaPDF(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFMedicina = true
+    exportarServicioPDF('Medicina', data.id_analisis)
 }
 
 async function exportarNutricionPDF(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFEvolucion = true
+    exportarServicioPDF('Evolucion', data.id)
 }
 
 async function exportarTrabajoSocialPDF(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFTrabajoSocial = true
+    exportarServicioPDF('Trabajo Social', data.id)
 }
 
 async function exportarHistoriaPDF() {
@@ -480,6 +456,36 @@ async function exportarHistoriaPDF() {
 
     propiedadesHistoriaPDF.value = { ...dataPaciente[0], consultas: [...analisis.value] }
     activePdfHistoria.value = true
+}
+
+async function exportarServicioPDF(servicio, id_analisis) {
+    try {
+        varView.cargando = true
+        const config = useRuntimeConfig()
+        const token = decryptData(sessionStorage.getItem('token'))
+        const res = await fetch(`${config.public.api}/api/v1/${servicio}/${id_analisis}/pdf`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/pdf'
+            }
+        });
+        if (!res.ok) {
+            throw new Error(`Error en la petición: ${res.status}`);
+        }
+
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Opcion de abrimos el PDF en una nueva pestaña sin descargar
+        window.open(url, '_blank');
+
+        setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+        varView.cargando = false
+    } catch (err) {
+        console.error("Error al obtener el PDF:", err);
+        varView.cargando = false
+    }
 }
 
 function pdfMedicinas(data) {
@@ -1016,6 +1022,19 @@ const propiedades = computed(() => {
                         buscador: true,
                         filtros: [
                             { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        ],
+                        acciones: [
+                            {
+                                icon: 'fa-solid fa-file-pdf',
+                                accion: () => {
+                                    varView.showExportarPDFs = true
+                                    varView.onlyPaciente = true
+                                    varView.id_pacientePDF = historiasStore.Formulario.HistoriaClinica.id_paciente
+                                    varView.servicioPDF = 'Medicina'
+                                },
+                                color: 'bg-gray-800 text-white hover:bg-gray-900 dark:bg-gray-200 dark:text-black',
+                                text: 'Exportar'
+                            },
                         ]
                     })
                 .setDatos(puedeVerMedicina ? analisis : [])
@@ -1152,7 +1171,7 @@ const propiedades = computed(() => {
                         { icon: 'pdf', action: pdfMedicinas }], botones: true,
                 })
                 .setHeaderTabla({
-                    titulo: 'Medicinas',
+                    titulo: 'Medicamentos del Paciente',
                     color: 'bg-[var(--color-default-600)] text-white',
                     espacioMargen: '500',
                     buscador: true,
@@ -1185,6 +1204,19 @@ const propiedades = computed(() => {
                     buscador: true,
                     filtros: [
                         { columna: 'created_at', placeholder: 'Fecha' },
+                    ],
+                    acciones: [
+                        {
+                            icon: 'fa-solid fa-file-pdf',
+                            accion: () => {
+                                varView.showExportarPDFs = true
+                                varView.onlyPaciente = true
+                                varView.id_pacientePDF = historiasStore.Formulario.HistoriaClinica.id_paciente
+                                varView.servicioPDF = 'Evolucion'
+                            },
+                            color: 'bg-gray-800 text-white hover:bg-gray-900 dark:bg-gray-200 dark:text-black',
+                            text: 'Exportar'
+                        },
                     ]
                 })
             )
@@ -1212,6 +1244,19 @@ const propiedades = computed(() => {
                     buscador: true,
                     filtros: [
                         { columna: 'creted_at', placeholder: 'Fecha' },
+                    ],
+                    acciones: [
+                        {
+                            icon: 'fa-solid fa-file-pdf',
+                            accion: () => {
+                                varView.showExportarPDFs = true
+                                varView.onlyPaciente = true
+                                varView.id_pacientePDF = historiasStore.Formulario.HistoriaClinica.id_paciente
+                                varView.servicioPDF = 'Trabajo Social'
+                            },
+                            color: 'bg-gray-800 text-white hover:bg-gray-900 dark:bg-gray-200 dark:text-black',
+                            text: 'Exportar'
+                        },
                     ]
                 })
             )
@@ -1228,10 +1273,5 @@ const propiedades = computed(() => {
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <PDFFormulaMedica v-if="varView.showPDFMedicamentos"></PDFFormulaMedica>
-    <PDFEvolucion v-if="varView.showPDFEvolucion" />
-    <PDFNota v-if="varView.showPDFNota"></PDFNota>
-    <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
-    <PDFMedicina v-if="varView.showPDFMedicina" />
-    <PDFTrabajoSocial v-if="varView.showPDFTrabajoSocial" />
     <ExportarPDFs v-if="varView.showExportarPDFs" :datos="analisis" />
 </template>

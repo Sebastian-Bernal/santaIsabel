@@ -7,7 +7,7 @@ export function useProfesionalActions({
     notificaciones,
     show,
     showVer,
-    refrescar // función opcional para actualizar lista
+    llamadatos
 }) {
 
     /* ===============================
@@ -75,11 +75,9 @@ export function useProfesionalActions({
         notificaciones.mensaje();
         notificaciones.options.background = "#d33";
 
-        if (refrescar) {
-            await refrescar();
-        } else {
-            window.location.reload();
-        }
+        cerrar();
+        await llamadatos();
+        refresh.value++;
     };
 
     return {

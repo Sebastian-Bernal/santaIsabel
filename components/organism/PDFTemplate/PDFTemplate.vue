@@ -127,21 +127,11 @@ const cerrar = () => {
                             disabled: true,
                             ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
                         }" />
-
+                    <slot/>
                 </div>
             </div>
         </div>
     </FondoBlur>
-    <!-- <div :id="props.Propiedades.elementId"
-        style="width: 794px; margin-bottom: 25px; background: white; position: absolute; top: -9999px; left: -9999px; color: black;">
-
-        <component v-for="component in Propiedades.components" :is="componentes[component.tipo]" :Propiedades="{
-            ...component,
-            disabled: true,
-            ...(component.vmodel ? { texto: component.texto + getValue(tablaStore?.Formulario, component.vmodel) } : {}),
-        }" />
-
-    </div> -->
 </template>
 
 <style scoped>

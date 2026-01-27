@@ -33,6 +33,7 @@ const generandoPDFs = ref(false);
 const progreso = ref(0);
 const pacientesStore = usePacientesStore()
 const profesionalStore = useMedicosStore()
+const calendarioCitasStore = useCalendarioCitas();
 
 const file = reactive({
     fechaInicio: '',
@@ -45,6 +46,21 @@ const file = reactive({
 const camposRequeridos = [
     'fechaInicio', 'fechaFin'
 ];
+
+onMounted(() => {
+    // Obtener la fecha actual desde el store
+    const [dia, mes, año] = calendarioCitasStore.fechaActual.split('/');
+    const fechaActual = new Date(`${año}-${mes}-${dia}`);
+
+    // Fecha fin = hoy
+    file.fechaFin = fechaActual.toISOString().split('T')[0];
+
+    // Fecha inicio = un mes antes
+    const fechaInicio = new Date(fechaActual);
+    fechaInicio.setMonth(fechaInicio.getMonth() - 1);
+    file.fechaInicio = fechaInicio.toISOString().split('T')[0];
+
+})
 
 watch(file, (newValue) => {
     file.value = newValue
@@ -72,11 +88,13 @@ const validarform = () => {
 // Filtrar análisis por rango de fechas
 const filtrarAnalisisPorFecha = (analisis, historias, servicio, fechaInicio, fechaFin, id_paciente = '', id_profesional = '') => {
     const inicio = new Date(fechaInicio);
+    inicio.setHours(0, 0, 0, 0); // incluir desde el inicio del día
+
     const fin = new Date(fechaFin);
-    fin.setHours(23, 59, 59, 999); // incluir todo el último día
+    fin.setHours(23, 59, 59, 999); // incluir hasta el final del día
 
     return analisis.filter(item => {
-        const fechaCreacion = new Date(item.created_at);
+        const fechaCreacion = new Date(item.created_at.replace(' ', 'T'));
 
         // Buscar paciente asociado a la historia
         const id_paciente_analisis = historias.find(h => h.id === item.id_historia)?.id_paciente;
@@ -122,7 +140,8 @@ const enviarPDFs = async () => {
 
         if (analisisFiltrados.length === 0) {
             options.position = 'top-end';
-            options.texto = "No se encontraron Notas en el rango de fechas especificado";
+            options.background = '#d33'
+            options.texto = "No se encontraron registros en el rango de fechas especificado";
             options.tiempo = 2000;
             mensaje();
             generandoPDFs.value = false;
@@ -197,107 +216,124 @@ const enviarPDFs = async () => {
 <template>
     <FondoBlur>
         <div class="bg-[rgba(0,0,0,0.5)] w-full h-full flex justify-center items-center">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg md:w-[50%] md:h-[60%] w-[90%] h-[80%]">
-            <div class="py-5 h-full flex flex-col justify-between">
-                <h2 class="text-2xl font-semibold text-center py-2">Configuración datos a exportar</h2>
-                <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
-                    <div class="flex justify-between items-center mb-5">
-                        <p class="text-lg text-gray-600"><i class="fa-solid fa-gear"></i> Rango de Fechas</p>
-                    </div>
+            <div
+                class="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300">
+                <div class="py-6 h-full flex flex-col justify-between">
+                    <!-- Título -->
+                    <h2 class="text-2xl font-bold text-center py-3 text-gray-800 dark:text-gray-100 tracking-wide">
+                        Configuración de Exportación
+                    </h2>
 
-                    <div class="pb-3">
-                        <Select v-model="file.servicio" :Propiedades="{
-                            placeholder: 'Servicio',
-                            id: 'servicio',
-                            name: 'servicio',
-                            label: 'Elige el Servicio',
-                            options: [
-                                {
-                                    text: 'Nota', value: 'Nota',
-                                },
-                                {
-                                    text: 'Terapia', value: 'Terapia',
-                                }
-                            ]
-                        }" />
-                    </div>
-
-                    <div class="grid md:grid-cols-2 grid-cols-1 gap-3">
-                        <Input v-model="file.fechaInicio" :Propiedades="{
-                            placeholder: 'Fecha de inicio',
-                            id: 'fechaInicio',
-                            name: 'fechaInicio',
-                            label: 'Fecha de Inicio',
-                            type: 'date',
-                        }" />
-                        <Input v-model="file.fechaFin" :Propiedades="{
-                            placeholder: 'Fecha de fin',
-                            id: 'fechaFin',
-                            name: 'fechaFin',
-                            type: 'date',
-                            label: 'Fecha de Fin',
-                        }" />
-                    </div>
-
-                    <div class="flex justify-between items-center mt-5" v-if="!varView.onlyPaciente">
-                        <p class="text-base text-gray-600"><i class="fa-solid fa-user"></i> Filtrar por:</p>
-                    </div>
-                    <div class="grid md:grid-cols-2 grid-cols-1 gap-3" v-if="!varView.onlyPaciente">
-                        <SelectSearch v-model="varView.pacientePDF" :Propiedades="{
-                            placeholder: 'Paciente (opcional)',
-                            tamaño: 'w-full',
-                            id: 'paciente',
-                            name: 'paciente',
-                            label: 'Filtrar Paciente (opcional)',
-                            options: pacientesStore.Pacientes,
-                            opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
-                            seleccionarItem: (item) => {
-                                console.log(item)
-                                file.id_paciente = item.id_paciente
-                            },
-                            upperCase: true,
-                        }" />
-                        <SelectSearch v-model="file.profesionalPDF" :Propiedades="{
-                            placeholder: 'Profesional (opcional)',
-                            tamaño: 'w-full',
-                            id: 'profesional',
-                            name: 'profesional',
-                            type: 'date',
-                            label: 'Filtrar Profesional (opcional)',
-                            options: profesionalStore.Medicos,
-                            opciones: [{ value: 'name' }, { text: 'Cedula', value: 'No_document' }],
-                            seleccionarItem: (item) => {
-                                file.id_profesional = item.id_profesional
-                            },
-                            upperCase: true,
-                        }" />
-                    </div>
-
-                    <!-- Mostrar progreso durante la generación -->
-                    <div v-if="generandoPDFs" class="mt-6 space-y-3">
-                        <div class="flex justify-between items-center">
-                            <p class="text-sm font-semibold text-gray-700">Generando PDFs...</p>
-                            <span class="text-sm font-bold text-blue-600">{{ progreso }}%</span>
+                    <!-- Contenido scrollable -->
+                    <div class="h-full pt-5 overflow-y-auto scrollForm px-10 space-y-6">
+                        <!-- Sección rango de fechas -->
+                        <div class="flex items-center gap-2 mb-5">
+                            <i class="fa-solid fa-calendar-days text-blue-500"></i>
+                            <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Rango de Fechas</p>
                         </div>
-                        <div class="w-full bg-gray-300 rounded-full h-3 overflow-hidden">
-                            <div class="bg-blue-500 h-full transition-all duration-300"
-                                :style="{ width: progreso + '%' }"></div>
+
+                        <!-- Select servicio -->
+                        <div class="pb-3" v-if="!varView.onlyPaciente">
+                            <Select v-model="file.servicio" :Propiedades="{
+                                placeholder: 'Servicio',
+                                id: 'servicio',
+                                name: 'servicio',
+                                label: 'Elige el Servicio',
+                                options: [
+                                    { text: 'Nota', value: 'Nota' },
+                                    { text: 'Terapia', value: 'Terapia' },
+                                    { text: 'Evolución', value: 'Evolucion' },
+                                    { text: 'Trabajo Social', value: 'Trabajo Social' },
+                                    { text: 'Medicina', value: 'Medicina' }
+                                ]
+                            }" />
+                        </div>
+
+                        <!-- Inputs fechas -->
+                        <div class="grid md:grid-cols-2 grid-cols-1 gap-4">
+                            <Input v-model="file.fechaInicio" :Propiedades="{
+                                placeholder: 'Fecha de inicio',
+                                id: 'fechaInicio',
+                                name: 'fechaInicio',
+                                label: 'Fecha de Inicio',
+                                type: 'date',
+                            }" />
+                            <Input v-model="file.fechaFin" :Propiedades="{
+                                placeholder: 'Fecha de fin',
+                                id: 'fechaFin',
+                                name: 'fechaFin',
+                                type: 'date',
+                                label: 'Fecha de Fin',
+                            }" />
+                        </div>
+
+                        <!-- Filtros -->
+                        <div v-if="!varView.onlyPaciente">
+                            <div class="flex items-center gap-2 mt-5">
+                                <i class="fa-solid fa-filter text-green-500"></i>
+                                <p class="text-base font-medium text-gray-700 dark:text-gray-300">Filtrar por:</p>
+                            </div>
+                            <div class="grid md:grid-cols-2 grid-cols-1 gap-4 mt-3">
+                                <SelectSearch v-model="varView.pacientePDF" :Propiedades="{
+                                    placeholder: 'Paciente (opcional)',
+                                    tamaño: 'w-full',
+                                    id: 'paciente',
+                                    name: 'paciente',
+                                    label: 'Filtrar Paciente (opcional)',
+                                    options: pacientesStore.Pacientes,
+                                    opciones: [{ value: 'name' }, { text: 'Cédula', value: 'No_document' }],
+                                    seleccionarItem: (item) => {
+                                        file.id_paciente = item.id_paciente
+                                    },
+                                    upperCase: true,
+                                }" />
+                                <SelectSearch v-model="file.profesionalPDF" :Propiedades="{
+                                    placeholder: 'Profesional (opcional)',
+                                    tamaño: 'w-full',
+                                    id: 'profesional',
+                                    name: 'profesional',
+                                    label: 'Filtrar Profesional (opcional)',
+                                    options: profesionalStore.Medicos,
+                                    opciones: [{ value: 'name' }, { text: 'Cédula', value: 'No_document' }],
+                                    seleccionarItem: (item) => {
+                                        file.id_profesional = item.id_profesional
+                                    },
+                                    upperCase: true,
+                                }" />
+                            </div>
+                        </div>
+
+                        <!-- Progreso -->
+                        <div v-if="generandoPDFs" class="mt-6 space-y-3">
+                            <div class="flex justify-between items-center">
+                                <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Generando PDFs...</p>
+                                <span class="text-sm font-bold text-blue-600">{{ progreso }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-500 ease-out"
+                                    :style="{ width: progreso + '%' }"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="w-full flex justify-center items-center gap-3 px-2">
-                    <ButtonForm color="bg-gray-500 md:w-[200px] sm:w-[2/3] w-full" @click="cerrar"
-                        :disabled="generandoPDFs">
-                        Cancelar
-                    </ButtonForm>
 
-                    <ButtonForm color="bg-blue-500 md:w-[200px] sm:w-[2/3] w-full" @click="validarform"
-                        :disabled="generandoPDFs">
-                        {{ generandoPDFs ? 'Procesando...' : 'Generar' }}
-                    </ButtonForm>
+                    <!-- Botones -->
+                    <div class="w-full flex justify-center items-center gap-4 px-4 mt-6">
+                        <ButtonForm
+                            color="bg-gray-500 hover:bg-gray-600 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
+                            @click="cerrar" :disabled="generandoPDFs">
+                            <i class="fa-solid fa-xmark mr-2"></i> Cancelar
+                        </ButtonForm>
+
+                        <ButtonForm
+                            color="bg-blue-600 hover:bg-blue-700 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
+                            @click="validarform" :disabled="generandoPDFs">
+                            <i class="fa-solid fa-file-export mr-2"></i> {{ generandoPDFs ? 'Procesando...' : 'Generar'
+                            }}
+                        </ButtonForm>
+                    </div>
                 </div>
             </div>
-        </div>
+
         </div>
     </FondoBlur>
 </template>

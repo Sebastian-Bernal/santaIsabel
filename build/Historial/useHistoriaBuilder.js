@@ -1581,13 +1581,6 @@ export function useHistoriaBuilder({
                     minlength: 10
                 })
 
-                .addCampo({
-                    component: 'Label',
-                    forLabel: '',
-                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
-                    tamaño: 'w-full col-span-2',
-                })
-
                 // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
 
                 .addCampo({
@@ -1680,21 +1673,6 @@ export function useHistoriaBuilder({
                     containerCampos: 'grid grid-cols-3 gap-2'
                 })
 
-                // --- Select: Condición de rehabilitación ---
-                .addCampo({
-                    component: 'Select',
-                    vmodel: 'Analisis.tratamiento',
-                    id: 'rehabilitacion',
-                    name: 'rehabilitacion',
-                    placeholder: 'Condición de rehabilitación',
-                    tamaño: 'w-full md:col-span-2',
-                    options: [
-                        { text: 'Total o Parcial', value: 'Total o Parcial' },
-                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-                    ]
-                })
-
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Procedimientos (opcional)',
@@ -1727,6 +1705,29 @@ export function useHistoriaBuilder({
                         },
                     ],
                     containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
+                })
+
+                // --- Select: Condición de rehabilitación ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Analisis.tratamiento',
+                    id: 'rehabilitacion',
+                    name: 'rehabilitacion',
+                    placeholder: 'Condición de rehabilitación',
+                    tamaño: 'w-full md:col-span-2',
+                    options: [
+                        { text: 'Total o Parcial', value: 'Total o Parcial' },
+                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                    ]
+                })
+
+
+                .addCampo({
+                    component: 'Label',
+                    forLabel: '',
+                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
+                    tamaño: 'w-full col-span-2',
                 })
 
         }

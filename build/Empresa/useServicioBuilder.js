@@ -13,7 +13,7 @@ export function useServicioBuilder({
   const varView = useVarView()
   const puedeDelete = varView.getPermisos.includes('Datos_delete');
   
-  if (eliminar) {
+  if (actualizar) {
     builder
       .setFormularioFondo(true)
       .nuevaSeccion('Formulario Servicio')
@@ -24,6 +24,9 @@ export function useServicioBuilder({
     builder
       .setFormularioFondo(true)
       .nuevaSeccion('Agregar Nuevo Servicio')
+      .setFormularioTipo('normal')
+      .setFormularioTituloFormulario('Servicio')
+      .setFormularioShow(showModificarServicio)
   }
 
   builder

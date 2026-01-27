@@ -150,6 +150,7 @@ export function useFormulario(props) {
 
     function validarform() {
         notificaciones.options.position = 'top-end'
+        notificaciones.options.background = '#d33'
         notificaciones.options.texto = "Faltan campos por llenar, por favor ingrese valores"
         notificaciones.options.tiempo = 1500
         notificaciones.mensaje()

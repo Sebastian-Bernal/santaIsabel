@@ -353,9 +353,10 @@ const propiedades = computed(() => {
         ? useServicioBuilder({
             storeId: 'Servicio',
             storePinia: 'Servicio',
-            actualizar: true,
+            actualizar: false,
             showModificarServicio: showNuevoServicio,
             cerrar: cerrarServicio,
+            eliminar: false
         })
         : null;
 

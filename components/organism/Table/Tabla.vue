@@ -127,7 +127,7 @@ const tablaAlto = computed(() => {
                     <ButtonRounded color="bg-blue-700">
                         <i class="fa-solid fa-filter"></i>
                     </ButtonRounded>
-                    <h4 class="md:block hidden">Filtrar Datos</h4>
+                    <h4 class="md:block hidden select-none">Filtrar Datos</h4>
                 </div>
 
                 <client-only v-if="Propiedades.headerTabla.excel">
@@ -136,7 +136,7 @@ const tablaAlto = computed(() => {
                             <ButtonRounded color="bg-green-500">
                                 <i class="fa-solid fa-file-excel"></i>
                             </ButtonRounded>
-                            <h4 class="md:block hidden">Exportar</h4>
+                            <h4 class="md:block hidden select-none">Exportar</h4>
                         </div>
                         <div
                             class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-lg">
@@ -158,7 +158,7 @@ const tablaAlto = computed(() => {
                 </client-only>
 
                 <div v-if="props.Propiedades.headerTabla?.accionAgregar"
-                    @click="props.Propiedades.headerTabla.accionAgregar" class="flex gap-1 items-center cursor-pointer">
+                    @click="props.Propiedades.headerTabla.accionAgregar" class="flex gap-1 items-center cursor-pointer user-select-none">
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </ButtonRounded>

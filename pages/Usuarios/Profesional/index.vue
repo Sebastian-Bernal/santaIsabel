@@ -48,10 +48,7 @@ const {
     notificaciones,
     show,
     showVer,
-    refrescar: async () => {
-        await llamadatos();
-        refresh.value++;
-    }
+    llamadatos
 });
 
 // Watch para actualizar informacion al agregar o actualizar
