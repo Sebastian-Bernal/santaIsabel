@@ -25,14 +25,15 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
             if (!datos.Terapia?.id_procedimiento) errores.push("El procedimiento es obligatoria.");
 
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Diagnosticos
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
                     errores.push(`Diagnostico ${idx + 1} incompleto o codigo incompleto.`);
                 }
             });
 
+            datos.DiagnosticosCIF = datos.DiagnosticosCIF.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.DiagnosticosCIF.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
                     errores.push(`Diagnostico CIF ${idx + 1} incompleto o codigo incompleto.`);
@@ -78,6 +79,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 }
             });
 
+            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
                 errores.push("El plan de medicamentos debe ser un arreglo.");
             } else {
@@ -89,6 +91,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Insumos
+            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Plan_manejo_insumos.forEach((i, idx) => {
                 if (!i.nombre || isNaN(parseInt(i.cantidad))) {
                     errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
@@ -96,6 +99,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Equipos
+            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Plan_manejo_equipos.forEach((e, idx) => {
                 if (!e.descripcion || !e.uso) {
                     errores.push(`Equipo ${idx + 1} incompleto.`);
@@ -321,6 +325,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Plan de Medicamentos
+            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
                 errores.push("El plan de medicamentos debe ser un arreglo.");
             } else {
@@ -332,6 +337,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Procedimientos
+            datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Plan_manejo_procedimientos.forEach((p, i) => {
                 if (!p.procedimiento || !p.codigo) {
                     errores.push(`Procedimiento ${i + 1} incompleto.`);
@@ -339,6 +345,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Insumos
+            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Plan_manejo_insumos.forEach((i, idx) => {
                 if (!i.nombre || isNaN(parseInt(i.cantidad))) {
                     errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
@@ -346,6 +353,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Equipos
+            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => !Object.values(d).every(v => v === '' || v == null))
             datos.Plan_manejo_equipos.forEach((e, idx) => {
                 if (!e.descripcion || !e.uso) {
                     errores.push(`Equipo ${idx + 1} incompleto.`);
@@ -674,16 +682,14 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                varView.propiedadesPDF = respuesta.Analisis
-                varView.showPDFMedicina = true
+                varView.propiedadesPDF = {
+                    id: respuesta.Analisis.id,
+                    servicio: 'Medicina'
+                }
+                varView.showPDFServicio = true
                 return true
             }
         } catch (error) {
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -879,8 +885,11 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                varView.propiedadesPDF = respuesta.data
-                varView.showPDFTerapia = true
+                varView.propiedadesPDF = {
+                    id: respuesta.data.id_analisis,
+                    servicio: 'Terapia'
+                }
+                varView.showPDFServicio = true
                 return true
             }
         } catch (error) {
@@ -1012,16 +1021,14 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                varView.propiedadesPDF = respuesta.Analisis
-                varView.showPDFEvolucion = true
+                varView.propiedadesPDF = {
+                    id: respuesta.Analisis.id,
+                    servicio: 'Evolucion'
+                }
+                varView.showPDFServicio = true
                 return true
             }
         } catch (error) {
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -1195,16 +1202,14 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                varView.propiedadesPDF = respuesta.Analisis
-                varView.showPDFTrabajoSocial = true
+                varView.propiedadesPDF = {
+                    id: respuesta.Analisis.id,
+                    servicio: 'Trabajo Social'
+                }
+                varView.showPDFServicio = true
                 return true
             }
         } catch (error) {
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {
@@ -1401,16 +1406,14 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                 };
 
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
-                varView.propiedadesPDF = respuesta.data
-                varView.showPDFNota = true
+                varView.propiedadesPDF = {
+                    id: respuesta.data.id_analisis,
+                    servicio: 'Nota'
+                }
+                varView.showPDFServicio = true
                 return true
             }
         } catch (error) {
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
             console.error('Fallo al enviar. Guardando localmente', error);
         }
     } else {

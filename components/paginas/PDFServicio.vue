@@ -2,6 +2,7 @@
 import FondoBlur from '../atoms/Fondos/FondoBlur.vue';
 
 import { onMounted } from 'vue';
+import { useVarView } from "~/stores/varview.js";
 import { decryptData } from '~/composables/Formulario/crypto';
 
 const varView = useVarView();
@@ -9,16 +10,17 @@ let blobGuardado = ''
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
-    await exportarMedicinaPDF(varView.propiedadesPDF)
+    await exportarNutricionPDF(varView.propiedadesPDF)
     varView.cargando = false
 });
 
-async function exportarMedicinaPDF(data) {
+// PDF
+async function exportarNutricionPDF(data) {
     try {
         varView.cargando = true
         const config = useRuntimeConfig()
         const token = decryptData(sessionStorage.getItem('token'))
-        const res = await fetch(`${config.public.api}/api/v1/Medicina/${data.id}/pdf`, {
+        const res = await fetch(`${config.public.api}/api/v1/${data.servicio}/${data.id}/pdf`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -33,9 +35,8 @@ async function exportarMedicinaPDF(data) {
         blobGuardado = blob
         const url = window.URL.createObjectURL(blob);
 
-        // Opcion de abrir el PDF en la pagina
+        // Opcion de abrimos el PDF en una nueva pestaña sin descargar
         document.getElementById('visorPDF').src = url;
-
 
         setTimeout(() => window.URL.revokeObjectURL(url), 10000);
         varView.cargando = false
@@ -50,7 +51,7 @@ async function descargarPDF() {
     const url = window.URL.createObjectURL(blobGuardado);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "Evolucion.pdf";
+    a.download = `${varView.propiedadesPDF.servicio}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -58,16 +59,16 @@ async function descargarPDF() {
 }
 
 const cerrarPDF = () => {
-    varView.showPDFMedicina = false
+    varView.showPDFServicio = false
 }
 
 </script>
 
 <template>
     <FondoBlur>
-        <div class="bg-white rounded-xl overflow-hidden shadow-2xl w-4/5 max-w-5xl relative">
+        <div class="bg-white rounded-xl overflow-hidden shadow-2xl w-4/5 max-w-4xl relative">
 
-                       <!-- Encabezado -->
+            <!-- Encabezado -->
             <div class="bg-[var(--color-default)] px-5 py-3 flex justify-between">
                 <h3 class="text-white text-lg font-semibold">Vista previa del documento PDF</h3>
 
@@ -95,4 +96,5 @@ const cerrarPDF = () => {
         </div>
 
     </FondoBlur>
+
 </template>

@@ -1,10 +1,6 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue'
-import PDFEvolucion from '~/components/paginas/PDFEvolucion.vue'
-import PDFNota from '~/components/paginas/PDFNota.vue'
-import PDFTerapia from '~/components/paginas/PDFTerapia.vue'
-import PDFMedicina from '~/components/paginas/PDFMedicina.vue'
-import PDFTrabajoSocial from '~/components/paginas/PDFTrabajoSocial.vue'
+import PDFServicio from '~/components/paginas/PDFServicio.vue'
 
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder'
 import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/CalendarioBuilder'
@@ -176,9 +172,5 @@ const propiedades = computed(() => {
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <Cita></Cita>
-    <PDFEvolucion v-if="varView.showPDFEvolucion"/>
-    <PDFNota v-if="varView.showPDFNota"></PDFNota>
-    <PDFTerapia v-if="varView.showPDFTerapia"></PDFTerapia>
-    <PDFMedicina v-if="varView.showPDFMedicina"/>
-    <PDFTrabajoSocial v-if="varView.showPDFTrabajoSocial"/>
+    <PDFServicio v-if="varView.showPDFServicio"></PDFServicio>
 </template>

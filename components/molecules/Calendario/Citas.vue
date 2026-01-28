@@ -365,7 +365,7 @@ async function activarCita(cita) {
                                     cita.hora.substring(0, 5) : '' }}
                             </h2>
                             <p class="text-xs text-gray-500 dark:text-gray-300">
-                                {{ props.Propiedades.showTodas ? cita.fecha : fechaCita }}
+                                {{ cita.fecha }}
                             </p>
                         </div>
                         <div class="flex flex-col gap-1">
@@ -388,8 +388,8 @@ async function activarCita(cita) {
                         </div>
                     </div>
                     <!-- FOOTER -->
-                    <div class="flex gap-2 pt-2">
-                        <div class="flex w-full justify-between gap-3 mt-3 bg-gray-50 rounded-full" v-if="cita.estado === 'Inactiva'">
+                    <div class="flex flex-col gap-2 pt-2">
+                        <div class="flex w-full justify-between gap-3 mt-3 rounded-full" v-if="cita.estado === 'Inactiva'">
                             <ButtonRounded
                                 color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
                                 tooltip="Cancelar" tooltipPosition="top"

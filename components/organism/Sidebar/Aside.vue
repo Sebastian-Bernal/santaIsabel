@@ -35,8 +35,11 @@ const cambiarEstadoFalse = () => {
                 class="menu-colapsado flex md:flex-col flex-row items-center justify-between md:h-screen md:w-16 shadow-lg border-r border-gray-200 md:py-4 pb-2">
 
                 <!-- Botón expandir -->
-                <ButtonRounded @click="varView.expandido = true" tooltip="Abrir Menú" tooltip-position="right"
-                    color="flex items-center justify-center w-10 h-10 rounded-full md:bg-[var(--color-default)] bg-[var(--color-default-700)] text-white hover:bg-[var(--color-default-200)] transition">
+                <ButtonRounded @click="() => {
+                    varView.expandido = true;
+                    cambiarEstadoFalse()
+                    }" tooltip="Abrir Menú" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full md:bg-[var(--color-default-200)] bg-[var(--color-default-700)] text-white hover:bg-[var(--color-default-200)] transition">
                     <i class="fa-solid fa-angle-right"></i>
                 </ButtonRounded>
 
@@ -89,7 +92,7 @@ const cambiarEstadoFalse = () => {
                     <div class="flex justify-between items-center md:flex flex-row-reverse border-b border-gray-200 dark:border-gray-700 md:dark:border-gray-200 pb-3 mb-4">
                         <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 md:dark:text-gray-800 tracking-wide">Menú</h2>
                         <ButtonRounded @click="varView.expandido = false" tooltip="Cerrar Menú" tooltip-position="right"
-                            color="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-default)] text-white hover:bg-[var(--color-default-200)] transition">
+                            color="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-default-200)] text-white hover:bg-[var(--color-default-200)] transition">
                             <i class="fa-solid fa-angle-left"></i>
                         </ButtonRounded>
                     </div>

@@ -159,7 +159,7 @@ function desplegarOptions() {
 }
 
 function handleEnter(event) {
-    if (opcionesFiltradas.value.length > 0 && opcionesFiltradas.value.length < 2) {
+    if (opcionesFiltradas.value.length > 0) {
         // Si hay opciones, seleccionar la primera
         event.preventDefault();
         seleccionar(opcionesFiltradas.value[0]);
@@ -175,7 +175,7 @@ function handleEnter(event) {
     <div class="relative" :class="Propiedades.tamaño">
         <input :value="modelValue"
             class="z-100 mt-1 h-[35px] text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            :class="Propiedades.tamaño" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
+            :class="[Propiedades.tamaño, {'cursor-not-allowed': Propiedades.disabled}]" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
             :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
             @keyup.enter="handleEnter" @keydown="manejarTeclas" />
@@ -190,7 +190,10 @@ function handleEnter(event) {
                 'px-3 py-2 cursor-pointer',
                 index === opcionActiva
                     ? 'bg-blue-200 dark:bg-gray-600'
-                    : 'hover:bg-blue-100 dark:hover:bg-gray-500'
+                    : 'hover:bg-blue-100 dark:hover:bg-gray-500',
+                index === 0
+                    ? 'bg-blue-100 dark:bg-gray-600'
+                    : ''
             ]" 
             @mousedown.prevent="seleccionar(opcion)">
                 <div v-for="campo in Propiedades.opciones" :key="campo.value">
