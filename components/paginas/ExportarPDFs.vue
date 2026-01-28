@@ -86,27 +86,42 @@ const validarform = () => {
 };
 
 // Filtrar análisis por rango de fechas
-const filtrarAnalisisPorFecha = (analisis, historias, servicio, fechaInicio, fechaFin, id_paciente = '', id_profesional = '') => {
+const filtrarAnalisisPorFecha = (analisis, historias, notas, terapias, servicio, fechaInicio, fechaFin, id_paciente = '', id_profesional = '') => {
     const inicio = new Date(fechaInicio);
     inicio.setHours(0, 0, 0, 0); // incluir desde el inicio del día
 
     const fin = new Date(fechaFin);
     fin.setHours(23, 59, 59, 999); // incluir hasta el final del día
 
-    return analisis.filter(item => {
-        const fechaCreacion = new Date(item.created_at.replace(' ', 'T'));
+    const resultado = [];
+    for (const item of analisis) {
+        let fechaCreacion = '';
 
-        // Buscar paciente asociado a la historia
+        if (servicio === 'Nota') {
+            const nota = notas.find(n => n.id_analisis === item.id);
+            if (!nota) continue;
+            fechaCreacion = new Date(nota.fecha_nota);
+        } else if (servicio === 'Terapia') {
+            const terapia = terapias.find(n => n.id_analisis === item.id);
+            if (!terapia) continue;
+            fechaCreacion = new Date(terapia.fecha);
+        } else {
+            fechaCreacion = new Date(item.created_at);
+        }
+
         const id_paciente_analisis = historias.find(h => h.id === item.id_historia)?.id_paciente;
 
-        // Condiciones dinámicas
         const condicionFecha = fechaCreacion >= inicio && fechaCreacion <= fin;
         const condicionProfesional = id_profesional ? parseInt(id_profesional) === parseInt(item.id_medico) : true;
         const condicionPaciente = id_paciente ? parseInt(id_paciente) === parseInt(id_paciente_analisis) : true;
-        const condicionServicio = servicio === item.servicio
+        const condicionServicio = servicio === item.servicio;
 
-        return condicionFecha && condicionProfesional && condicionPaciente && condicionServicio;
-    });
+        if (condicionFecha && condicionProfesional && condicionPaciente && condicionServicio) {
+            resultado.push(item);
+        }
+    }
+    return resultado;
+
 };
 
 const enviarPDFs = async () => {
@@ -126,11 +141,21 @@ const enviarPDFs = async () => {
 
         store.almacen = 'HistoriaClinica';
         let historiasData = await store.leerdatos();
+        let notas = []
+        let terapias = []
+
+        if (file.servicio === 'Nota' || varView.servicioPDF === 'Nota') {
+            notas = await apiRest.getData('Nota', 'notas');
+        } else if (file.servicio === 'Terapia' || varView.servicioPDF === 'Terapia') {
+            terapias = await apiRest.getData('Terapia', 'terapias');
+        }
 
         // Filtrar análisis por rango de fechas
         const analisisFiltrados = filtrarAnalisisPorFecha(
             analisisData,
             historiasData,
+            notas,
+            terapias,
             file.servicio || varView.servicioPDF,
             file.fechaInicio,
             file.fechaFin,

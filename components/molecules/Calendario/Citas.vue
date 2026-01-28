@@ -454,7 +454,7 @@ async function activarCita(cita) {
             :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
-            <template v-if="!unref(props.Propiedades.citas) || unref(props.Propiedades.citas).length === 0">
+            <template v-if="!unref(props.Propiedades.citas)">
                 <div v-for="i in 2" :key="i" :class="Propiedades.tamaño"
                     class="w-full p-4 shadow-md bg-white dark:bg-gray-700 flex flex-col gap-4 animate-pulse">
                     <!-- HEADER -->

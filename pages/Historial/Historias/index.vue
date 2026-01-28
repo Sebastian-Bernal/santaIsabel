@@ -661,7 +661,7 @@ const propiedades = computed(() => {
                             varView.id_pacientePDF = ''
                             varView.servicioPDF = ''
                         },
-                        color: 'bg-gray-600 text-white hover:bg-gray-900 dark:bg-gray-200 dark:text-black',
+                        color: 'bg-gray-600 text-white hover:bg-gray-900 dark:bg-gray-500 dark:hover:bg-gray-600',
                         text: 'Exportar'
                     },
                 ]
