@@ -347,12 +347,12 @@ export function useHistoriaBuilder({
                     },
                     {
                         name: 'codigo',
-                        id: 'cie-10',
+                        id: 'codigo',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIF',
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIF,
-                        opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
+                        opciones: [{ value: 'codigo' }, { text: 'Nombre: ', value: 'nombre' }],
                         seleccionarItem: (item) => {
                             historiaStore.Formulario.DiagnosticosCIF.at(-1).codigo = item.codigo
                             historiaStore.Formulario.DiagnosticosCIF.at(-1).descripcion = item.nombre

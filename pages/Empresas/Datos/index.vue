@@ -120,6 +120,8 @@ async function actualizarProfesion(profesion) {
     storeProfesion.Formulario.Profesion.id = profesion.id
     storeProfesion.Formulario.Profesion.id_temporal = profesion.id_temporal
     const permisos = await storeProfesion.traerPermisos(profesion.id)
+    storeProfesion.Formulario.Profesion.ListaPacientes = permisos.includes("ListaPacientes")
+    storeProfesion.Formulario.Profesion.Diagnosticos_view = permisos.includes("Diagnosticos_view")
     storeProfesion.Formulario.Profesion.permisos = permisos
     showModificarProfesion.value = true
 }

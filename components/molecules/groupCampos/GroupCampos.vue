@@ -204,7 +204,12 @@ const itemsCompletos = computed(() =>
                         :class="{ 'fa-angle-up': showCampos, 'fa-angle-down': !showCampos }">
                     </i>
                 </div>
-                <span v-if="items.length > 0" class="text-sm text-blue-700">{{ items.length }}</span>
+                <span v-if="items.length > 0" class="text-sm text-blue-700">
+                    {{ 
+                    props.Propiedades.liveUpdate ? 
+                    items.length > 1 ? items.length - 1 : items.length
+                    :  items.length 
+                    }}</span>
             </div>
         </div>
 

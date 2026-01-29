@@ -198,10 +198,21 @@ const enviarPDFs = async () => {
                 // Opcion de abrimos el PDF en una nueva pestaña sin descargar
                 // window.open(url, '_blank');
 
+                // Leer el nombre desde el header
+                const disposition = res.headers.get('Content-Disposition');
+                let fileName = `${varView.servicioPDF || file.servicio}_${analisis.id}.pdf`;
+                if (disposition) {
+                const match = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/);
+                if (match && match[1]) {
+                    fileName = decodeURIComponent(match[1]);
+                }
+                }
+
+
                 // Descargar
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${varView.servicioPDF || file.servicio}_${analisis.id}.pdf`; // nombre dinámico
+                a.download = fileName; // nombre dinámico
                 document.body.appendChild(a);
                 a.click();
                 a.remove();

@@ -9,34 +9,31 @@ export const validarYEnviarNuevaCita = async (datos) => {
     const varView = useVarView()
     const cita = datos.Cita;
 
-    let camposObligatorios = []
+    let camposObligatorios = [
+            'id_paciente',
+            'id_medico',
+            'name_paciente',
+            'name_medico',
+            'servicio',
+            'motivo',
+            'fecha',
+    ]
     const servicioStore = useDatosServicioStore()
     const serviciosPlantilla = await servicioStore.listServicios()
     const tipoConsulta = serviciosPlantilla.find((s) => {
         return s.name === cita.servicio
     })?.plantilla
 
-    if (tipoConsulta === 'Terapia') {
-        camposObligatorios = [
-            'id_paciente',
-            'id_medico',
-            'name_paciente',
-            'name_medico',
-            'servicio',
-            'motivo',
-            'fecha',
-        ];
-    } else {
-        camposObligatorios = [
-            'id_paciente',
-            'id_medico',
-            'name_paciente',
-            'name_medico',
-            'servicio',
-            'motivo',
-            'fecha',
-        ];
-    }
+    // if (tipoConsulta === 'Terapia' && !cita.nuevoProcedimiento) {
+    //     camposObligatorios.push(
+    //         'id_procedimiento'
+    //     );
+    // } else {
+    //     camposObligatorios.push(
+    //         'procedimiento',
+    //         'codigo',
+    //     );
+    // }
 
     if (datos.Cita.tipo) {
         camposObligatorios.push(

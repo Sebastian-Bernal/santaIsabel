@@ -52,6 +52,8 @@ export default defineNuxtConfig({
       dashboard: 'api/v1/dashboard',
       traeDatosHistoria: 'api/v1/traeDatosHistoria',
       traeDatosPlanManejo: 'api/v1/traeDatosPlanManejo',
+      traePacientes: 'api/v1/traePacientes',
+      traeProfesionales: 'api/v1/traeProfesionales',
     }
   },
   app: {

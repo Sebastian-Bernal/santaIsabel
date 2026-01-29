@@ -52,8 +52,6 @@ const actualizar = ref(false)
 const propiedadesHistoriaPDF = ref({})
 const activePdfHistoria = ref(false)
 
-const puedePostAnalisis = ref(Boolean)
-
 async function llamadatos() {
     varView.cargando = true
     const datos = await historiasStore.datosHistoria
@@ -579,9 +577,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    // const puedePost = varView.getPermisos.includes('Historias_post')
-    // const puedePUT = varView.getPermisos.includes('Historias_put')
-    puedePostAnalisis.value = varView.getPermisos.includes('Diagnosticos_view')
+
     const puedeVerNotas = varView.getPermisos.includes('Notas_view')
     const puedeVerEvoluciones = varView.getPermisos.includes('Evoluciones_view')
     const puedeVerTerapias = varView.getPermisos.includes('Terapias_view')

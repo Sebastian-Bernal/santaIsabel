@@ -33,28 +33,18 @@ export const enviarFormularioProfesion = async (datos, reintento = false) => {
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
-    // Convertir permisos
-    // datos.Profesion.permisos = datos.Profesion.permisos.map((permiso) => {
-    //     if (typeof permiso !== 'string') return permiso;
+    if (datos.Profesion.ListaPacientes === true) {
+        datos.Profesion.permisos.push("ListaPacientes")
+    } else {
+        datos.Profesion.permisos = datos.Profesion.permisos.filter(permiso => permiso !== "ListaPacientes")
+    }
 
-    //     const partes = permiso.split(' ');
-    //     const seccion = partes.slice(0, -1).join(' ');
-    //     const accion = partes[partes.length - 1];
-
-    //     switch (accion) {
-    //         case 'leer':
-    //             return `${seccion}_get`;
-    //         case 'crear':
-    //             return `${seccion}_post`;
-    //         case 'actualizar':
-    //             return `${seccion}_put`;
-    //         case 'eliminar':
-    //             return `${seccion}_delete`;
-    //         default:
-    //             return `${permiso}_view`;
-    //     }
-    // });
-
+    if (datos.Profesion.Diagnosticos_view === true) {
+        datos.Profesion.permisos.push("Diagnosticos_view")
+    } else {
+        datos.Profesion.permisos = datos.Profesion.permisos.filter(permiso => permiso !== "Diagnosticos_view")
+    }
+    
     const online = navigator.onLine;
     if (online) {
         try {

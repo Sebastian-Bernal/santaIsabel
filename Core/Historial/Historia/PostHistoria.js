@@ -23,7 +23,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Terapia?.hora) errores.push("La hora es obligatoria.");
             if (!datos.Terapia?.objetivos) errores.push("El objetivo es obligatorio.");
             if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
-            if (!datos.Terapia?.id_procedimiento) errores.push("El procedimiento es obligatoria.");
 
             // Validar Diagnosticos
             datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
@@ -839,7 +838,7 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                         evolucion: datos.Terapia.evolucion,
                         id_paciente: datos.Terapia.id_paciente,
                         id_profesional: datos.Terapia.id_profesional,
-                        id_procedimiento: datos.Terapia.id_procedimiento,
+                        id_procedimiento: datos.Terapia.id_procedimiento || null,
                     },
                     Analisis: {
                         motivo: datos.Cita.servicio,

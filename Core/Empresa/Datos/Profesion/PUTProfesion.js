@@ -33,6 +33,18 @@ export const enviarFormularioPutProfesion = async (datos, reintento = false) => 
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
 
+    if (datos.Profesion.ListaPacientes === true) {
+        datos.Profesion.permisos.push("ListaPacientes")
+    } else {
+        datos.Profesion.permisos = datos.Profesion.permisos.filter(permiso => permiso !== "ListaPacientes")
+    }
+
+    if (datos.Profesion.Diagnosticos_view === true) {
+        datos.Profesion.permisos.push("Diagnosticos_view")
+    } else {
+        datos.Profesion.permisos = datos.Profesion.permisos.filter(permiso => permiso !== "Diagnosticos_view")
+    }
+
     const online = navigator.onLine;
     if (online) {
         try {

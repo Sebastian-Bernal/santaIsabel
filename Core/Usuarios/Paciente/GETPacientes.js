@@ -1,24 +1,64 @@
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS";
 import { useCitasStore } from "~/stores/Formularios/citas/Cita";
 import { useMedicosStore } from "~/stores/Formularios/profesional/Profesionales";
+import { decryptData } from "~/composables/Formulario/crypto";
 
 export async function traerPacientes({ online = true, filtrar = true } = {}) {
   const varView = useVarView();
   const rol = varView.getRol;
   const apiRest = useApiRest();
   const store = useIndexedDBStore();
-  const epsStore = useDatosEPSStore();
 
-  // Obtener datos según si está online o no
-  const getData = async (entidad, key) => {
-    if (online) return await apiRest.getData(entidad, key);
-    store.almacen = entidad;
-    return await store.leerdatos();
-  };
+  let usuarios = ''
+  let pacientes = ''
+  let EPSs = ''
+  if (online) {
 
-  const usuarios = await getData('InformacionUser', 'informacionUsers');
-  const pacientes = await getData('Paciente', 'pacientes');
-  const EPSs = online ? await apiRest.getData('EPS', 'eps') : await epsStore.listEPS();
+    const token = decryptData(sessionStorage.getItem('token'))
+    const config = useRuntimeConfig()
+    const dataPacientes = await apiRest.functionCall({
+      metodo: 'GET',
+      url: config.public.traePacientes,
+      token: token
+    })
+
+    if (dataPacientes.success) {
+      // guardar en IndexedDB para uso offline
+      const store = useIndexedDBStore();
+      // Definir mapeo entre nombre del almacén y propiedad en dataHistoria
+      const colecciones = {
+        Paciente: dataPacientes.pacientes,
+        InformacionUser: dataPacientes.informacionUsers,
+        EPS: dataPacientes.eps,
+      };
+
+      // Recorremos cada colección y guardamos en IndexedDB
+      for (const [almacen, datos] of Object.entries(colecciones)) {
+        store.almacen = almacen;
+        await store.borrartodo();
+
+        for (const item of datos) {
+          await store.guardardatosID({ ...item });
+        }
+      }
+
+      usuarios = dataPacientes.informacionUsers;
+      pacientes = dataPacientes.pacientes;
+      EPSs = dataPacientes.eps;
+
+    }
+  } else {
+
+    // Obtener datos según si está online o no
+    const getData = async (entidad, key) => {
+      store.almacen = entidad;
+      return await store.leerdatos();
+    };
+
+    usuarios = await getData('InformacionUser', 'informacionUsers');
+    pacientes = await getData('Paciente', 'pacientes');
+    EPSs = await getData('EPS', 'eps');
+  }
 
   // Crear mapa de EPS
   const mapaEPS = EPSs.reduce((acc, eps) => {
@@ -28,6 +68,7 @@ export async function traerPacientes({ online = true, filtrar = true } = {}) {
 
   let pacientesFiltrados = pacientes;
 
+  filtrar = !varView.getPermisos.includes('ListaPacientes')
   // Si rol es profesional y se requiere filtrar, obtener solo pacientes atendidos
   if (rol === 'Profesional' && filtrar) {
     const citasStore = useCitasStore();
@@ -50,23 +91,23 @@ export async function traerPacientes({ online = true, filtrar = true } = {}) {
     const usuario = usuarios.find(user => {
       const idVacio = !user.id;
       return user.id === paciente.id_infoUsuario ||
-             (user.id_temporal === paciente.id_infoUsuario && idVacio);
+        (user.id_temporal === paciente.id_infoUsuario && idVacio);
     });
 
     return usuario
       ? {
-          ...paciente,
-          ...usuario,
-          Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
-          id_paciente: paciente.id,
-          id_temporal: paciente.id_temporal,
-          id_temporalUsuario: usuario.id_temporal
-        }
+        ...paciente,
+        ...usuario,
+        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
+        id_paciente: paciente.id,
+        id_temporal: paciente.id_temporal,
+        id_temporalUsuario: usuario.id_temporal
+      }
       : {
-          ...paciente,
-          Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
-          usuario: null
-        };
+        ...paciente,
+        Eps: mapaEPS[paciente.id_eps] || paciente.Eps,
+        usuario: null
+      };
   });
 
   return usuariosPacientes;

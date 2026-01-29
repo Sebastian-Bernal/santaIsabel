@@ -72,9 +72,21 @@ export function useProfesionesBuilder({
       vmodel: 'Profesion.codigo',
       upperCase: true
     })
+      .addCampo({
+        component: 'Checkbox',
+        placeholder: 'Permitir mostrar todos los Pacientes?',
+        tamaño: 'w-full',
+        vmodel: 'Profesion.ListaPacientes',
+      })
+      .addCampo({
+        component: 'Checkbox',
+        placeholder: 'Permitir realizar diagnosticos?',
+        tamaño: 'w-full',
+        vmodel: 'Profesion.Diagnosticos_view',
+      })
     .addCampo({
       component: 'Permisos',
-      placeholder: 'Seleccione los permisos',
+      placeholder: 'Seleccione los permisos en cada Seccion',
       id: 'permisos',
       name: 'permisos',
       tamaño: 'w-full md:col-span-2',

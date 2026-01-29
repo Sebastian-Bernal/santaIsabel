@@ -332,7 +332,7 @@ const tablaAlto = computed(() => {
         <!-- Paginador -->
         <div class="mt-[10px] flex justify-between items-center h-[30px] md:px-10">
             <p class="text-sm text-gray-500 md:block hidden">
-                Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+                Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }} <span class="text-gray-600 dark:text-gray-400">de {{ datosOrdenados.length }}</span></p>
 
             <div class="btnsPagina flex items-center gap-3">
                 <button v-if="paginaActual > 1"

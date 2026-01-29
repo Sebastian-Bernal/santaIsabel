@@ -8,7 +8,6 @@ import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 import { useIngresoContraseñaBuilder } from '~/build/Login/useIngresoContraseñaBuilder';
-import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 
 definePageMeta({
     layout: 'authentication'
@@ -131,9 +130,6 @@ const propiedadesLogin = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedadesLogin" />
-     <!-- <FondoBlur>
-
-     </FondoBlur> -->
 </template>
 
 <style>

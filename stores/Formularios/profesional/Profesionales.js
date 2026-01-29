@@ -1,6 +1,7 @@
 import { traerProfesionales } from "~/Core/Usuarios/Profesional/GETProfesionales";
 import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';
+import { decryptData } from "~/composables/Formulario/crypto";
 
 // Pinia Medicos
 export const useMedicosStore = defineStore('Medicos', {
@@ -37,31 +38,59 @@ export const useMedicosStore = defineStore('Medicos', {
     }),
 
     getters: {
-        
+
         async tablaMedicos() {
             const store = useIndexedDBStore()
             store.almacen = 'Profesional'
             const medicos = await store.leerdatos()
-            
+
             const medicosActivos = medicos.filter((medico) => {
                 return medico.estado === 1
             })
-            
+
             return medicosActivos
         },
     },
-    
+
     actions: {
         async listMedicos(online = true) {
             const apiRest = useApiRest()
             const store = useIndexedDBStore()
-    
+
             let medicos = ''
             let usuarios = ''
 
-            if(online){
-                usuarios = await apiRest.getData('InformacionUser', 'informacionUsers')
-                medicos = await apiRest.getData('Profesional', 'profesionals')
+            if (online) {
+                const token = decryptData(sessionStorage.getItem('token'))
+                const config = useRuntimeConfig()
+                const dataProfesionales = await apiRest.functionCall({
+                    metodo: 'GET',
+                    url: config.public.traeProfesionales,
+                    token: token
+                })
+
+                if (dataProfesionales.success) {
+                    // guardar en IndexedDB para uso offline
+                    const store = useIndexedDBStore();
+                    // Definir mapeo entre nombre del almacén y propiedad en dataHistoria
+                    const colecciones = {
+                        Paciente: dataProfesionales.profesionales,
+                        InformacionUser: dataProfesionales.informacionUsers,
+                    };
+
+                    // Recorremos cada colección y guardamos en IndexedDB
+                    for (const [almacen, datos] of Object.entries(colecciones)) {
+                        store.almacen = almacen;
+                        await store.borrartodo();
+
+                        for (const item of datos) {
+                            await store.guardardatosID({ ...item });
+                        }
+                    }
+
+                    usuarios = dataProfesionales.informacionUsers;
+                    medicos = dataProfesionales.profesionales;
+                }
             } else {
                 store.almacen = 'InformacionUser'
                 usuarios = await store.leerdatos()
@@ -69,18 +98,18 @@ export const useMedicosStore = defineStore('Medicos', {
                 store.almacen = 'Profesional'
                 medicos = await store.leerdatos()
             }
-    
+
             store.almacen = 'Profesion'
             const profesiones = await store.leerdatos()
-    
+
             const mapaProfesion = profesiones.reduce((acc, profesion) => {
                 acc[profesion.id] = profesion.nombre;
                 return acc;
             }, {});
-    
+
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
-    
+
                 const usuario = usuarios.find((user) => {
                     if (user.id === medico.id_infoUsuario) {
                         return user;
@@ -90,9 +119,9 @@ export const useMedicosStore = defineStore('Medicos', {
                         return user
                     } // Validar si hay usuario con id_temporal
                 });
-    
-                if(!usuario) return
-    
+
+                if (!usuario) return
+
                 return {
                     ...medico,
                     ...usuario, // Agregamos los datos del usuario (o null si no se encuentra)
@@ -102,39 +131,12 @@ export const useMedicosStore = defineStore('Medicos', {
                     profesion: mapaProfesion[medico.id_profesion] || medico.id_profesion,
                 }
             })
-    
+
             this.Medicos = usuariosProfesionales
             return usuariosProfesionales
         },
 
         async indexDBDatos() {
-            const profesionales = await traerProfesionales()
-
-            const profesionesStore = useDatosProfesionStore()
-            const profesiones = await profesionesStore.listProfesiones()
-            const mapaProfesion = profesiones.reduce((acc, profesion) => {
-                acc[profesion.id] = profesion.nombre;
-                return acc;
-            }, {});
-
-            const profesionalesIndexed = profesionales.map((data) => ({
-                Profesional: {
-                    id: data.id,
-                    id_infoUsuario: data.id_infoUsuario,
-                    id_profesion: data.id_profesion,
-                    profesion: mapaProfesion[data.id_profesion],
-                    zonaLaboral: data.zona_laboral,
-                    departamentoLaboral: data.departamento_laboral,
-                    municipioLaboral: data.municipio_laboral,
-                    estado: data.estado,
-                }
-            }));
-
-            // Guardar solo los nuevos
-            profesionalesIndexed.forEach(item => {
-                guardarEnDB(item);
-            });
-
         },
     }
 });

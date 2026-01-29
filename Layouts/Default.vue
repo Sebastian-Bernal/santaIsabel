@@ -56,11 +56,9 @@ onUnmounted(() => {
         "aside main"
         "footer footer";
     grid-template-rows: 60px 1fr 40px;
-    min-height: 100vh;
     min-height: 100dvh;
     max-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
-    overflow-y: none;
 }
 
 @media screen and (max-width: 768px) {

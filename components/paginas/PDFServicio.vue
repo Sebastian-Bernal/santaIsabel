@@ -49,6 +49,7 @@ async function exportarNutricionPDF(data) {
 async function descargarPDF() {
     if (!blobGuardado) return;
     const url = window.URL.createObjectURL(blobGuardado);
+
     const a = document.createElement("a");
     a.href = url;
     a.download = `${varView.propiedadesPDF.servicio}`;
