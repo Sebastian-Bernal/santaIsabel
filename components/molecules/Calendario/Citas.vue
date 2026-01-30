@@ -38,7 +38,7 @@ const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
 const puedePut = ref(varView.getPermisos.includes('Citas_put'))
 const puedeDelete = ref(varView.getPermisos.includes('Citas_delete'))
-const showPendientes = ref(true)
+const showPendientes = ref(false)
 
 const {
     fechaActual,
@@ -72,7 +72,7 @@ const {
     paginaAnterior,
     irAPagina,
     datosPaginados,
-} = usePaginacion(datosOrdenados);
+} = usePaginacion(datosOrdenados, 9);
 
 // Al buscar cambia a primera pagina
 watch(busqueda, (nuevoValor, anteriorValor) => {
@@ -105,6 +105,14 @@ const citasFiltradas = computed(() => {
         }
     });
 });
+
+// Computada para ordenar por fecha_nota descendente
+const citasOrdenadas = computed(() => {
+  return [...datosPaginados.value].sort((a, b) => {
+    return new Date(b.fecha) - new Date(a.fecha)
+  })
+})
+
 
 // Pendientes
 const pendientes = computed(() => {
@@ -370,7 +378,7 @@ async function activarCita(cita) {
                         </div>
                         <div class="flex flex-col gap-1">
                             <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                                }}</div>
+                            }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                         </div>
                     </div>
@@ -389,7 +397,8 @@ async function activarCita(cita) {
                     </div>
                     <!-- FOOTER -->
                     <div class="flex flex-col gap-2 pt-2">
-                        <div class="flex w-full justify-between gap-3 mt-3 rounded-full" v-if="cita.estado === 'Inactiva'">
+                        <div class="flex w-full justify-between gap-3 mt-3 rounded-full"
+                            v-if="cita.estado === 'Inactiva'">
                             <ButtonRounded
                                 color="bg-danger hover:bg-red-600 text-white w-[90px]! h-[28px]! font-bold text-xs gap-1 shadow-sm"
                                 tooltip="Cancelar" tooltipPosition="top"
@@ -479,7 +488,7 @@ async function activarCita(cita) {
             </template>
 
             <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
-                v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
+                v-for="cita in props.Propiedades.showTodas ? citasOrdenadas : citasFiltradas"
                 :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
 
                 <!-- HEADER -->
@@ -496,7 +505,7 @@ async function activarCita(cita) {
                     </div>
                     <div class="flex flex-col gap-1">
                         <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                            }}</div>
+                        }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                     </div>
                 </div>
@@ -576,42 +585,66 @@ async function activarCita(cita) {
 
     </div>
     <!-- Paginador -->
-    <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex justify-between items-center h-[30px] px-10">
-        <p class="text-sm text-gray-500 md:block hidden">
-            Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+    <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex gap-3 justify-between items-center h-[30px] px-10">
+        <div class="text-sm md:flex gap-1 hidden">
+            <p class="text-gray-500">Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+            <p class="text-gray-500">de {{ datosOrdenados.length }}</p>
+        </div>
 
         <div class="btnsPagina flex items-center gap-3">
-            <button v-if="paginaActual > 1"
-                class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+            <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
+                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
+                @click="irAPagina(1)">
+                <i class="fa-solid fa-angles-left"></i>
+            </ButtonRounded>
+            <ButtonRounded v-if="paginaActual > 1" tooltip="Atras"
+                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
                 @click="paginaAnterior()">
                 <i class="fa-solid fa-angle-left"></i>
-            </button>
-            <div class="flex gap-2 pagina select-none">
-                <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-600 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                    {{ paginaActual - 1 }}</h2>
-                <h2
-                    class="bg-gray-300 dark:bg-gray-800 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                    {{ paginaActual }}</h2>
-                <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                    class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 hover:dark:bg-gray-600 dark:text-gray-300 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                    {{ paginaActual + 1 }}</h2>
+            </ButtonRounded>
+            <div class="flex gap-2 pagina">
+                    <!-- Página anterior -->
+                    <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
+                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                        {{ paginaActual - 1 }}
+                    </h2>
+
+                    <!-- Página actual -->
+                    <h2
+                        class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
+                        {{ paginaActual }}
+                    </h2>
+
+                    <!-- Página siguiente -->
+                    <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
+                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                        {{ paginaActual + 1 }}
+                    </h2>
+
+                    <!-- Última página -->
+                    <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
+                        <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
+                        <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
+                            class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
+                            {{ totalPaginas }}
+                        </h2>
+                    </div>
             </div>
-            <button v-if="paginaActual != totalPaginas"
-                class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+            <ButtonRounded v-if="paginaActual != totalPaginas" tooltip="Siguiente"
+                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
                 @click="siguientePagina()">
                 <i class="fa-solid fa-angle-right"></i>
-            </button>
+            </ButtonRounded>
         </div>
 
         <div class="flex gap-2 items-center">
             <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
             <select name="numRegistros" class="text-black bg-gray-200 rounded-xl p-1 cursor-pointer"
                 @change="cambiarItemsPorPagina($event.target.value)">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
+                <option value="6">6</option>
+                <option value="9" selected>9</option>
+                <option value="12">12</option>
+                <option value="15">15</option>
             </select>
         </div>
     </div>

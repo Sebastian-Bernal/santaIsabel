@@ -160,7 +160,7 @@ const propiedades = computed(() => {
             .addComponente('Citas', builderCitas
                 .setCitas(citas)
                 .setShowTodas(true)
-                .setFiltros([{ columna: 'motivo', placeholder: 'Motivo', }, { columna: 'estado', placeholder: 'Estado', }])
+                .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }])
             )
     }
 

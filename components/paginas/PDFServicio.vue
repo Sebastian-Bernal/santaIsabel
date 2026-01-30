@@ -6,7 +6,8 @@ import { useVarView } from "~/stores/varview.js";
 import { decryptData } from '~/composables/Formulario/crypto';
 
 const varView = useVarView();
-let blobGuardado = ''
+const nombrePDF = ref('');
+let blobGuardado = '';
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
@@ -35,6 +36,18 @@ async function exportarNutricionPDF(data) {
         blobGuardado = blob
         const url = window.URL.createObjectURL(blob);
 
+        // Leer el nombre desde el header
+        const disposition = res.headers.get('Content-Disposition');
+        let fileName = `${varView.propiedadesPDF.servicio}`;
+        if (disposition) {
+            const match = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/);
+            if (match && match[1]) {
+                fileName = decodeURIComponent(match[1]);
+            }
+        }
+
+        nombrePDF.value = fileName
+
         // Opcion de abrimos el PDF en una nueva pestaña sin descargar
         document.getElementById('visorPDF').src = url;
 
@@ -52,7 +65,7 @@ async function descargarPDF() {
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${varView.propiedadesPDF.servicio}`;
+    a.download = nombrePDF.value;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

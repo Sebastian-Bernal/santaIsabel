@@ -983,7 +983,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
-                        servicio: datos.Cita.servicio,
+                        servicio: datos.Analisis.servicio,
                         nombreServicio: datos.Analisis.nombreServicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({

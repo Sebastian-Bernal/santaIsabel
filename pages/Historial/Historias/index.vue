@@ -186,110 +186,92 @@ const verHistoria = async (his) => {
 };
 
 async function cargaHistorial(id) {
-    varView.cargando = true
+    try {
+        varView.cargando = true;
 
-    // Reiniciar valores
-    analisis.value = []
-    notas.value = []
-    tratamientos.value = []
-    medicinas.value = [];
-    evoluciones.value = [];
-    nutricion.value = [];
-    diagnosticos.value = []
-    trabajosSocial.value = []
+        // Reiniciar valores
+        analisis.value = [];
+        notas.value = [];
+        tratamientos.value = [];
+        medicinas.value = [];
+        evoluciones.value = [];
+        nutricion.value = [];
+        diagnosticos.value = [];
+        trabajosSocial.value = [];
+        diagnosticosCIF.value = [];
 
-    const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id')
-    const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia')
+        // Historia clínica
+        const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id');
+        const allAnalisis = await historiasStore.listDatos(historia[0]?.id, 'Analisis', 'id_historia') || [];
 
-    // Analisis
-    let analisisDatos = []
+        // Clasificar análisis según servicio
+        const analisisDatos = [];
+        allAnalisis.forEach((item) => {
+            if (item.servicio === 'Evolucion') {
+                nutricion.value.push({ ...item });
+            } else if (item.servicio === 'Trabajo Social') {
+                trabajosSocial.value.push({ ...item });
+            } else if (item.servicio === 'Medicina') {
+                analisisDatos.push({ ...item });
+            }
+        });
 
-    allAnalisis.map((analisis) => {
-        if (analisis.servicio === 'Evolucion') {
-            nutricion.value.push({ ...analisis })
-        } else if (analisis.servicio === 'Trabajo Social') {
-            trabajosSocial.value.push({ ...analisis })
-        } else if (analisis.servicio === 'Medicina') {
-            analisisDatos.push({ ...analisis })
-        }
-    })
-
-    // Consultas
-    if (allAnalisis || allAnalisis.length > 0) {
+        // Consultas (Analisis con examen físico)
         for (const item of analisisDatos) {
             const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
-
-            analisis.value.push({ ...item, ...examenFisico[0] })
+            analisis.value.push({ ...item, ...examenFisico[0] });
         }
-    } else {
-        analisis.value = []
-    }
 
-    // Evoluciones
-    evoluciones.value = await pacientesStore.listDatos(id, 'Terapia') || []
+        // Evoluciones (Terapia)
+        evoluciones.value = await pacientesStore.listDatos(id, 'Terapia') || [];
 
-    // Notas
-    notas.value = await pacientesStore.listDatos(id, 'Nota') || []
+        // Notas
+        notas.value = await pacientesStore.listDatos(id, 'Nota') || [];
 
+        // Tratamientos
+        tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || [];
 
-    // Tratamientos
-    tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || []
-
-
-    // Medicinas
-    if (allAnalisis || allAnalisis.length > 0) {
-        // Obtener todos los tratamientos asociados a cada id_analisis de la historia
-        const medicamentosPorAnalisis = await Promise.all(
-            allAnalisis.map(async (h) => {
-
-                const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || []
-
-                // Enriquecer cada tratamiento con su análisis correspondiente
-                const medicamentosConAnalisis = medicamentos.map((tratamiento) => {
-                    return {
+        // Medicinas
+        if (allAnalisis.length > 0) {
+            const medicamentosPorAnalisis = await Promise.all(
+                allAnalisis.map(async (h) => {
+                    const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || [];
+                    return medicamentos.map((tratamiento) => ({
                         ...tratamiento,
                         ...h,
                         id: tratamiento.id
-                    }
+                    }));
                 })
+            );
+            medicinas.value = medicamentosPorAnalisis.flat();
+        }
 
-                return medicamentosConAnalisis
-            })
-        )
+        // Diagnósticos
+        if (allAnalisis.length > 0) {
+            const diagnosticosPorAnalisis = await Promise.all(
+                allAnalisis.map(async (h) => {
+                    const diagnostico = await historiasStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || [];
+                    const diagnosticoCIF = await historiasStore.listDatos(h.id, 'DiagnosticosCIF', 'id_analisis') || [];
+                    return { diagnostico, diagnosticoCIF };
+                })
+            );
+            diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat();
+            diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat();
+        }
 
-        // Unificar todos los medicamentos en un solo array
-        medicinas.value = medicamentosPorAnalisis.flat()
-    } else {
-        medicinas.value = []
+        // 🔹 Ordenamientos
+        notas.value.sort((a, b) => new Date(b.fecha_nota) - new Date(a.fecha_nota));
+        evoluciones.value.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        analisis.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        nutricion.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        trabajosSocial.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    } catch (error) {
+        console.error("Error cargando historial:", error);
+    } finally {
+        varView.cargando = false;
     }
-
-    // Diagnosticos
-
-    if (allAnalisis || allAnalisis.length > 0) {
-        // Obtener todos los diagnosticos asociados a cada id_analisis de la historia
-        const diagnosticosPorAnalisis = await Promise.all(
-            allAnalisis.map(async (h) => {
-
-                const diagnostico = await historiasStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || []
-                const diagnosticoCIF = await historiasStore.listDatos(h.id, 'DiagnosticosCIF', 'id_analisis') || []
-
-                return {
-                    diagnostico,
-                    diagnosticoCIF
-                }
-            })
-        )
-
-        // Unificar todos los medicamentos en un solo array
-        diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat()
-        diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat()
-    } else {
-        diagnosticos.value = []
-        diagnosticosCIF.value = []
-    }
-
-    varView.cargando = false
-};
+}
 
 function cerrarModalVer() {
     showItem.value = false

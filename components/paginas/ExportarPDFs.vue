@@ -30,6 +30,7 @@ const props = defineProps({
 });
 
 const generandoPDFs = ref(false);
+const cancelarPDFs = ref(false);
 const progreso = ref(0);
 const pacientesStore = usePacientesStore()
 const profesionalStore = useMedicosStore()
@@ -71,7 +72,8 @@ watch(file, (newValue) => {
 });
 
 function cerrar() {
-    varView.showExportarPDFs = false
+    cancelarPDFs.value = true; // activar la cancelación de pdf
+    if(!generandoPDFs.value) {varView.showExportarPDFs = false}
 };
 
 const validarform = () => {
@@ -177,6 +179,17 @@ const enviarPDFs = async () => {
         const token = decryptData(sessionStorage.getItem('token'))
         // Generar y descargar PDFs secuencialmente
         for (let i = 0; i < analisisFiltrados.length; i++) {
+            // 🔹 Verificar si se canceló
+            if (cancelarPDFs.value) {
+                varView.showExportarPDFs = false
+                options.position = 'top-end';
+                options.background = '#d33'
+                options.texto = "Proceso de generación de PDFs cancelado";
+                options.tiempo = 2000;
+                mensaje();
+                break;
+            }
+
             const analisis = analisisFiltrados[i];
 
 
@@ -208,7 +221,6 @@ const enviarPDFs = async () => {
                 }
                 }
 
-
                 // Descargar
                 const a = document.createElement('a');
                 a.href = url;
@@ -228,13 +240,14 @@ const enviarPDFs = async () => {
             }
         }
 
-        // Mensaje de éxito
-        options.position = 'top-end';
-        options.texto = `${totalAnalisis} PDFs generados y descargados exitosamente`;
-        options.background = '#22c55e'
-        options.tiempo = 2000;
-        mensaje();
-
+        // Si no se canceló, mostramos mensaje de éxito
+        if (!cancelarPDFs.value) {
+            options.position = 'top-end';
+            options.texto = `${totalAnalisis} PDFs generados y descargados exitosamente`;
+            options.background = '#22c55e';
+            options.tiempo = 2000;
+            mensaje();
+        }
         cerrar();
     } catch (error) {
         console.error('Error al exportar PDFs:', error);
@@ -356,7 +369,7 @@ const enviarPDFs = async () => {
                     <div class="w-full flex justify-center items-center gap-4 px-4 mt-6">
                         <ButtonForm
                             color="bg-gray-500 hover:bg-gray-600 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
-                            @click="cerrar" :disabled="generandoPDFs">
+                            @click="cerrar">
                             <i class="fa-solid fa-xmark mr-2"></i> Cancelar
                         </ButtonForm>
 

@@ -70,7 +70,7 @@ const mostrarAcciones = (id) => {
 onMounted(() => {
     // timepoCArgando
     setTimeout(() => {
-      tiempoLoading.value = false
+        tiempoLoading.value = false
     }, 10000)
 
 })
@@ -158,15 +158,16 @@ const tablaAlto = computed(() => {
                 </client-only>
 
                 <div v-if="props.Propiedades.headerTabla?.accionAgregar"
-                    @click="props.Propiedades.headerTabla.accionAgregar" class="flex gap-1 items-center cursor-pointer user-select-none">
+                    @click="props.Propiedades.headerTabla.accionAgregar"
+                    class="flex gap-1 items-center cursor-pointer user-select-none">
                     <ButtonRounded color="bg-blue-500">
                         <i class="fa-solid fa-plus"></i>
                     </ButtonRounded>
                     <h4 class="md:block hidden">Agregar</h4>
                 </div>
 
-                <div v-for="boton in props.Propiedades.headerTabla?.acciones"
-                    @click="boton.accion" class="flex gap-1 items-center cursor-pointer">
+                <div v-for="boton in props.Propiedades.headerTabla?.acciones" @click="boton.accion"
+                    class="flex gap-1 items-center cursor-pointer">
                     <ButtonRounded :color="boton.color || 'bg-blue-500'">
                         <i class="fa-solid" :class="boton.icon"></i>
                     </ButtonRounded>
@@ -181,7 +182,8 @@ const tablaAlto = computed(() => {
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
                 <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
-                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros" tooltipPosition="left" @click="borrarFiltros"> 
+                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros"
+                    tooltipPosition="left" @click="borrarFiltros">
                     <i class="fa-solid fa-close"></i>
                 </ButtonRounded>
             </div>
@@ -227,7 +229,7 @@ const tablaAlto = computed(() => {
 
                 <!-- Skeleton cuando no hay datos -->
                 <template v-if="!datosPaginados && tiempoLoading || (datosPaginados.length === 0 && busqueda === '' && tiempoLoading) ||
-                                    (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
+                    (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
                     <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
                         class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnas">
                         <div v-for="(col, key) in columnasVisibles" :key="key"
@@ -319,9 +321,10 @@ const tablaAlto = computed(() => {
                 </div>
 
 
-                <div v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
+                <div
+                    v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
                     <p class="text-gray-500 text-center my-10">
-                        No se encontraron resultados. 
+                        No se encontraron resultados.
                         <i class="fa-solid fa-search-minus"></i>
                     </p>
                 </div>
@@ -330,38 +333,65 @@ const tablaAlto = computed(() => {
         </div>
 
         <!-- Paginador -->
-        <div class="mt-[10px] flex justify-between items-center h-[30px] md:px-10">
-            <p class="text-sm text-gray-500 md:block hidden">
-                Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }} <span class="text-gray-600 dark:text-gray-400">de {{ datosOrdenados.length }}</span></p>
+        <div class="mt-[10px] flex gap-3 justify-between items-center h-[30px] md:px-10">
+            <div class="text-sm md:flex gap-1 hidden">
+                <p class="text-gray-500">Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
+                <p class="text-gray-500">de {{ datosOrdenados.length }}</p>
+            </div>
 
             <div class="btnsPagina flex items-center gap-3">
-                <button v-if="paginaActual > 1"
-                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
+                    color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
+                    @click="irAPagina(1)">
+                    <i class="fa-solid fa-angles-left"></i>
+                </ButtonRounded>
+                <ButtonRounded v-if="paginaActual > 1" tooltip="Atras"
+                    color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
                     @click="paginaAnterior()">
                     <i class="fa-solid fa-angle-left"></i>
-                </button>
-                <div class="flex gap-2 pagina">
-                    <h2 v-if="paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                        {{ paginaActual - 1 }}</h2>
+                </ButtonRounded>
+                <div class="flex gap-2 pagina select-none">
+                    <!-- Página anterior -->
+                    <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
+                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                        {{ paginaActual - 1 }}
+                    </h2>
+
+                    <!-- Página actual -->
                     <h2
-                        class="bg-gray-200 dark:bg-gray-800 dark:text-gray-300 text-gray-600 flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                        {{ paginaActual }}</h2>
+                        class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
+                        {{ paginaActual }}
+                    </h2>
+
+                    <!-- Página siguiente -->
                     <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                        class="text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center px-2 w-[30px] h-[30px] rounded-full">
-                        {{ paginaActual + 1 }}</h2>
+                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                        {{ paginaActual + 1 }}
+                    </h2>
+
+                    <!-- Última página -->
+                    <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
+                        <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
+                        <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
+                            class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
+                            {{ totalPaginas }}
+                        </h2>
+                    </div>
+
+
                 </div>
-                <button v-if="paginaActual != totalPaginas"
-                    class="text-l p-2 text-white w-[30px] h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+                <ButtonRounded v-if="paginaActual != totalPaginas" tooltip="Siguiente"
+                    color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
                     @click="siguientePagina()">
                     <i class="fa-solid fa-angle-right"></i>
-                </button>
+                </ButtonRounded>
             </div>
 
             <div class="flex gap-2 items-center">
                 <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
                 <p class="text-sm text-gray-500 md:hidden block">N. registros</p>
-                <select name="numRegistros" class="text-black bg-gray-100 rounded-xl p-1 cursor-pointer"
+                <select name="numRegistros"
+                    class="text-black bg-gray-100 dark:bg-gray-500 rounded-xl p-1 cursor-pointer"
                     @change="cambiarItemsPorPagina($event.target.value)">
                     <option value="5">5</option>
                     <option value="10" selected>10</option>
