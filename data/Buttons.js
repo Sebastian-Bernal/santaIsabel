@@ -8,115 +8,36 @@ export const buttons = ref([
         secciones: [
             {
                 titulo: 'Configuracion',
-                subSecciones: [
-                    {
-                        titulo: 'Crear',
-                    },
-                ]
+                ruta: '/Empresas/Configuracion'
             },
             // {
             //     titulo: 'Resoluciones',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             {
                 titulo: 'Datos',
+                ruta: '/Empresas/Datos'
             },
             {
                 titulo: 'Usuarios',
+                ruta: '/Empresas/Usuarios'
             },
             // {
             //     titulo: 'Inventarios',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             // {
             //     titulo: 'Negocios',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             // {
             //     titulo: 'Productos',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             // {
             //     titulo: 'Formas de pago',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             // {
             //     titulo: 'Impuestos',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
             // {
             //     titulo: 'Cajas',
-            //     subSecciones: [
-            //         {
-            //             titulo: 'Crear',
-            //         },
-            //         { 
-            //             titulo: 'Eliminar',
-            //         },
-            //         {
-            //             titulo: 'Actualizar',
-            //         }
-            //     ]
             // },
 
         ],
@@ -130,9 +51,11 @@ export const buttons = ref([
         secciones: [
             {
                 titulo: "Historias",
+                ruta: '/Historial/Historias'
             },
             {
                 titulo: "Insumos",
+                ruta: '/Historial/Insumos'
             },
         ],
         icon: "fa-file",
@@ -145,18 +68,15 @@ export const buttons = ref([
         secciones: [
             {
                 titulo: "Pacientes",
+                ruta: '/Usuarios/Pacientes'
             },
             {
                 titulo: "Profesional",
-                subSecciones: [
-                    {
-                        titulo: 'Datos',
-                        ruta: '/Usuarios/Profesional'
-                    },
-                ]
+                ruta: '/Usuarios/Profesional'
             },
             {
                 titulo: "Citas",
+                ruta: '/Usuarios/Citas'
             }
         ],
         icon: "fa-user",

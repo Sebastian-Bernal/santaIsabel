@@ -1,11 +1,16 @@
 <script setup>
 import DropdownNavbar from '~/components/molecules/Dropdowns/DropdownNavbar.vue';
 import Breadcrumb from '~/components/molecules/BreadCrumbs/Breadcrumb.vue';
+import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
 import { ref, computed, onMounted } from 'vue';
+const colorMode = useColorMode()
 
+function toggleTheme() {
+  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+}
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
 const usuario = ref();
@@ -49,8 +54,8 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a href="/Home" class="text-white md:text-xl text-lg font-extrabold ml-3">
-                <i class="fa-solid fa-laptop-medical md:text-2xl text-lg md:mt-0 mt-2"></i>
+            <a href="/Home" class="seccionLogo text-white md:text-xl font-extrabold py-2 px-3 md:w-[20%] h-fit bg-[var(--color-default-700)] shadow-xl">
+                <i class="fa-solid fa-laptop-medical md:text-2xl text-lg"></i>
                 Thesalus
             </a>
             <p class="text-xs text-white mr-10 mt-2 md:hidden block">{{ usuario }}</p>
@@ -74,6 +79,12 @@ const removeStorage = () => {
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />
                 </li>
+                <!-- <li>
+                    <ButtonRounded tooltip="Cambiar Tema" tooltip-position="bottom" color="!bg-inherit" @click="toggleTheme">
+                        <i v-if="colorMode.value === 'dark'" class=" fa-solid fa-moon"></i>
+                        <i v-else class=" fa-solid fa-sun"></i>
+                    </ButtonRounded>
+                </li> -->
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
                     <p class="text-xs ml-1 font-semibold md:block hidden" :class="{ 'mr-6': aplicarMargen }">{{ usuario }}</p>
@@ -86,14 +97,16 @@ const removeStorage = () => {
 
 <style scoped>
 .navbar {
-    padding: 5px;
     grid-area: navbar;
 }
 
 .navbar__content {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+}
+
+.seccionLogo {
+    clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
 }
 
 .logo {

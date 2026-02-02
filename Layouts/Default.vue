@@ -1,11 +1,12 @@
 <template>
-    <div class="containerMain" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[60px_1fr]': !varView.expandido}">
+    <div class="containerMain" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[50px_1fr]': !varView.expandido}">
         <Loader v-if="varView.cargando"></Loader>
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
             <div class="container-content">
                 <slot></slot>
+                <FooterPage></FooterPage>
             </div>
         </div>
         <Footer></Footer>
@@ -16,6 +17,7 @@
 import { useVarView } from '~/stores/varview';
 import Navbar from '~/components/organism/Navbar/Navbar.vue';
 import Aside from '~/components/organism/Sidebar/Aside.vue';
+import FooterPage from '~/components/organism/FooterPage/FooterPage.vue';
 import Footer from '~/components/organism/Footer/Footer.vue';
 import Loader from '~/components/molecules/Spinner/Loader.vue';
 import { iniciarSincronizacionPeriodica } from '~/composables/Formulario/sincronizarDatos';
@@ -55,7 +57,7 @@ onUnmounted(() => {
         "navbar navbar"
         "aside main"
         "footer footer";
-    grid-template-rows: 60px 1fr 40px;
+    grid-template-rows: 60px 1fr 10px;
     min-height: 100dvh;
     max-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
@@ -69,8 +71,8 @@ onUnmounted(() => {
     }
 
     .section-content {
-        padding: 5px 15px;
-        margin: 0 3px;
+        padding: 5px;
+        margin: 0;
     }
 }
 
@@ -78,13 +80,13 @@ onUnmounted(() => {
     grid-area: main;
     overflow-y: hidden;
     margin: 0 10px;
-    padding: 0 0 5px 0;
-    border-radius: 15px 15px 15px 15px;
-    background-color: rgba(0,0,0,0.3);
+    border-radius: 5px;
 }
 
 .container-content {
     height: 100%;
+    display: flex;
+    flex-direction: column;
     overflow-y: scroll;
 }
 

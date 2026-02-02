@@ -12,7 +12,11 @@ export default withMT({
     "./error.vue",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+              // puedes mapear tus variables CSS aquí si quieres
+            }
+    },
   },
   plugins: [],
 });

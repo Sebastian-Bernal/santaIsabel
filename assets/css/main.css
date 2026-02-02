@@ -26,6 +26,8 @@
     --color-default-500: #2a5860;
     --color-default-600: #22484f;
     --color-default-700: #1b373d;
+    --color-default-800: #14272c;
+    --color-default-900: #0d181c;
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     /* font-family: Bebas Neue, sans-serif; */
 }

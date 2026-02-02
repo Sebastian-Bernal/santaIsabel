@@ -23,18 +23,69 @@ const cambiarEstadoFalse = () => {
         cambiarEstado(false);
     }
 };
+
+function accesoRapidoSelected(nombre) {
+    switch (nombre) {
+        case 'Datos': {
+            const button = buttons.value.find(btn => btn.nombre === 'Empresas');
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(1)
+            }
+            break;
+        }
+        case 'Historias': {
+            const button = buttons.value.find(btn => btn.nombre === 'Historial');
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(0)
+            }
+            break;
+        }
+        case 'Pacientes': {
+            const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(0)
+            }
+            break;
+        }
+        case 'Profesional': {
+            const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(1)
+            }
+            break;
+        }
+        case 'Citas': {
+            const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
+            console.log(button);
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(2)
+            }
+            break;
+        }
+        default:
+            console.log("No se encontró el caso para:", nombre);
+    }
+
+
+}
 </script>
 
 <template>
-    <div class="section-asidebar m-[8px] flex items-center" :class="{ 'expandido': varView.expandido }">
+    <div class="section-asidebar flex items-center relative" :class="{ 'expandido': varView.expandido }">
 
-        <div class="section-asidebar__content flex flex-col items-center rounded-xl" :class="{ 'h-full': varView.expandido, 'h-[75%]': !varView.expandido }"">
+        <div class="section-asidebar__content flex flex-col items-center rounded-r-lg"
+            :class="{ 'h-full': varView.expandido, 'h-[75%]': !varView.expandido }"">
 
             <!-- Estado colapsado -->
             <div v-if="!varView.expandido"
-                class="menu-colapsado flex md:flex-col flex-row items-center justify-between md:h-screen md:w-16 shadow-lg border-r border-gray-200 md:py-4 pb-2">
+            class="menu-colapsado flex md:flex-col flex-row items-center justify-between md:h-screen md:w-16 shadow-lg md:py-4 pb-2">
 
-                <!-- Botón expandir -->
+            <!-- Botón expandir -->
                 <ButtonRounded @click="() => {
                     varView.expandido = true;
                     cambiarEstadoFalse()
@@ -42,98 +93,156 @@ const cambiarEstadoFalse = () => {
                     color="flex items-center justify-center w-10 h-10 rounded-full md:bg-[var(--color-default-200)] bg-[var(--color-default-700)] text-white hover:bg-[var(--color-default-200)] transition">
                     <i class="fa-solid fa-angle-right"></i>
                 </ButtonRounded>
+            <!-- <div class="md:absolute md:mr-[-55px] h-[20px] rounded-lg transform">
+                <ButtonRounded @click="() => { varView.expandido = true; cambiarEstadoFalse() }" tooltip="Abrir Menú"
+                    tooltip-position="right"
+                    color="flex items-center justify-center md:w-4 !md:h-12 md:rounded-none rounded-full md:bg-[var(--color-default-claro)] bg-[var(--color-default-700)] text-white transition">
+                    <i class="fa-solid fa-angle-right md:text-black text-white"></i>
+                </ButtonRounded>
+            </div> -->
+
+            <!-- Navegación por íconos -->
+            <nav class="flex md:flex-col flex-row items-center gap-6" @click="cambiarEstadoFalse()">
+                <!-- <ButtonAside v-for="button in buttons" :key="button.nombre" :data="button" /> -->
+                <ButtonRounded tooltip="Datos" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
+                    <NuxtLink to="/Empresas/Datos" @click="accesoRapidoSelected('Datos')">
+                        <i class="fa-solid fa-building text-lg"></i>
+                    </NuxtLink>
+                </ButtonRounded>
+                <ButtonRounded tooltip="Historias" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
+                    <NuxtLink to="/Historial/Historias" @click="accesoRapidoSelected('Historias')">
+                        <i class="fa-solid fa-file text-lg"></i>
+                    </NuxtLink>
+                </ButtonRounded>
+                <ButtonRounded tooltip="Pacientes" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
+                    <NuxtLink to="/Usuarios/Pacientes" @click="accesoRapidoSelected('Pacientes')">
+                        <i class="fa-solid fa-user text-lg"></i>
+                    </NuxtLink>
+                </ButtonRounded>
+                <ButtonRounded tooltip="Profesionales" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
+                    <NuxtLink to="/Usuarios/Profesional" @click="accesoRapidoSelected('Profesional')">
+                        <i class="fa-solid fa-user-doctor text-lg"></i>
+                    </NuxtLink>
+                </ButtonRounded>
+                <ButtonRounded tooltip="Agenda" tooltip-position="right"
+                    color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
+                    <NuxtLink to="/Usuarios/Citas" @click="accesoRapidoSelected('Citas')">
+                        <i class="fa-solid fa-calendar-day text-lg"></i>
+                    </NuxtLink>
+                </ButtonRounded>
+            </nav>
+
+            <!-- Perfil / Logout -->
+            <a href="/" class="flex-col items-center gap-3 md:flex flex-none">
+                <i
+                    class="fa-solid fa-right-from-bracket text-xl text-white md:text-gray-700 hover:text-red-600 cursor-pointer"></i>
+            </a>
+        </div>
+
+        <!-- Estado expandido -->
+        <div v-else
+            class="menu-expandido md:bg-inherit flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3">
+            <!-- Header -->
+            <div>
+                <div
+                    class="flex justify-between items-center md:flex flex-row-reverse border-b border-gray-200 dark:border-gray-700 md:dark:border-gray-200 pb-3 mb-4">
+                    <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 md:dark:text-gray-800 tracking-wide">
+                        Menú</h2>
+                    <ButtonRounded @click="varView.expandido = false" tooltip="Cerrar Menú" tooltip-position="right"
+                        color="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-default-200)] text-white hover:bg-[var(--color-default-200)] transition">
+                        <i class="fa-solid fa-angle-left"></i>
+                    </ButtonRounded>
+                </div>
+
+                <!-- Sección Explorar -->
+                <p
+                    class="text-gray-500 dark:text-gray-400 md:dark:text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">
+                    Secciones</p>
+
+                <!-- Items dinámicos -->
+                <div v-for="button in buttons" :key="button.nombre"
+                    @click="() => { storeAside.activeButton(button.id); footer.cambiarIdActivo(0) }"
+                    class="menu-item py-2 border-b border-gray-100 dark:border-gray-600 md:dark:border-gray-100 rounded-md transition">
+                    <a class="flex items-center justify-between gap-2 mb-2"
+                        :href="`/${button.nombre}/${button.secciones[0].titulo}`"
+                        @click="footer.cambiarSecciones(button.secciones)">
+                        <span class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">{{
+                            button.nombre }}</span>
+                        <i class="fa-solid text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"
+                            :class="button.icon"></i>
+                    </a>
+                </div>
+
+                <!-- Sección Explorar -->
+                <p
+                    class="text-gray-500 dark:text-gray-400 md:dark:text-gray-500 text-xs font-semibold uppercase tracking-wider my-2">
+                    Acceso Rapido</p>
 
                 <!-- Navegación por íconos -->
-                <nav class="flex md:flex-col flex-row items-center gap-6" @click="cambiarEstadoFalse()">
-                    <!-- <ButtonAside v-for="button in buttons" :key="button.nombre" :data="button" /> -->
-                    <ButtonRounded tooltip="Datos" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
-                        <NuxtLink to="/Empresas/Datos">
-                            <i class="fa-solid fa-building text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Historias" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
-                        <NuxtLink to="/Historial/Historias">
-                            <i class="fa-solid fa-file text-lg"></i>
-                        </NuxtLink> 
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Pacientes" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
-                        <NuxtLink to="/Usuarios/Pacientes">
-                            <i class="fa-solid fa-user text-lg"></i>
-                        </NuxtLink> 
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Profesionales" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
-                        <NuxtLink to="/Usuarios/Profesional">
-                            <i class="fa-solid fa-user-doctor text-lg"></i>
-                        </NuxtLink> 
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Agenda" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:!text-gray-700 transition py-5">
-                        <NuxtLink to="/Usuarios/Citas">
-                            <i class="fa-solid fa-calendar-day text-lg"></i>
-                        </NuxtLink> 
-                    </ButtonRounded>
-                </nav>
+                <div @click="cambiarEstadoFalse()">
 
-                <!-- Perfil / Logout -->
-                <a href="/" class="flex-col items-center gap-3 md:flex flex-none">
-                    <i class="fa-solid fa-right-from-bracket text-xl text-white md:text-gray-700 hover:text-red-600 cursor-pointer"></i>
-                </a>
-            </div>
-
-            <!-- Estado expandido -->
-            <div v-else
-                class="menu-expandido md:bg-inherit flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3">
-                <!-- Header -->
-                <div>
-                    <div class="flex justify-between items-center md:flex flex-row-reverse border-b border-gray-200 dark:border-gray-700 md:dark:border-gray-200 pb-3 mb-4">
-                        <h2 class="text-lg font-bold text-gray-800 dark:text-gray-200 md:dark:text-gray-800 tracking-wide">Menú</h2>
-                        <ButtonRounded @click="varView.expandido = false" tooltip="Cerrar Menú" tooltip-position="right"
-                            color="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--color-default-200)] text-white hover:bg-[var(--color-default-200)] transition">
-                            <i class="fa-solid fa-angle-left"></i>
-                        </ButtonRounded>
-                    </div>
-
-                    <!-- Sección Explorar -->
-                    <p class="text-gray-500 dark:text-gray-400 md:dark:text-gray-500 text-xs font-semibold uppercase tracking-wider mb-2">Explorar</p>
-
-                    <!-- Items dinámicos -->
-                    <div v-for="button in buttons" :key="button.nombre" @click="storeAside.activeButton(button.id)"
-                        class="menu-item py-4 border-b border-gray-100 dark:border-gray-600 md:dark:border-gray-100 rounded-md transition">
-                        <div class="flex items-center justify-between gap-2 mb-2">
-                            <span class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">{{ button.nombre }}</span>
-                            <i class="fa-solid text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"
-                                :class="button.icon"></i>
-                        </div>
-                        <div class="flex flex-col gap-1 pl-2">
-                            <a v-for="seccion in button.secciones" :key="seccion.titulo"
-                                :href="`/${button.nombre}/${seccion.titulo}`" @click="footer.cambiarSecciones(seccion.subSecciones)"
-                                class="submenu-link text-gray-800 dark:text-gray-200 md:dark:text-gray-800 text-sm text-wrap transition">
-                                • {{ seccion.titulo }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Perfil -->
-                <div class="menu-item py-4 border-t border-gray-200 dark:border-gray-700 md:dark:border-gray-200 mt-4">
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                        <span class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Perfil</span>
-                        <i class="fa-solid fa-user text-lg text-gray-500 dark:text-gray-400 md:dark:text-gray-500 transition"></i>
-                    </div>
-                    <div class="flex flex-col gap-1 pl-2">
-                        <a class="text-gray-600 dark:text-gray-400 md:dark:text-gray-600 font-semibold text-sm text-wrap transition">{{ varView.getRol }}</a>
-                        <a href="/" class="text-red-500 font-semibold text-sm hover:text-red-700 text-wrap transition">
-                            Cerrar Sesión
-                        </a>
-                    </div>
+                    <a class="flex items-center justify-between gap-2 py-2" href="/Empresas/Datos"
+                        @click="accesoRapidoSelected('Datos')">
+                        <span
+                            class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Datos</span>
+                        <i
+                            class="fa-solid fa-building text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"></i>
+                    </a>
+                    <a class="flex items-center justify-between gap-2 py-2" href="/Historial/Historias"
+                        @click="accesoRapidoSelected('Historias')">
+                        <span
+                            class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Historias</span>
+                        <i
+                            class="fa-solid fa-file text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"></i>
+                    </a>
+                    <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Pacientes"
+                        @click="accesoRapidoSelected('Pacientes')">
+                        <span
+                            class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Pacientes</span>
+                        <i
+                            class="fa-solid fa-user text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"></i>
+                    </a>
+                    <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Profesional"
+                        @click="accesoRapidoSelected('Profesional')">
+                        <span
+                            class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Profesional</span>
+                        <i
+                            class="fa-solid fa-user-doctor text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"></i>
+                    </a>
+                    <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Citas"
+                        @click="accesoRapidoSelected('Citas')">
+                        <span
+                            class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Citas</span>
+                        <i
+                            class="fa-solid fa-calendar-day text-lg text-gray-500 md:dark:text-gray-500 dark:text-gray-400 transition"></i>
+                    </a>
                 </div>
             </div>
 
+            <!-- Perfil -->
+            <div class="menu-item py-4 border-t border-gray-200 dark:border-gray-700 md:dark:border-gray-200 mt-4">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                    <span
+                        class="text-gray-800 dark:text-gray-200 md:dark:text-gray-800 font-medium text-sm">Perfil</span>
+                    <i
+                        class="fa-solid fa-user text-lg text-gray-500 dark:text-gray-400 md:dark:text-gray-500 transition"></i>
+                </div>
+                <div class="flex flex-col gap-1 pl-2">
+                    <a
+                        class="text-gray-600 dark:text-gray-400 md:dark:text-gray-600 font-semibold text-sm text-wrap transition">{{
+                            varView.getRol }}</a>
+                    <a href="/" class="text-red-500 font-semibold text-sm hover:text-red-700 text-wrap transition">
+                        Cerrar Sesión
+                    </a>
+                </div>
+            </div>
         </div>
+
+    </div>
 
     </div>
 </template>
@@ -141,9 +250,8 @@ const cambiarEstadoFalse = () => {
 <style scoped>
 .section-asidebar {
     grid-area: aside;
-    width: 50px;
-    height: 100%;
-    overflow: hidden;
+    width: 45px;
+    height: 80vh;
     /* ancho colapsado */
     transition: width 0.3s ease;
     padding: 10px 0;
@@ -163,6 +271,18 @@ const cambiarEstadoFalse = () => {
     display: flex;
     flex-direction: column;
     padding: 5px;
+}
+
+.clip {
+  /* Forma de pestaña sobresaliente */
+  clip-path: polygon(
+    0% 0%,       /* esquina superior izquierda */
+    85% 0%,      /* corte diagonal arriba */
+    100% 20%,    /* punta sobresaliente arriba derecha */
+    100% 80%,    /* punta sobresaliente abajo derecha */
+    85% 100%,    /* corte diagonal abajo */
+    0% 100%      /* esquina inferior izquierda */
+  );
 }
 
 /* Links */

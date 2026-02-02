@@ -4,7 +4,7 @@ export const useNotificacionesStore = defineStore("Notificaciones", {
     // state
     state: () => {
         let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        console.log('Tema de notificaciones:', theme);
+
         return {
             swal: null,
             respuesta: null,
