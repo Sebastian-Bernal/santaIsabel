@@ -1,5 +1,5 @@
 <template>
-    <div class="containerMain" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[50px_1fr]': !varView.expandido}">
+    <div class="containerMain transition-[grid-template-columns] duration-300 ease-in-out" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido}">
         <Loader v-if="varView.cargando"></Loader>
         <Navbar></Navbar>
         <Aside></Aside>
@@ -57,7 +57,7 @@ onUnmounted(() => {
         "navbar navbar"
         "aside main"
         "footer footer";
-    grid-template-rows: 60px 1fr 10px;
+    grid-template-rows: 60px 1fr 30px;
     min-height: 100dvh;
     max-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
@@ -66,7 +66,7 @@ onUnmounted(() => {
 @media screen and (max-width: 768px) {
     .containerMain {
         grid-template-areas: "navbar" "aside" "main" "footer";
-        grid-template-rows: 45px 40px 1fr 40px;
+        grid-template-rows: 45px 40px 1fr 10px;
         grid-template-columns: 1fr;
     }
 

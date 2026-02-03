@@ -24,17 +24,6 @@ export const validarYEnviarNuevaCita = async (datos) => {
         return s.name === cita.servicio
     })?.plantilla
 
-    // if (tipoConsulta === 'Terapia' && !cita.nuevoProcedimiento) {
-    //     camposObligatorios.push(
-    //         'id_procedimiento'
-    //     );
-    // } else {
-    //     camposObligatorios.push(
-    //         'procedimiento',
-    //         'codigo',
-    //     );
-    // }
-
     if (datos.Cita.tipo) {
         camposObligatorios.push(
             'intervaloCitas',
@@ -133,9 +122,28 @@ export const validarYEnviarNuevaCita = async (datos) => {
             }
         }
 
-        const fechaInicial = parseFechaISO(datos.Cita.fecha);
+        if(datos.Cita.motivo === 'Atención domiciliaria') {
+            datos.Cita.intervaloCitas = 1
+
+            // Diferencia en milisegundos
+            const diffMs = fechaFinal - fechaInicial;
+            // Convertir a días
+            const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1; 
+            // +1 para incluir el día inicial
+            // Validar si caben todas las citas
+            if (datos.Cita.cantidadCitas > diffDias) {
+                notificacionesStore.options.icono = 'warning';
+                notificacionesStore.options.titulo = 'Información inválida.';
+                notificacionesStore.options.texto = 'Cantidad de citas mayor al rango de fechas';
+                notificacionesStore.options.tiempo = 5000;
+                notificacionesStore.simple();
+                return false;
+            }
+        }
+
 
         varView.cargando = true
+
         // Generar todas las citas
         for (let i = 0; i < cantidad; i++) {
             // Clonar la fecha inicial

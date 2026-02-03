@@ -75,10 +75,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
   ],
   colorMode: {
-    // classSuffix: '',
     preference: 'system', // usa el tema del sistema por defecto
-    fallback: 'light', // si no detecta, usa light
-    storageKey: 'nuxt-color-mode' // clave en localStorage
   },
   vite: {
     plugins: [

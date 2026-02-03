@@ -5,25 +5,28 @@ import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import { diasSemana, nombresMeses } from '~/data/Fechas';
 import { useShowNavbar } from '~/stores/navbarResponsive.js';
 import { submenuNotificaciones, submenuSesion } from '~/data/NavMenu';
-import { ref, computed, onMounted } from 'vue';
-const colorMode = useColorMode()
 
-function toggleTheme() {
-  colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-}
+import { useButtonsAside } from '~/stores/ButtonActive';
+import { ref, computed, onMounted } from 'vue';
+
+const footer = useSeccionFooter();
+const storeAside = useButtonsAside();
 const { showNavbarBurguer, cambiarEstado } = useShowNavbar();
 
 const usuario = ref();
 const varView = useVarView();
+const buttons = ref()
 
 onMounted(() => {
     // Obtener y parsear el usuario
     const user = varView.getUser
-  if (user && typeof user.name === 'string') {
-    usuario.value = user.name.split(' ')[0]
-  } else {
-    usuario.value = 'Usuario'
-  }
+    if (user && typeof user.name === 'string') {
+        usuario.value = user.name.split(' ')[0]
+    } else {
+        usuario.value = 'Usuario'
+    }
+    const permisosStore = varView.getPermisos
+    buttons.value = storeAside.getbuttons(permisosStore);
 })
 
 function obtenerFechaFormateada() {
@@ -41,12 +44,21 @@ const fechaActualFormateada = computed(() => {
 });
 
 const aplicarMargen = computed(() => {
-  return usuario.value?.length < 7;
+    return usuario.value?.length < 7;
 });
 
 const removeStorage = () => {
     sessionStorage.removeItem('seccionesGuardadas')
 };
+
+function agenda() {
+    const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
+    console.log(button)
+    if (button) {
+        footer.cambiarSecciones(button.secciones);
+        footer.cambiarIdActivo(2)
+    }
+}
 
 </script>
 
@@ -54,13 +66,14 @@ const removeStorage = () => {
     <div class="navbar">
         <div class="navbar__content">
 
-            <a href="/Home" class="seccionLogo text-white md:text-xl font-extrabold py-2 px-3 md:w-[20%] h-fit bg-[var(--color-default-700)] shadow-xl">
+            <a href="/Home"
+                class="seccionLogo text-white md:text-xl font-extrabold py-2 px-3 md:w-[20%] w-[40%] h-fit bg-[var(--color-default-200)] shadow-xl">
                 <i class="fa-solid fa-laptop-medical md:text-2xl text-lg"></i>
                 Thesalus
             </a>
             <p class="text-xs text-white mr-10 mt-2 md:hidden block">{{ usuario }}</p>
             <div class="menuResponsive" @click="cambiarEstado()">
-                <div :class="{'text-white': !showNavbarBurguer, 'text-gray-300' : showNavbarBurguer}">
+                <div :class="{ 'text-white': !showNavbarBurguer, 'text-gray-300': showNavbarBurguer }">
                     <i class="fa-solid fa-bars transition-all duration-300 cursor-pointer active:scale-95"></i>
                 </div>
             </div>
@@ -68,26 +81,22 @@ const removeStorage = () => {
             <ul class="navbar__content__list" @click="removeStorage()"
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
-                    <a href="/Usuarios/Citas" class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-[10px] shadow-lg">
+                    <nuxtLink to="/Usuarios/Citas" @click="agenda()"
+                        class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-[10px] shadow-lg">
                         <i class="fa-solid fa-calendar-day"></i>
-                        <p class="text-white md:text-white">{{fechaActualFormateada }}</p>
-                    </a>
+                        <p class="text-white md:text-white">{{ fechaActualFormateada }}</p>
+                    </nuxtLink>
                 </li>
                 <li>
-                    <Breadcrumb/>
+                    <Breadcrumb />
                 </li>
                 <li>
                     <DropdownNavbar icon="fa-bell" nombre="Notificaciones" :submenu="submenuNotificaciones" />
                 </li>
-                <!-- <li>
-                    <ButtonRounded tooltip="Cambiar Tema" tooltip-position="bottom" color="!bg-inherit" @click="toggleTheme">
-                        <i v-if="colorMode.value === 'dark'" class=" fa-solid fa-moon"></i>
-                        <i v-else class=" fa-solid fa-sun"></i>
-                    </ButtonRounded>
-                </li> -->
                 <li>
                     <DropdownNavbar icon="fa-circle-user" nombre="Iniciar sesion" :submenu="submenuSesion" />
-                    <p class="text-xs ml-1 font-semibold md:block hidden" :class="{ 'mr-6': aplicarMargen }">{{ usuario }}</p>
+                    <p class="text-xs ml-1 font-semibold md:block hidden" :class="{ 'mr-6': aplicarMargen }">{{ usuario
+                    }}</p>
                 </li>
             </ul>
 
@@ -106,7 +115,25 @@ const removeStorage = () => {
 }
 
 .seccionLogo {
+    position: relative;
     clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
+    overflow: hidden;
+    /* importante para que se recorte */
+}
+
+.seccionLogo::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
+    box-shadow:
+        inset -8px -8px 12px -6px rgba(0, 0, 0, 0.5);
+    /* sombra interna abajo */
+    width: 100%;
+    height: 100%;
 }
 
 .logo {

@@ -25,10 +25,10 @@ watch(() => footer.secciones,
 </script>
 
 <template>
-    <div class="containerNavFooter flex w-full items-center">
+    <div class="flex w-full items-center">
         <nuxt-link v-for="(pagina, key) in subSeccion" :to="pagina.ruta"
             class="subSeccion cursor-pointer text-gray-500 py-[8px] min-w-[200px] flex justify-center text-xs md:text-base hover:bg-[rgba(0,0,0,0.3)] hover:text-white"
-            :class="{ 'active': footer.idActivo === key }" @click="footer.cambiarIdActivo(key)">
+            :class="{ 'active dark:bg-gray-900 bg-gray-50': footer.idActivo === key }" @click="footer.cambiarIdActivo(key)">
             {{ pagina.titulo }}
         </nuxt-link>
     </div>
@@ -40,7 +40,6 @@ watch(() => footer.secciones,
 }
 
 .active {
-    background-color: rgba(0, 0, 0, 0.3);
     color: #fff;
     clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 15% 100%);
 }

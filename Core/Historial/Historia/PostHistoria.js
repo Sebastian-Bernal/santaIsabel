@@ -295,6 +295,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 });
             }
 
+            datos.Antecedentes = datos.Antecedentes.filter(d => !Object.values(d).every(v => v === '' || v == null))
             // Validar Antecedentes
             if (!Array.isArray(datos.Antecedentes)) {
                 errores.push("Los antecedentes deben ser un arreglo.");

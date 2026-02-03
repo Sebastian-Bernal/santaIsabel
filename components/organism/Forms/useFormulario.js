@@ -96,8 +96,19 @@ export function useFormulario(props) {
         });
 
         // Detectar inputs inválidos
-        const hayCamposInvalidos = document.querySelectorAll('input:invalid').length > 0;
-        varView.formComplete = !hayCamposInvalidos && camposValidos;
+        const camposInvalidos = document.querySelectorAll('input:invalid');
+        varView.formComplete = camposInvalidos.length === 0 && camposValidos;
+
+        if (!varView.formComplete && camposInvalidos.length > 0) {
+            const primerCampo = camposInvalidos[0];
+
+            // Generar hipervínculo dinámico
+            primerCampo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            primerCampo.focus();
+
+            return false;
+        }
+
         return varView.formComplete
     }
 

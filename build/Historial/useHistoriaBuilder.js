@@ -1293,6 +1293,7 @@ export function useHistoriaBuilder({
                 name: 'motivo',
                 placeholder: 'Describa el motivo principal de la consulta...',
                 tamaño: 'w-full col-span-2',
+                minlength: 10,
             })
             .addCampo({
                 component: 'Label',
@@ -1307,7 +1308,8 @@ export function useHistoriaBuilder({
                 id: 'enfermedad',
                 name: 'enfermedad',
                 placeholder: 'Describa la evolucion de la enfermedad actual, sintomas, duracion, factores, desencadenantes...',
-                tamaño: 'w-full col-span-2'
+                tamaño: 'w-full col-span-2',
+                minlength: 10,
             })
             .addCampo({
                 component: 'GroupCampos',
