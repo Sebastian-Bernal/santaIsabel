@@ -295,7 +295,7 @@ function changeShowPendientes() {
 
         <!-- Citas de Hoy -->
         <div class="grid gap-2 px-4"
-            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
+            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 lg:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
             <template v-if="!unref(props.Propiedades.citas)">

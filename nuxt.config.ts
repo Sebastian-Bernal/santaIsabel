@@ -76,6 +76,7 @@ export default defineNuxtConfig({
   ],
   colorMode: {
     preference: 'system', // usa el tema del sistema por defecto
+    classSuffix: ''         // evita el sufijo "-mode"
   },
   vite: {
     plugins: [
