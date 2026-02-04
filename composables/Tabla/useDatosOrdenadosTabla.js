@@ -1,6 +1,6 @@
 import { ref, computed, watch } from 'vue';
 
-export function useOrdenamiento(datos = ref([]), columnas = []) {
+export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []) {
     const busqueda = ref('');
     const filtros = ref({});
     const menorAMayor = ref(true);
@@ -46,6 +46,7 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
             columnaOrden.value = nombreColumna;
             menorAMayor.value = true;
         }
+
     };
 
     const datosOrdenados = computed(() => {
@@ -55,10 +56,12 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
         if (busqueda.value.trim() !== '') {
             const termino = busqueda.value.trim().toLowerCase();
             resultado = resultado.filter(item =>
-                Object.values(item).some(valor =>
+                Object.entries(item).some(([key, valor]) =>
+                    !noBuscarPor?.includes(key) &&
                     String(valor).toLowerCase().includes(termino)
                 )
             );
+
         }
 
         // Busqueda global con hash
@@ -118,6 +121,8 @@ export function useOrdenamiento(datos = ref([]), columnas = []) {
     const borrarFiltros = () => {
         busqueda.value = ''
         filtros.value = {}
+        menorAMayor.value = true;
+        columnaOrden.value = '';
     }
 
     return {

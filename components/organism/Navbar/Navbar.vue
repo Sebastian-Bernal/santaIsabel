@@ -121,19 +121,17 @@ function agenda() {
     /* importante para que se recorte */
 }
 
-.seccionLogo::before {
+/* Sombra interna */
+.seccionLogo::after {
     content: "";
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    clip-path: polygon(0% 0%, 100% 0%, 85% 100%, 0% 100%);
+    inset: 0;
+    pointer-events: none;
+
     box-shadow:
-        inset -8px -8px 12px -6px rgba(0, 0, 0, 0.5);
-    /* sombra interna abajo */
-    width: 100%;
-    height: 100%;
+        inset -10px -10px 40px -8px rgba(0, 0, 0, 0.45);
+
+    clip-path: inherit;
 }
 
 .logo {

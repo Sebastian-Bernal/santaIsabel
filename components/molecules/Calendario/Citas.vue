@@ -2,20 +2,14 @@
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import Input from '~/components/atoms/Inputs/Input.vue';
-import Historia from '~/components/Historia.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
-import { useHistoriasStore } from '~/stores/Formularios/historias/Historia';
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
-import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio'
 import { computed, ref } from 'vue';
 import { nombresMeses } from '~/data/Fechas.js'
-import { validarYEnviarCancelarCita } from '~/Core/Usuarios/Cita/CancelarCita';
 import { storeToRefs } from 'pinia';
 import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 import { usePaginacion } from '~/composables/Tabla/usePaginacion';
-import { useCitasStore } from '~/stores/Formularios/citas/Cita';
-import { mapCampos } from '~/components/organism/Forms/useFormulario';
+import { useCitasActions } from '~/composables/Usuarios/Citas';
 
 const props = defineProps({
     citas: {
@@ -30,12 +24,7 @@ const props = defineProps({
 
 const varView = useVarView();
 const calendarioCitasStore = useCalendarioCitas();
-const historiasStore = useHistoriasStore();
-const pacientesStore = usePacientesStore();
-const citasStore = useCitasStore();
-const servicioStore = useDatosServicioStore();
 const Citas = ref(props.Propiedades.citas);
-const notificacionesStore = useNotificacionesStore();
 const puedePut = ref(varView.getPermisos.includes('Citas_put'))
 const puedeDelete = ref(varView.getPermisos.includes('Citas_delete'))
 const showPendientes = ref(false)
@@ -48,19 +37,19 @@ const {
 } = storeToRefs(calendarioCitasStore);
 
 const {
-    alertRespuestaInput,
-    simple,
-    mensaje,
-    options
-} = notificacionesStore;
-
-const {
     busqueda,
     filtros,
     filtrosConOpciones,
     datosOrdenados,
     borrarFiltros
-} = useOrdenamiento(props.Propiedades.citas || ref([]), props.Propiedades.filtros);
+} = useOrdenamiento(props.Propiedades.citas || ref([]), props.Propiedades.filtros, ['name_medico']);
+
+// Computada para ordenar por fecha_nota descendente
+const citasOrdenadas = computed(() => {
+  return [...datosOrdenados.value].sort((a, b) => {
+    return new Date(b.fecha) - new Date(a.fecha)
+  })
+});
 
 const {
     paginaActual,
@@ -72,7 +61,7 @@ const {
     paginaAnterior,
     irAPagina,
     datosPaginados,
-} = usePaginacion(datosOrdenados, 9);
+} = usePaginacion(citasOrdenadas, 9);
 
 // Al buscar cambia a primera pagina
 watch(busqueda, (nuevoValor, anteriorValor) => {
@@ -106,13 +95,6 @@ const citasFiltradas = computed(() => {
     });
 });
 
-// Computada para ordenar por fecha_nota descendente
-const citasOrdenadas = computed(() => {
-  return [...datosPaginados.value].sort((a, b) => {
-    return new Date(b.fecha) - new Date(a.fecha)
-  })
-})
-
 
 // Pendientes
 const pendientes = computed(() => {
@@ -139,167 +121,20 @@ const fechaCita = computed(() => {
     }
 });
 
-async function cancelarCita(cita) {
-    options.icono = 'warning';
-    options.titulo = 'Deseas Cancelar la cita?';
-    options.html = `Se cancelara la cita de: <span>${cita.name_paciente}</span>`;
-    options.input = 'text';
-    options.inputAtributes = { placeholder: "Motivo de cancelacion", }
-    options.confirmtext = 'Si, Cancelar'
-    options.canceltext = 'Atras'
-    const respuestaAlert = await alertRespuestaInput()
-    if (respuestaAlert.estado === 'confirmado') {
-        if (respuestaAlert.valor === '') {
-            options.position = 'top-end';
-            options.texto = "Ingrese un motivo de cancelacion.";
-            options.background = '#d33'
-            options.tiempo = 1500
-            mensaje()
-            return
-        }
-        const res = validarYEnviarCancelarCita(cita, respuestaAlert.valor)
-        if (res) {
-            options.position = 'top-end';
-            options.texto = "Cita Cancelada con exito.";
-            options.background = '#6bc517'
-            options.tiempo = 1500
-            mensaje()
-            options.background = '#d33'
-        }
-    }
-}
+const {
+  cancelarCita,
+  activarCita,
+  actualizarCita,
+  showMotivoCancelacion,
+  showMotivoEdicion,
+  showObservacion
+} = useCitasActions({
+  fecha
+})
 
-const actualizarCita = (cita) => {
-    mapCampos(cita, citasStore.Formulario);
-    if (cita.motivo === 'Atención domiciliaria') {
-        varView.rangoCita = true
-    } else {
-        varView.rangoCita = false
-    }
-    varView.showActualizarCita = true
-}
-
-function showMotivo(cita) {
-    options.icono = "info";
-    options.titulo = "Motivo de cancelacion";
-    options.texto = cita.motivo_cancelacion ? `${cita.motivo_cancelacion}` : 'Cita cancelada!';
-    options.tiempo = 5000;
-    simple();
-}
-
-function showMotivoEdicion(cita) {
-    options.icono = "info";
-    options.titulo = "Motivo de edición";
-    options.texto = cita.motivo_edicion ? `${cita.motivo_edicion}` : 'La cita ha sido editada!';
-    options.tiempo = 5000;
-    simple();
-}
-
-async function showObservacion(cita) {
-    const historia = await historiasStore.listDatos(cita.id_examen_fisico, 'Analisis', 'id')
-    const observacion = historia[0]?.observacion
-    options.icono = "info";
-    options.titulo = "Observacion del Profesional";
-    options.texto = observacion ? `${observacion}` : 'Cita Realizada con exito!';
-    options.tiempo = 5000;
-    simple();
-}
-
-function parseFechaISO(iso) {
-    const [y, m, d] = iso.split('-').map(Number);
-    return new Date(y, m - 1, d); // siempre local, sin UTC
-}
 
 function changeShowPendientes() {
     showPendientes.value = !showPendientes.value
-}
-
-async function activarCita(cita) {
-    if (!cita.fechaHasta) {
-        cita.fechaHasta = cita.fecha
-    }
-
-    // Obtener horas y minutos
-    const fechaHoy = new Date();
-    const horas = fechaHoy.getHours().toString().padStart(2, '0');
-    const minutos = fechaHoy.getMinutes().toString().padStart(2, '0');
-
-    // Formato HH:MM
-    const horaActual = `${horas}:${minutos}`;
-
-    const fechaHoyC = parseFechaISO(new Date().toISOString().split('T')[0]);
-    const fechaHasta = parseFechaISO(cita.fechaHasta);
-
-    if (fechaHoyC > fechaHasta) {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'Rango vencido';
-        notificacionesStore.options.texto = 'Consulta con un administrador para habilitar Cita!'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return
-    }
-
-
-    let pacientes = pacientesStore.Pacientes
-
-    if (pacientes.length < 1) {
-        pacientes = await pacientesStore.listPacientes(false)
-    }
-    const pacienteCita = pacientes.filter(data => {
-        return data.id_paciente === cita.id_paciente
-    })?.[0];
-
-    if (!pacienteCita) {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No se encontro el paciente';
-        notificacionesStore.options.texto = 'Verifica si existe en la lista de pacientes.'
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return
-    }
-
-    historiasStore.Formulario.HistoriaClinica.name_paciente = cita.name_paciente
-    historiasStore.Formulario.HistoriaClinica.type_doc_paciente = pacienteCita.type_doc
-    historiasStore.Formulario.HistoriaClinica.No_document_paciente = pacienteCita.No_document
-    historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
-    historiasStore.Formulario.Analisis.servicio = cita.servicio
-
-    historiasStore.Formulario.Cita = cita
-
-    const servicios = await servicioStore.listServicios()
-    varView.tipoConsulta = servicios.find((s) => {
-        return s.name === cita.servicio
-    })
-
-    if (!varView.tipoConsulta) {
-        notificacionesStore.options.icono = 'warning'
-        notificacionesStore.options.titulo = 'No se encontro el tipo de servicio';
-        notificacionesStore.options.texto = ''
-        notificacionesStore.options.tiempo = 3000
-        await notificacionesStore.simple()
-        return
-    }
-
-    // varView.tipoConsulta = cita.servicio
-    if (varView.tipoConsulta.plantilla === 'Terapia') {
-        historiasStore.Formulario.Terapia.id_paciente = cita.id_paciente
-        historiasStore.Formulario.Terapia.id_profesional = cita.id_medico
-        historiasStore.Formulario.Terapia.id_procedimiento = cita.id_procedimiento
-        historiasStore.Formulario.Terapia.fecha = fecha.value.split('/').reverse().join('-') || cita.fecha
-        historiasStore.Formulario.Terapia.hora = horaActual || cita.hora
-    } else if (varView.tipoConsulta.plantilla === 'Nota') {
-        historiasStore.Formulario.Nota.id_paciente = cita.id_paciente
-        historiasStore.Formulario.Nota.id_profesional = cita.id_medico
-        historiasStore.Formulario.Nota.id_procedimiento = cita.id_procedimiento
-        historiasStore.Formulario.Nota.direccion = pacienteCita.direccion
-        historiasStore.Formulario.Nota.fecha_nota = fecha.value.split('/').reverse().join('-') || cita.fecha
-        historiasStore.Formulario.Nota.hora_nota = horaActual || cita.hora
-    } else if (varView.tipoConsulta.plantilla === 'Medicina') {
-        // const antecedentes = await historiasStore.listDatos(cita.id_paciente, 'Antecedentes', 'id_paciente')
-
-        // historiasStore.Formulario.Antecedentes = antecedentes
-    }
-    varView.showNuevaHistoria = true
 }
 
 </script>
@@ -307,7 +142,7 @@ async function activarCita(cita) {
 <template>
     <!-- Header y filtros -->
     <div v-if="props.Propiedades.showTodas"
-        class="flex md:flex-row flex-col justify-between items-end px-6 py-3 bg-white dark:bg-gray-700 border-1 border-gray-300 dark:border-gray-600 rounded-xl">
+        class="flex md:flex-row flex-col justify-between items-end px-6 py-2 bg-white dark:bg-gray-700 border-1 border-gray-300 dark:border-gray-600 rounded-xl">
         <div class="md:w-1/3 w-full">
             <div class="flex gap-2">
                 <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
@@ -460,7 +295,7 @@ async function activarCita(cita) {
 
         <!-- Citas de Hoy -->
         <div class="grid gap-2 px-4"
-            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
+            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'lg:grid-cols-2 md:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
             <template v-if="!unref(props.Propiedades.citas)">
@@ -488,7 +323,7 @@ async function activarCita(cita) {
             </template>
 
             <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
-                v-for="cita in props.Propiedades.showTodas ? citasOrdenadas : citasFiltradas"
+                v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
                 :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
 
                 <!-- HEADER -->
@@ -558,7 +393,7 @@ async function activarCita(cita) {
                         <div v-if="cita.estado === 'cancelada'">
                             <ButtonRounded
                                 color="bg-gray-500 hover:bg-gray-600 text-white w-[30px]! h-[30px]! shadow-sm"
-                                tooltip="Información" tooltipPosition="top" @click="showMotivo(cita)">
+                                tooltip="Información" tooltipPosition="top" @click="showMotivoCancelacion(cita)">
                                 <i class="fa-solid fa-info"></i>
                             </ButtonRounded>
                         </div>
@@ -648,8 +483,6 @@ async function activarCita(cita) {
             </select>
         </div>
     </div>
-
-    <Historia v-if="varView.showNuevaHistoria" />
 </template>
 
 <style>

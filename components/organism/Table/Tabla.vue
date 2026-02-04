@@ -45,7 +45,7 @@ const {
     sortedItems,
     datosOrdenados,
     borrarFiltros
-} = useOrdenamiento(props.Propiedades.datos.content || ref([]), props.Propiedades.headerTabla.filtros);
+} = useOrdenamiento(props.Propiedades.datos.content || ref([]), props.Propiedades.headerTabla.filtros, props.Propiedades.headerTabla.noBuscarPor);
 
 
 // Paginador
@@ -182,7 +182,7 @@ const tablaAlto = computed(() => {
             <div class="flex justify-between items-center">
                 <p class="text-sm text-gray-500 pb-1">Filtrar Datos de la tabla</p>
                 <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
-                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros"
+                    color="dark:text-gray-200 dark:bg-gray-600 text-gray-700 bg-gray-600" tooltip="Borrar Filtros"
                     tooltipPosition="left" @click="borrarFiltros">
                     <i class="fa-solid fa-close"></i>
                 </ButtonRounded>
@@ -218,11 +218,12 @@ const tablaAlto = computed(() => {
                 <!-- Header titulos de props Columnas -->
                 <div class="sticky top-0 z-1 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-center text-white"
                     :class="Propiedades.headerTabla?.color" :style="estiloColumnas">
-                    <h2 v-for="col in columnasVisibles" :key="col.titulo"
+                    <h2 v-for="(col, key) in columnasVisibles" :key="col.titulo"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         {{ col.value }}
-                        <i v-if="col.ordenar" @click="sortedItems(col.titulo)"
-                            class="fa-solid fa-sort cursor-pointer"></i>
+                        <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)" color="bg-inherit h-fit h-fit" tooltip="Ordenar">
+                            <i class="fa-solid fa-sort cursor-pointer"></i>
+                        </ButtonRounded>
                     </h2>
                     <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
                 </div>

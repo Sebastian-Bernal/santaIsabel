@@ -7,6 +7,8 @@ import { CalendarioBuilder, CitasBuilder } from '~/build/Constructores/Calendari
 import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { ref, onMounted } from 'vue'
 import { CardBuilder } from '~/build/Constructores/CardBuilder'
+import { TablaBuilder } from '~/build/Constructores/TablaBuilder'
+import { useCitasActions } from '~/composables/Usuarios/Citas'
 
 const varView = useVarView()
 const citasStore = useCitasStore();
@@ -15,6 +17,21 @@ const citas = ref([]);
 const calendarioCitasStore = useCalendarioCitas();
 const show = ref(false);
 const refresh = ref(1);
+
+const {
+    fecha,
+} = storeToRefs(calendarioCitasStore);
+
+const {
+  cancelarCita,
+  activarCita,
+  actualizarCita,
+  showMotivoCancelacion,
+  showMotivoEdicion,
+  showObservacion
+} = useCitasActions({
+  fecha
+})
 
 async function llamadatos() {
     varView.cargando = true
@@ -71,12 +88,63 @@ const showCalendario = () => {
     varView.showCalendario = !varView.showCalendario
 };
 
+const showTabla = () => {
+    varView.showEnTabla = !varView.showEnTabla
+}
+
+function citaEliminada (cita) {
+    if(cita.estado == 'Inactiva'){
+        return 'borrar'
+    } else if (cita.estado == 'cancelada') {
+        return 'observacion eliminada'
+    }
+}
+
+function isCancelarCita (cita) {
+    if(cita.estado == 'cancelada'){
+        showMotivoCancelacion(cita)
+    } else {
+        cancelarCita(cita)
+    }
+}
+
+function isCitaActualizada (cita) {
+    if(cita.estado == 'Inactiva' && cita.showMotivoEdicion){
+        return 'observacion editada'
+    } else {
+        return ''
+    }
+}
+
+function isActualizarCita (cita) {
+    if(cita.estado == 'Inactiva'){
+        return 'actualizar'
+    }
+}
+
+function citaRealizada (cita) {
+    if(cita.estado == 'Realizada'){
+        return 'observacion completada'
+    } else if(cita.estado == 'Inactiva') {
+        return 'completar'
+    }
+}
+
+function isActivarCita (cita) {
+    if(cita.estado == 'Realizada'){
+        showObservacion(cita)
+    } else if(cita.estado == 'Inactiva'){
+        activarCita(cita)
+    }
+}
+
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
 
 const propiedades = computed(() => {
 
     const builderCitas = new CitasBuilder()
+    const tablabuilder = new TablaBuilder()
     const pagina = new ComponenteBuilder()
 
     const puedeVer = varView.getPermisos.includes('Citas_view');
@@ -134,7 +202,7 @@ const propiedades = computed(() => {
             .addComponente('Citas', builderCitas
                 .setCitas(citas)
                 .setShowTodas(false)
-                .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }])
+                .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}])
             )
             if(varView.showCalendario){
                 pagina
@@ -152,16 +220,50 @@ const propiedades = computed(() => {
                 titulo: 'Calendario de tu Agenda',
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
+                    !varView.showEnTabla ? { text: 'Tabla', icon: 'fa-solid fa-table', color: 'bg-[var(--color-default-400)]', action: showTabla } :
+                    { text: 'Tarjeta', icon: 'fa-solid fa-address-card', color: 'bg-[var(--color-default-400)]', action: showTabla },
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila },
                     puedePost ? { text: 'Agendar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
                 ]
             })
             .setContenedor('grid grid-cols-1 gap-3')
-            .addComponente('Citas', builderCitas
-                .setCitas(citas)
-                .setShowTodas(true)
-                .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }])
-            )
+            if(varView.showEnTabla){
+                pagina
+                .addComponente('Tabla', tablabuilder
+                    .setColumnas([
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'name_paciente', value: 'Paciente', tamaño: 200, ordenar: true },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 150 },
+                    { titulo: 'servicio', value: 'Servicio', tamaño: 150 },
+                    { titulo: 'name_medico', value: 'Profesional', tamaño: 150 },
+                    { titulo: 'estado', value: 'Estado', tamaño: 150, ordenar: true },
+                    ])
+                    .setHeaderTabla({
+                    color: 'bg-[var(--color-default)] text-white',
+                    buscador: true,
+                    excel: true,
+                    filtros: [{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}],
+                    noBuscarPor: ['name_medico']
+                    })
+                    .setDatos(citas)
+                    .setAcciones(
+                        { icons: [
+                            // { icon: isCitaActualizada, action: showMotivoEdicion },
+                            { icon: isActualizarCita, action: actualizarCita },
+                            { icon: citaEliminada, action: isCancelarCita },
+                            { icon: citaRealizada, action: isActivarCita },
+                        ], botones: true }
+                    )
+                )
+            } else {
+                pagina
+                .addComponente('Citas', builderCitas
+                    .setCitas(citas)
+                    .setShowTodas(true)
+                    .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}])
+                )
+            }
+
     }
 
     return pagina.build()
@@ -173,4 +275,5 @@ const propiedades = computed(() => {
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <Cita></Cita>
     <PDFServicio v-if="varView.showPDFServicio"></PDFServicio>
+    <Historia v-if="varView.showNuevaHistoria" />
 </template>

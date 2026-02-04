@@ -17,10 +17,18 @@ const iconoClase = computed(() => {
             return 'fa-solid fa-pencil';
         case 'borrar':
             return 'fa-solid fa-trash';
+        case 'completar':
+            return 'fa-solid fa-check';
         case 'agregar':
             return 'fa-solid fa-plus';
         case 'download':
             return 'fa-solid fa-download';
+        case 'observacion eliminada':
+            return 'fa-solid fa-info';
+        case 'observacion editada':
+            return 'fa-solid fa-info';
+        case 'observacion completada':
+            return 'fa-solid fa-info';
         case 'pdf':
             return 'fa-solid fa-file-pdf text-xl text-gray-700 dark:text-gray-200';
         case 'movimiento':
@@ -35,13 +43,21 @@ const botonClase = computed(() => {
         case 'ver':
             return 'bg-sky-700 w-[24px] h-[24px] cursor-pointer';
         case 'actualizar':
-            return 'bg-[var(--color-warning)] w-[24px] h-[24px] cursor-pointer';
+            return 'bg-amber-500 w-[24px] h-[24px] cursor-pointer';
         case 'borrar':
-            return 'bg-red-600 w-[24px] h-[24px] cursor-pointer';
+            return 'bg-danger w-[24px] h-[24px] cursor-pointer';
+        case 'completar':
+            return 'bg-green-500 w-[24px] h-[24px] cursor-pointer';
         case 'agregar':
             return 'bg-blue-500 w-[24px] h-[24px] cursor-pointer';
         case 'download':
             return 'bg-blue-700 w-[24px] h-[24px] cursor-pointer';
+        case 'observacion eliminada':
+            return 'bg-danger w-[24px] h-[24px] cursor-pointer';
+        case 'observacion editada':
+            return 'bg-amber-500 w-[24px] h-[24px] cursor-pointer';
+        case 'observacion completada':
+            return 'bg-blue-600 w-[24px] h-[24px] cursor-pointer';
         case 'pdf':
             return 'w-[24px] h-[24px] cursor-pointer md:bg-inherit bg-gray-200 dark:bg-gray-700';
         case 'movimiento':
