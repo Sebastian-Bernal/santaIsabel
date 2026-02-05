@@ -1,4 +1,5 @@
 import { ref, computed, watch } from 'vue';
+import { nombresMeses } from '~/data/Fechas';
 
 export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []) {
     const busqueda = ref('');
@@ -51,7 +52,7 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
 
     const datosOrdenados = computed(() => {
         let resultado = [...unref(datos)];
-        
+
         // Datos por busqueda Global de datos
         if (busqueda.value.trim() !== '') {
             const termino = busqueda.value.trim().toLowerCase();
@@ -64,24 +65,49 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
 
         }
 
-        // Busqueda global con hash
-        // if (busqueda.value.trim() !== "") {
-        //     const termino = busqueda.value.trim().toLowerCase();
-        //     resultado = indiceBusquedaGlobal.value[termino] || [];
-        // }
-
         // Datos por filtros en columnas, hash maps
+        const filtroFecha = { mes: null, año: null };
+
         for (const [columna, valorFiltro] of Object.entries(filtros.value)) {
             if (valorFiltro && valorFiltro !== "") {
-                const val = String(valorFiltro).toLowerCase();
-                const indiceCol = indicePorColumna.value[columna];
-                if (indiceCol && indiceCol[val]) {
-                    resultado = resultado.filter(item => indiceCol[val].includes(item));
+                const colDef = columnas.find(c => c.columna === columna);
+                const columnaReal = colDef?.columnaReal || columna;
+
+                if (colDef?.tipo === 'mes') {
+                    filtroFecha.mes = Number(valorFiltro);
+                } else if (colDef?.tipo === 'año') {
+                    filtroFecha.año = Number(valorFiltro);
                 } else {
-                    resultado = [];
+                    const val = String(valorFiltro).toLowerCase();
+                    const indiceCol = indicePorColumna.value[columnaReal];
+                    if (indiceCol && indiceCol[val]) {
+                        resultado = resultado.filter(item => indiceCol[val].includes(item));
+                    } else {
+                        resultado = [];
+                    }
                 }
             }
         }
+
+
+        // Aplicar filtro combinado de fecha
+        if (filtroFecha.mes || filtroFecha.año) {
+            resultado = resultado.filter(item => {
+                const fecha = new Date(item["fecha"]);
+                const mes = fecha.getMonth() + 1;
+                const año = fecha.getFullYear();
+
+                if (filtroFecha.mes && filtroFecha.año) {
+                    return mes === filtroFecha.mes && año === filtroFecha.año;
+                } else if (filtroFecha.mes) {
+                    return mes === filtroFecha.mes;
+                } else if (filtroFecha.año) {
+                    return año === filtroFecha.año;
+                }
+            });
+        }
+
+
 
         // Datos menor a mayor - mayor a menor con cache
         if (columnaOrden.value) {
@@ -108,13 +134,50 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
     // Generar ociones por datos no repetidos de columna a filtrar
     const filtrosConOpciones = computed(() => {
         return columnas.map(col => {
-            const valoresUnicos = [
-                ...new Set(unref(datos).map(d => d[col.columna]).filter(v => v !== null && v !== undefined))
-            ];
-            return {
-                ...col,
-                datos: valoresUnicos.map(v => ({ text: v, value: v }))
-            };
+            const columnaReal = col.columnaReal || col.columna;
+
+            if (col.tipo === 'mes') {
+                const meses = [
+                    { text: 'Enero', value: 1 },
+                    { text: 'Febrero', value: 2 },
+                    { text: 'Marzo', value: 3 },
+                    { text: 'Abril', value: 4 },
+                    { text: 'Mayo', value: 5 },
+                    { text: 'Junio', value: 6 },
+                    { text: 'Julio', value: 7 },
+                    { text: 'Agosto', value: 8 },
+                    { text: 'Septiembre', value: 9 },
+                    { text: 'Octubre', value: 10 },
+                    { text: 'Noviembre', value: 11 },
+                    { text: 'Diciembre', value: 12 }
+                ];
+                return { ...col, datos: meses };
+            } else if (col.tipo === 'año') {
+                const añosUnicos = [
+                    ...new Set(
+                        unref(datos)
+                            .map(d => {
+                                const fecha = d[columnaReal];
+                                if (!fecha) return null;
+                                const parsed = new Date(fecha);
+                                return isNaN(parsed) ? null : parsed.getFullYear();
+                            })
+                            .filter(v => v !== null)
+                    )
+                ];
+                return {
+                    ...col,
+                    datos: añosUnicos.map(a => ({ text: String(a), value: a }))
+                };
+            } else {
+                const valoresUnicos = [
+                    ...new Set(unref(datos).map(d => d[columnaReal]).filter(v => v !== null && v !== undefined))
+                ];
+                return {
+                    ...col,
+                    datos: valoresUnicos.map(v => ({ text: v, value: v }))
+                };
+            }
         });
     });
 

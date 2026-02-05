@@ -28,6 +28,7 @@ const Citas = ref(props.Propiedades.citas);
 const puedePut = ref(varView.getPermisos.includes('Citas_put'))
 const puedeDelete = ref(varView.getPermisos.includes('Citas_delete'))
 const showPendientes = ref(false)
+const mostrarFiltrosAvanzados = ref(false)
 
 const {
     fechaActual,
@@ -141,33 +142,60 @@ function changeShowPendientes() {
 
 <template>
     <!-- Header y filtros -->
-    <div v-if="props.Propiedades.showTodas"
-        class="flex md:flex-row flex-col justify-between items-end px-6 py-2 bg-white dark:bg-gray-700 border-1 border-gray-300 dark:border-gray-600 rounded-xl">
-        <div class="md:w-1/3 w-full">
-            <div class="flex gap-2">
-                <h2 class="text-xl font-semibold">Registro completo de Agenda</h2>
-                <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
-                    color="dark:text-gray-400 dark:bg-gray-800 !text-gray-700 bg-gray-300" tooltip="Borrar Filtros"
-                    tooltipPosition="right" @click="borrarFiltros">
-                    <i class="fa-solid fa-close"></i>
-                </ButtonRounded>
+
+        <div v-if="props.Propiedades.showTodas" class="w-full mt-4 p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-gray-400"></i>
+                    <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Registro completo de Agenda
+                        <span v-if="Object.values(filtros).some(v => v !== '')"
+                            class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                            Filtros activos
+                        </span>
+                    </p>
+                </div>
+
+                <div class="flex gap-2">
+                    <ButtonRounded v-if="filtrosConOpciones.length > 3" @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
+                        color=" dark:text-gray-200 bg-gray-800 dark:bg-gray-700" :color="{'bg-gray-800 dark:bg-gray-700' : !mostrarFiltrosAvanzados, 'bg-blue-800 dark:bg-blue-700' : mostrarFiltrosAvanzados,}" tooltip="Filtros Avanzados">
+                        <i class="fa-solid fa-sliders"></i>
+                    </ButtonRounded>
+                    <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
+                        color="dark:text-gray-200 dark:bg-red-600 bg-red-400" tooltip="Limpiar filtros"
+                        tooltipPosition="top" @click="borrarFiltros">
+                        <i class="fa-solid fa-xmark"></i>
+                    </ButtonRounded>
+                </div>
             </div>
-            <Input :Propiedades="{
-                placeholder: 'Buscar dato en citas...',
-                icon: 'fa-solid fa-search',
-                modelValue: busqueda,
-                tamaño: 'w-full',
-                upperCase: true,
-                estilo: 'bg-gray-50 dark:bg-gray-800'
-            }" v-model="busqueda" />
+            <div class="flex flex-wrap items-end justify-between gap-3"">
+                <Input :Propiedades="{
+                    placeholder: 'Buscar dato en Citas...',
+                    icon: 'fa-solid fa-search',
+                    modelValue: busqueda,
+                    tamaño: 'w-full sm:w-2/5',
+                    upperCase: true,
+                    estilo: 'bg-white dark:bg-gray-900'
+                }" v-model="busqueda" />
+
+            <div class="flex flex-wrap justify-end gap-3">
+                <Select v-for="(filtro, key) in filtrosConOpciones.slice(0, 3)" :key="key" :Propiedades="{
+                    placeholder: filtro.placeholder,
+                    label: filtro.placeholder,
+                    modelValue: busqueda,
+                    tamaño: 'md:w-[180px] w-full',
+                    estilo: 'bg-white dark:bg-gray-900',
+                    options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
+                }" v-model="filtros[filtro.columna]" />
+            </div>
         </div>
-        <div class="flex gap-3 md:w-1/3 w-full md:mt-0 mt-4">
-            <Select v-for="(filtro, key) in filtrosConOpciones" :key="key" :Propiedades="{
-                placeholder: 'Todos',
+        <div v-if="mostrarFiltrosAvanzados" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-end">
+            <Select v-for="(filtro, key) in filtrosConOpciones.slice(3)" :key="key" :Propiedades="{
+                placeholder: filtro.placeholder,
                 label: filtro.placeholder,
                 modelValue: busqueda,
                 tamaño: 'w-full',
-                estilo: 'bg-gray-50 dark:bg-gray-800',
+                estilo: 'bg-white dark:bg-gray-900',
                 options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
             }" v-model="filtros[filtro.columna]" />
         </div>
@@ -295,7 +323,7 @@ function changeShowPendientes() {
 
         <!-- Citas de Hoy -->
         <div class="grid gap-2 px-4"
-            :class="{ 'lg:grid-cols-3 md:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 lg:grid-cols-1': !varView.showEnFila }">
+            :class="{ 'xl:grid-cols-3 lg:grid-cols-2': varView.showEnFila || !varView.showCalendario, 'xl:grid-cols-2 lg:grid-cols-1': !varView.showEnFila }">
             <!-- Card Citas -->
 
             <template v-if="!unref(props.Propiedades.citas)">

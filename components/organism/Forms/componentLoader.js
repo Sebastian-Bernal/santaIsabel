@@ -14,6 +14,7 @@ export function loadComponent(name) {
     Imagen: () => import('~/components/atoms/Images/Imagen.vue'),
     Permisos: () => import('~/components/atoms/Selects/Permisos.vue'),
     Card: () => import('~/components/molecules/Cards/Card.vue'),
+    Button: () => import('~/components/atoms/Buttons/Button.vue')
   };
 
   const loader = componentMap[name];

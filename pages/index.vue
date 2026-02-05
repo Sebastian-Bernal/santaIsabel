@@ -8,7 +8,6 @@ import { useLoginBuilder } from '~/build/Login/useLoginBuilder';
 import { useRecuperarContraseñaBuilder } from '~/build/Login/useRecuperarContraseñaBuilder.js';
 import { validarYEnviarRecuperarContraseña } from '~/Core/Login/RecuperarContraseña';
 import { useIngresoContraseñaBuilder } from '~/build/Login/useIngresoContraseñaBuilder';
-import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 
 definePageMeta({
     layout: 'authentication'
@@ -131,14 +130,11 @@ const propiedadesLogin = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedadesLogin" />
-     <!-- <FondoBlur>
-
-     </FondoBlur> -->
 </template>
 
 <style>
 .logo {
-    animation: aparecerLogo 1s;
+    animation: aparecerLogo 1s ease-out;
 }
 
 @keyframes aparecerLogo {
@@ -151,6 +147,21 @@ const propiedadesLogin = computed(() => {
         transform: translateY(0);
         opacity: 1;
     }
+}
 
+.animate-fadeIn {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 </style>

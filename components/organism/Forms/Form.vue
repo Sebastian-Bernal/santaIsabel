@@ -68,19 +68,19 @@ function limpiar() {
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg pb-4"
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg flex flex-col h-full"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
-            <div class="pb-5 z-1 flex flex-col items-center h-[90%]">
+            <div class="flex flex-col flex-1 min-h-0" :class="{'h-[90%]': props.Propiedades.formulario.botones.length > 0, 'h-[100%]': !props.Propiedades.formulario.botones}">
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
                     :Propiedades="Propiedades.formulario" :SeccionActual="seccionActual"
                     :key="Propiedades.formulario.soloVer" :cerrar="limpiar" />
-                <!-- Body -->
-                <div class="w-full h-full py-1">
+                <!-- Titulo Sin wizard -->
+                <div class="w-full py-1 flex flex-col flex-1 min-h-0">
                     <div v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
-                        class="relative py-2 pt-5">
+                        class="relative pt-4 pb-3 px-4">
                         <h2
                             class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center">
                             {{ Propiedades.formulario.secciones[seccionActual].nombre }}
@@ -94,11 +94,11 @@ function limpiar() {
                         </div>
                     </div>
                     <!-- Formulario -->
-                    <div class="w-full h-full flex justify-center">
-                        <div class="scrollForm w-full flex flex-col items-center py-3 gap-[15px] h-[95%] overflow-y-auto"
+                    <div class="flex-1 scrollForm overflow-y-auto">
+                        <div class="w-full flex flex-col items-center py-3 gap-4"
                             :class="{ 'h-[92%]!': Propiedades.formulario.tipo === 'Wizard' }">
                             <!-- Contenido del formulario -->
-                            <div class="w-full md:px-10 px-5 pb-8 grid md:grid-cols-2 grid-cols-1 gap-[15px]"
+                            <div class="w-full md:px-10 px-5 grid md:grid-cols-2 grid-cols-1 gap-4"
                                 :class="Propiedades.formulario.contenedorCampos">
                                 <component v-for="(item, index) in camposActuales" :key="index"
                                     :is="componentInstances[item.component]"
@@ -112,10 +112,10 @@ function limpiar() {
                 </div>
             </div>
             <!-- Botones -->
-            <div class="mt-5 w-full flex flex-row-reverse justify-center items-center gap-3 px-2">
+            <div v-if="props.Propiedades.formulario.botones.length > 0" class="border-t border-gray-200 dark:border-gray-700 px-4 py-3 flex flex-row-reverse justify-center gap-3">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)"
-                    class="md:w-[200px] sm:w-[2/3] w-full">
+                    class="md:w-[180px] w-full">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>

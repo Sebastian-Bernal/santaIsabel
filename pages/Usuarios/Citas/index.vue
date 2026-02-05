@@ -20,6 +20,8 @@ const refresh = ref(1);
 
 const {
     fecha,
+    meses,
+    fechaActual
 } = storeToRefs(calendarioCitasStore);
 
 const {
@@ -138,6 +140,16 @@ function isActivarCita (cita) {
     }
 }
 
+const citasPorMes = computed((mes) => {
+
+    const citasfiltradasMes = citas.value.filter((cita) => {
+        return cita.fecha.split('-')[1] === mes
+    })
+  return [...citasfiltradasMes].sort((a, b) => {
+    return new Date(b.fecha) - new Date(a.fecha)
+  })
+})
+
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
 
@@ -202,7 +214,12 @@ const propiedades = computed(() => {
             .addComponente('Citas', builderCitas
                 .setCitas(citas)
                 .setShowTodas(false)
-                .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}])
+                .setFiltros([
+                    { columna: 'servicio', placeholder: 'Servicio', }, 
+                    { columna: 'estado', placeholder: 'Estado', }, 
+                    { columna: 'name_medico', placeholder: 'Profesional'}, 
+                    { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' }
+                ])
             )
             if(varView.showCalendario){
                 pagina
@@ -242,7 +259,13 @@ const propiedades = computed(() => {
                     color: 'bg-[var(--color-default)] text-white',
                     buscador: true,
                     excel: true,
-                    filtros: [{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}],
+                    filtros: [
+                        { columna: 'servicio', placeholder: 'Servicio', }, 
+                        { columna: 'estado', placeholder: 'Estado', }, 
+                        { columna: 'name_medico', placeholder: 'Profesional'},
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                    ],
                     noBuscarPor: ['name_medico']
                     })
                     .setDatos(citas)
@@ -260,7 +283,12 @@ const propiedades = computed(() => {
                 .addComponente('Citas', builderCitas
                     .setCitas(citas)
                     .setShowTodas(true)
-                    .setFiltros([{ columna: 'servicio', placeholder: 'Servicio', }, { columna: 'estado', placeholder: 'Estado', }, {columna: 'name_medico', placeholder: 'Profesional'}])
+                    .setFiltros([
+                        { columna: 'servicio', placeholder: 'Servicio', }, 
+                        { columna: 'estado', placeholder: 'Estado', }, 
+                        {columna: 'name_medico', placeholder: 'Profesional'},
+                        { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' }
+                    ])
                 )
             }
 

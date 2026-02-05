@@ -10,8 +10,6 @@ export function useLoginBuilder({
   recuperarcontraseña,
   cambiarContraseña,
   validaUsuario,
-  selectEmpresa,
-  opcionesCompañy,
   mostrarContraseña
 }) {
   const builder = new FormularioBuilder()
@@ -27,14 +25,12 @@ export function useLoginBuilder({
     .setFormulariotamaño('SM')
     .setFormularioFondo('FondoTransparent')
     .setFormularioShow(true)
-    .setBotones([
-      { text: 'Ingresar', color: 'bg-white text-black! hover:bg-gray-100', type: 'enviar' },
-    ])
+    .setFormularioEstilos('h-[75%]! !bg-white/10 backdrop-blur-md rounded-xl shadow-lg w-full md:px-5 animate-fadeIn')
     .nuevaSeccion()
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'md:w-1/6 w-[60px] logo mb-2 select-none',
+      tamaño: 'w-20 h-20 logo mb-2 select-none',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({
@@ -42,42 +38,28 @@ export function useLoginBuilder({
       text: `
             <div class="flex flex-col justify-center items-center gap-1 pb-5">
                 <h3 class="text-white md:text-3xl text-xl font-bold">Thesalus</h3>
+                <p class="text-gray-200 text-sm">Tu salud, nuestra prioridad</p>
             </div>
         `,
       tamaño: 'w-full col-span-2 flex justify-center'
     })
     .addCampo({
       component: 'Input',
-      placeholder: 'Correo Electronico',
+      placeholder: 'Ingresa tu Correo',
       type: 'email',
       id: 'correo-user',
       name: 'correo-user',
       tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
       estilo: 'text-white!',
       vmodel: 'Usuario.correo',
+      icon: 'fa-solid fa-envelope text-white',
       events: {
         onKeyUp: validaUsuario
       },
     })
-  if (selectEmpresa.value) {
-    builder
-      .setFormularioEstilos('bg-inherit! h-[75vh]!')
-      .addCampo({
-        component: 'Select',
-        placeholder: 'Seleccione la Empresa',
-        tamaño: 'lg:w-2/3 w-full col-span-2 justify-self-center',
-        estilo: 'text-white!',
-        vmodel: 'Usuario.empresa',
-        options: opcionesCompañy
-      })
-  } else {
-    builder
-      .setFormularioEstilos('bg-inherit! h-[70vh]!')
-  }
-  builder
     .addCampo({
       component: 'Input',
-      placeholder: 'Contraseña',
+      placeholder: 'Ingresa tu Contraseña',
       type: !mostrarContraseña.value ? 'password' : 'text',
       id: 'password',
       name: 'contraseña',
@@ -93,12 +75,21 @@ export function useLoginBuilder({
       },
     })
     .addCampo({
+      component: 'Button',
+      texto: 'Ingresar',
+      color: 'col-span-2 lg:w-2/3 w-full mx-auto bg-gradient-to-r from-[var(--color-default)] to-[var(--color-default-700)] text-white font-bold py-2 rounded-lg shadow-md transition-all duration-300 cursor-pointer active:scale-95',
+      events: {
+        onClick: () => validarYEnviarLogin(usuarioStore.Formulario)
+      }
+    })
+    .addCampo({
       component: 'Label',
       text: `
-            <p class="text-sm mt-3 text-gray-100">
-                Olvidaste tu contraseña?
-                <span @click="recuperarContraseña" class="underline font-semibold cursor-pointer">Recuperar</span>
-            </p>
+                <p class="text-sm mt-2 text-gray-100 text-center">
+                    ¿Olvidaste tu contraseña?
+                    <span @click="recuperarContraseña"
+                        class="underline font-semibold cursor-pointer hover:text-teal-300">Recuperar</span>
+                </p>
         `,
       events: {
         onClick: recuperarcontraseña
@@ -108,10 +99,11 @@ export function useLoginBuilder({
     .addCampo({
       component: 'Label',
       text: `
-            <p class="text-xs text-gray-300">
-                Primer Ingreso
-                <span @click="cambiarContraseña" class="underline font-semibold cursor-pointer">Crear Contraseña</span>
-            </p>
+                <p class="text-xs text-gray-300 text-center mt-1">
+                    Primer Ingreso
+                    <span @click="cambiarContraseña"
+                        class="underline font-semibold cursor-pointer hover:text-teal-300">Crear Contraseña</span>
+                </p>
         `,
       events: {
         onClick: cambiarContraseña

@@ -6,6 +6,7 @@ import Citas from '~/components/molecules/Calendario/Citas.vue';
 import Card from '~/components/molecules/Cards/Card.vue';
 import Modal from '~/components/organism/Modal/Modal.vue';
 import PDFTemplate from '../PDFTemplate/PDFTemplate.vue';
+import Button from '~/components/atoms/Buttons/Button.vue';
 
 import FondoDefault from '~/components/atoms/Fondos/FondoDefault.vue';
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
@@ -31,6 +32,7 @@ const components = {
     Card,
     Modal,
     PDFTemplate,
+    Button
 }
 
 </script>

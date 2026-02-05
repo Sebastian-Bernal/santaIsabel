@@ -11,7 +11,7 @@ const props = defineProps({
   <button
     :disabled="Propiedades.disabled"
     :class="Propiedades.color, [
-      'px-5 py-2 rounded-2xl font-semibold shadow-md transition-all duration-300',
+      'px-5 py-2 rounded-2xl font-semibold shadow-md transition-all duration-300 cursor-pointer active:scale-95',
       Propiedades.disabled
         ? 'bg-gray-400 cursor-not-allowed'
         : 'bg-blue-500 hover:bg-blue-600 active:scale-95 text-white',
