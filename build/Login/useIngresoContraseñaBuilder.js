@@ -1,6 +1,6 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
-import CrossImg from '~/assets/img/cross.png'
+import CrossImg from '~/public/cruz.png'
 
 export function useIngresoContraseñaBuilder({
   storeId,
@@ -14,23 +14,35 @@ export function useIngresoContraseñaBuilder({
     .setStoreId(storeId)
     .setStorePinia(storePinia)
     .setFormulariotamaño('SM')
-    .setFormularioEstilos('h-[75vh]!')
+    .setFormularioEstilos('h-[70vh]!')
     .setFormularioFondo(true)
     .setFormularioShow(show)
     .setBotones([
-      { text: 'Siguiente', color: 'dark:bg-white dark:text-black! dark:hover:bg-gray-100 bg-blue-500 hover:bg-blue-600 ', type: 'enviar', },
+      { text: 'Crear cuenta', color: 'dark:bg-white dark:text-black! dark:hover:bg-gray-100 bg-blue-500 hover:bg-[var(--color-default)]! hover:text-white! ', type: 'enviar', },
       { text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar', accion: cerrar },
     ])
-    .nuevaSeccion('Cambiar Contraseña')
+    .nuevaSeccion('')
     .addCampo({
       component: 'Imagen',
       src: CrossImg,
-      tamaño: 'w-1/6 logo mt-5 mb-10 select-none invert dark:invert-0',
+      tamaño: 'w-20 h-20 logo mt-8 mb-3 select-none',
       contenedor: 'flex justify-center w-full col-span-2'
     })
     .addCampo({
+      component: 'Label',
+      text: `
+            <div class="flex flex-col justify-center items-center gap-2 pt-4 pb-8 text-center">
+                <h3 class="text-[var(--color-default)] text-3xl font-bold tracking-wide">Thesalus</h3>
+                <p class="text-gray-600 dark:text-gray-300 max-w-md">
+                  Ingresa el código enviado a tu correo y crea una contraseña segura para tu cuenta.
+                </p>
+            </div>
+        `,
+      tamaño: 'w-full col-span-2 flex justify-center'
+    })
+    .addCampo({
       component: 'Input',
-      placeholder: 'Codigo de Recuperacion',
+      placeholder: 'Código de recuperación',
       icon: 'fa-solid fa-key',
       type: 'text',
       id: 'codigo',
@@ -40,7 +52,8 @@ export function useIngresoContraseñaBuilder({
     })
     .addCampo({
       component: 'Input',
-      placeholder: 'Contraseña',
+      placeholder: 'Nueva contraseña',
+      icon: 'fa-solid fa-lock',
       type: 'password',
       id: 'contraseña',
       name: 'contraseña',

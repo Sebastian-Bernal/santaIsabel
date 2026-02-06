@@ -143,7 +143,7 @@ const tablaAlto = computed(() => {
                             class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-lg">
 
                             <download-excel class="flex gap-1 hover:text-white"
-                                :data="Array.isArray(props.Propiedades?.datos?.content) ? unref(props.Propiedades.datos.content) : unref(props.Propiedades.datos.content)"
+                                :data="Array.isArray(datosOrdenados) ? unref(datosOrdenados) : unref(props.Propiedades.datos.content)"
                                 :name="props.Propiedades.headerTabla.titulo" type="xlsx">
                                 <i class="fa-solid fa-download"></i>
                                 <p class="text-xs">Descargar</p>
@@ -194,7 +194,7 @@ const tablaAlto = computed(() => {
 
                 <div class="flex gap-2">
                     <ButtonRounded v-if="filtrosConOpciones.length > 3" @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
-                        color="bg-gray-800 text-gray-700 dark:bg-gray-700 dark:text-gray-200" tooltip="Filtros Avanzados">
+                        :color="mostrarFiltrosAvanzados ? 'bg-blue-800 dark:bg-blue-700' : 'bg-gray-800 text-gray-700 dark:bg-gray-700 dark:text-gray-200' " tooltip="Filtros Avanzados">
                         <i class="fa-solid fa-sliders"></i>
                     </ButtonRounded>
                     <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
@@ -428,7 +428,7 @@ const tablaAlto = computed(() => {
         </div>
     </div>
     </div>
-    <DatosExcel v-if="varView.showDatosExcel" :datos="props.Propiedades.datos.content"
+    <DatosExcel v-if="varView.showDatosExcel" :datos="datosOrdenados"
         :tabla="props.Propiedades.headerTabla.titulo" />
 </template>
 

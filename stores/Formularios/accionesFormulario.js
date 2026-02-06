@@ -35,8 +35,11 @@ import { validarYEnviarPutDatosServicio } from '~/Core/Empresa/Datos/Servicio/Pu
 import { validarYEnviarLogin } from '~/Core/Login/Ingresar';
 import { validarYEnviarCambiarContraseña } from '~/Core/Login/CambiarContraseña';
 import { validarYEnviarCambiarContraseñaPrimerVez } from '~/Core/Login/CambiarContraseñaPrimerVez';
+// Insumos
+import { validarYEnviarNuevoInusmo } from '~/Core/Historial/Insumos/PostInsumos';
 // Movimientos Insumos
-import { validarYEnviarNuevoMovimiento } from '~/Core/Historial/Insumos/PostInsumos';
+import { validarYEnviarNuevoMovimiento } from '~/Core/Historial/Insumos/PostMovimiento';
+import { validarYEnviarActualizarInusmo } from '~/Core/Historial/Insumos/PutInsumos';
 
 
 // Importa accion de cada formulario desde el core
@@ -152,7 +155,12 @@ export const accionesFormularios = {
         return respuesta
     },
     NuevoInsumo: async (data) => {
-
+        const respuesta = await validarYEnviarNuevoInusmo(data)
+        return respuesta
+    },
+    ActualizarInsumo: async (data) => {
+        const respuesta = await validarYEnviarActualizarInusmo(data)
+        return respuesta
     },
     NuevoMovimiento: async (data) => {
         const respuesta = await validarYEnviarNuevoMovimiento(data)

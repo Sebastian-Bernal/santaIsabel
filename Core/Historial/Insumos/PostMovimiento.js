@@ -3,23 +3,18 @@ import { useNotificacionesStore } from '../../../stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nueva Nota
-export const validarYEnviarNuevoInusmo = async (datos) => {
+export const validarYEnviarNuevoMovimiento = async (datos) => {
     const notificacionesStore = useNotificacionesStore()
 
-    const insumo = datos?.Insumos;
+    const Movimiento = datos?.Movimiento;
 
     // Validar que todos los campos estén presentes y no vacíos
     if (
-        !insumo?.nombre ||
-        !insumo?.categoria ||
-        !insumo?.activo ||
-        insumo?.receta === undefined ||
-        !insumo?.unidad ||
-        insumo?.stock === undefined ||
-        !insumo?.lote ||
-        !insumo?.vencimiento ||
-        !insumo?.ubicacion
-
+        !Movimiento?.cantidadMovimiento ||
+        !Movimiento?.fechaMovimiento ||
+        !Movimiento?.tipoMovimiento ||
+        !Movimiento?.id_medico ||
+        !Movimiento?.id_insumo
     ) {
         const msg = 'Todos los campos son obligatorios. Verifica que no haya ninguno vacío.';
         notificacionesStore.options.icono = 'error';
@@ -30,19 +25,26 @@ export const validarYEnviarNuevoInusmo = async (datos) => {
         return;
     }
 
-    return await enviarFormularioNuevoInsumo(datos);
+    return await enviarFormularioInsumos(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
+export const enviarFormularioInsumos = async (datos, reintento= false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
     const varView = useVarView();
 
-    if(datos.Insumos.receta === ''){
-        datos.Insumos.receta === false
+    varView.showPDFInsumo = true
+    varView.propiedadesPDF = {
+        ...datos.Insumos,
+        ...datos.Movimiento,
+        id_medico: 1,
+        nombreInsumo: datos.Insumos.nombre,
+        codigoInsumo: 'INS-001',
+        unidad: datos.Insumos.unidad,
+        areaDestino: 'Bodega Central',
     }
 
     const online = navigator.onLine;
@@ -51,24 +53,20 @@ export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
             // mandar a api
             let options = {
                 metodo: 'POST',
-                url: config.public.insumos,
+                url: config.public.movimientos,
                 token: token,
                 body: {
-                    nombre: datos.Insumos.nombre,
-                    categoria: datos.Insumos.categoria,
-                    activo: datos.Insumos.activo,
-                    receta: datos.Insumos.receta,
-                    unidad: datos.Insumos.unidad,
-                    stock: datos.Insumos.stock,
-                    lote: datos.Insumos.lote,
-                    vencimiento: datos.Insumos.vencimiento,
-                    ubicacion: datos.Insumos.ubicacion,
+                    id_insumo: datos.Movimiento.id_insumo,
+                    id_medico: datos.Movimiento.id_medico,
+                    cantidadMovimiento: datos.Movimiento.cantidadMovimiento,
+                    fechaMovimiento: datos.Movimiento.fechaMovimiento,
+                    tipoMovimiento: datos.Movimiento.tipoMovimiento,
                 }
-
             }
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
+
                 return true
             }
 

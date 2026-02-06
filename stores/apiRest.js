@@ -12,6 +12,7 @@ export const useApiRest = defineStore('apiRest', {
         async functionCall(opcion) {
             const notificacionesStore = useNotificacionesStore()
             const config = useRuntimeConfig()
+            const varView = useVarView()
             this.baseUrl = config.public.api // URL API
 
 
@@ -73,9 +74,24 @@ export const useApiRest = defineStore('apiRest', {
 
                     console.log('Error response:', errorData);
 
+                    // Validar si es Unauthorized (401) o Forbidden (403)
+                    if (response.status === 401 || response.status === 403) {
+                        notificacionesStore.options.icono = 'warning';
+                        notificacionesStore.options.titulo = 'Inicio de sesión caducado';
+                        notificacionesStore.options.texto = 'Vuelve a ingresar';
+                        notificacionesStore.options.tiempo = 5000;
+                        await notificacionesStore.simple();
+
+                        // Redirigir al login
+                        window.location.href = '/';
+                        return;
+                    }
+
                     if (opcion.metodo === 'GET') {
+                        varView.cargando = false
                         return
                     }
+
                     // Notificación con el mensaje del backend o fallback
                     notificacionesStore.options.icono = 'warning';
                     notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';

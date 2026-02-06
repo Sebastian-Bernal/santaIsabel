@@ -3,7 +3,7 @@ import { useNotificacionesStore } from '../../../stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
 
 // funcion para Validar campos del formulario Nueva Nota
-export const validarYEnviarNuevoInusmo = async (datos) => {
+export const validarYEnviarActualizarInusmo = async (datos) => {
     const notificacionesStore = useNotificacionesStore()
 
     const insumo = datos?.Insumos;
@@ -30,11 +30,11 @@ export const validarYEnviarNuevoInusmo = async (datos) => {
         return;
     }
 
-    return await enviarFormularioNuevoInsumo(datos);
+    return await enviarFormularioActualizarInsumo(datos);
 };
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
-export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
+export const enviarFormularioActualizarInsumo = async (datos, reintento= false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
@@ -50,10 +50,11 @@ export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
         try {
             // mandar a api
             let options = {
-                metodo: 'POST',
-                url: config.public.insumos,
+                metodo: 'PUT',
+                url: config.public.insumos + '/' + datos.Insumos.id,
                 token: token,
                 body: {
+                    id: datos.Insumos.id,
                     nombre: datos.Insumos.nombre,
                     categoria: datos.Insumos.categoria,
                     activo: datos.Insumos.activo,

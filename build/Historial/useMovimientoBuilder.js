@@ -12,7 +12,7 @@ export function useMovimientoBuilder({
     const insumoStore = useInsumosStore();
     function seleccionarMedico(medico) {
         insumoStore.Formulario.Insumos.name_medico = medico.name
-        insumoStore.Formulario.Insumos.id_medico = medico.id_profesional
+        insumoStore.Formulario.Movimiento.id_medico = medico.id_profesional
     }
     const builder = new FormularioBuilder()
     builder
@@ -83,7 +83,6 @@ export function useMovimientoBuilder({
             options: [
                 { value: 'Ingreso', text: 'Ingreso' },
                 { value: 'Egreso', text: 'Egreso' },
-                { value: 'Usado', text: 'Usado' },
             ],
             label: 'Tipo',
             placeholder: 'Seleccione tipo de movimiento',

@@ -140,16 +140,6 @@ function isActivarCita (cita) {
     }
 }
 
-const citasPorMes = computed((mes) => {
-
-    const citasfiltradasMes = citas.value.filter((cita) => {
-        return cita.fecha.split('-')[1] === mes
-    })
-  return [...citasfiltradasMes].sort((a, b) => {
-    return new Date(b.fecha) - new Date(a.fecha)
-  })
-})
-
 // Construccion de pagina
 const builderCalendario = new CalendarioBuilder()
 
@@ -250,10 +240,10 @@ const propiedades = computed(() => {
                     .setColumnas([
                     { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
                     { titulo: 'name_paciente', value: 'Paciente', tamaño: 200, ordenar: true },
+                    { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },
                     { titulo: 'motivo', value: 'Motivo', tamaño: 150 },
                     { titulo: 'servicio', value: 'Servicio', tamaño: 150 },
-                    { titulo: 'name_medico', value: 'Profesional', tamaño: 150 },
-                    { titulo: 'estado', value: 'Estado', tamaño: 150, ordenar: true },
+                    { titulo: 'estado', value: 'Estado', tamaño: 100, ordenar: true },
                     ])
                     .setHeaderTabla({
                     color: 'bg-[var(--color-default)] text-white',
@@ -287,7 +277,8 @@ const propiedades = computed(() => {
                         { columna: 'servicio', placeholder: 'Servicio', }, 
                         { columna: 'estado', placeholder: 'Estado', }, 
                         {columna: 'name_medico', placeholder: 'Profesional'},
-                        { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' }
+                        { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ])
                 )
             }

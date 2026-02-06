@@ -47,9 +47,9 @@ const {
 
 // Computada para ordenar por fecha_nota descendente
 const citasOrdenadas = computed(() => {
-  return [...datosOrdenados.value].sort((a, b) => {
-    return new Date(b.fecha) - new Date(a.fecha)
-  })
+    return [...datosOrdenados.value].sort((a, b) => {
+        return new Date(b.fecha) - new Date(a.fecha)
+    })
 });
 
 const {
@@ -123,14 +123,14 @@ const fechaCita = computed(() => {
 });
 
 const {
-  cancelarCita,
-  activarCita,
-  actualizarCita,
-  showMotivoCancelacion,
-  showMotivoEdicion,
-  showObservacion
+    cancelarCita,
+    activarCita,
+    actualizarCita,
+    showMotivoCancelacion,
+    showMotivoEdicion,
+    showObservacion
 } = useCitasActions({
-  fecha
+    fecha
 })
 
 
@@ -143,62 +143,63 @@ function changeShowPendientes() {
 <template>
     <!-- Header y filtros -->
 
-        <div v-if="props.Propiedades.showTodas" class="w-full mt-4 p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
-            <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-filter text-gray-400"></i>
-                    <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                        Registro completo de Agenda
-                        <span v-if="Object.values(filtros).some(v => v !== '')"
-                            class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
-                            Filtros activos
-                        </span>
-                    </p>
-                </div>
-
-                <div class="flex gap-2">
-                    <ButtonRounded v-if="filtrosConOpciones.length > 3" @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
-                        color=" dark:text-gray-200 bg-gray-800 dark:bg-gray-700" :color="{'bg-gray-800 dark:bg-gray-700' : !mostrarFiltrosAvanzados, 'bg-blue-800 dark:bg-blue-700' : mostrarFiltrosAvanzados,}" tooltip="Filtros Avanzados">
-                        <i class="fa-solid fa-sliders"></i>
-                    </ButtonRounded>
-                    <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
-                        color="dark:text-gray-200 dark:bg-red-600 bg-red-400" tooltip="Limpiar filtros"
-                        tooltipPosition="top" @click="borrarFiltros">
-                        <i class="fa-solid fa-xmark"></i>
-                    </ButtonRounded>
-                </div>
+    <div v-if="props.Propiedades.showTodas"
+        class="w-full mt-4 p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-filter text-gray-400"></i>
+                <p class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                    Registro completo de Agenda
+                    <span v-if="Object.values(filtros).some(v => v !== '')"
+                        class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300">
+                        Filtros activos
+                    </span>
+                </p>
             </div>
-            <div class="flex flex-wrap items-end justify-between gap-3"">
-                <Input :Propiedades="{
-                    placeholder: 'Buscar dato en Citas...',
-                    icon: 'fa-solid fa-search',
-                    modelValue: busqueda,
-                    tamaño: 'w-full sm:w-2/5',
-                    upperCase: true,
-                    estilo: 'bg-white dark:bg-gray-900'
-                }" v-model="busqueda" />
 
-            <div class="flex flex-wrap justify-end gap-3">
-                <Select v-for="(filtro, key) in filtrosConOpciones.slice(0, 3)" :key="key" :Propiedades="{
-                    placeholder: filtro.placeholder,
-                    label: filtro.placeholder,
-                    modelValue: busqueda,
-                    tamaño: 'md:w-[180px] w-full',
-                    estilo: 'bg-white dark:bg-gray-900',
-                    options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
-                }" v-model="filtros[filtro.columna]" />
+            <div class="flex gap-2">
+                <ButtonRounded v-if="filtrosConOpciones.length > 3"
+                    @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
+                    :color="mostrarFiltrosAvanzados ? 'bg-blue-800 dark:bg-blue-700' : 'bg-gray-800 text-gray-700 dark:bg-gray-700 dark:text-gray-200'"
+                    tooltip="Filtros Avanzados">
+                    <i class="fa-solid fa-sliders"></i>
+                </ButtonRounded>
+                <ButtonRounded v-if="busqueda !== '' || Object.values(filtros).some(v => v !== '')"
+                    color="dark:text-gray-200 dark:bg-red-600 bg-red-400" tooltip="Limpiar filtros"
+                    tooltipPosition="top" @click="borrarFiltros">
+                    <i class="fa-solid fa-xmark"></i>
+                </ButtonRounded>
             </div>
         </div>
-        <div v-if="mostrarFiltrosAvanzados" class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-end">
-            <Select v-for="(filtro, key) in filtrosConOpciones.slice(3)" :key="key" :Propiedades="{
+        <div class="flex flex-wrap items-end justify-between gap-3"">
+                <Input :Propiedades="{
+                    placeholder: 'Buscar dato en Citas...', icon: 'fa-solid fa-search',
+                    modelValue: busqueda, tamaño: 'w-full sm:w-2/5', upperCase: true, estilo: 'bg-white dark:bg-gray-900'
+                }"
+            v-model="busqueda" />
+
+        <div class="flex flex-wrap justify-end gap-3">
+            <Select v-for="(filtro, key) in filtrosConOpciones.slice(0, 3)" :key="key" :Propiedades="{
                 placeholder: filtro.placeholder,
                 label: filtro.placeholder,
                 modelValue: busqueda,
-                tamaño: 'w-full',
+                tamaño: 'md:w-[180px] w-full',
                 estilo: 'bg-white dark:bg-gray-900',
                 options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
             }" v-model="filtros[filtro.columna]" />
         </div>
+    </div>
+    <div v-if="mostrarFiltrosAvanzados"
+        class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-end">
+        <Select v-for="(filtro, key) in filtrosConOpciones.slice(3)" :key="key" :Propiedades="{
+            placeholder: filtro.placeholder,
+            label: filtro.placeholder,
+            modelValue: busqueda,
+            tamaño: 'w-full',
+            estilo: 'bg-white dark:bg-gray-900',
+            options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
+        }" v-model="filtros[filtro.columna]" />
+    </div>
     </div>
     <!--Citas  -->
     <div :class="props.Propiedades.estilos"
@@ -210,14 +211,14 @@ function changeShowPendientes() {
         <!-- Citas Pendientes -->
         <div v-if="fechaActual === fecha && pendientes.length > 1 && !props.Propiedades.showTodas">
             <div class="flex items-center justify-between my-2 px-5">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 mr-5">
                     <i class="fa-solid fa-hourglass-half text-red-300"></i>
                     <h2 class="text-xl font-semibold">Citas Pendientes</h2>
                 </div>
                 <ButtonRounded
-                    :color="!showPendientes ? 'bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-gray-400' : 'bg-blue-500 hover:bg-blue-600 text-white'"
+                    :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
                     tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes">
-                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i>
+                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> Ver {{ pendientes.length.toLocaleString('es-ES') }}
                 </ButtonRounded>
             </div>
 
@@ -241,7 +242,7 @@ function changeShowPendientes() {
                         </div>
                         <div class="flex flex-col gap-1">
                             <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                            }}</div>
+                                }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                         </div>
                     </div>
@@ -315,6 +316,9 @@ function changeShowPendientes() {
                 </div>
             </div>
 
+
+            <div class="h-[2px] w-full bg-gray-200 dark:bg-gray-800 my-3"></div>
+
             <div class="flex items-center my-2 px-5 gap-2">
                 <i class="fa-solid fa-calendar-day text-blue-300"></i>
                 <h2 class="text-xl font-semibold">Citas de Hoy</h2>
@@ -368,7 +372,7 @@ function changeShowPendientes() {
                     </div>
                     <div class="flex flex-col gap-1">
                         <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                        }}</div>
+                            }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                     </div>
                 </div>
@@ -466,32 +470,32 @@ function changeShowPendientes() {
                 <i class="fa-solid fa-angle-left"></i>
             </ButtonRounded>
             <div class="flex gap-2 pagina">
-                    <!-- Página anterior -->
-                    <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
-                        {{ paginaActual - 1 }}
-                    </h2>
+                <!-- Página anterior -->
+                <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
+                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                    {{ paginaActual - 1 }}
+                </h2>
 
-                    <!-- Página actual -->
-                    <h2
-                        class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
-                        {{ paginaActual }}
-                    </h2>
+                <!-- Página actual -->
+                <h2
+                    class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
+                    {{ paginaActual }}
+                </h2>
 
-                    <!-- Página siguiente -->
-                    <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                        class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
-                        {{ paginaActual + 1 }}
-                    </h2>
+                <!-- Página siguiente -->
+                <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
+                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                    {{ paginaActual + 1 }}
+                </h2>
 
-                    <!-- Última página -->
-                    <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
-                        <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
-                        <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
-                            class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
-                            {{ totalPaginas }}
-                        </h2>
-                    </div>
+                <!-- Última página -->
+                <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
+                    <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
+                    <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
+                        class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
+                        {{ totalPaginas }}
+                    </h2>
+                </div>
             </div>
             <ButtonRounded v-if="paginaActual != totalPaginas" tooltip="Siguiente"
                 color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"

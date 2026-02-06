@@ -25,7 +25,7 @@ export function useLoginBuilder({
     .setFormulariotamaño('SM')
     .setFormularioFondo('FondoTransparent')
     .setFormularioShow(true)
-    .setFormularioEstilos('h-[75%]! !bg-white/10 backdrop-blur-md rounded-xl shadow-lg w-full md:px-5 animate-fadeIn')
+    .setFormularioEstilos('h-[70%]! !bg-white/10 backdrop-blur-md rounded-xl shadow-lg w-full md:px-5 animate-fadeIn')
     .nuevaSeccion()
     .addCampo({
       component: 'Imagen',
@@ -67,7 +67,7 @@ export function useLoginBuilder({
       estilo: 'text-white!',
       vmodel: 'Usuario.contraseña',
       slot: {
-        label: mostrarContraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-gray-200"></i>`,
+        label: mostrarContraseña.value ? `<i class="fa-solid fa-eye text-gray-200"></i>` : `<i class="fa-solid fa-eye-slash text-[var(--color-default-claro)]"></i>`,
         action: cambiarMostrarContraseña
       },
       events: {

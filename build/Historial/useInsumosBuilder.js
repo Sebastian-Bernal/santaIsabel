@@ -7,7 +7,10 @@ export function useInsumosBuilder({
     storePinia,
     show,
     cerrarModal,
-    actulizarDatos
+    actulizarDatos,
+    soloVer,
+    eliminarDato,
+    movimientos
 }) {
     const insumoStore = useInsumosStore();
     const builder = new FormularioBuilder()
@@ -16,6 +19,8 @@ export function useInsumosBuilder({
         .setStorePinia(storePinia)
         .setFormularioShow(show)
         .setEditarFormulario(actulizarDatos)
+        .setSoloVer(soloVer)
+        .setEliminarFormulario(eliminarDato)
         .setFormulariotamaño('LG')
         .setFormularioTipo('Wizard')
         .setBotones([
@@ -133,7 +138,7 @@ export function useInsumosBuilder({
         })
         .addCampo({
             component: 'Input',
-            type: 'text',
+            type: 'date',
             label: 'Fecha de Vencimiento',
             placeholder: 'AAAA-MM-DD',
             id: 'vencimiento',
@@ -141,10 +146,73 @@ export function useInsumosBuilder({
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Insumos.vencimiento',
         })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            label: 'Ubicacion',
+            placeholder: 'Estante 1',
+            id: 'ubicacion',
+            name: 'ubicacion',
+            tamaño: 'md:col-span-1 col-span-3',
+            vmodel: 'Insumos.ubicacion',
+        })
 
-    if (actulizarDatos) {
+    if (soloVer) {
+        // Construimos las cards dinámicamente
+        const cardsMovimientos = movimientos.map(mov => {
+            // Definir estilos según tipo de movimiento
+            let bgClass = ''
+            let icon = ''
+            let text = ''
+
+            switch (mov.tipoMovimiento) {
+                case 'Ingreso':
+                    bgClass = 'bg-green-100 dark:bg-green-900'
+                    icon = 'fa-solid fa-plus text-green-600'
+                    text = `Stock agregado: ${mov.cantidadMovimiento} unidades`
+                    break
+                case 'usado':
+                    bgClass = 'bg-yellow-100 dark:bg-yellow-900'
+                    icon = 'fa-solid fa-arrow-up text-yellow-600'
+                    text = `Stock usado: ${mov.cantidadMovimiento} unidades`
+                    break
+                case 'Egreso':
+                    bgClass = 'bg-red-100 dark:bg-red-900'
+                    icon = 'fa-solid fa-trash text-red-600'
+                    text = `Stock eliminado: ${mov.cantidadMovimiento} unidades`
+                    break
+                default:
+                    bgClass = 'bg-gray-100 dark:bg-gray-700'
+                    icon = 'fa-solid fa-circle-info text-gray-600'
+                    text = `Movimiento: ${mov.cantidadMovimiento} unidades`
+            }
+
+            return {
+                header: {
+                    icon: 'fa-solid fa-pills',
+                    title: `${mov.cantidadMovimiento} unidades`,
+                    html: `<span class="text-sm text-gray-500">${insumoStore.Formulario.Insumos?.nombre || ''}</span>`
+                },
+                body: {
+                    html: `
+                        <div class="flex items-center ${bgClass} p-2 rounded-lg gap-5">
+                            <i class="${icon} mx-1"></i>
+                            <div class="flex flex-col gap-1 text-sm">
+                                <span class="font-semibold">${text}</span>
+                                <span class="text-gray-600 dark:text-gray-400">Profesional: ${mov.medico?.name || 'N/A'}</span>
+                                <span class="text-xs text-gray-500">
+                                    <i class="fa-solid fa-clock mr-1"></i> ${mov.fechaMovimiento}
+                                </span>
+                            </div>
+                        </div>
+                    `
+                },
+                footer: {}
+            }
+        })
+
         builder
-            .nuevaSeccion('Movimientos de Inventario')
+        .nuevaSeccion('Movimientos de Inventario')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-boxes-stacked text-blue-500 mr-1"></i>Informacion de Stock',
@@ -153,72 +221,8 @@ export function useInsumosBuilder({
         })
             .addCampo({
                 component: 'Card',
-                cards: [
-                    {
-                        header: {
-                            icon: 'fa-solid fa-pills',
-                            title: '200 unidades',
-                            html: `<span class="text-sm text-gray-500">Paracetamol 500mg</span>`
-                        },
-                        body: {
-                            html: `
-                    <div class=" w-full h-full flex items-center bg-green-100 dark:bg-green-900 p-2 rounded-lg gap-5">
-                        <i class="fa-solid fa-plus text-green-600 mx-1"></i>
-                        <div class="flex flex-col gap-1 text-sm">
-                            <span class="font-semibold">Stock agregado: 200 unidades</span>
-                            <span class="text-gray-600 dark:text-gray-400">Profesional: Juan Pérez Rodriguez</span>
-                            <span class="text-xs text-gray-500"><i class="fa-solid fa-clock mr-1"></i> 20/01/2026 - 14:30</span>
-                        </div>
-                    </div>
-                `
-                        },
-                        footer: {
-                        }
-                    },
-                    {
-                        header: {
-                            icon: 'fa-solid fa-pills',
-                            title: '50 unidades',
-                            html: `<span class="text-sm text-gray-500">Paracetamol 500mg</span>`
-                        },
-                        body: {
-                            html: `
-                    <div class="flex items-center bg-yellow-100 dark:bg-yellow-900 p-2 rounded-lg gap-5">
-                        <i class="fa-solid fa-arrow-up text-yellow-600 mx-1"></i>
-                        <div class="flex flex-col gap-1 text-sm">
-                            <span class="font-semibold">Stock usado: 50 unidades</span>
-                            <span class="text-gray-600 dark:text-gray-400">Profesional: María Gómez</span>
-                            <span class="text-xs text-gray-500"><i class="fa-solid fa-clock mr-1"></i> 19/01/2026 - 09:15</span>
-                        </div>
-                    </div>
-                `
-                        },
-                        footer: {
-                        }
-                    },
-                    {
-                        header: {
-                            icon: 'fa-solid fa-pills',
-                            title: '10 unidades',
-                            html: `<span class="text-sm text-gray-500">Paracetamol 500mg</span>`
-                        },
-                        body: {
-                            html: `
-                    <div class="flex items-center bg-red-100 dark:bg-red-900 p-2 rounded-lg gap-5">
-                        <i class="fa-solid fa-trash text-red-600 mx-1"></i>
-                        <div class="flex flex-col gap-1 text-sm">
-                            <span class="font-semibold">Stock eliminado: 10 unidades</span>
-                            <span class="text-gray-600 dark:text-gray-400">Profesional: Carlos Ruiz</span>
-                            <span class="text-xs text-gray-500"><i class="fa-solid fa-clock mr-1"></i> 18/01/2026 - 17:45</span>
-                        </div>
-                    </div>
-                `
-                        },
-                        footer: {
-                        }
-                    }
-                ],
-                contenedorCards: 'grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4 !space-y-0',
+                cards: cardsMovimientos,
+                contenedorCards: 'grid lg:grid-cols-2 grid-cols-1 gap-4 !space-y-0',
                 contenedor: 'col-span-2 bg-gray-100 dark:bg-gray-800 px-3 pb-3 rounded-xl',
                 tamaño: 'flex justify-between rounded-lg bg-inherit! border dark:border-gray-700 border-gray-200 hover:bg-white! dark:hover:bg-gray-900!',
                 header: {

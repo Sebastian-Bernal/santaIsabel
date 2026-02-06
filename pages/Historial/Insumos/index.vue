@@ -11,8 +11,10 @@ import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 import { useMovimientoBuilder } from '~/build/Historial/useMovimientoBuilder'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import PDFMovimientoInsumo from '~/components/paginas/PDFMovimientoInsumo.vue'
+import { eliminarInsumo } from '~/Core/Historial/Insumos/DeleteInsumo'
 
 const varView = useVarView()
+const notificaciones = useNotificacionesStore()
 
 const show = ref(false);
 const insumoStore = useInsumosStore();
@@ -21,12 +23,42 @@ const showMovimiento = ref(false);
 const refresh = ref(1);
 const medicosStore = useMedicosStore();
 const medicosList = ref([]);
+const insumos = ref([]);
+const movimientos = ref([])
 
 async function llamadatos() {
     varView.cargando = true
+    insumos.value = await insumoStore.listInsumos();
     varView.cargando = false
 }
-// Watch para actualizar citas al agregar nueva
+
+// Refrescar pagina cuando se agrega o modifica Paciente
+watch(() => show.value,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+);
+
+watch(() => showVer.value,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+);
+
+watch(() => showMovimiento.value,
+    async (estado) => {
+        if(!estado && varView.cambioEnApi){
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+);
 
 onMounted(async () => {
     await llamadatos()
@@ -38,43 +70,51 @@ const agregarInsumo = () => {
     show.value = true
 };
 
-const verInsumo = (insumo) => {
+const verInsumo = async (insumo) => {
     mapCampos(insumo, insumoStore.Formulario);
+    movimientos.value = await insumoStore.listMovimientodeInsumo()
     showVer.value = true;
+}
+
+const confirmarEliminarUsuario = async() => {
+    const insumoAEliminar = insumoStore.Formulario.Insumos;
+
+    notificaciones.options = {
+        icono: "warning",
+        titulo: "¿Deseas eliminar el insumo?",
+        html: `Se eliminará el insumo: <span>${insumoAEliminar.nombre}</span>`,
+        confirmtext: "Sí, eliminar",
+        canceltext: "Atrás"
+    };
+
+    const respuesta = await notificaciones.alertRespuesta();
+
+    if (respuesta !== "confirmado") return;
+
+    const eliminado = await eliminarInsumo(insumoAEliminar);
+
+    if (!eliminado) return;
+
+    notificaciones.options = {
+        position: "top-end",
+        texto: "Insumo eliminado con éxito.",
+        background: "#6bc517",
+        tiempo: 1500
+    };
+
+    notificaciones.mensaje();
+    notificaciones.options.background = "#d33";
+
+    showVer.value = false
+    await llamadatos();
+    refresh.value++;
 }
 
 const agregarMovimiento = (insumo) => {
     mapCampos(insumo, insumoStore.Formulario);
+    insumoStore.Formulario.Movimiento.id_insumo = insumo.id
     showMovimiento.value = true;
 }
-
-const insumos = ref([
-    {
-        nombre: 'Paracetamol Tabletas x500mg, farmacia XYZ',
-        lote: 'A123',
-        vencimiento: '2024-12-31',
-        ubicacion: 'Estante 1',
-        precio: 5000,
-        categoria: 'Medicamento',
-        stock: 100,
-        activo: 'Paracetamol',
-        receta: false,
-        unidad: 'Caja',
-    },
-    {
-        nombre: 'Ibuprofeno capsulas x200mg, Distribuidora ABC',
-        lote: 'B456',
-        vencimiento: '2025-06-30',
-        ubicacion: 'Estante 2',
-        precio: 7000,
-        categoria: 'Medicamento',
-        stock: 50,
-        activo: 'Ibuprofeno',
-        receta: true,
-        unidad: 'Caja',
-    },
-    // Agrega más insumos según sea necesario
-])
 
 // Construccion de pagina
 
@@ -137,8 +177,11 @@ const propiedades = computed(() => {
             storeId: "ActualizarInsumo",
             storePinia: "Insumos",
             show: showVer.value,
+            soloVer: varView.soloVer,
             actulizarDatos: true,
-            cerrarModal: () => { showVer.value = false; refresh.value += 1; }
+            eliminarDato: confirmarEliminarUsuario,
+            cerrarModal: () => { showVer.value = false; refresh.value += 1; },
+            movimientos: movimientos.value
         })
         : null;
 
@@ -155,10 +198,9 @@ const propiedades = computed(() => {
     tablaBuilder
         .setColumnas([
             { titulo: "nombre", value: "Nombre", tamaño: 350, ordenar: true },
-            { titulo: "lote", value: "Lote", tamaño: 100 },
+            { titulo: "activo", value: "Activo", tamaño: 100 },
             { titulo: "vencimiento", value: "Vencimiento", tamaño: 100 },
             { titulo: "ubicacion", value: "Ubicacion", tamaño: 100 },
-            { titulo: "precio", value: "Precio", tamaño: 150, ordenar: true },
             { titulo: "categoria", value: "Tipo", tamaño: 150, ordenar: true },
             { titulo: "stock", value: "Stock", tamaño: 150, ordenar: true },
         ])

@@ -89,6 +89,12 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
                     const servicio = db.createObjectStore('Servicio', { keyPath: 'id_temporal', autoIncrement: true });
                     servicio.createIndex("buscaServicio", "id", { unique: false });
+
+                    const insumo = db.createObjectStore('Insumo', { keyPath: 'id_temporal', autoIncrement: true });
+                    insumo.createIndex("buscaInsumo", "id", { unique: false });
+
+                    const movimiento = db.createObjectStore('Movimiento', { keyPath: 'id_temporal', autoIncrement: true });
+                    movimiento.createIndex("buscaMovimiento", "id", { unique: false });
                 }
 
                 request.onerror = (event) => {
