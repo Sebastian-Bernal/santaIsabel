@@ -7,6 +7,7 @@ import { onMounted, ref } from 'vue'
 import { decryptData } from '~/composables/Formulario/crypto';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { CIF } from '~/data/CIF'
+import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 
 
 export function useHistoriaBuilder({
@@ -21,11 +22,13 @@ export function useHistoriaBuilder({
     const pacienteStore = usePacientesStore()
     const medicoStore = useMedicosStore()
     const storeCodigos = useCodigos()
+    const insumoStore = useInsumosStore()
     const varView = useVarView()
 
     const PacientesList = ref([])
     const MedicosList = ref([])
     const CIE10 = ref([])
+    const insumos = ref([])
     const id_paciente = ref(null)
     const sugerencia = ref("")
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
@@ -35,6 +38,7 @@ export function useHistoriaBuilder({
         PacientesList.value = pacienteStore.Pacientes;
         MedicosList.value = medicoStore.Medicos;
         CIE10.value = await storeCodigos.leerdatos();
+        insumos.value = await insumoStore.listInsumos();
         varView.cargando = false
     });
 
@@ -519,7 +523,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
-                        upperCase:true,
+                        upperCase: true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
@@ -683,7 +687,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
-                        upperCase:true,
+                        upperCase: true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
@@ -760,7 +764,7 @@ export function useHistoriaBuilder({
             .addCampo({
                 component: 'GroupCampos',
                 labelGroup: 'Equipos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
+                buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', usado: false, id_paciente: id_paciente } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_equipos',
                 value: [],
@@ -768,15 +772,29 @@ export function useHistoriaBuilder({
                     {
                         name: 'descripcion',
                         id: 'descripcionEquipo',
-                        typeCampo: 'Input',
+                        typeCampo: 'SelectSearch',
                         placeholder: 'Descripcion',
                         tamaño: 'w-full',
+                        upperCase: true,
+                        options: insumos,
+                        opciones: [{ value: 'nombre' }, { text: 'Cantidad', value: 'stock' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_equipos.at(-1).descripcion = item.nombre
+                            historiaStore.Formulario.Plan_manejo_equipos.at(-1).id_insumo = item.id
+                        },
                     },
                     {
                         name: 'uso',
                         id: 'usoEquipos',
                         typeCampo: 'Input',
                         placeholder: 'Uso',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'usado',
+                        id: 'usado',
+                        typeCampo: 'Checkbox',
+                        placeholder: 'Quitar de inventario',
                         tamaño: 'w-full',
                     },
                 ],
@@ -794,9 +812,16 @@ export function useHistoriaBuilder({
                     {
                         name: 'nombre',
                         id: 'nombreInsumo',
-                        typeCampo: 'Input',
+                        typeCampo: 'SelectSearch',
                         placeholder: 'Nombre',
                         tamaño: 'w-full',
+                        upperCase: true,
+                        options: insumos,
+                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_insumos.at(-1).nombre = item.nombre
+                            historiaStore.Formulario.Plan_manejo_insumos.at(-1).id_insumo = item.id
+                        },
                     },
                     {
                         name: 'cantidad',
@@ -821,8 +846,22 @@ export function useHistoriaBuilder({
                     {
                         name: 'medicamento',
                         id: 'Medicamento',
-                        typeCampo: 'Input',
+                        typeCampo: 'SelectSearch',
                         placeholder: 'Medicamento',
+                        tamaño: 'w-full',
+                        upperCase: true,
+                        options: insumos,
+                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
+                        },
+                    },
+                    {
+                        name: 'cantidad',
+                        id: 'cantidad',
+                        typeCampo: 'Input',
+                        placeholder: 'Cantidad',
                         tamaño: 'w-full',
                     },
                     {
@@ -830,13 +869,6 @@ export function useHistoriaBuilder({
                         id: 'dosis',
                         typeCampo: 'Input',
                         placeholder: 'Dosis',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'cantidad',
-                        id: 'cantidad',
-                        typeCampo: 'Input',
-                        placeholder: 'Cantidad de dias (número)',
                         tamaño: 'w-full',
                     },
                 ],
@@ -986,7 +1018,7 @@ export function useHistoriaBuilder({
                         id: 'cie-10',
                         typeCampo: 'SelectSearch',
                         placeholder: 'CIE-10',
-                        upperCase:true,
+                        upperCase: true,
                         tamaño: 'w-full md:col-span-1 col-span-2',
                         options: CIE10,
                         opciones: [{ value: 'code' }, { text: 'Descripcion: ', value: 'description' }],
@@ -1324,25 +1356,25 @@ export function useHistoriaBuilder({
                 value: [],
                 campos: [
                     { name: 'descripcion', id: 'antecedente', typeCampo: 'Input', placeholder: 'Antecedente', tamaño: 'w-full' },
-                        {
-                            name: 'tipo',
-                            id: 'tipoAntecedente',
-                            typeCampo: 'Select',
-                            placeholder: 'Tipo Antecedente',
-                            options: [
-                                {
-                                    text: 'Personal',
-                                    value: 'Personal'
-                                },
-                                {
-                                    text: 'Familiar',
-                                    value: 'Familiar'
-                                }
-                            ],
-                            tamaño: 'w-full'
-                        },
-                    ],
-                    containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
+                    {
+                        name: 'tipo',
+                        id: 'tipoAntecedente',
+                        typeCampo: 'Select',
+                        placeholder: 'Tipo Antecedente',
+                        options: [
+                            {
+                                text: 'Personal',
+                                value: 'Personal'
+                            },
+                            {
+                                text: 'Familiar',
+                                value: 'Familiar'
+                            }
+                        ],
+                        tamaño: 'w-full'
+                    },
+                ],
+                containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
             })
         if (!puedePostAnalisis.value) {
             builder
@@ -1527,7 +1559,7 @@ export function useHistoriaBuilder({
                             id: 'cie-10',
                             typeCampo: 'SelectSearch',
                             placeholder: 'CIE-10',
-                            upperCase:true,
+                            upperCase: true,
                             tamaño: 'w-full md:col-span-1 col-span-2',
                             options: CIE10,
                             opciones: [{ value: 'code' }, { text: 'Descripcion:', value: 'description' }],
@@ -1588,7 +1620,7 @@ export function useHistoriaBuilder({
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Equipos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', id_paciente: id_paciente } },],
+                    buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', usado: false, id_paciente: id_paciente } },],
                     tamaño: 'w-full md:col-span-2',
                     vmodel: 'Plan_manejo_equipos',
                     liveUpdate: true,
@@ -1597,9 +1629,16 @@ export function useHistoriaBuilder({
                         {
                             name: 'descripcion',
                             id: 'descripcionEquipo',
-                            typeCampo: 'Input',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Descripcion',
                             tamaño: 'w-full',
+                            upperCase: true,
+                            options: insumos,
+                            opciones: [{ value: 'nombre' }, { text: 'Cantidad', value: 'stock' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_equipos.at(-1).descripcion = item.nombre
+                                historiaStore.Formulario.Plan_manejo_equipos.at(-1).id_insumo = item.id
+                            },
                         },
                         {
                             name: 'uso',
@@ -1608,6 +1647,13 @@ export function useHistoriaBuilder({
                             placeholder: 'Uso',
                             tamaño: 'w-full',
                         },
+                    {
+                        name: 'usado',
+                        id: 'usado',
+                        typeCampo: 'Checkbox',
+                        placeholder: 'Quitar de inventario',
+                        tamaño: 'w-full',
+                    },
                     ],
                     containerCampos: 'grid grid-cols-2 gap-2'
                 })
@@ -1624,9 +1670,16 @@ export function useHistoriaBuilder({
                         {
                             name: 'nombre',
                             id: 'nombreInsumo',
-                            typeCampo: 'Input',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Nombre',
                             tamaño: 'w-full',
+                            upperCase: true,
+                            options: insumos,
+                            opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_insumos.at(-1).nombre = item.nombre
+                                historiaStore.Formulario.Plan_manejo_insumos.at(-1).id_insumo = item.id
+                            },
                         },
                         {
                             name: 'cantidad',
@@ -1652,8 +1705,23 @@ export function useHistoriaBuilder({
                         {
                             name: 'medicamento',
                             id: 'Medicamento',
-                            typeCampo: 'Input',
+                            typeCampo: 'SelectSearch',
                             placeholder: 'Medicamento',
+                            tamaño: 'w-full',
+                            upperCase: true,
+                            options: insumos,
+                            opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
+                            },
+                        },
+                        {
+                            name: 'cantidad',
+                            id: 'cantidad',
+                            typeCampo: 'Input',
+                            type: 'number',
+                            placeholder: 'Cantidad',
                             tamaño: 'w-full',
                         },
                         {
@@ -1661,14 +1729,6 @@ export function useHistoriaBuilder({
                             id: 'dosis',
                             typeCampo: 'Input',
                             placeholder: 'Dosis',
-                            tamaño: 'w-full',
-                        },
-                        {
-                            name: 'cantidad',
-                            id: 'cantidad',
-                            typeCampo: 'Input',
-                            type: 'number',
-                            placeholder: 'Cantidad de dias (número)',
                             tamaño: 'w-full',
                         },
                     ],

@@ -58,11 +58,12 @@ async function exportarMedicinaPDF(data) {
     propiedadesMedicinaPDF.value = { 
         ...data, 
         ...dataPaciente, 
-        nameProfesional: profesional.name, 
-        cedulaProfesional: profesional.No_document, 
-        sello: profesional.sello,
+        nameProfesional: profesional?.name, 
+        cedulaProfesional: profesional?.No_document, 
+        sello: profesional?.sello,
         medicamentos
     }
+    console.log(propiedadesMedicinaPDF)
     activePdfMedicina.value = true
     varView.cargando = false
 }

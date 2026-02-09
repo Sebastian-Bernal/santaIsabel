@@ -50,7 +50,7 @@ export function useCitasActions({ fecha }) {
             return
         }
 
-        const res = validarYEnviarCancelarCita(cita, respuestaAlert.valor)
+        const res = validarYEnviarCancelarCita(cita, respuesta.valor)
 
         if (res) {
             options.position = 'top-end'
@@ -211,6 +211,7 @@ export function useCitasActions({ fecha }) {
         showMotivoCancelacion,
         showMotivoEdicion,
         showObservacion,
-        activarCita
+        activarCita,
+        parseFechaISO
     }
 }

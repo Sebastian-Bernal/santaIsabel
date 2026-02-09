@@ -6,7 +6,7 @@ import { TablaBuilder } from '~/build/Constructores/TablaBuilder'
 import { ref, onMounted } from 'vue'
 import { CardBuilder } from '~/build/Constructores/CardBuilder'
 import { useInsumosBuilder } from '~/build/Historial/useInsumosBuilder'
-import { mapCampos } from '~/components/organism/Forms/useFormulario'
+import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useFormulario'
 import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 import { useMovimientoBuilder } from '~/build/Historial/useMovimientoBuilder'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
@@ -67,12 +67,13 @@ onMounted(async () => {
 
 // Funciones para manejar la visibilidad de los formularios
 const agregarInsumo = () => {
+    mapCamposLimpios(insumoStore.Formulario)
     show.value = true
 };
 
 const verInsumo = async (insumo) => {
     mapCampos(insumo, insumoStore.Formulario);
-    movimientos.value = await insumoStore.listMovimientodeInsumo()
+    movimientos.value = await insumoStore.listMovimientodeInsumo(medicosList.value)
     showVer.value = true;
 }
 
@@ -168,7 +169,7 @@ const propiedades = computed(() => {
             storeId: "NuevoInsumo",
             storePinia: "Insumos",
             show: show.value,
-            cerrarModal: () => { show.value = false; refresh.value += 1; }
+            cerrarModal: () => { show.value = false; }
         })
         : null;
 
@@ -180,7 +181,7 @@ const propiedades = computed(() => {
             soloVer: varView.soloVer,
             actulizarDatos: true,
             eliminarDato: confirmarEliminarUsuario,
-            cerrarModal: () => { showVer.value = false; refresh.value += 1; },
+            cerrarModal: () => { showVer.value = false; },
             movimientos: movimientos.value
         })
         : null;
@@ -191,14 +192,14 @@ const propiedades = computed(() => {
             storePinia: "Insumos",
             show: showMovimiento.value,
             medicosList: medicosList,
-            cerrarModal: () => { showMovimiento.value = false; refresh.value += 1; }
+            cerrarModal: () => { showMovimiento.value = false; }
         })
         : null;
 
     tablaBuilder
         .setColumnas([
             { titulo: "nombre", value: "Nombre", tamaño: 350, ordenar: true },
-            { titulo: "activo", value: "Activo", tamaño: 100 },
+            { titulo: "activoL", value: "Activo", tamaño: 100 },
             { titulo: "vencimiento", value: "Vencimiento", tamaño: 100 },
             { titulo: "ubicacion", value: "Ubicacion", tamaño: 100 },
             { titulo: "categoria", value: "Tipo", tamaño: 150, ordenar: true },
@@ -212,7 +213,7 @@ const propiedades = computed(() => {
             buscador: true,
             excel: true,
             filtros: [
-                { columna: 'tipo', placeholder: 'Tipo' },
+                { columna: 'categoria', placeholder: 'Tipo' },
                 { columna: 'ubicacion', placeholder: 'Ubicacion' },
             ]
         })

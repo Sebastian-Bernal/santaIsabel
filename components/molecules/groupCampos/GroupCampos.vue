@@ -7,6 +7,7 @@ import Select from '~/components/atoms/Selects/Select.vue';
 import SelectMultiple from '~/components/atoms/Selects/SelectMultiple.vue';
 import SelectSearch from '~/components/atoms/Selects/SelectSearch.vue';
 import Textarea from '~/components/atoms/Textareas/Textarea.vue';
+import Checkbox from '~/components/atoms/Checkbox/Checkbox.vue';
 
 const props = defineProps({
     Propiedades: { type: Object, required: true },
@@ -15,7 +16,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const campos = { Input, Select, SelectMultiple, SelectSearch, Textarea };
+const campos = { Input, Select, SelectMultiple, SelectSearch, Textarea, Checkbox};
 
 // Registro actual del formulario
 const form = ref({ ...props.Propiedades.addItem });

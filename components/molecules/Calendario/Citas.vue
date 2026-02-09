@@ -122,13 +122,26 @@ const fechaCita = computed(() => {
     }
 });
 
+function vencida(cita) {
+  if (!cita.fechaHasta) {
+    cita.fechaHasta = cita.fecha
+  }
+
+  const now = new Date()
+  const fechaHoy = parseFechaISO(now.toISOString().split('T')[0])
+  const fechaHasta = parseFechaISO(cita.fechaHasta)
+
+  return fechaHoy > fechaHasta
+}
+
 const {
     cancelarCita,
     activarCita,
     actualizarCita,
     showMotivoCancelacion,
     showMotivoEdicion,
-    showObservacion
+    showObservacion,
+    parseFechaISO
 } = useCitasActions({
     fecha
 })
@@ -218,7 +231,8 @@ function changeShowPendientes() {
                 <ButtonRounded
                     :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
                     tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes">
-                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> Ver {{ pendientes.length.toLocaleString('es-ES') }}
+                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> Ver {{
+                        pendientes.length.toLocaleString('es-ES') }}
                 </ButtonRounded>
             </div>
 
@@ -242,7 +256,7 @@ function changeShowPendientes() {
                         </div>
                         <div class="flex flex-col gap-1">
                             <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                                }}</div>
+                            }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                         </div>
                     </div>
@@ -356,7 +370,9 @@ function changeShowPendientes() {
 
             <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                 v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
-                :class="[{ 'bg-red-50 dark:bg-gray-900': cita.estado === 'cancelada' }, props.Propiedades.tamaño]">
+                :class="[{ 
+                    'bg-red-50 dark:bg-red-900/40 border-l-4 border-red-200 hover:bg-red-200 hover:dark:bg-red-800': cita.estado === 'cancelada', 
+                    'bg-gray-100 dark:bg-gray-800 border-l-4 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-200 hover:dark:bg-gray-700': vencida(cita) }, props.Propiedades.tamaño]">
 
                 <!-- HEADER -->
                 <div class="flex items-center gap-4">
@@ -372,7 +388,7 @@ function changeShowPendientes() {
                     </div>
                     <div class="flex flex-col gap-1">
                         <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                            }}</div>
+                        }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                     </div>
                 </div>

@@ -42,6 +42,7 @@ export const useVarView = defineStore('varView', {
         // validacion de formularios
         soloVer: true,
         formComplete: false,
+        respuestaBackend: false,
         camposVacios: false,
         tipoConsulta: '',
         tipoHistoria: '',

@@ -61,9 +61,8 @@ watch(() => varView.showActualizarCita,
 
 watch(() => varView.showNuevaHistoria,
     async (estado) => {
-        if(!estado){
+        if(!estado ){
             await llamadatos();
-            refresh.value++;
         }
     }
 );

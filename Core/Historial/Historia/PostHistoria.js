@@ -134,15 +134,19 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => ({
                     medicamento: m.medicamento,
                     dosis: m.dosis,
-                    cantidad: parseInt(m.cantidad)
+                    cantidad: parseInt(m.cantidad),
+                    id_insumo: m.id_insumo
                 })),
                 Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
                     nombre: i.nombre,
-                    cantidad: parseInt(i.cantidad)
+                    cantidad: parseInt(i.cantidad),
+                    id_insumo: i.id_insumo
                 })),
                 Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
                     descripcion: e.descripcion,
-                    uso: e.uso
+                    uso: e.uso,
+                    id_insumo: e.id_insumo,
+                    usado: e.usado || false,
                 })),
                 Cita: {
                     id: datos.Cita.id,
@@ -423,7 +427,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => ({
                     medicamento: m.medicamento,
                     dosis: m.dosis,
-                    cantidad: parseInt(m.cantidad)
+                    cantidad: parseInt(m.cantidad),
+                    id_insumo: m.id_insumo
                 })),
                 Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => ({
                     procedimiento: p.procedimiento,
@@ -434,11 +439,13 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 })),
                 Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
                     nombre: i.nombre,
-                    cantidad: parseInt(i.cantidad)
+                    cantidad: parseInt(i.cantidad),
+                    id_insumo: i.id_insumo
                 })),
                 Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
                     descripcion: e.descripcion,
-                    uso: e.uso
+                    uso: e.uso,
+                    id_insumo: e.id_insumo
                 })),
                 Terapia: {
                     sesion: datos.Terapia.sesion,
@@ -556,7 +563,8 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
                         medicamento: m.medicamento,
                         dosis: m.dosis,
-                        cantidad: parseInt(m.cantidad)
+                        cantidad: parseInt(m.cantidad),
+                        id_insumo: m.id_insumo
                     })),
                     Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
                         procedimiento: p.procedimiento,
@@ -567,11 +575,14 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     })),
                     Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
                         nombre: i.nombre,
-                        cantidad: parseInt(i.cantidad)
+                        cantidad: parseInt(i.cantidad),
+                        id_insumo: i.id_insumo
                     })),
                     Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
                         descripcion: e.descripcion,
-                        uso: e.uso
+                        uso: e.uso,
+                        usado: e.usado,
+                        id_insumo: e.id_insumo
                     })),
                     Cita: {
                         id: datos.Cita.id
@@ -1125,15 +1136,19 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                     Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
                         medicamento: m.medicamento,
                         dosis: m.dosis,
-                        cantidad: parseInt(m.cantidad)
+                        cantidad: parseInt(m.cantidad),
+                        id_insumo: m.id_insumo
                     })),
                     Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
                         nombre: i.nombre,
-                        cantidad: parseInt(i.cantidad)
+                        cantidad: parseInt(i.cantidad),
+                        id_insumo: i.id_insumo
                     })),
                     Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
                         descripcion: e.descripcion,
-                        uso: e.uso
+                        uso: e.uso,
+                        usado: e.usado,
+                        id_insumo: e.id_insumo
                     })),
                     Cita: {
                         id: datos.Cita.id

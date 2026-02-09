@@ -1,5 +1,3 @@
-import { guardarEnDB } from "~/composables/Formulario/useIndexedDBManager";
-import { useMedicosStore } from "../profesional/Profesionales";
 import { useHistoriasStore } from "../historias/Historia";
 
 // Estructura de datos de Insumos
@@ -8,7 +6,7 @@ const estructura = {
         id: '',
         nombre: '',
         categoria: '',
-        activo: '',
+        activoL: '',
         receta: false,
         unidad: '',
         stock: '',
@@ -44,18 +42,25 @@ export const useInsumosStore = defineStore('Insumos', {
             const apiRest = useApiRest()
             let insumos = await apiRest.getData('Insumo', 'insumos')
 
+            insumos = insumos.map(item => {
+                // desestructuramos y renombramos la propiedad
+                const { activo, ...rest } = item
+                return {
+                ...rest,
+                activoL: activo
+                }
+            })
+
             this.InsumosData = insumos;
             return insumos;
         },
 
-        async listMovimientodeInsumo() {
+        async listMovimientodeInsumo(listMedicos) {
             const varView = useVarView()
             const apiRest = useApiRest()
-            const medicosStore = useMedicosStore()
             const historiaStore = useHistoriasStore()
 
             const movimientos = await apiRest.getData('Movimiento', 'movimientos')
-            const profesionales = await medicosStore.listMedicos(true)
 
             // Filtrar solo los movimientos del insumo actual
             let movimientosInsumo = movimientos.filter(
@@ -65,7 +70,7 @@ export const useInsumosStore = defineStore('Insumos', {
             // Mapear cada movimiento con su profesional y análisis
             movimientosInsumo = await Promise.all(
                 movimientosInsumo.map(async mov => {
-                    const medico = profesionales.find(
+                    const medico = listMedicos.find(
                         p => p.id_profesional === mov.id_medico
                     )
 
@@ -79,10 +84,12 @@ export const useInsumosStore = defineStore('Insumos', {
                     return {
                         ...mov,
                         medico,
-                        analisis: analisis[0] || null
+                        analisis: analisis?[0]: null
                     }
                 })
             )
+
+            console.log(movimientosInsumo)
 
             return movimientosInsumo;
         },

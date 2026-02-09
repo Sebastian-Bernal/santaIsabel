@@ -13,6 +13,7 @@ export function useInsumosBuilder({
     movimientos
 }) {
     const insumoStore = useInsumosStore();
+    
     const builder = new FormularioBuilder()
     builder
         .setStoreId(storeId)
@@ -35,7 +36,7 @@ export function useInsumosBuilder({
             .setFormularioTituloFormulario('Nuevo insumo Médico')
     }
     builder
-        .nuevaSeccion(actulizarDatos ? insumoStore.Formulario.Insumos.activo : 'Registrar nuevo producto en inventario')
+        .nuevaSeccion(actulizarDatos ? 'Insumo' : 'Registrar nuevo producto en inventario')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-id-card text-blue-500 mr-1"></i>Informacion Basica',
@@ -59,6 +60,7 @@ export function useInsumosBuilder({
                 { value: 'Medicamento', text: 'Medicamento' },
                 { value: 'Material Quirurgico', text: 'Material Quirurgico' },
                 { value: 'Insumo de Laboratorio', text: 'Insumo de Laboratorio' },
+                { value: 'Equipos médicos', text: 'Equipos médicos' },
                 { value: 'Otro', text: 'Otro' },
             ],
             label: 'Categoria',
@@ -72,18 +74,17 @@ export function useInsumosBuilder({
             component: 'Label',
             text: '<i class="fa-solid fa-capsules text-blue-500 mr-1"></i>Informacion Farmacologica',
             tamaño: 'w-full col-span-2',
-            forLabel: 'activo'
+            forLabel: 'activoL'
         })
         .addCampo({
             component: 'Input',
             type: 'text',
             label: 'Ingrediente Activo',
             placeholder: 'Principio activo',
-            id: 'activo',
-            name: 'activo',
+            id: 'activoL',
+            name: 'activoL',
             tamaño: 'md:col-span-1 col-span-3',
-            minlength: 3,
-            vmodel: 'Insumos.activo'
+            vmodel: 'Insumos.activoL'
         })
         .addCampo({
             component: 'Checkbox',
@@ -112,7 +113,6 @@ export function useInsumosBuilder({
             id: 'unidad',
             name: 'unidad',
             tamaño: 'md:col-span-1 col-span-3',
-            minlength: 3,
             vmodel: 'Insumos.unidad'
         })
         .addCampo({
@@ -159,7 +159,7 @@ export function useInsumosBuilder({
 
     if (soloVer) {
         // Construimos las cards dinámicamente
-        const cardsMovimientos = movimientos.map(mov => {
+        const cardsMovimientos = movimientos.length > 0 ? movimientos.map(mov => {
             // Definir estilos según tipo de movimiento
             let bgClass = ''
             let icon = ''
@@ -207,9 +207,24 @@ export function useInsumosBuilder({
                         </div>
                     `
                 },
-                footer: {}
+                footer: {
+                    // buttons: [
+                    //     {
+                    //         icon: 'fa-solid fa-file text-gray-300 text-xs',
+                    //         text: `Analisis: ${mov.nombreServicio} - ${mov.created_at.split(' ')[0]}`
+                    //     }
+                    // ]
+                }
             }
-        })
+        }) : [
+                {
+                    header: {
+                        icon: 'fa-solid fa-pills',
+                        title: `Sin movimientos registrados`,
+                        html: `<span class="text-sm text-gray-500">${insumoStore.Formulario.Insumos?.nombre || ''}</span>`
+                    },
+                },
+            ]
 
         builder
         .nuevaSeccion('Movimientos de Inventario')
