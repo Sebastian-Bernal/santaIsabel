@@ -151,16 +151,14 @@ export const useApiRest = defineStore('apiRest', {
 
                     if (respuesta?.success && Array.isArray(respuesta.data) && almacen !== '') {
                         datos = await respuesta.data;
-
                         // guardar en IndexedDB para uso offline
                         const store = useIndexedDBStore();
                         store.almacen = almacen;
-                        await store.borrartodo();
-                        // console.log(almacen, datos)
+                        await store.bulkPut(datos)
 
-                        for (const item of datos) {
-                            await store.guardardatosID({ ...item })
-                        };
+                        // for (const item of datos) {
+                        //     await store.actualiza({ ...item })
+                        // };
                     }
 
                 } catch (error) {

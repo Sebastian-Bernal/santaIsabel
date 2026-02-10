@@ -45,7 +45,6 @@ watch(() => varView.showNuevaCita,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
             await llamadatos();
-            refresh.value++;
         }
     }
 );
@@ -61,7 +60,7 @@ watch(() => varView.showActualizarCita,
 
 watch(() => varView.showNuevaHistoria,
     async (estado) => {
-        if(!estado ){
+        if(!estado && varView.cambioEnApi){
             await llamadatos();
         }
     }
@@ -260,7 +259,6 @@ const propiedades = computed(() => {
                     .setDatos(citas)
                     .setAcciones(
                         { icons: [
-                            // { icon: isCitaActualizada, action: showMotivoEdicion },
                             { icon: isActualizarCita, action: actualizarCita },
                             { icon: citaEliminada, action: isCancelarCita },
                             { icon: citaRealizada, action: isActivarCita },

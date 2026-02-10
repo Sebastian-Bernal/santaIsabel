@@ -226,7 +226,7 @@ function changeShowPendientes() {
             <div class="flex items-center justify-between my-2 px-5">
                 <div class="flex items-center gap-2 mr-5">
                     <i class="fa-solid fa-hourglass-half text-red-300"></i>
-                    <h2 class="text-xl font-semibold">Citas Pendientes</h2>
+                    <h2 class="text-xl font-semibold select-none cursor-pointer" @click="changeShowPendientes">Citas Pendientes</h2>
                 </div>
                 <ButtonRounded
                     :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
@@ -372,7 +372,7 @@ function changeShowPendientes() {
                 v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
                 :class="[{ 
                     'bg-red-50 dark:bg-red-900/40 border-l-4 border-red-200 hover:bg-red-200 hover:dark:bg-red-800': cita.estado === 'cancelada', 
-                    'bg-gray-100 dark:bg-gray-800 border-l-4 border-gray-400 text-gray-600 dark:text-gray-300 hover:bg-gray-200 hover:dark:bg-gray-700': vencida(cita) }, props.Propiedades.tamaño]">
+                    'bg-gray-100 dark:bg-gray-900/40 border-l-4 border-gray-400 dark:border-yellow-900/40 text-gray-600 dark:text-gray-300 hover:bg-gray-200 hover:dark:bg-gray-700': vencida(cita) && cita.estado === 'Inactiva' }, props.Propiedades.tamaño]">
 
                 <!-- HEADER -->
                 <div class="flex items-center gap-4">

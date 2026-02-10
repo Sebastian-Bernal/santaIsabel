@@ -16,7 +16,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue']);
 
-const campos = { Input, Select, SelectMultiple, SelectSearch, Textarea, Checkbox};
+const campos = { Input, Select, SelectMultiple, SelectSearch, Textarea, Checkbox };
 
 // Registro actual del formulario
 const form = ref({ ...props.Propiedades.addItem });
@@ -83,6 +83,7 @@ const editItem = (index) => {
 
 // Eliminar
 const removeItem = (index) => {
+    console.log(index)
     // Si es el único item, limpiar valores en lugar de eliminar
     if (items.value.length === 1) {
         const emptyItem = { ...props.Propiedades.addItem };
@@ -205,12 +206,6 @@ const itemsCompletos = computed(() =>
                         :class="{ 'fa-angle-up': showCampos, 'fa-angle-down': !showCampos }">
                     </i>
                 </div>
-                <span v-if="items.length > 0" class="text-sm text-blue-700">
-                    {{ 
-                    props.Propiedades.liveUpdate ? 
-                    items.length > 1 ? items.length - 1 : items.length
-                    :  items.length 
-                    }}</span>
             </div>
         </div>
 
@@ -233,11 +228,23 @@ const itemsCompletos = computed(() =>
                     Cancelar
                 </button>
 
-                <button type="button" @click="saveItem"
-                    class="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 cursor-pointer active:scale-95">
+                <!-- Botón de cancelar solo aparece si falta algún campo -->
+                <!-- <button v-if="!isFormValid() && editIndex === null" type="button"
+                    @click="removeItem(items.value.length - 1)"
+                    class="ml-2 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 cursor-pointer active:scale-95">
+                    <i class="fa-solid fa-xmark"></i> Cancelar
+                </button> -->
+
+                <button type="button" @click="saveItem" :class="[
+                    'px-4 py-2 text-sm rounded-lg transition-all duration-300 cursor-pointer active:scale-95',
+                    isFormValid()
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-300 text-gray-700 cursor-not-allowed'
+                ]" :disabled="!isFormValid()">
                     <i class="fa-solid fa-plus"></i>
                     {{ editIndex !== null ? 'Actualizar' : 'Guardar' }}
                 </button>
+
             </div>
         </div>
 

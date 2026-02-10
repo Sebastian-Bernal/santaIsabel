@@ -58,13 +58,25 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
         return false;
     }
 
-    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+    const errores = []
+    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).some(v => v === '' || v == null)),
     // Validar Procedimientos
     datos.Plan_manejo_procedimientos.forEach((p, i) => {
         if (!p.procedimiento || !p.codigo) {
             errores.push(`Procedimiento ${i + 1} incompleto.`);
         }
     });
+
+    if(errores.length > 0) {
+        errores.forEach(msg => {
+            notificacionesStore.options.icono = 'error';
+            notificacionesStore.options.titulo = 'Información inválida';
+            notificacionesStore.options.texto = msg;
+            notificacionesStore.options.tiempo = 5000;
+            notificacionesStore.simple();
+        });
+        return false;
+    }
 
     // 🔁 Validación si ya existe el paciente
     const paciente = pacientes.find(

@@ -109,6 +109,15 @@ const tablaAlto = computed(() => {
         height: `${pixeles}px`
     }
 })
+
+function getAccionesVisibles(fila) {
+  return props.Propiedades.acciones.icons.filter(action => {
+    const tipo = typeof action.icon === 'function' ? action.icon(fila) : action.icon;
+    return tipo !== undefined && tipo !== null && tipo !== '';
+  });
+}
+
+
 </script>
 
 <template>
@@ -291,7 +300,7 @@ const tablaAlto = computed(() => {
                     <!-- Acciones por props -->
                     <BotonAccion
                         v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
-                        v-for="action in Propiedades.acciones.icons" :key="action"
+                        v-for="action in getAccionesVisibles(fila)" :key="action"
                         :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                         @click="action.action(fila)" />
 

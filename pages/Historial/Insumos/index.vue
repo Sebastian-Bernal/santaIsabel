@@ -15,6 +15,7 @@ import { eliminarInsumo } from '~/Core/Historial/Insumos/DeleteInsumo'
 
 const varView = useVarView()
 const notificaciones = useNotificacionesStore()
+const apiRest = useApiRest()
 
 const show = ref(false);
 const insumoStore = useInsumosStore();
@@ -23,6 +24,7 @@ const showMovimiento = ref(false);
 const refresh = ref(1);
 const medicosStore = useMedicosStore();
 const medicosList = ref([]);
+const analisis = ref([])
 const insumos = ref([]);
 const movimientos = ref([])
 
@@ -63,6 +65,7 @@ watch(() => showMovimiento.value,
 onMounted(async () => {
     await llamadatos()
     medicosList.value = await medicosStore.listMedicos();
+    analisis.value = await apiRest.getData('Analisis', 'analisis')
 });
 
 // Funciones para manejar la visibilidad de los formularios
@@ -73,7 +76,7 @@ const agregarInsumo = () => {
 
 const verInsumo = async (insumo) => {
     mapCampos(insumo, insumoStore.Formulario);
-    movimientos.value = await insumoStore.listMovimientodeInsumo(medicosList.value)
+    movimientos.value = await insumoStore.listMovimientodeInsumo(medicosList.value, analisis.value)
     showVer.value = true;
 }
 

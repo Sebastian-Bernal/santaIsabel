@@ -55,13 +55,11 @@ export const useInsumosStore = defineStore('Insumos', {
             return insumos;
         },
 
-        async listMovimientodeInsumo(listMedicos) {
+        async listMovimientodeInsumo(listMedicos, analisisList) {
             const varView = useVarView()
             const apiRest = useApiRest()
-            const historiaStore = useHistoriasStore()
 
             const movimientos = await apiRest.getData('Movimiento', 'movimientos')
-
             // Filtrar solo los movimientos del insumo actual
             let movimientosInsumo = movimientos.filter(
                 mov => mov.id_insumo === this.Formulario.Insumos.id
@@ -69,27 +67,25 @@ export const useInsumosStore = defineStore('Insumos', {
 
             // Mapear cada movimiento con su profesional y análisis
             movimientosInsumo = await Promise.all(
-                movimientosInsumo.map(async mov => {
+                movimientosInsumo.map(mov => {
                     const medico = listMedicos.find(
                         p => p.id_profesional === mov.id_medico
                     )
 
-                    // listDatos puede ser async, así que lo tratamos como tal
-                    const analisis = await historiaStore.listDatos(
-                        mov.id_analisis,
-                        'Analisis',
-                        'id'
+                    const analisis = analisisList.find(
+                        a => a.id === mov.id_analisis
                     )
 
                     return {
                         ...mov,
                         medico,
-                        analisis: analisis?[0]: null
+                        analisis,
                     }
                 })
             )
 
-            console.log(movimientosInsumo)
+            movimientosInsumo.sort((a, b) => new Date(b.fechaMovimiento) - new Date(a.fechaMovimiento));
+
 
             return movimientosInsumo;
         },

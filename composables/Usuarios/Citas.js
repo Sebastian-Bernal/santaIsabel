@@ -175,7 +175,7 @@ export function useCitasActions({ fecha }) {
         historiasStore.Formulario.HistoriaClinica.id_paciente = cita.id_paciente
 
         historiasStore.Formulario.Analisis.servicio = cita.servicio
-        historiasStore.Formulario.Cita = cita
+        historiasStore.Formulario.Cita = { ...cita }
     }
 
     function resolverPlantilla(cita, paciente, horaActual) {

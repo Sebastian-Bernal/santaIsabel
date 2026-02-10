@@ -200,9 +200,14 @@ export function useInsumosBuilder({
                             <div class="flex flex-col gap-1 text-sm">
                                 <span class="font-semibold">${text}</span>
                                 <span class="text-gray-600 dark:text-gray-400">Profesional: ${mov.medico?.name || 'N/A'}</span>
-                                <span class="text-xs text-gray-500">
-                                    <i class="fa-solid fa-clock mr-1"></i> ${mov.fechaMovimiento}
-                                </span>
+                                <div class="flex gap-3">
+                                    <span class="text-xs text-gray-500">
+                                        <i class="fa-solid fa-clock mr-1"></i> ${mov.fechaMovimiento}
+                                    </span>
+                                    <span class="text-xs text-gray-600">
+                                        ${mov.analisis?.nombreServicio || ''}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     `

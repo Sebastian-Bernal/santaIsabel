@@ -51,6 +51,7 @@ export function useMovimientoBuilder({
                 { value: 'Medicamento', text: 'Medicamento' },
                 { value: 'Material Quirurgico', text: 'Material Quirurgico' },
                 { value: 'Insumo de Laboratorio', text: 'Insumo de Laboratorio' },
+                { value: 'Equipos médicos', text: 'Equipos médicos' },
                 { value: 'Otro', text: 'Otro' },
             ],
             label: 'Categoria',

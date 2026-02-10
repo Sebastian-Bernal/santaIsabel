@@ -25,6 +25,18 @@ export const validarYEnviarNuevoMovimiento = async (datos) => {
         return;
     }
 
+    if (
+        Movimiento.cantidadMovimiento > datos.Insumos.stock && Movimiento.tipoMovimiento === 'Egreso'
+    ) {
+        const msg = 'Cantidad de movimiento mayor al stock actual.';
+        notificacionesStore.options.icono = 'error';
+        notificacionesStore.options.titulo = 'Información inválida.';
+        notificacionesStore.options.texto = msg;
+        notificacionesStore.options.tiempo = 5000;
+        notificacionesStore.simple();
+        return;
+    }
+
     return await enviarFormularioInsumos(datos);
 };
 
