@@ -376,8 +376,8 @@ const propiedades = computed(() => {
     // Tabla EPS
     builderTablaEPS
         .setColumnas([
-            { titulo: 'nombre', value: 'Nombre', tamaño: 220, ordenar: true },
             { titulo: 'nit', value: 'Nit', tamaño: 100, ordenar: true },
+            { titulo: 'nombre', value: 'Nombre', tamaño: 300, ordenar: true },
             { titulo: 'codigo', value: 'Codigo', tamaño: 100, ordenar: true },
         ])
         .setHeaderTabla({ titulo: 'EPS Registradas', color: 'bg-[var(--color-default)] text-white', buscador: true, excel: true, accionAgregar: puedePostEPS ? nuevaEPS : null })
@@ -390,8 +390,8 @@ const propiedades = computed(() => {
     // Tabla Profesiones
     builderTablaProfessions
         .setColumnas([
-            { titulo: 'nombre', value: 'Nombre', tamaño: 200, ordenar: true },
-            { titulo: 'codigo', value: 'Codigo', tamaño: 200, ordenar: true },
+            { titulo: 'codigo', value: 'Codigo', tamaño: 150, ordenar: true },
+            { titulo: 'nombre', value: 'Nombre', tamaño: 350, ordenar: true },
         ])
         .setHeaderTabla({
             titulo: 'Profesiones Registradas',
@@ -409,8 +409,8 @@ const propiedades = computed(() => {
     // Tabla Profesiones
     builderTablaServicios
         .setColumnas([
-            { titulo: 'name', value: 'Nombre', tamaño: 200, ordenar: true },
-            { titulo: 'plantilla', value: 'Tipo', tamaño: 200, ordenar: true },
+            { titulo: 'plantilla', value: 'Tipo', tamaño: 150, ordenar: true },
+            { titulo: 'name', value: 'Nombre', tamaño: 800, ordenar: true },
         ])
         .setHeaderTabla({
             titulo: 'Servicios Registrados',

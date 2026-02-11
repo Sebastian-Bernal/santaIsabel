@@ -113,9 +113,7 @@ export const validarYEnviarActualizarCita = async (datos) => {
             const body = {
                 id_paciente: datos.Cita.id_paciente,
                 id_medico: datos.Cita.id_medico,
-                name_paciente: datos.Cita.name_paciente,
-                name_medico: datos.Cita.name_medico,
-                servicio: datos.Cita.servicio,
+                id_servicio: datos.Cita.id_servicio,
                 motivo: datos.Cita.motivo,
                 fecha: fechaFormateada,
                 fechaHasta: datos.Cita.fechaHasta,
@@ -168,9 +166,7 @@ const enviarFormularioCita = async (datos, reintento = false) => {
                     id: datos.Cita.id,
                     id_paciente: datos.Cita.id_paciente,
                     id_medico: datos.Cita.id_medico,
-                    name_paciente: datos.Cita.name_paciente,
-                    name_medico: datos.Cita.name_medico,
-                    servicio: datos.Cita.servicio,
+                    id_servicio: datos.Cita.id_servicio,
                     motivo: datos.Cita.motivo,
                     fecha: datos.Cita.fecha,
                     fechaHasta: datos.Cita.fechaHasta,
@@ -192,9 +188,7 @@ const enviarFormularioCita = async (datos, reintento = false) => {
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
                         id_medico: respuesta.data.id_medico,
-                        name_paciente: respuesta.data.name_paciente,
-                        name_medico: respuesta.data.name_medico,
-                        servicio: respuesta.data.servicio,
+                        id_servicio: respuesta.data.id_servicio,
                         motivo: respuesta.data.motivo,
                         fecha: respuesta.data.fecha,
                         fechaHasta: respuesta.data.fechaHasta,
@@ -203,7 +197,7 @@ const enviarFormularioCita = async (datos, reintento = false) => {
                         id_procedimiento: respuesta.data.id_procedimiento
                     }
                 }
-                await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
                 console.log('datos actualizados')
                 return true
             }

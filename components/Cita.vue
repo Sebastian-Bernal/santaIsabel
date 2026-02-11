@@ -35,7 +35,7 @@ onMounted(async () => {
 
     CIE10.value = await storeCodigos.leerdatos();
     servicios.value = await servicioStore.listServicios();
-    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.name}})
+    servicios.value = servicios.value.map((s) => {return {text: s.name, value: s.id}})
     varView.cargando = false
 });
 

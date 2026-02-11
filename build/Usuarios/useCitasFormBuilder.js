@@ -29,12 +29,12 @@ export function useFormularioCitaBuilder({
   })
 
   async function changeServicio(event) {
-    const servicio = event.target.value
+    const id_servicio = event.target.value
 
     const servicioStore = useDatosServicioStore()
     const serviciosPlantilla = await servicioStore.listServicios()
     const tipoConsulta = serviciosPlantilla.find((s) => {
-      return s.name === servicio
+      return s.id === id_servicio
     })?.plantilla
 
     if (tipoConsulta === 'Terapia') {
@@ -56,7 +56,6 @@ export function useFormularioCitaBuilder({
       const respuesta = await api.functionCall(options)
 
       if (respuesta.success) {
-        varView.tipoConsulta = 'Terapia'
         varView.tratamientos = respuesta.data
 
         optionsTratamientos.value = respuesta.data.map(data => {
@@ -266,7 +265,7 @@ export function useFormularioCitaBuilder({
       name: 'servicio',
       tamaño: 'w-full md:col-span-1 col-span-2',
       options: servicios,
-      vmodel: 'Cita.servicio',
+      vmodel: 'Cita.id_servicio',
       slot: {
         tooltip: `<div id="tratamientos" class="text-green-600 dark:text-green-300 text-xs mt-1"></div>`
       },

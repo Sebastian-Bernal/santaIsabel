@@ -861,6 +861,7 @@ export function useHistoriaBuilder({
                         name: 'cantidad',
                         id: 'cantidad',
                         typeCampo: 'Input',
+                        type: 'number',
                         placeholder: 'Cantidad',
                         tamaño: 'w-full',
                     },

@@ -59,7 +59,9 @@ export const validarYEnviarNuevoPaciente = async (datos) => {
     }
 
     const errores = []
-    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).some(v => v === '' || v == null)),
+    datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
     // Validar Procedimientos
     datos.Plan_manejo_procedimientos.forEach((p, i) => {
         if (!p.procedimiento || !p.codigo) {

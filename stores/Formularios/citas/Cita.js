@@ -6,6 +6,7 @@ const estructuraCita = {
         id: '',
         fecha: '',
         servicio: '',
+        id_servicio: '',
         motivo: '',
         hora: '',
         id_paciente: '',

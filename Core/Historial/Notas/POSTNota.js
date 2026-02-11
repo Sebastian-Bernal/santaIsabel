@@ -59,11 +59,9 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
                 token: token,
                 body: {
                     id_paciente: datos.Nota.id_paciente,
-                    id_profesional: datos.Nota.id_profesional,
                     direccion: datos.Nota.direccion,
                     fecha_nota: datos.Nota.fecha_nota,
                     hora_nota: datos.Nota.hora_nota,
-                    nota: datos.Nota.nota,
                     tipoAnalisis: datos.Nota.tipoAnalisis,
                 }
             }
@@ -75,11 +73,9 @@ export const enviarFormularioNota = async (datos, reintento= false) => {
                         sincronizado: 1,
                         id: respuesta.data.id,
                         id_paciente: respuesta.data.id_paciente,
-                        id_profesional: respuesta.data.id_profesional,
                         direccion: respuesta.data.direccion,
                         fecha_nota: respuesta.data.fecha_nota,
                         hora_nota: respuesta.data.hora_nota,
-                        nota: respuesta.data.nota,
                         tipoAnalisis: respuesta.data.tipoAnalisis,
                     }
                 }

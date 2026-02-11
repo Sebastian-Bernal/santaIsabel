@@ -47,8 +47,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
         case 'Evolucion':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
-            datos.Analisis.nombreServicio = datos.Cita.servicio
-            datos.Analisis.servicio = varView.tipoConsulta.plantilla
+            datos.Analisis.id_servicio = datos.Cita.id_servicio
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
@@ -79,7 +78,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 }
             });
 
-            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => !Object.values(d).some(v => v === '' || v == null))
+            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
                 errores.push("El plan de medicamentos debe ser un arreglo.");
             } else {
@@ -91,7 +92,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Insumos
-            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => !Object.values(d).some(v => v === '' || v == null));
+            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             datos.Plan_manejo_insumos.forEach((i, idx) => {
                 if (!i.nombre || isNaN(parseInt(i.cantidad))) {
                     errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
@@ -99,7 +102,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Equipos
-            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => !Object.values(d).some(v => v === '' || v == null))
+            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             datos.Plan_manejo_equipos.forEach((e, idx) => {
                 if (!e.descripcion || !e.uso) {
                     errores.push(`Equipo ${idx + 1} incompleto.`);
@@ -132,8 +137,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: varView.tipoConsulta.plantilla,
-                    nombreServicio: datos.Cita.servicio
+                    id_servicio: datos.Cita.id_servicio
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -248,7 +252,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
         case 'Medicina':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual;
-            datos.Analisis.fecha = calendarioStore.fechaActual;
 
             const puedePostAnalisis = varView.getPermisos.includes('Analisis_post')
 
@@ -337,7 +340,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Plan de Medicamentos
-            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => !Object.values(d).some(v => v === '' || v == null))
+            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
                 errores.push("El plan de medicamentos debe ser un arreglo.");
             } else {
@@ -349,7 +354,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             }
 
             // Validar Procedimientos
-            datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => {
+                return d && Object.values(d).every(v => v !== '' && v != null);
+            });
             datos.Plan_manejo_procedimientos.forEach((p, i) => {
                 if (!p.procedimiento || !p.codigo) {
                     errores.push(`Procedimiento ${i + 1} incompleto.`);
@@ -357,7 +364,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Insumos
-            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => !Object.values(d).some(v => v === '' || v == null))
+            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             datos.Plan_manejo_insumos.forEach((i, idx) => {
                 if (!i.nombre || isNaN(parseInt(i.cantidad))) {
                     errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
@@ -365,7 +374,9 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Equipos
-            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => !Object.values(d).some(v => v === '' || v == null))
+            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
             datos.Plan_manejo_equipos.forEach((e, idx) => {
                 if (!e.descripcion || !e.uso) {
                     errores.push(`Equipo ${idx + 1} incompleto.`);
@@ -410,8 +421,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: varView.tipoConsulta.plantilla,
-                    nombreServicio: datos.Cita.servicio,
+                    id_servicio: datos.Cita.id_servicio,
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -591,8 +601,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Analisis.id_medico,
-                        servicio: datos.Analisis.servicio,
-                        nombreServicio: datos.Analisis.nombreServicio,
+                        id_servicio: datos.Analisis.id_servicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -781,7 +790,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: datos.Cita.servicio,
+                    id_servicio: datos.Cita.id_servicio,
                     sincronizado: 0
                 },
                 Diagnosticos: datos.Diagnosticos.map((d, i) => ({
@@ -916,8 +925,7 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                     Analisis: {
                         motivo: datos.Cita.servicio,
                         id_medico: datos.Cita.id_medico,
-                        servicio: 'Terapia',
-                        nombreServicio: datos.Cita.servicio,
+                        id_servicio: datos.Cita.id_servicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -1056,8 +1064,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
-                        servicio: datos.Analisis.servicio,
-                        nombreServicio: datos.Analisis.nombreServicio,
+                        id_servicio: datos.Analisis.id_servicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -1081,7 +1088,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
-                        servicio: datos.Cita.servicio,
+                        id_servicio: datos.Cita.id_servicio,
                     },
                     Cita: {
                         id: datos.Cita.id,
@@ -1187,8 +1194,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                         analisis: datos.Analisis.analisis,
                         tipoAnalisis: datos.Analisis.tipoAnalisis,
                         id_medico: datos.Analisis.id_medico,
-                        servicio: datos.Analisis.servicio,
-                        nombreServicio: datos.Analisis.nombreServicio,
+                        id_servicio: datos.Analisis.id_servicio,
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
@@ -1305,7 +1311,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    servicio: datos.Cita.servicio,
+                    id_servicio: datos.Cita.id_servicio,
                     sincronizado: 0
                 },
                 Diagnosticos: datos.Diagnosticos.map((d, i) => ({
@@ -1433,8 +1439,7 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                         motivo: 'Nota Medica',
                         tipoAnalisis: datos.Nota.tipoAnalisis,
                         id_medico: datos.Cita.id_medico,
-                        servicio: 'Nota',
-                        nombreServicio: datos.Cita.servicio
+                        id_servicio: datos.Cita.id_servicio
                     },
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,

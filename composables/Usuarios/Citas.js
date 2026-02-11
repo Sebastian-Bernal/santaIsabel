@@ -94,15 +94,15 @@ export function useCitasActions({ fecha }) {
        OBSERVACIÓN PROFESIONAL
     ========================= */
     async function showObservacion(cita) {
-        const historia = await historiasStore.listDatos(
-            cita.id_examen_fisico,
+        const analisis = await historiasStore.listDatos(
+            cita.id_analisis,
             'Analisis',
             'id'
         )
 
         options.icono = 'info'
         options.titulo = 'Observacion del Profesional'
-        options.texto = historia[0]?.observacion || 'Cita Realizada con exito!'
+        options.texto = analisis[0]?.observacion || 'Cita Realizada con exito!'
         options.tiempo = 5000
         simple()
     }
@@ -151,7 +151,7 @@ export function useCitasActions({ fecha }) {
         prepararHistoria(cita, paciente)
 
         const servicios = await servicioStore.listServicios()
-        varView.tipoConsulta = servicios.find(s => s.name === cita.servicio)
+        varView.tipoConsulta = servicios.find(s => s.id === cita.id_servicio)
 
         if (!varView.tipoConsulta) {
             options.icono = 'warning'
@@ -196,8 +196,6 @@ export function useCitasActions({ fecha }) {
         if (varView.tipoConsulta.plantilla === 'Nota') {
             Object.assign(historiasStore.Formulario.Nota, {
                 id_paciente: cita.id_paciente,
-                id_profesional: cita.id_medico,
-                id_procedimiento: cita.id_procedimiento,
                 direccion: paciente.direccion,
                 fecha_nota: fechaForm,
                 hora_nota: horaActual

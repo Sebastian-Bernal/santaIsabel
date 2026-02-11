@@ -110,11 +110,9 @@ export const enviarFormularioPutNota = async (datos, reintento = false) => {
                     Nota: {
                         id: datos.Nota.id,
                         id_paciente: datos.Nota.id_paciente,
-                        id_profesional: datos.Nota.id_profesional,
                         direccion: datos.Nota.direccion,
                         fecha_nota: datos.Nota.fecha_nota,
                         hora_nota: datos.Nota.hora_nota,
-                        nota: datos.Nota.nota,
                         tipoAnalisis: datos.Nota.tipoAnalisis,
                     },
                     Descripcion: (datos.Nota.Descripcion ?? []).map(d => ({

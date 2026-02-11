@@ -170,6 +170,7 @@ export const useApiRest = defineStore('apiRest', {
                 datos = await this.getOfflineData(almacen);
             }
 
+            varView.cargando = false
             varView.cambioEnApi = false
             return datos;
         },
