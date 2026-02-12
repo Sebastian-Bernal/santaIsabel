@@ -48,10 +48,10 @@ const components = {
             <div v-if="Propiedades.header.button" class="flex gap-3 items-center cursor-pointer">
 
                 <div v-for="button in Propiedades.header.button"
-                    class="flex gap-2 items-center p-3 rounded-2xl text-white font-semibold" :class="button.color"
+                    class="flex gap-2 items-center px-3 py-2 rounded-2xl text-white font-semibold transition-all duration-300 cursor-pointer active:scale-95" :class="button.color"
                     @click="button.action">
-                    <i :class="button.icon"></i>
-                    <p class="md:flex hidden">{{ button.text }}</p>
+                    <i class="text-lg" :class="button.icon"></i>
+                    <p class="md:flex hidden text-base">{{ button.text }}</p>
                 </div>
 
             </div>

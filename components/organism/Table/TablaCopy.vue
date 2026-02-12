@@ -100,7 +100,7 @@ const estiloColumnas = computed(() => {
         .join(' ');
 
     return {
-        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
+        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''} 0px`
     };
 });
 
@@ -253,18 +253,17 @@ function getAccionesVisibles(fila) {
     <!-- Tabla -->
     <div
         class="mt-5 shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-xl overflow-hidden">
-        <div class="w-full" >
+        <div class="w-full">
 
             <!-- Header titulos de props Columnas -->
-            <div class="sticky top-0 z-10 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-white text-center"
+            <div class="sticky top-0 z-10 grid py-4 px-2 justify-between text-xs font-semibold rounded-t-xl text-center bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 text-gray-600! dark:text-gray-100!"
                 :class="Propiedades.headerTabla?.color" :style="estiloColumnas">
                 <h2 v-for="(col, key) in columnasVisibles" :key="col.titulo"
                     :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                     {{ col.value }}
                     <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
                         color="bg-inherit h-fit h-fit" tooltip="Ordenar">
-                        <i class="fa-solid fa-sort cursor-pointer"
-                            :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
+                        <i class="fa-solid fa-sort cursor-pointer" :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
                     </ButtonRounded>
                 </h2>
                 <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
@@ -277,26 +276,28 @@ function getAccionesVisibles(fila) {
                     class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnas">
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="h-3 pt-1 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                        <div class="h-3 bg-gray-200 rounded w-3/4"></div>
                     </div>
                     <div v-if="Propiedades.acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
-                        <div class="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                        <div class="h-3 bg-gray-200 rounded w-1/2 mt-1"></div>
                     </div>
                 </div>
             </template>
 
 
             <!-- Body tabla -->
-            <div class="overflow-y-auto max-h-[400px] scrollForm">
+            <div class="overflow-y-auto max-h-[400px] scrollFormT">
                 <div v-for="(fila, id) in datosPaginados"
-                    class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
+                    class="bodyTable justify-between grid p-2 text-center odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700"
                     :style="estiloColumnas">
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-black dark:text-white truncate rounded-2xl">{{ fila[col.titulo] }}</p>
+                        <p class=" truncate "
+                            :class="{ 'font-medium text-gray-900 dark:text-white': key === 0, 'text-gray-800 dark:text-gray-200': key != 0 }">
+                            {{ fila[col.titulo] }}</p>
                     </div>
 
                     <!-- Acciones -->
@@ -339,6 +340,9 @@ function getAccionesVisibles(fila) {
 
                     </div>
 
+                    <div
+                        class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
+                    </div>
                     <!-- collapse -->
                     <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
                         <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
@@ -366,12 +370,16 @@ function getAccionesVisibles(fila) {
                 </div>
             </div>
 
-            <div
+            <div class="flex flex-col items-center justify-center py-16 text-center"
                 v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
-                <p class="text-gray-500 text-center my-10">
-                    No se encontraron resultados.
-                    <i class="fa-solid fa-search-minus"></i>
+                <i class="fa-regular fa-folder-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">
+                    No hay resultados
                 </p>
+                <p class="text-sm text-gray-400 mt-1">
+                    Ajusta los filtros o cambia el término de búsqueda.
+                </p>
+
             </div>
 
         </div>
@@ -510,5 +518,18 @@ function getAccionesVisibles(fila) {
 /* Paginador css */
 .btnsPagina button {
     background: linear-gradient(to left, var(--color-default), var(--color-default-700));
+}
+
+.scrollFormT {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.scrollFormT::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollFormT::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
 }
 </style>

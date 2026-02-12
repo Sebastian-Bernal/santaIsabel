@@ -54,21 +54,6 @@ export class PdfBuilder {
         return this
     }
 
-    async cargarSelloComoBase64() {
-        if (!this.config.sello) return null;
-        const config = useRuntimeConfig()
-
-        try {
-            // const res = await fetch(`${config.public.api}/${config.publico.obtenerSelloBase64}/${this.config.sello}`);
-            const res = await fetch("http://127.0.0.1:8000/api/v1/sello/L5jHtC91M80723m8E7Gf.jpg");
-            const data = await res.json();
-            return data.base64;
-        } catch (err) {
-            console.error("Error cargando sello:", err);
-            return null;
-        }
-    }
-
 
     async export() {
     const { $html2canvas, $jsPDF } = useNuxtApp();
@@ -78,14 +63,6 @@ export class PdfBuilder {
     }
 
     // Convertir la URL del sello a Base64
-    const selloBase64 = await this.cargarSelloComoBase64();
-
-    if (selloBase64) {
-        const selloDiv = document.getElementById("selloProfesional");
-        if (selloDiv) {
-        selloDiv.innerHTML = `<img src="${selloBase64}" style="width:80px;height:80px;" />`;
-        }
-    }
 
     const element = document.getElementById(this.config.elementId);
     if (!element) throw new Error(`No existe el elemento con id: ${this.config.elementId}`);

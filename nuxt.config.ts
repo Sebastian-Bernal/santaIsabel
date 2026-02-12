@@ -50,7 +50,6 @@ export default defineNuxtConfig({
       cie10: 'api/v1/cie10',
       insumos: 'api/v1/insumos',
       movimientos: 'api/v1/movimientos',
-      obtenerSelloBase64: 'api/v1/sello{filename}',
       dashboard: 'api/v1/dashboard',
       traeDatosHistoria: 'api/v1/traeDatosHistoria',
       traeDatosPlanManejo: 'api/v1/traeDatosPlanManejo',

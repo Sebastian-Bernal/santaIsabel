@@ -185,8 +185,6 @@ export function useCitasActions({ fecha }) {
 
         if (varView.tipoConsulta.plantilla === 'Terapia') {
             Object.assign(historiasStore.Formulario.Terapia, {
-                id_paciente: cita.id_paciente,
-                id_profesional: cita.id_medico,
                 id_procedimiento: cita.id_procedimiento,
                 fecha: fechaForm,
                 hora: horaActual
@@ -195,7 +193,6 @@ export function useCitasActions({ fecha }) {
 
         if (varView.tipoConsulta.plantilla === 'Nota') {
             Object.assign(historiasStore.Formulario.Nota, {
-                id_paciente: cita.id_paciente,
                 direccion: paciente.direccion,
                 fecha_nota: fechaForm,
                 hora_nota: horaActual

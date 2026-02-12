@@ -17,8 +17,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
     switch (varView.tipoConsulta.plantilla) {
         case 'Terapia':
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
-            if (!datos.Terapia?.id_paciente) errores.push("El paciente es obligatorio.");
-            if (!datos.Terapia?.id_profesional) errores.push("El médico es obligatorio.");
             if (!datos.Terapia?.sesion) errores.push("La sesión es obligatoria.");
             if (!datos.Terapia?.fecha) errores.push("La fecha es obligatoria.");
             if (!datos.Terapia?.hora) errores.push("La hora es obligatoria.");
@@ -173,7 +171,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             datos.HistoriaClinica.fecha_historia = calendarioStore.fechaActual.split('/').reverse().join('-');
             // Validar que todos los campos estén presentes y no vacíos
             if (
-                !nota?.id_paciente ||
                 !nota?.direccion ||
                 !nota?.fecha_nota ||
                 !nota?.hora_nota ||

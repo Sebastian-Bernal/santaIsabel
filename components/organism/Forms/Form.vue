@@ -68,7 +68,7 @@ function limpiar() {
 <template>
     <component :is="fondos[Propiedades.formulario.fondo]"
         v-if="!Propiedades.formulario.fondo || unref(Propiedades.formulario.show)">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg flex flex-col h-full"
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg flex flex-col h-full animate-fadeIn"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
             <div class="flex flex-col flex-1 min-h-0" :class="{'h-[90%]': props.Propiedades.formulario.botones.length > 0, 'h-[100%]': !props.Propiedades.formulario.botones}">
@@ -123,3 +123,21 @@ function limpiar() {
 
     </component>
 </template>
+
+<style scoped>
+.animate-fadeIn {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+</style>

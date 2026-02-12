@@ -34,7 +34,7 @@ export function useFormularioCitaBuilder({
     const servicioStore = useDatosServicioStore()
     const serviciosPlantilla = await servicioStore.listServicios()
     const tipoConsulta = serviciosPlantilla.find((s) => {
-      return s.id === id_servicio
+      return parseInt(s.id) === parseInt(id_servicio)
     })?.plantilla
 
     if (tipoConsulta === 'Terapia') {

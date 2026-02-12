@@ -45,7 +45,7 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
             menorAMayor.value = !menorAMayor.value;
         } else {
             columnaOrden.value = nombreColumna;
-            menorAMayor.value = true;
+            menorAMayor.value = false;
         }
 
     };
@@ -55,6 +55,9 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
 
         // Datos por busqueda Global de datos
         if (busqueda.value.trim() !== '') {
+            columnaOrden.value = '';
+            menorAMayor.value = true;
+            Object.keys(cacheOrdenes).forEach(k => delete cacheOrdenes[k]);
             const termino = busqueda.value.trim().toLowerCase();
             resultado = resultado.filter(item =>
                 Object.entries(item).some(([key, valor]) =>
@@ -70,6 +73,9 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
 
         for (const [columna, valorFiltro] of Object.entries(filtros.value)) {
             if (valorFiltro && valorFiltro !== "") {
+                columnaOrden.value = '';
+                menorAMayor.value = true;
+                Object.keys(cacheOrdenes).forEach(k => delete cacheOrdenes[k]);
                 const colDef = columnas.find(c => c.columna === columna);
                 const columnaReal = colDef?.columnaReal || columna;
 
@@ -106,8 +112,6 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
                 }
             });
         }
-
-
 
         // Datos menor a mayor - mayor a menor con cache
         if (columnaOrden.value) {
@@ -186,6 +190,7 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
         filtros.value = {}
         menorAMayor.value = true;
         columnaOrden.value = '';
+        Object.keys(cacheOrdenes).forEach(k => delete cacheOrdenes[k]); // limpiar cache
     }
 
     return {

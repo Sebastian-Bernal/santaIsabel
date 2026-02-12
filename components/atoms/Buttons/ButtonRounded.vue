@@ -42,6 +42,10 @@ const props = defineProps({
   offset: {
     type: Number,
     default: 8
+  },
+  activo: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -92,6 +96,16 @@ onMounted(() => {
   const handler = () => isVisible.value && updateTooltipPosition()
   window.addEventListener('resize', handler)
   window.addEventListener('scroll', handler, true)
+
+  // Si activo está en true, mostrar tooltip al cargar
+  if (props.activo) {
+    buttonRef.value?.focus()
+    show()
+    setTimeout(() => {
+      hide()
+      buttonRef.value?.blur()
+    }, 1500) // 1,5 segundos
+  }
 })
 
 onBeforeUnmount(() => {

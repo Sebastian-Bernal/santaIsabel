@@ -9,7 +9,6 @@ export const validarYEnviarActualizarNota = async (datos) => {
     const errores = [];
             // Validar que todos los campos estén presentes y no vacíos
             if (
-                !nota?.id_paciente ||
                 !nota?.direccion ||
                 !nota?.fecha_nota ||
                 !nota?.hora_nota ||
@@ -109,7 +108,6 @@ export const enviarFormularioPutNota = async (datos, reintento = false) => {
                 body: {
                     Nota: {
                         id: datos.Nota.id,
-                        id_paciente: datos.Nota.id_paciente,
                         direccion: datos.Nota.direccion,
                         fecha_nota: datos.Nota.fecha_nota,
                         hora_nota: datos.Nota.hora_nota,
@@ -131,8 +129,6 @@ export const enviarFormularioPutNota = async (datos, reintento = false) => {
                 //     Nota: {
                 //         sincronizado: 1,
                 //         id: respuesta.data.id,
-                //         id_paciente: respuesta.data.id_paciente,
-                //         id_profesional: respuesta.data.id_profesional,
                 //         direccion: respuesta.data.direccion,
                 //         fecha_nota: respuesta.data.fecha_nota,
                 //         hora_nota: respuesta.data.hora_nota,

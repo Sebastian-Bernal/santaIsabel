@@ -206,27 +206,41 @@ async function cargaHistorial(id) {
 
         // Clasificar análisis según servicio
         const analisisDatos = [];
-        allAnalisis.forEach((item) => {
-            if (item.servicio === 'Evolucion') {
-                nutricion.value.push({ ...item });
-            } else if (item.servicio === 'Trabajo Social') {
-                trabajosSocial.value.push({ ...item });
-            } else if (item.servicio === 'Medicina') {
-                analisisDatos.push({ ...item });
+        // allAnalisis.forEach((item) => {
+        //     if (item.servicio === 'Evolucion') {
+        //         nutricion.value.push({ ...item });
+        //     } else if (item.servicio === 'Trabajo Social') {
+        //         trabajosSocial.value.push({ ...item });
+        //     } else if (item.servicio === 'Medicina') {
+        //         analisisDatos.push({ ...item });
+        //     } else if (analisis.servicio === 'Nota') {
+        //         notas.value.push({ ...item });
+        //     } else if (analisis.servicio === 'Terapia') {
+                
+        //     }
+        // });
+
+        for (const analisis of allAnalisis) {
+            if (analisis.servicio === 'Evolucion') {
+                nutricion.value.push({ ...analisis });
+            } else if (analisis.servicio === 'Trabajo Social') {
+                trabajosSocial.value.push({ ...analisis });
+            } else if (analisis.servicio === 'Medicina') {
+                analisisDatos.push({ ...analisis });
+            } else if (analisis.servicio === 'Nota') {
+                let nota = await historiasStore.listDatos(analisis.id, 'Nota', 'id_analisis')
+                notas.value.push({ ...nota[0] });
+            } else if (analisis.servicio === 'Terapia') {
+                let terapia = await historiasStore.listDatos(analisis.id, 'Terapia', 'id_analisis')
+                evoluciones.value.push({ ...terapia[0] })
             }
-        });
+        }
 
         // Consultas (Analisis con examen físico)
         for (const item of analisisDatos) {
             const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
             analisis.value.push({ ...item, ...examenFisico[0] });
         }
-
-        // Evoluciones (Terapia)
-        evoluciones.value = await pacientesStore.listDatos(id, 'Terapia') || [];
-
-        // Notas
-        notas.value = await pacientesStore.listDatos(id, 'Nota') || [];
 
         // Tratamientos
         tratamientos.value = await pacientesStore.listDatos(id, 'Plan_manejo_procedimientos') || [];

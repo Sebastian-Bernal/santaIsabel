@@ -62,8 +62,6 @@ export const validarYEnviarActualizarHistoria = async (datos) => {
             return await enviarFormularioActualizarNutricion(datos);
 
         case 'Terapia':
-            if (!datos.Terapia?.id_paciente) errores.push("El paciente es obligatorio.");
-            if (!datos.Terapia?.id_profesional) errores.push("El médico es obligatorio.");
             if (!datos.Terapia?.sesion) errores.push("La sesión es obligatoria.");
             if (!datos.Terapia?.fecha) errores.push("La fecha es obligatoria.");
             if (!datos.Terapia?.hora) errores.push("La hora es obligatoria.");
@@ -593,8 +591,6 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
                     fecha: datos.Terapia.fecha,
                     hora: datos.Terapia.hora,
                     evolucion: datos.Terapia.evolucion,
-                    id_paciente: datos.Terapia.id_paciente,
-                    id_profesional: datos.Terapia.id_profesional,
                     id_procedimiento: datos.Terapia.id_procedimiento,
                 }
             }
@@ -609,8 +605,6 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
                         fecha: datos.Terapia.fecha,
                         hora: datos.Terapia.hora,
                         evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
                         id_procedimiento: datos.Terapia.id_procedimiento,
                     },
                 };
@@ -638,8 +632,6 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
                         fecha: datos.Terapia.fecha,
                         hora: datos.Terapia.hora,
                         evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
-                        id_profesional: datos.Terapia.id_profesional,
                         id_procedimiento: datos.Terapia.id_procedimiento,
                         sinconizado: 0
                     },
