@@ -534,7 +534,7 @@ function changeShowPendientes() {
 </template>
 
 <style>
-.btnsPagina button {
+/* .btnsPagina button {
     background: linear-gradient(to left, var(--color-default), var(--color-default-700));
-}
+} */
 </style>

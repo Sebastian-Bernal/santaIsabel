@@ -188,12 +188,17 @@ const propiedades = computed(() => {
     // Tabla de pacientes
     builderTabla
         .setColumnas([
-            { titulo: "name", value: "Nombre", tamaño: 150, ordenar: true },
+            { titulo: "name", value: "Nombre", tamaño: 200, ordenar: true, pinned:true },
             { titulo: "No_document", value: "Documento", tamaño: 100, ordenar: true },
             { titulo: "municipio", value: "Ciudad", tamaño: 150 },
+            { titulo: "departamento", value: "Departamento", tamaño: 150 },
+            { titulo: "sexo", value: "Sexo", tamaño: 100 },
             { titulo: "genero", value: "Genero", tamaño: 100 },
             { titulo: "celular", value: "Celular", tamaño: 100 },
-            { titulo: "Eps", value: "EPS", tamaño: 150, ordenar: true },
+            { titulo: "regimen", value: "Regimen", tamaño: 150 },
+            { titulo: "Eps", value: "EPS", tamaño: 200, ordenar: true },
+            { titulo: "vulnerabilidad", value: "Vulnerabilidad", tamaño: 200, ordenar: true },
+            { titulo: "barrio", value: "Barrio", tamaño: 200, ordenar: true },
         ])
         .setHeaderTabla({
             titulo: "Gestión de Pacientes",
@@ -207,7 +212,10 @@ const propiedades = computed(() => {
                 { columna: 'Eps', placeholder: 'EPS' },
             ]
         })
-        .setDatos(pacientes);
+        .setDatos(pacientes)
+        .setConfiguracion({
+            tipo: 'pinned',
+        });
 
     const acciones = [];
     if (puedePut) {

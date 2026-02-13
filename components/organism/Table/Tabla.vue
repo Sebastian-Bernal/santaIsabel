@@ -64,6 +64,17 @@ const {
     datosPaginados,
 } = usePaginacion(datosOrdenados);
 
+const bodyScroll = ref(null)
+const headerInner = ref(null)
+
+const syncHeaderScroll = () => {
+
+  const x = bodyScroll.value.scrollLeft;
+
+  headerInner.value.style.transform =
+    `translateX(-${x}px)`;
+
+}
 
 // Funciones
 const mostrarAcciones = (id) => {
@@ -89,18 +100,51 @@ watch(filtros, (nuevoValor, anteriorValor) => {
     paginaActual.value = 1;
 }, { deep: true });
 
+
+const columnasPinned = computed(() => {
+    if(props.Propiedades.configuracion.tipo === 'pinned'){
+        return props.Propiedades.columnas.filter(c => c.pinned)
+    } else {
+        return []
+    }
+})
+
+const columnasScrollable = computed(() => {
+    if(props.Propiedades.configuracion.tipo === 'pinned'){
+        return props.Propiedades.columnas.filter(c => !c.pinned)
+    } else {
+        return columnasVisibles.value
+    }
+})
+
+const estiloColumnasPinned = computed(() => {
+
+    const tamaños = columnasPinned.value
+        .map(col =>
+            screenWidth.value > 748
+                ? `${col.tamaño}px`
+                : '100px'
+        )
+        .join(' ');
+
+    return {
+        gridTemplateColumns: tamaños
+    };
+
+});
+
 // Tamaño numero de columnas
-const estiloColumnas = computed(() => {
+const estiloColumnasScrollable = computed(() => {
     if (!columnasVisibles.value || columnasVisibles.value.length === 0) return {};
 
-    const tamaños = columnasVisibles.value
+    const tamaños = columnasScrollable.value
         .map(col => col.tamaño && !isNaN(col.tamaño) ?
             screenWidth.value > 748 ? `${col.tamaño}px` : '100px'
             : '80px')
         .join(' ');
 
     return {
-        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 100px' : ''}`
+        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 60px' : ''}`
     };
 });
 
@@ -253,102 +297,150 @@ function getAccionesVisibles(fila) {
     <!-- Tabla -->
     <div
         class="mt-5 shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-xl overflow-hidden">
-        <div class="w-full" >
+        <div class="w-full" role="table">
 
-            <!-- Header titulos de props Columnas -->
-            <div class="sticky top-0 z-10 grid py-4 px-2 justify-between text-xs font-bold rounded-t-xl text-white text-center"
-                :class="Propiedades.headerTabla?.color" :style="estiloColumnas">
-                <h2 v-for="(col, key) in columnasVisibles" :key="col.titulo"
-                    :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                    {{ col.value }}
-                    <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
-                        color="bg-inherit h-fit h-fit" tooltip="Ordenar">
-                        <i class="fa-solid fa-sort cursor-pointer"
-                            :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
-                    </ButtonRounded>
-                </h2>
-                <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class">Acciones</h2>
+            <!-- Header Columnas -->
+            <div class="flex w-max min-w-full relative">
+
+                <!-- COLUMNAS FIJAS -->
+                <div v-if="props.Propiedades.configuracion.tipo === 'pinned'" class="sticky top-0 z-20 grid py-4 px-2 justify-between text-xs font-semibold text-center bg-[var(--color-default)] dark:bg-[var(--color-default-600)]/80 border-b border-gray-200 dark:border-gray-700 text-gray-50! dark:text-gray-100!" 
+                :style="estiloColumnasPinned" :class="{'rounded-lt-xl': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-xl': props.Propiedades.configuracion.tipo !== 'pinned'}" role="row">
+
+                    <h2 v-for="(col, key) in columnasPinned" :key="col.titulo"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+                        {{ col.value }}
+                        <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
+                            color="bg-inherit h-fit h-fit" tooltip="Ordenar">
+                            <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
+                                :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
+                        </ButtonRounded>
+                    </h2>
+
+                </div>
+
+                <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
+                <div ref="headerInner" class="w-full sticky top-0 z-3 grid py-4 px-2 justify-between text-xs font-semibold text-center bg-[var(--color-default)] dark:bg-[var(--color-default-600)]/80 border-b border-gray-200 dark:border-gray-700 text-gray-50! dark:text-gray-100!"
+                    :class="[Propiedades.headerTabla?.color, {'rounded-rt-xl': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-xl': props.Propiedades.configuracion.tipo !== 'pinned'}]" :style="estiloColumnasScrollable" role="row">
+
+                    <h2 v-for="(col, key) in columnasScrollable" :key="col.titulo"
+                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+                        {{ col.value }}
+                        <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
+                            color="bg-inherit h-fit h-fit" tooltip="Ordenar">
+                            <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
+                                :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
+                        </ButtonRounded>
+                    </h2>
+                    <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class" role="cell">Acciones
+                    </h2>
+
+                </div>
             </div>
 
             <!-- Skeleton cuando no hay datos -->
             <template v-if="!datosPaginados && tiempoLoading || (datosPaginados.length === 0 && busqueda === '' && tiempoLoading) ||
                 (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
                 <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
-                    class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnas">
+                    class="bodyTable justify-between grid p-2 text-center animate-pulse" :style="estiloColumnasScrollable">
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="h-3 pt-1 bg-gray-300 dark:bg-gray-700 rounded"></div>
+                        <div class="h-3 bg-gray-200 rounded w-3/4"></div>
                     </div>
                     <div v-if="Propiedades.acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
-                        <div class="w-6 h-6 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
+                        <div class="h-3 bg-gray-200 rounded w-1/2 mt-1"></div>
                     </div>
                 </div>
             </template>
 
-
             <!-- Body tabla -->
-            <div class="overflow-y-auto max-h-[400px] scrollForm">
-                <div v-for="(fila, id) in datosPaginados"
-                    class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
-                    :style="estiloColumnas">
+            <div ref="bodyScroll" @scroll="syncHeaderScroll" class="overflow-auto max-h-[411px] relative scrollFormT">
 
-                    <div v-for="(col, key) in columnasVisibles" :key="key"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-black dark:text-white truncate rounded-2xl">{{ fila[col.titulo] }}</p>
+                <div v-for="(fila, id) in datosPaginados" role="row"
+                    class="bodyTable justify-between flex w-max min-w-full odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700">
+                    <div
+                        class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
                     </div>
 
-                    <!-- Acciones -->
-                    <div v-if="Propiedades.acciones.botones"
-                        class="flex items-center justify-center accionesTabla text-center gap-2"
-                        :class="Propiedades.acciones.class">
-                        <!-- Acciones por props -->
-                        <BotonAccion
-                            v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
-                            v-for="action in getAccionesVisibles(fila)" :key="action"
-                            :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                            @click="action.action(fila)" />
+                    <!-- COLUMNAS FIJAS -->
+                    <div v-if="props.Propiedades.configuracion.tipo === 'pinned'" class="sticky left-0 z-20 shadow-[4px_0_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[4px_0_6px_-1px_rgba(255,255,255,0.05)] flex flex-col justify-center backdrop-blur-3xl">
+                        <div class="grid w-full justify-between p-2 py-2 text-center"" :style="estiloColumnasPinned">
+                            <div v-for="col in columnasPinned" :key="col.titulo" :style="{ width: `${col.tamaño}px` }">
+                                <p class="font-medium text-gray-900 dark:text-white truncate">
+                                    {{ fila[col.titulo] }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-                        <!-- Tablas ocultas responsive  -->
-                        <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse"
-                            class="flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
-                            <i v-if="!activeCollapse || id !== idActivo"
-                                class="fa-solid fa-angle-down text-gray-600"></i>
-                            <i v-if="activeCollapse && id === idActivo" class="fa-solid fa-angle-up text-gray-600"></i>
-                        </button>
-                        <!-- Acciones porp props Responsive -->
-                        <div class="relative inline-block text-left">
-                            <button @click="mostrarAcciones(id)"
-                                v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
-                                class="btn-accionesOcultas flex items-center justify-center bg-gray-200 w-[24px] h-[24px] text-white rounded-full transition-all duration-300 cursor-pointer active:scale-95 hover:bg-gray-300">
-                                <i class="fa-solid fa-ellipsis-vertical text-gray-600"></i>
+                    <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
+                    <div class="grid w-full justify-between p-2 py-2 text-center" :style="estiloColumnasScrollable">
+                        <div v-for="(col, key) in columnasScrollable" :key="key"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+                            <p class="truncate "
+                                :class="{ 'font-medium text-gray-900 dark:text-white': key === 0, 'text-gray-800 dark:text-gray-200': key != 0 }">
+                                {{ fila[col.titulo] }}
+                            </p>
+                        </div>
+
+                        <!-- Acciones -->
+                        <div v-if="Propiedades.acciones.botones"
+                            class="flex items-center justify-center accionesTabla text-center gap-2 group"
+                            :class="Propiedades.acciones.class">
+
+                            <!-- Acciones por props -->
+                            <BotonAccion
+                                v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
+                                v-for="action in getAccionesVisibles(fila)" :key="action"
+                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                @click="action.action(fila)" />
+
+
+                            <!-- Tablas ocultas responsive  -->
+                            <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)" v-if="collapse && props.Propiedades.configuracion.tipo !== 'pinned'"
+                                class="flex items-center justify-center bg-gray-300 w-6 h-6 text-white text-xs rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
+                                <i v-if="!activeCollapse || id !== idActivo"
+                                    class="fa-solid fa-angle-down text-gray-600"></i>
+                                <i v-if="activeCollapse && id === idActivo"
+                                    class="fa-solid fa-angle-up text-gray-600"></i>
                             </button>
 
-                            <!-- Dropdown -->
-                            <div v-if="btnAcciones === id"
-                                class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
-                                :id="id">
-                                <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
-                                    :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                    @click="() => { action.action(fila); mostrarAcciones(id) }"
-                                    class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
-                                </BotonAccion>
+                            <!-- Acciones porp props Responsive -->
+                            <div class="relative inline-block text-left">
+                                <button @click="mostrarAcciones(id)"
+                                    v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
+                                    class="btn-accionesOcultas flex items-center justify-center bg-gray-300 w-6 h-6 text-white rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:bg-gray-300">
+                                    <i class="fa-solid fa-ellipsis-vertical text-gray-600 text-xs"></i>
+                                </button>
+
+                                <!-- Dropdown -->
+                                <div v-if="btnAcciones === id"
+                                    class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
+                                    :id="id">
+                                    <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
+                                        :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                        @click="() => { action.action(fila); mostrarAcciones(id) }"
+                                        class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
+                                    </BotonAccion>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <!-- collapse -->
+                        <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
+                            <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
+                                <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
+                                    <p
+                                        class="text-[var(--color-default-700)] dark:text-[var(--color-default-claro)] text-xs font-bold border-t-gray-200 mb-2 truncate">
+                                        {{ col.titulo }}</p>
+                                    {{ fila[col.titulo] }}
+                                </h2>
                             </div>
                         </div>
 
-                    </div>
-
-                    <!-- collapse -->
-                    <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
-                        <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
-                            <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
-                                <p
-                                    class="text-[var(--color-default-700)] dark:text-[var(--color-default-claro)] text-xs font-bold border-t-gray-200 mb-2 truncate">
-                                    {{ col.titulo }}</p>
-                                {{ fila[col.titulo] }}
-                            </h2>
-                        </div>
                     </div>
                 </div>
 
@@ -357,7 +449,7 @@ function getAccionesVisibles(fila) {
                 <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
                     :key="`empty-${n}`"
                     class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
-                    :style="estiloColumnas">
+                    :style="estiloColumnasScrollable">
 
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
@@ -366,83 +458,73 @@ function getAccionesVisibles(fila) {
                 </div>
             </div>
 
-            <div
+            <div class="flex flex-col items-center justify-center py-16 text-center"
                 v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
-                <p class="text-gray-500 text-center my-10">
-                    No se encontraron resultados.
-                    <i class="fa-solid fa-search-minus"></i>
+                <i class="fa-regular fa-folder-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-600 dark:text-gray-400 font-medium">
+                    No hay resultados
                 </p>
+                <p class="text-sm text-gray-400 mt-1">
+                    Ajusta los filtros o cambia el término de búsqueda.
+                </p>
+
             </div>
 
         </div>
     </div>
 
     <!-- Paginador -->
-    <div class="mt-[10px] flex gap-3 justify-between items-center h-[30px] md:px-10">
-        <div class="text-sm md:flex gap-1 hidden">
-            <p class="text-gray-500">Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
-            <p class="text-gray-500">de {{ datosOrdenados.length }}</p>
-        </div>
+    <div class="flex items-center justify-between px-4 py-2 mt-2">
+        <p class="text-sm text-gray-500 dark:text-gray-400 md:flex gap-1 hidden">
+            Mostrando
+            <span class="text-gray-500">{{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</span>
+            <span class="text-gray-500">de {{ datosOrdenados.length }}</span>
+        </p>
 
-        <div class="btnsPagina flex items-center gap-3">
-            <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
+        <div class="btnsPagina flex items-center gap-2">
+            <!-- <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
                 color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
                 @click="irAPagina(1)">
                 <i class="fa-solid fa-angles-left"></i>
-            </ButtonRounded>
-            <ButtonRounded v-if="paginaActual > 1" tooltip="Atras"
-                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+            </ButtonRounded> -->
+
+            <ButtonRounded tooltip="Atras" :disabled="paginaActual === 1"
+                color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="paginaAnterior()">
-                <i class="fa-solid fa-angle-left"></i>
+                <i class="fa-solid fa-chevron-left"></i>
             </ButtonRounded>
             <div class="flex gap-2 pagina select-none">
-                <!-- Página anterior -->
-                <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
-                    {{ paginaActual - 1 }}
-                </h2>
 
                 <!-- Página actual -->
-                <h2
-                    class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
-                    {{ paginaActual }}
-                </h2>
-
-                <!-- Página siguiente -->
-                <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
-                    {{ paginaActual + 1 }}
-                </h2>
-
-                <!-- Última página -->
-                <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
-                    <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
-                    <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
-                        class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
+                <span class="text-sm text-gray-600 dark:text-gray-300">
+                    Página
+                    <span class="font-semibold">
+                        {{ paginaActual }}
+                    </span>
+                    de
+                    <span @click="irAPagina(totalPaginas)" class="font-semibold underline cursor-pointer hover:text-gray-900 dark:hover:text-gray-400">
                         {{ totalPaginas }}
-                    </h2>
-                </div>
-
+                    </span>
+                </span>
 
             </div>
-            <ButtonRounded v-if="paginaActual != totalPaginas" tooltip="Siguiente"
-                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer"
+            <ButtonRounded :disabled="paginaActual === totalPaginas" tooltip="Siguiente"
+                color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="siguientePagina()">
-                <i class="fa-solid fa-angle-right"></i>
+                <i class="fa-solid fa-chevron-right"></i>
             </ButtonRounded>
         </div>
 
-        <div class="flex gap-2 items-center">
-            <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
-            <p class="text-sm text-gray-500 md:hidden block">N. registros</p>
-            <select name="numRegistros" class="text-black bg-gray-100 dark:bg-gray-500 rounded-xl p-1 cursor-pointer"
-                @change="cambiarItemsPorPagina($event.target.value)">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
-        </div>
+
+        <select name="numRegistros"
+            class="ml-3 text-sm bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            @change="cambiarItemsPorPagina($event.target.value)">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+        </select>
+
     </div>
     </div>
     <DatosExcel v-if="varView.showDatosExcel" :datos="datosOrdenados" :tabla="props.Propiedades.headerTabla.titulo" />
@@ -508,7 +590,21 @@ function getAccionesVisibles(fila) {
 }
 
 /* Paginador css */
-.btnsPagina button {
+/* .btnsPagina button {
     background: linear-gradient(to left, var(--color-default), var(--color-default-700));
+} */
+
+.scrollFormT {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.scrollFormT::-webkit-scrollbar {
+    width: 3px;
+}
+
+.scrollFormT::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 9999px;
 }
 </style>

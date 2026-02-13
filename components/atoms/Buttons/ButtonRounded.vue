@@ -2,7 +2,9 @@
   <div class="relative inline-flex">
     <button
       type="button"
-      :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95 w-[30px] h-[30px] flex justify-center items-center text-white rounded-full hover:opacity-75']"
+      :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95 w-[30px] h-[30px] flex justify-center items-center text-white rounded-full hover:opacity-75',
+        {'opacity-30': props.disabled}
+      ]"
       ref="buttonRef"
       @mouseenter="show()"
       @mouseleave="hide()"
@@ -44,6 +46,10 @@ const props = defineProps({
     default: 8
   },
   activo: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
     type: Boolean,
     default: false
   }

@@ -1,6 +1,10 @@
 <template>
-    <button class="border-none text-white text-center rounded-full text-xs hover:opacity-75 transition-all duration-300 cursor-pointer active:scale-95" :class="botonClase">
-        <i :class="iconoClase"></i>
+    <button class="action-btn group relative flex items-center justify-center
+        w-6 h-6 rounded-md
+        hover:bg-gray-200 dark:hover:bg-gray-700
+        transition-all duration-150
+        active:scale-90" :class="variantClase">
+        <i :class="iconoClase" class="text-xs px-1 transition-transform duration-150 group-hover:scale-110"></i>
     </button>
 </template>
 
@@ -12,11 +16,11 @@ const props = defineProps({
 const iconoClase = computed(() => {
     switch (props.tipo) {
         case 'ver':
-            return 'fa-solid fa-eye';
+            return 'fa-regular fa-eye';
         case 'actualizar':
-            return 'fa-solid fa-pencil';
+            return 'fa-regular fa-pen-to-square';
         case 'borrar':
-            return 'fa-solid fa-trash';
+            return 'fa-regular fa-trash-can';
         case 'completar':
             return 'fa-solid fa-check';
         case 'agregar':
@@ -30,40 +34,40 @@ const iconoClase = computed(() => {
         case 'observacion completada':
             return 'fa-solid fa-info';
         case 'pdf':
-            return 'fa-solid fa-file-pdf text-xl text-gray-700 dark:text-gray-200';
+            return 'fa-solid fa-file-pdf';
         case 'movimiento':
-            return 'fa-solid fa-cart-plus text-xs text-white dark:text-gray-700';
+            return 'fa-solid fa-cart-plus';
         default:
             return '';
     }
 });
 
-const botonClase = computed(() => {
+const variantClase = computed(() => {
     switch (props.tipo) {
         case 'ver':
-            return 'bg-sky-700 w-[24px] h-[24px] cursor-pointer';
+            return 'text-blue-600 dark:text-blue-400';
         case 'actualizar':
-            return 'bg-amber-500 w-[24px] h-[24px] cursor-pointer';
+            return 'text-amber-600 dark:text-amber-400';
         case 'borrar':
-            return 'bg-danger w-[24px] h-[24px] cursor-pointer';
+            return 'text-red-600 dark:text-red-400';
         case 'completar':
-            return 'bg-green-500 w-[24px] h-[24px] cursor-pointer';
+            return 'text-green-600 dark:text-green-400';
         case 'agregar':
-            return 'bg-blue-500 w-[24px] h-[24px] cursor-pointer';
+            return 'text-blue-500 ';
         case 'download':
-            return 'bg-blue-700 w-[24px] h-[24px] cursor-pointer';
+            return 'text-blue-700 ';
         case 'observacion eliminada':
-            return 'bg-danger w-[24px] h-[24px] cursor-pointer';
+            return 'text-red-500';
         case 'observacion editada':
-            return 'bg-amber-500 w-[24px] h-[24px] cursor-pointer';
+            return 'text-amber-500 ';
         case 'observacion completada':
-            return 'bg-blue-600 w-[24px] h-[24px] cursor-pointer';
+            return 'text-blue-600 ';
         case 'pdf':
-            return 'w-[24px] h-[24px] cursor-pointer md:bg-inherit bg-gray-200 dark:bg-gray-700';
+            return 'text-black dark:text-white';
         case 'movimiento':
-            return 'w-[24px] h-[24px] cursor-pointer bg-amber-600 dark:bg-amber-700';
+            return ' text-amber-600 dark:text-amber-700';
         case 'Rojo':
-            return 'bg-red-500 w-[10px] h-[10px]';        
+            return 'bg-red-500 w-[10px] h-[10px]';
         case 'Naranja':
             return 'bg-orange-500 w-[10px] h-[10px]';
         case 'Verde':
@@ -73,3 +77,9 @@ const botonClase = computed(() => {
     }
 });
 </script>
+
+<style>
+.action-btn {
+  backdrop-filter: blur(4px);
+}
+</style>

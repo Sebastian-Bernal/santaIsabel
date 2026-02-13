@@ -4,6 +4,7 @@ export class TablaBuilder {
             columnas: [], // Lista de columnas
             headerTabla: {},
             acciones: {}, // Lista de acciones por fila
+            configuracion: {},
             datos: {} // Datos de la tabla
         };
     }
@@ -20,6 +21,11 @@ export class TablaBuilder {
 
     setAcciones(acciones) {
         this.tabla.acciones = { ...acciones };
+        return this;
+    }
+
+    setConfiguracion(configuracion) {
+        this.tabla.configuracion = { ...configuracion };
         return this;
     }
 
