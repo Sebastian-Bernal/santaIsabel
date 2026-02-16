@@ -237,10 +237,10 @@ const propiedades = computed(() => {
                 .addComponente('Tabla', tablabuilder
                     .setColumnas([
                     { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
-                    { titulo: 'name_paciente', value: 'Paciente', tamaño: 200, ordenar: true },
+                    { titulo: 'name_paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 150 },
-                    { titulo: 'servicio', value: 'Servicio', tamaño: 150 },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 200 },
+                    { titulo: 'servicio', value: 'Servicio', tamaño: 200 },
                     { titulo: 'estado', value: 'Estado', tamaño: 100, ordenar: true },
                     ])
                     .setHeaderTabla({

@@ -4,7 +4,7 @@ export class TablaBuilder {
             columnas: [], // Lista de columnas
             headerTabla: {},
             acciones: {}, // Lista de acciones por fila
-            configuracion: {},
+            configuracion: {}, // Configuración adicional de la tabla
             datos: {} // Datos de la tabla
         };
     }

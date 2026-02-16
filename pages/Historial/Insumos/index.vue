@@ -120,6 +120,18 @@ const agregarMovimiento = (insumo) => {
     showMovimiento.value = true;
 }
 
+function validarStock(insumo) {
+    if (insumo.stock > 10) {
+        return 'Verde'
+    } else if (insumo.stock < 10) {
+        return 'Naranja'
+    } else if (insumo.stock === 0) {
+        return 'Rojo'
+    } else {
+        return ''
+    }
+
+}
 // Construccion de pagina
 
 const propiedades = computed(() => {
@@ -223,6 +235,7 @@ const propiedades = computed(() => {
         .setDatos(insumos);
     const acciones = [];
     if (puedePut) {
+        acciones.push({ icon: validarStock, action: () => {} });
         acciones.push({ icon: "ver", action: verInsumo });
         acciones.push({ icon: "movimiento", action: agregarMovimiento });
     }

@@ -370,7 +370,7 @@ const enviarPDFs = async () => {
                         <ButtonForm
                             color="bg-gray-500 hover:bg-gray-600 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
                             @click="cerrar">
-                            <i class="fa-solid fa-xmark mr-2"></i> Cancelar
+                            <i class="fa-solid fa-xmark mr-2"></i> {{ cancelarPDFs ? 'Cancelando...' : 'Cancelar' }}
                         </ButtonForm>
 
                         <ButtonForm

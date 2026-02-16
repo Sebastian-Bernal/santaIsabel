@@ -1,7 +1,7 @@
 <template>
     <button class="action-btn group relative flex items-center justify-center
         w-6 h-6 rounded-md
-        hover:bg-gray-200 dark:hover:bg-gray-700
+        hover:bg-gray-200 dark:hover:bg-gray-500
         transition-all duration-150
         active:scale-90" :class="variantClase">
         <i :class="iconoClase" class="text-xs px-1 transition-transform duration-150 group-hover:scale-110"></i>

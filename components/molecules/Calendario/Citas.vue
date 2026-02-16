@@ -230,7 +230,7 @@ function changeShowPendientes() {
                 </div>
                 <ButtonRounded
                     :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
-                    tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes" activo="true">
+                    tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes" :activo="true">
                     <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> Ver {{
                         pendientes.length.toLocaleString('es-ES') }}
                 </ButtonRounded>

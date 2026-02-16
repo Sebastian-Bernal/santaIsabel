@@ -97,36 +97,36 @@ function accesoRapidoSelected(nombre) {
                 <!-- Navegación por íconos -->
                 <nav class="flex md:flex-col flex-row items-center gap-6" @click="cambiarEstadoFalse()">
                     <!-- <ButtonAside v-for="button in buttons" :key="button.nombre" :data="button" /> -->
-                    <ButtonRounded tooltip="Datos" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
-                        <NuxtLink to="/Empresas/Datos" @click="accesoRapidoSelected('Datos')">
+                    <NuxtLink to="/Empresas/Datos" @click="accesoRapidoSelected('Datos')">
+                        <ButtonRounded tooltip="Datos" tooltip-position="right"
+                            color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
                             <i class="fa-solid fa-building text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Historias" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
-                        <NuxtLink to="/Historial/Historias" @click="accesoRapidoSelected('Historias')">
+                        </ButtonRounded>
+                    </NuxtLink>
+                    <NuxtLink to="/Historial/Historias" @click="accesoRapidoSelected('Historias')">
+                        <ButtonRounded tooltip="Historias" tooltip-position="right"
+                            color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
                             <i class="fa-solid fa-file text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Pacientes" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
-                        <NuxtLink to="/Usuarios/Pacientes" @click="accesoRapidoSelected('Pacientes')">
+                        </ButtonRounded>
+                    </NuxtLink>
+                    <NuxtLink to="/Usuarios/Pacientes" @click="accesoRapidoSelected('Pacientes')">
+                        <ButtonRounded tooltip="Pacientes" tooltip-position="right"
+                            color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
                             <i class="fa-solid fa-user text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Profesionales" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
-                        <NuxtLink to="/Usuarios/Profesional" @click="accesoRapidoSelected('Profesional')">
+                        </ButtonRounded>
+                    </NuxtLink>
+                    <NuxtLink to="/Usuarios/Profesional" @click="accesoRapidoSelected('Profesional')">
+                        <ButtonRounded tooltip="Profesionales" tooltip-position="right"
+                            color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
                             <i class="fa-solid fa-user-doctor text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
-                    <ButtonRounded tooltip="Agenda" tooltip-position="right"
-                        color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
-                        <NuxtLink to="/Usuarios/Citas" @click="accesoRapidoSelected('Citas')">
+                        </ButtonRounded>
+                    </NuxtLink>
+                    <NuxtLink to="/Usuarios/Citas" @click="accesoRapidoSelected('Citas')">
+                        <ButtonRounded tooltip="Agenda" tooltip-position="right"
+                            color="flex items-center justify-center w-10 h-10 rounded-full text-white md:text-gray-300 md:dark:text-black transition py-5">
                             <i class="fa-solid fa-calendar-day text-lg"></i>
-                        </NuxtLink>
-                    </ButtonRounded>
+                        </ButtonRounded>
+                    </NuxtLink>
                 </nav>
 
                 <!-- Perfil / Logout -->
