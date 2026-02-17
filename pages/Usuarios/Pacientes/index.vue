@@ -21,6 +21,7 @@ const apiRest = useApiRest()
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
 const pacientes = ref([]);
+const kardex = ref([]);
 const refresh = ref(1);
 
 const show = ref(false);
@@ -91,6 +92,8 @@ onMounted(async () => {
 
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
+    kardex.value = await apiRest.getData('', 'traeKardex')
+    console.log(kardex.value)
     varView.cargando = false;
 });
 
@@ -220,7 +223,7 @@ const propiedades = computed(() => {
         .setColumnas([
             { titulo: "Eps", value: "EPS", tamaño: 200, ordenar: true, pinned: true },
             { titulo: "name", value: "NOMBRE", tamaño: 200, ordenar: true, pinned: true },
-            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100, pinned: true },
+            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100 },
             { titulo: "No_document", value: "DOCUMENTO", tamaño: 120, ordenar: true, pinned: true },
             { titulo: "celular", value: "N. Tel", tamaño: 150 },
             { titulo: "direccion", value: "DIRECCION", tamaño: 100 },
@@ -229,64 +232,59 @@ const propiedades = computed(() => {
             { titulo: "municipio", value: "Municipio Atencion", tamaño: 130 },
             { titulo: "regimen", value: "Regimen", tamaño: 150 },
             { titulo: "diagnostico", value: "Diagnostico", tamaño: 160 },
-            { titulo: "correo", value: "Correo", tamaño: 100 },
-            { titulo: "fecha", value: "Fecha Inicio", tamaño: 100 },
-            { titulo: "kitCateterismo", value: "Kit Cateterismo", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Kit sonda", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Kit gastro", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Traqueo", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Equipos Biomedicos", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Oxigeno", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Cuidadores", tamaño: 180, },
-            { titulo: "estado", value: "Estado", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "VM", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Fecha ultima visita medica", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Mes", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "TR", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Terapeuta Respiratoria", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "TF", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Terapia Fisico", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "TFO", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Terapia Fonoaudiologia", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "TO", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Terapia Ocupacional", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "TEO Cantidad", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Complejidad", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Tipo de Herida", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Profesional TEO", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Observacion TEO", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Nutricionista", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Nutricionista", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control Nutricion", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "VPSico", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control Psicologia", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "T social", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control T social", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Guia Espiritual", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Enfermeria Jefe", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Medico Internista", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control M/ Internista", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control M/ Internista", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Medico Fisiatra", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control de Fisiatra", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Medicina Familiar", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Control Medicina Familiar", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Auxiliar de Enfermeria", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Observacion", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Equipos Biomedicos", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "ADMON MTOS", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Orden de laboratorio", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Fecha de resultado", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Pago como rural", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Fecha de la llamada y hora", tamaño: 180, },
-            { titulo: "kitCateterismo", value: "Observacion", tamaño: 180, },
+            // { titulo: "correo", value: "Correo", tamaño: 100 },
+            // { titulo: "fecha", value: "Fecha Inicio", tamaño: 100 },
+            { titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, },
+            { titulo: "kit_sonda", value: "Kit sonda", tamaño: 180, },
+            { titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, },
+            { titulo: "traqueo", value: "Traqueo", tamaño: 180, },
+            { titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, },
+            { titulo: "oxigeno", value: "Oxigeno", tamaño: 180, },
+            { titulo: "vm", value: "VM", tamaño: 180, },
+            { titulo: "cuidadores", value: "Cuidadores", tamaño: 180, },
+            { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, },
+            // { titulo: "mes", value: "Mes", tamaño: 180, },
+            { titulo: "terapia_respiratoria", value: "TR", tamaño: 180, },
+            { titulo: "terapeuta_respiratoria", value: "Terapeuta Respiratoria", tamaño: 180, },
+            { titulo: "terapia_fisica", value: "TF", tamaño: 180, },
+            { titulo: "terapeuta_fisica", value: "Terapeuta Fisico", tamaño: 180, },
+            { titulo: "terapia_fonoaudiologia", value: "TFO", tamaño: 180, },
+            { titulo: "terapeuta_fonoaudiologia", value: "Terapeuta Fonoaudiologia", tamaño: 180, },
+            { titulo: "terapia_ocupacional", value: "TO", tamaño: 180, },
+            { titulo: "terapeuta_ocupacional", value: "Terapeuta Ocupacional", tamaño: 180, },
+            { titulo: "TEO_cantidad", value: "TEO Cantidad", tamaño: 180, },
+            { titulo: "profesional_nutricionista", value: "Nutricionista", tamaño: 180, },
+            { titulo: "nutricionista", value: "Control Nutricion", tamaño: 180, },
+            { titulo: "VPSico", value: "VPSico", tamaño: 180, },
+            { titulo: "psicologia", value: "Control Psicologia", tamaño: 180, },
+            { titulo: "trabajo_social", value: "T social", tamaño: 180, },
+            { titulo: "profesional_trabajo_social", value: "Control T social", tamaño: 180, },
+            { titulo: "guia_espiritual", value: "Guia Espiritual", tamaño: 180, },
+            { titulo: "complejidad", value: "Complejidad", tamaño: 180, },
+            { titulo: "tipoHerida", value: "Tipo de Herida", tamaño: 180, },
+            { titulo: "profesionalTEO", value: "Profesional TEO", tamaño: 180, },
+            { titulo: "observacionTeo", value: "Observacion TEO", tamaño: 180, },
+            { titulo: "enfermeriaJefe", value: "Enfermeria Jefe", tamaño: 180, },
+            { titulo: "internista", value: "Medico Internista", tamaño: 180, },
+            { titulo: "control", value: "Control M/ Internista", tamaño: 180, },
+            { titulo: "fisiatra", value: "Medico Fisiatra", tamaño: 180, },
+            { titulo: "fisiatria", value: "Control de Fisitria", tamaño: 180, },
+            { titulo: "familiar", value: "Medicina Familiar", tamaño: 180, },
+            { titulo: "controlFamiliar", value: "Control Medicina Familiar", tamaño: 180, },
+            { titulo: "enfermeria", value: "Auxiliar de Enfermeria", tamaño: 180, },
+            { titulo: "admon", value: "ADMON MTOS", tamaño: 180, },
+            { titulo: "laboratorio", value: "Orden de laboratorio", tamaño: 180, },
+            { titulo: "resultado", value: "Fecha de resultado", tamaño: 180, },
+            { titulo: "pagor", value: "Pago como rural", tamaño: 180, },
+            { titulo: "llama", value: "Fecha de la llamada y hora", tamaño: 180, },
+            { titulo: "observacion", value: "Observacion", tamaño: 180, },
         ])
         .setHeaderTabla({
             titulo: "Kardex Cronicos",
             descripcion: "Administra y consulta información de pacientes",
             color: "bg-[var(--color-default)] text-white",
         })
-        .setDatos(pacientes)
+        .setDatos(kardex)
         .setConfiguracion({
             tipo: 'pinned',
             camposEditables: true,
@@ -312,25 +310,28 @@ const propiedades = computed(() => {
         .setLayout("")
         .setContenedor("w-full")
     if (varView.getRol === 'Admin') {
-
+        pagina
         if (varView.pacienteKardex) {
             pagina
-                .setHeaderPage({
-                    titulo: 'Gestión información de pacientes',
-                    button: [
-                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showKardex },
-                    ]
-                })
-                .addComponente("Tabla", builderTablaKardex)
+            .setHeaderPage({
+                titulo: 'Gestión información de pacientes',
+                button: [
+                    { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showKardex },
+                ]
+            })
+            .addComponente("Tabla", builderTablaKardex)
+            
         } else {
             pagina
-                .setHeaderPage({
-                    titulo: 'Gestión información de pacientes',
-                    button: [
-                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-gray-500', action: showKardex },
-                    ]
-                })
-                .addComponente("Tabla", builderTabla);
+            .setHeaderPage({
+                titulo: 'Gestión información de pacientes',
+                button: [
+                    { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-gray-500', action: showKardex },
+                ]
+            })
+            
+            .addComponente("Tabla", builderTabla)
+            .addComponente("Tabla", builderTablaKardex)
         }
     }
     else {

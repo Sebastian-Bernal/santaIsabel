@@ -106,7 +106,7 @@ export const useApiRest = defineStore('apiRest', {
                 return this.data
             } catch (error) {
                 console.error('Error en functionCall:', error);
-
+                varView.cargando = false
                 // Notificación genérica si algo falla fuera del bloque anterior
                 // notificacionesStore.options.icono = 'warning';
                 // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';
@@ -149,13 +149,14 @@ export const useApiRest = defineStore('apiRest', {
                         respuesta = await this.functionCall(options);
                     }
 
-                    if (respuesta?.success && Array.isArray(respuesta.data) && almacen !== '') {
+                    if (respuesta?.success && Array.isArray(respuesta.data)) {
                         datos = await respuesta.data;
                         // guardar en IndexedDB para uso offline
-                        const store = useIndexedDBStore();
-                        store.almacen = almacen;
-                        await store.bulkPut(datos)
-
+                        if (almacen !== '') {
+                            const store = useIndexedDBStore();
+                            store.almacen = almacen;
+                            await store.bulkPut(datos)
+                        };
                         // for (const item of datos) {
                         //     await store.actualiza({ ...item })
                         // };

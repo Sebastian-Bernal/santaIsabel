@@ -54,6 +54,7 @@ export default defineNuxtConfig({
       traeDatosHistoria: 'api/v1/traeDatosHistoria',
       traeDatosPlanManejo: 'api/v1/traeDatosPlanManejo',
       traePacientes: 'api/v1/traePacientes',
+      traeKardex: 'api/v1/traeKardex',
       traeProfesionales: 'api/v1/traeProfesionales',
     }
   },

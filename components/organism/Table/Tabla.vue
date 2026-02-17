@@ -150,7 +150,7 @@ const estiloColumnasScrollable = computed(() => {
         .join(' ');
 
     return {
-        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 60px' : ''}`
+        gridTemplateColumns: `${tamaños}${props.Propiedades.acciones.botones ? ' 70px' : ''}`
     };
 });
 
@@ -349,7 +349,7 @@ async function guardarCambios() {
 
                 <!-- COLUMNAS FIJAS -->
                 <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
-                    class="sticky top-0 z-20 grid justify-between text-xs font-semibold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-gray-50! dark:text-gray-100!"
+                    class="sticky top-0 z-20 grid justify-between text-xs font-bold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-white"
                     :style="estiloColumnasPinned"
                     :class="{ 'rounded-lt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }"
                     role="row">
@@ -368,7 +368,7 @@ async function guardarCambios() {
 
                 <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
                 <div ref="headerInner"
-                    class="w-full sticky top-0 z-3 grid justify-between text-xs font-semibold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-gray-50! dark:text-gray-100!"
+                    class="w-full sticky top-0 z-3 grid justify-between text-xs bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 font-bold"
                     :class="[Propiedades.headerTabla?.color, { 'rounded-rt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }]"
                     :style="estiloColumnasScrollable" role="row">
 
@@ -391,16 +391,16 @@ async function guardarCambios() {
             <template v-if="!datosPaginados && tiempoLoading || (datosPaginados.length === 0 && busqueda === '' && tiempoLoading) ||
                 (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
                 <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
-                    class="bodyTable justify-between grid p-2 text-center animate-pulse"
+                    class="bodyTable justify-between grid text-center animate-pulse"
                     :style="estiloColumnasScrollable">
                     <div v-for="(col, key) in columnasVisibles" :key="key"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+                        <div class="h-3 bg-gray-200 rounded w-3/4 my-[15px] mx-2"></div>
                     </div>
                     <div v-if="Propiedades.acciones.botones"
                         class="flex items-center justify-center accionesTabla text-center gap-2"
                         :class="Propiedades.acciones.class">
-                        <div class="h-3 bg-gray-200 rounded w-1/2 mt-1"></div>
+                        <div class="h-3 bg-gray-200 rounded w-1/2 mt-1 my-2"></div>
                     </div>
                 </div>
             </template>
@@ -439,7 +439,7 @@ async function guardarCambios() {
                                 <span v-if="!estaEditando(id, col.titulo)"
                                     class="block truncate text-gray-800 dark:text-gray-200">
 
-                                    {{ fila[col.titulo] || '—' }}
+                                    {{ fila[col.titulo] }}
 
                                 </span>
 
@@ -447,7 +447,7 @@ async function guardarCambios() {
                                 <input v-else ref="inputEditable" v-model="fila[col.titulo]"
                                     @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
                                     @keydown.enter="celdaActiva = { fila: null, columna: null }"
-                                    class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
+                                    class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 hover:dark:bg-[var(--color-default-oscuro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
                                     type="text" />
                             </div>
 
@@ -494,7 +494,7 @@ async function guardarCambios() {
                                 <div v-if="btnAcciones === id"
                                     class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
                                     :id="id">
-                                    <BotonAccion v-for="action in Propiedades.acciones.icons" :key="action"
+                                    <BotonAccion v-for="action in getAccionesVisibles(fila)" :key="action"
                                         :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
                                         @click="() => { action.action(fila); mostrarAcciones(id) }"
                                         class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
@@ -508,12 +508,13 @@ async function guardarCambios() {
                         <!-- collapse -->
                         <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
                             <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
-                                <h2 v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate">
+                                <div v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate px-2 my-2">
                                     <p
-                                        class="text-[var(--color-default-700)] dark:text-[var(--color-default-claro)] text-xs font-bold border-t-gray-200 mb-2 truncate">
-                                        {{ col.titulo }}</p>
+                                        class="text-gray-600 dark:text-gray-200 text-xs font-bold border-t-1 border-t-gray-100 dark:border-t-gray-600 mb-1 truncate">
+                                        {{ col.titulo }}
+                                    </p>
                                     {{ fila[col.titulo] }}
-                                </h2>
+                                </div>
                             </div>
                         </div>
 

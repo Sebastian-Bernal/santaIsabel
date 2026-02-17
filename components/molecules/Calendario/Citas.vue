@@ -474,7 +474,7 @@ function changeShowPendientes() {
             <p class="text-gray-500">de {{ datosOrdenados.length }}</p>
         </div>
 
-        <div class="btnsPagina flex items-center gap-3">
+        <div class="btnsPaginaCard flex items-center gap-3">
             <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
                 color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
                 @click="irAPagina(1)">
@@ -534,7 +534,7 @@ function changeShowPendientes() {
 </template>
 
 <style>
-/* .btnsPagina button {
+.btnsPaginaCard button {
     background: linear-gradient(to left, var(--color-default), var(--color-default-700));
-} */
+}
 </style>

@@ -11,7 +11,7 @@ function toggleTheme() {
 <footer class="section-footer md:h-[30px] text-gray-200 flex items-center justify-end px-6">
 
   <!-- Derechos reservados -->
-  <div class="text-sm pb-2 hidden md:block">
+  <div class="text-sm pb-2 hidden md:block select-none">
     © 2026 Todos los derechos reservados
   </div>
 </footer>

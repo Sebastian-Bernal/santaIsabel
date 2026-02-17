@@ -36,7 +36,7 @@ export function useInsumosBuilder({
             .setFormularioTituloFormulario('Nuevo insumo Médico')
     }
     builder
-        .nuevaSeccion(actulizarDatos ? 'Insumo' : 'Registrar nuevo producto en inventario')
+        .nuevaSeccion('Inventario')
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-id-card text-blue-500 mr-1"></i>Informacion Basica',
