@@ -29,9 +29,8 @@ const insumos = ref([]);
 const movimientos = ref([])
 
 async function llamadatos() {
-    varView.cargando = true
     insumos.value = await insumoStore.listInsumos();
-    varView.cargando = false
+    varView.datosActualizados()
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
@@ -63,6 +62,7 @@ watch(() => showMovimiento.value,
 );
 
 onMounted(async () => {
+    insumos.value = await insumoStore.listInsumos(false);
     await llamadatos()
     medicosList.value = await medicosStore.listMedicos();
     analisis.value = await apiRest.getData('Analisis', 'analisis')
@@ -123,7 +123,7 @@ const agregarMovimiento = (insumo) => {
 function validarStock(insumo) {
     if (insumo.stock > 10) {
         return 'Verde'
-    } else if (insumo.stock < 10) {
+    } else if (insumo.stock <= 10 && insumo.stock > 0) {
         return 'Naranja'
     } else if (insumo.stock === 0) {
         return 'Rojo'

@@ -1,6 +1,7 @@
 <template>
     <div class="containerMain transition-[grid-template-columns] duration-300 ease-in-out" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido}">
         <Loader v-if="varView.cargando"></Loader>
+        <Actualizado v-if="varView.actualizando"></Actualizado>
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
@@ -20,6 +21,7 @@ import Aside from '~/components/organism/Sidebar/Aside.vue';
 import FooterPage from '~/components/organism/FooterPage/FooterPage.vue';
 import Footer from '~/components/organism/Footer/Footer.vue';
 import Loader from '~/components/molecules/Spinner/Loader.vue';
+import Actualizado from '~/components/molecules/Spinner/Actualizado.vue';
 import { iniciarSincronizacionPeriodica } from '~/composables/Formulario/sincronizarDatos';
 
 const varView = useVarView();

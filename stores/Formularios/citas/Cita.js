@@ -34,10 +34,18 @@ export const useCitasStore = defineStore('Citas', {
 
     actions: {
 
-        async listCitas() {
+        async listCitas(online = true) {
             const varView = useVarView()
             const apiRest = useApiRest()
-            let citas = await apiRest.getData('Cita', 'citas')
+
+            let citas = []
+            if(online){
+                citas = await apiRest.getData('Cita', 'citas')
+            } else {
+                const store = useIndexedDBStore()
+                store.almacen = 'Cita'
+                citas = await store.leerdatos()
+            }
 
             citas.sort((a, b) => {
                 const fechaA = new Date(`${a.fecha}T${a.hora}`);

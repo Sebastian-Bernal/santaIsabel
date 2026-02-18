@@ -567,6 +567,54 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full md:col-span-2'
             })
 
+            // --- Label: Evolución ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'medicamento',
+                text: '<i class="fa-solid fa-pills text-blue-500 mr-1"></i>Plan de manejo',
+                tamaño: 'w-full md:col-span-2'
+            })
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Medicamentos (opcional)',
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente } },],
+                tamaño: 'w-full md:col-span-2',
+                vmodel: 'Plan_manejo_medicamentos',
+                value: [],
+                campos: [
+                    {
+                        name: 'medicamento',
+                        id: 'Medicamento',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Medicamento',
+                        tamaño: 'w-full',
+                        upperCase: true,
+                        options: insumos,
+                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
+                        },
+                    },
+                    {
+                        name: 'cantidad',
+                        id: 'cantidad',
+                        typeCampo: 'Input',
+                        type: 'number',
+                        placeholder: 'Cantidad',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'dosis',
+                        id: 'dosis',
+                        typeCampo: 'Input',
+                        placeholder: 'Dosis',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'grid grid-cols-3 gap-2'
+            })
+
     } else if (varView.tipoConsulta?.plantilla === 'Trabajo Social') {
         builder
             // 📌 Sección: Datos

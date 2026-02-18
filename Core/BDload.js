@@ -1,4 +1,3 @@
-import { useDatosProfesionStore } from "~/stores/Formularios/empresa/Profesion";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente";
 import { useMedicosStore } from "~/stores/Formularios/profesional/Profesionales";
 import { useCitasStore } from "~/stores/Formularios/citas/Cita";
@@ -10,15 +9,13 @@ export async function traerDatos(onProgress = () => {}) {
         const historiaStore = useHistoriasStore()
         const profesionalesStore = useMedicosStore()
         const pacientesStore = usePacientesStore()
-        const profesionesStore = useDatosProfesionStore()
         const citasStore = useCitasStore()
 
         const pasos = [
             { texto: 'Cargando historias clínicas...', fn: () => historiaStore.indexDBDatos() },
             { texto: 'Cargando citas...', fn: () => citasStore.indexDBDatos() },
-            { texto: 'Cargando profesiones...', fn: () => profesionalesStore.indexDBDatos() },
+            { texto: 'Cargando profesionales...', fn: () => profesionalesStore.indexDBDatos() },
             { texto: 'Cargando pacientes...', fn: () => pacientesStore.indexDBDatos() },
-            { texto: 'Cargando profesionales...', fn: () => profesionesStore.indexDBDatos() },
         ];
 
         const total = pasos.length;

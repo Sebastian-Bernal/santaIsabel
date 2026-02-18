@@ -50,6 +50,9 @@ async function exportarNutricionPDF(data) {
 
         // Opcion de abrimos el PDF en una nueva pestaña sin descargar
         document.getElementById('visorPDF').src = url;
+        document.getElementById('visorPDF').onload = () => {
+        document.getElementById('pdfLoader').style.display = 'none';
+        };
 
         setTimeout(() => window.URL.revokeObjectURL(url), 10000);
         varView.cargando = false
@@ -83,8 +86,8 @@ const cerrarPDF = () => {
         <div class="bg-white rounded-xl overflow-hidden shadow-2xl w-4/5 max-w-4xl relative">
 
             <!-- Encabezado -->
-            <div class="bg-[var(--color-default)] px-5 py-3 flex justify-between">
-                <h3 class="text-white text-lg font-semibold">Vista previa del documento PDF</h3>
+            <div class="bg-[var(--color-default)] px-5 py-2 flex justify-between items-center">
+                <h3 class="text-white text-lg font-semibold">📄 Documento cargado para vista previa</h3>
 
                 <div class="flex gap-1">
                     <!-- Botón de descarga -->
@@ -100,12 +103,19 @@ const cerrarPDF = () => {
                 </div>
             </div>
 
+            <div id="pdfLoader" class="absolute inset-0 flex items-center justify-center bg-white dark:bg-gray-700">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm">Cargando documento...</p>
+                </div>
+            </div>
+
             <!-- Contenedor del visor -->
-            <iframe id="visorPDF" class="w-full h-[600px] border-0"></iframe>
+            <iframe id="visorPDF" class="w-full h-[600px] border-0 relative z-10"></iframe>
 
             <!-- Pie de página -->
-            <div class="bg-gray-100 px-5 py-2 text-right text-sm text-gray-600">
-                📄 Documento cargado para vista previa
+            <div class="bg-gray-100 px-5 py-1 text-right text-sm text-gray-600">
+                Descarga haciendo click en el icono de descarga de este contenedor.
             </div>
         </div>
 

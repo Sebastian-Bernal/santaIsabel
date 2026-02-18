@@ -31,6 +31,7 @@ onMounted(async () => {
 // PDF
 async function exportarMedicinaPDF(data) {
     varView.cargando = true
+    console.log(data)
     const pacientes = await pacientesStore.listPacientes()
     const profesionales = await medicoStore.listMedicos(false)
 
@@ -63,7 +64,7 @@ async function exportarMedicinaPDF(data) {
         sello: profesional?.sello,
         medicamentos
     }
-    console.log(propiedadesMedicinaPDF)
+
     activePdfMedicina.value = true
     varView.cargando = false
 }

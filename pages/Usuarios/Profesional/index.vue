@@ -24,9 +24,8 @@ const show = ref(false)
 const showVer = ref(false)
 
 async function llamadatos() {
-    varView.cargando = true
     medicos.value = await medicosStore.listMedicos();
-    varView.cargando = false
+    varView.datosActualizados()
 }
 
 const {
@@ -68,17 +67,12 @@ watch(() => showVer.value, async (estado) => {
 
 // Cargar los Medicos desde el store
 onMounted(async () => {
-    varView.cargando = true
-
+    medicos.value = await medicosStore.listMedicos(false);
     await llamadatos()
     const listaProfesiones = await profesionStore.listProfesion
     profesiones.value = listaProfesiones.map((profesion) => {
         return { text: profesion.nombre, value: profesion.id }
     });
-
-    refresh.value++
-
-    varView.cargando = false
 });
 
 // Construccion de pagina

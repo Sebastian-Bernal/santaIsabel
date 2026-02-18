@@ -36,9 +36,8 @@ const {
 })
 
 async function llamadatos() {
-    varView.cargando = true
     citas.value = await citasStore.listCitas();
-    varView.cargando = false
+    varView.datosActualizados()
 }
 // Watch para actualizar citas al agregar nueva
 watch(() => varView.showNuevaCita,
@@ -67,6 +66,7 @@ watch(() => varView.showNuevaHistoria,
 );
 
 onMounted(async () => {
+    citas.value = await citasStore.listCitas(false)
     await llamadatos()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
@@ -211,7 +211,7 @@ const propiedades = computed(() => {
             )
             if(varView.showCalendario){
                 pagina
-                .setContenedor('grid lg:grid-cols-[1.5fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-6 gap-3')
+                .setContenedor('grid lg:grid-cols-[1.7fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-6 gap-3')
                 .addComponente('Calendario', builderCalendario
                     .setCitas(citas)
                 )

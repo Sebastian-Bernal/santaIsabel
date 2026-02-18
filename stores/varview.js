@@ -5,6 +5,7 @@ import { decryptData } from "~/composables/Formulario/crypto";
 export const useVarView = defineStore('varView', {
     state: () => ({
         cargando: false,
+        actualizando: false,
         // Formularios Paciente
         showNuevoPaciente: false,
         pacienteKardex: false,
@@ -62,7 +63,7 @@ export const useVarView = defineStore('varView', {
 
     getters: {
         isOnline: () => {
-            if( typeof navigator === 'undefined' || !navigator.onLine) {
+            if (typeof navigator === 'undefined' || !navigator.onLine) {
                 return false;
             } else if (navigator.onLine) {
                 return true;
@@ -96,6 +97,15 @@ export const useVarView = defineStore('varView', {
             } catch (error) {
                 console.error('Error al obtener usuario desde sessionStorage:', error);
             }
+        }
+    },
+
+    actions: {
+        datosActualizados() {
+            this.actualizando = true
+            setTimeout(() => {
+                this.actualizando = false
+            }, 1500);
         }
     }
 })

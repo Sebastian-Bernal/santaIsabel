@@ -123,15 +123,15 @@ const fechaCita = computed(() => {
 });
 
 function vencida(cita) {
-  if (!cita.fechaHasta) {
-    cita.fechaHasta = cita.fecha
-  }
+    if (!cita.fechaHasta) {
+        cita.fechaHasta = cita.fecha
+    }
 
-  const now = new Date()
-  const fechaHoy = parseFechaISO(now.toISOString().split('T')[0])
-  const fechaHasta = parseFechaISO(cita.fechaHasta)
+    const now = new Date()
+    const fechaHoy = parseFechaISO(now.toISOString().split('T')[0])
+    const fechaHasta = parseFechaISO(cita.fechaHasta)
 
-  return fechaHoy > fechaHasta
+    return fechaHoy > fechaHasta
 }
 
 const {
@@ -146,9 +146,13 @@ const {
     fecha
 })
 
-
+const contenedorCitas = ref(null)
 function changeShowPendientes() {
+    if (contenedorCitas.value) {
+      contenedorCitas.value.scrollTop = 0
+    }
     showPendientes.value = !showPendientes.value
+
 }
 
 </script>
@@ -156,8 +160,7 @@ function changeShowPendientes() {
 <template>
     <!-- Header y filtros -->
 
-    <div v-if="props.Propiedades.showTodas"
-        class="w-full mt-4 p-5 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+    <div v-if="props.Propiedades.showTodas" class="w-full mt-4 p-5 bg-white dark:bg-gray-800 rounded-xl shadow-md">
         <div class="flex justify-between items-center mb-4">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-filter text-gray-400"></i>
@@ -215,25 +218,30 @@ function changeShowPendientes() {
     </div>
     </div>
     <!--Citas  -->
-    <div :class="props.Propiedades.estilos"
-        class="py-5 flex flex-col gap-3 border border-gray-300 dark:border-gray-600 rounded-2xl md:h-[62vh] h-[50vh] overflow-y-auto bg-white dark:bg-gray-700 scrollForm">
-        <h2 v-if="!props.Propiedades.showTodas" class="text-xl font-semibold my-2 px-10">
-            {{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}
-        </h2>
+    <div ref="contenedorCitas"
+        :class="props.Propiedades.estilos"
+        class="pb-5 flex flex-col gap-3 shadow-md rounded-xl md:h-[64vh] h-[50vh] overflow-y-auto bg-white dark:bg-gray-700 scrollForm relative">
+        <div v-if="!props.Propiedades.showTodas"
+            class="flex justify-between items-center px-6 py-3 sticky top-0 bg-white dark:bg-gray-700 shadow-xs z-10">
+            <p class="text-xl font-semibold">
+                {{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}
+            </p>
+            <ButtonRounded
+                :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
+                tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes" :activo="true">
+                <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> {{
+                    pendientes.length.toLocaleString('es-ES') }}
+            </ButtonRounded>
+        </div>
 
         <!-- Citas Pendientes -->
         <div v-if="fechaActual === fecha && pendientes.length > 1 && !props.Propiedades.showTodas">
             <div class="flex items-center justify-between my-2 px-5">
                 <div class="flex items-center gap-2 mr-5">
                     <i class="fa-solid fa-hourglass-half text-red-300"></i>
-                    <h2 class="text-xl font-semibold select-none cursor-pointer" @click="changeShowPendientes">Citas Pendientes</h2>
+                    <h2 class="text-xl font-semibold select-none cursor-pointer" @click="changeShowPendientes">Citas
+                        Pendientes</h2>
                 </div>
-                <ButtonRounded
-                    :color="!showPendientes ? 'bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 w-fit! flex gap-1 px-2' : 'bg-blue-500 hover:bg-blue-600 text-white w-fit! flex gap-1 px-2'"
-                    tooltip="Mostrar/Ocultar Pendientes" tooltipPosition="top" @click="changeShowPendientes" :activo="true">
-                    <i :class="!showPendientes ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'"></i> Ver {{
-                        pendientes.length.toLocaleString('es-ES') }}
-                </ButtonRounded>
             </div>
 
             <div class="grid gap-2 px-4" v-if="showPendientes"
@@ -256,7 +264,7 @@ function changeShowPendientes() {
                         </div>
                         <div class="flex flex-col gap-1">
                             <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                            }}</div>
+                                }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                         </div>
                     </div>
@@ -370,9 +378,10 @@ function changeShowPendientes() {
 
             <div class="w-full flex flex-col gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md dark:shadow-gray-900 transition hover:shadow-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                 v-for="cita in props.Propiedades.showTodas ? datosPaginados : citasFiltradas"
-                :class="[{ 
-                    'bg-red-50 dark:bg-red-900/40 border-l-4 border-red-200 hover:bg-red-200 hover:dark:bg-red-800': cita.estado === 'cancelada', 
-                    'bg-gray-100 dark:bg-gray-900/40 border-l-4 border-gray-400 dark:border-yellow-900/40 text-gray-600 dark:text-gray-300 hover:bg-gray-200 hover:dark:bg-gray-700': vencida(cita) && cita.estado === 'Inactiva' }, props.Propiedades.tamaño]">
+                :class="[{
+                    'bg-red-50 dark:bg-red-900/40 border-l-4 border-red-200 hover:bg-red-200 hover:dark:bg-red-800': cita.estado === 'cancelada',
+                    'bg-gray-100 dark:bg-gray-900/40 border-l-4 border-gray-400 dark:border-yellow-900/40 text-gray-600 dark:text-gray-300 hover:bg-gray-200 hover:dark:bg-gray-700': vencida(cita) && cita.estado === 'Inactiva'
+                }, props.Propiedades.tamaño]">
 
                 <!-- HEADER -->
                 <div class="flex items-center gap-4">
@@ -388,7 +397,7 @@ function changeShowPendientes() {
                     </div>
                     <div class="flex flex-col gap-1">
                         <div class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ cita.name_paciente
-                        }}</div>
+                            }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-400">{{ cita.servicio }}</div>
                     </div>
                 </div>

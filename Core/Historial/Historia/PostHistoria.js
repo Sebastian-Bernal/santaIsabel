@@ -57,6 +57,19 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 }
             });
 
+            datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos.filter(d => {
+                return d && Object.values(d).some(v => v !== '' && v != null);
+            });
+            if (!Array.isArray(datos.Plan_manejo_medicamentos)) {
+                errores.push("El plan de medicamentos debe ser un arreglo.");
+            } else {
+                datos.Plan_manejo_medicamentos.forEach((m, i) => {
+                    if (!m.medicamento || !m.dosis || isNaN(parseInt(m.cantidad))) {
+                        errores.push(`Medicamento ${i + 1} incompleto o cantidad inválida.`);
+                    }
+                });
+            }
+
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             return await enviarFormularioNutricion(datos);
@@ -1066,6 +1079,12 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                     Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                         descripcion: d.descripcion,
                         codigo: d.codigo
+                    })),
+                    Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
+                        medicamento: m.medicamento,
+                        dosis: m.dosis,
+                        cantidad: parseInt(m.cantidad),
+                        id_insumo: m.id_insumo
                     })),
                     Cita: {
                         id: datos.Cita.id

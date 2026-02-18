@@ -1,9 +1,8 @@
 <script setup>
 import Pagina from '~/components/organism/Pagina/Pagina.vue';
-import PDFFormulaMedica from '~/components/paginas/PDFFormulaMedica.vue';
 import ExportarPDFs from '~/components/paginas/ExportarPDFs.vue';
 
-import { ref, onMounted, unref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia.js';
 import { useVerHistoriaBuilder } from '~/build/Historial/useVerHistoriaBuilder';
 import { useVarView } from "~/stores/varview.js";
@@ -15,7 +14,6 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useFormulario';
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
-import { PdfBuilder } from '~/build/Constructores/PDFBuilder';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { decryptData } from '~/composables/Formulario/crypto';
 
@@ -49,15 +47,10 @@ const showVerHistorial = ref(false)
 const formularioItem = ref('')
 const actualizar = ref(false)
 
-const propiedadesHistoriaPDF = ref({})
-const activePdfHistoria = ref(false)
-
 async function llamadatos() {
-    varView.cargando = true
     const datos = await historiasStore.datosHistoria
     historiasList.value = datos
     await historiasStore.indexDBDatos()
-    varView.cargando = false
 }
 // Watchers para actualizar informacion
 watch(() => show.value,
@@ -156,23 +149,22 @@ watch(() => showItem.value,
 
             }
 
-            const his = historiasList.value.find(h => {
-                return h.id === id_paciente.value
-            })
-            historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
-            historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
-            historiasStore.Formulario.HistoriaClinica.id_paciente = his.id
-
+            
         }
+        const his = historiasList.value.find(h => {
+            return h.id === id_paciente.value
+        })
+        historiasStore.Formulario.HistoriaClinica.name_paciente = his.paciente
+        historiasStore.Formulario.HistoriaClinica.No_document_paciente = his.cedula
+        historiasStore.Formulario.HistoriaClinica.id_paciente = his.id
     }
 );
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
-    varView.cargando = true
     await llamadatos()
     await medicosStore.listMedicos();
-    varView.cargando = false
+    varView.datosActualizados()
 });
 
 // visibilidad ver Historial
@@ -206,19 +198,6 @@ async function cargaHistorial(id) {
 
         // Clasificar análisis según servicio
         const analisisDatos = [];
-        // allAnalisis.forEach((item) => {
-        //     if (item.servicio === 'Evolucion') {
-        //         nutricion.value.push({ ...item });
-        //     } else if (item.servicio === 'Trabajo Social') {
-        //         trabajosSocial.value.push({ ...item });
-        //     } else if (item.servicio === 'Medicina') {
-        //         analisisDatos.push({ ...item });
-        //     } else if (analisis.servicio === 'Nota') {
-        //         notas.value.push({ ...item });
-        //     } else if (analisis.servicio === 'Terapia') {
-                
-        //     }
-        // });
 
         for (const analisis of allAnalisis) {
             if (analisis.servicio === 'Evolucion') {
@@ -279,6 +258,7 @@ async function cargaHistorial(id) {
         analisis.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         nutricion.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         trabajosSocial.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        medicinas.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     } catch (error) {
         console.error("Error cargando historial:", error);
@@ -439,17 +419,8 @@ async function exportarTrabajoSocialPDF(data) {
     exportarServicioPDF('Trabajo Social', data.id)
 }
 
-async function exportarHistoriaPDF() {
-    // mapCampos(data, notasStore.Formulario)
-    const paciente = historiasStore.Formulario.HistoriaClinica.id_paciente
-    const pacientes = await pacientesStore.listPacientes()
-
-    const dataPaciente = pacientes.filter(user => {
-        return user.id_paciente === paciente
-    })
-
-    propiedadesHistoriaPDF.value = { ...dataPaciente[0], consultas: [...analisis.value] }
-    activePdfHistoria.value = true
+function exportarFormulaPDF(data) {
+    exportarServicioPDF('Formula', data.id_analisis)
 }
 
 async function exportarServicioPDF(servicio, id_analisis) {
@@ -482,25 +453,7 @@ async function exportarServicioPDF(servicio, id_analisis) {
     }
 }
 
-function pdfMedicinas(data) {
-    varView.propiedadesPDF = {
-        id_paciente: historiasStore.Formulario.HistoriaClinica.id_paciente,
-        ...data
-    }
-    varView.showPDFMedicamentos = true
-}
-
 // Propiedades calculadas
-const fechaFormateada = () => {
-    const fecha = new Date()
-    const dia = String(fecha.getDate()).padStart(2, '0');
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11
-    const año = fecha.getFullYear();
-    const fechaActual = `${dia}/${mes}/${año}`
-
-    return fechaActual
-}
-
 function estadoSemaforo(fila) {
     if (fila.tipoAnalisis === 'Estado clinico sin cambios') {
         return 'Verde'
@@ -598,25 +551,6 @@ const propiedades = computed(() => {
     const tablaNutricion = new TablaBuilder()
     const tablaTrabajoSocial = new TablaBuilder()
 
-    const pdfHistorial = new PdfBuilder()
-
-    const filasConsultas = (unref(analisis) || []).map(consulta => {
-        const fechaOriginal = consulta.created_at;
-        const fechaObj = new Date(fechaOriginal);
-        const fecha = `${fechaObj.getDate().toString().padStart(2, '0')}/${(fechaObj.getMonth() + 1).toString().padStart(2, '0')}/${fechaObj.getFullYear()}`;
-
-        const contenido = `
-        <p class="text-start text-base py-2"><strong>Fecha:</strong> ${fecha}</p>
-        <p class="text-start text-xs py-2"><strong>Motivo:</strong> ${consulta.motivo}</p>
-        <p class="text-start text-xs py-2"><strong>Analisis:</strong> ${consulta.analisis || ''}</p>
-        <p class="text-start text-xs py-2"><strong>Observacion:</strong> ${consulta.observacion || ''}</p>
-        <p class="text-start text-xs py-2"><strong>Tipo analisis:</strong> ${consulta.tipoAnalisis || ''}</p>
-        <p class="text-start text-xs py-2"><strong>Tratamiento:</strong> ${consulta.tratamiento || ''}</p>
-        <hr class="w-full h-5"/>
-        `
-        return [contenido]
-    });
-
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
         storePinia: 'Historias',
@@ -674,7 +608,6 @@ const propiedades = computed(() => {
                         <p>Paciente: ${historiasStore.Formulario.HistoriaClinica.name_paciente}</p> 
                         <p>CC: ${historiasStore.Formulario.HistoriaClinica.No_document_paciente}</p>
                     </div>`,
-                acciones: [puedeVerMedicina ? { icon: 'fa-solid fa-file-pdf', accion: exportarHistoriaPDF } : { icon: 'fa-solid fa-file-pdf cursor-not-allowed text-gray-400 hover:text-gray-400', accion: () => { } }]
             })
 
             .nuevaSeccion('Botones', 'md:grid grid-cols-2 flex flex-col md:justify-center gap-1 w-full h-full content-center py-5 px-8')
@@ -925,77 +858,6 @@ const propiedades = computed(() => {
                     .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
                     .build()
             )
-            .addComponente('PDFTemplate', pdfHistorial
-                .setElementId('Historia')
-                .setIsActive(activePdfHistoria)
-                .setFileName(`paciente_${propiedadesHistoriaPDF.value.name}`)
-                // ENCABEZADO PRINCIPAL
-                .addComponente('Tabla', {
-                    container: 'border-b-2 pb-3',
-                    border: true,
-                    columnas: [
-                        '<div class="flex items-center justify-center flex-col"><img src="/logo.png" width="60px"/><p>Santa Isabel IPS</p></div>',
-                        `
-                            <p class="text-sm border-b-1 pb-2 uppercase">Proceso: Programa de Atención Domiciliaria</p></br>
-                            <p class="text-sm border-b-1 pb-2 uppercase">Registro</p></br>
-                            <p class="text-sm uppercase">Historial Clinico</p>
-                        `,
-                        `
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Codigo:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">version:</p>
-                            <p class="w-full text-end text-xs border-b-1 pb-2">Fecha: ${fechaFormateada()}</p>
-                            <p class="w-full text-end text-xs">Pagina:</p>
-                        `
-                    ],
-                })
-                .addComponente('Texto', {
-                    texto: 'Informacion del Paciente'
-                })
-                .addComponente('Tabla', {
-                    container: 'space-y-2 rounded-xl py-3',
-                    styles: {
-                        backgroundColor: '#fff',
-                    },
-                    filas: [
-                        ['<p class="w-full text-start text-xs">Nombres y Apellidos:</p>', '<p class="w-full text-start text-xs">Celular:</p>', '<p class="w-full text-start text-xs">Fecha de Nacimiento:</p>'],
-                        [`${propiedadesHistoriaPDF.value.name}`, `${propiedadesHistoriaPDF.value.celular}`, `${propiedadesHistoriaPDF.value.nacimiento}`,],
-                        ['<p class="w-full text-start text-xs pt-2">Tipo de Documento:</p>', '<p class="w-full text-start text-xs pt-2">Documento:</p>', '<p class="w-full text-start text-xs pt-2">Genero:</p>'],
-                        [`${propiedadesHistoriaPDF.value.type_doc}`, `${propiedadesHistoriaPDF.value.No_document}`, `${propiedadesHistoriaPDF.value.sexo}`,],
-                        ['<p class="w-full text-start text-xs pt-2">Direccion:</p>', '<p class="w-full text-start text-xs pt-2">Barrio:</p>', '<p class="w-full text-start text-xs pt-2">Zona:</p>'],
-                        [`${propiedadesHistoriaPDF.value.direccion}`, `${propiedadesHistoriaPDF.value.barrio}`, `${propiedadesHistoriaPDF.value.zona}`,]
-                    ],
-                })
-                .addComponente('Texto', {
-                    texto: 'Datos Adicionales'
-                })
-                .addComponente('Tabla', {
-                    container: 'space-y-2 rounded-xl py-3',
-                    styles: {
-                        backgroundColor: '#fff',
-                    },
-                    filas: [
-                        ['<p class="w-full text-start text-xs">Municipio:</p>', '<p class="w-full text-start text-xs">Departamento:</p>', '<p class="w-full text-start text-xs">Telefono:</p>'],
-                        [`${propiedadesHistoriaPDF.value.municipio}`, `${propiedadesHistoriaPDF.value.departamento}`, `${propiedadesHistoriaPDF.value.telefono}`,],
-                        ['<p class="w-full text-start text-xs pt-2">EPS:</p>', '<p class="w-full text-start text-xs pt-2">Regimen:</p>', '<p class="w-full text-start text-xs pt-2">Vulnerabilidad:</p>'],
-                        [`${propiedadesHistoriaPDF.value.Eps}`, `${propiedadesHistoriaPDF.value.regimen}`, `${propiedadesHistoriaPDF.value.vulnerabilidad}`,],
-                    ],
-                })
-                .addComponente('Espacio', {
-                    alto: 24
-                })
-                .addComponente('Texto', {
-                    texto: 'Resumen de Historias Clinicas'
-                })
-                .addComponente('Tabla', {
-                    container: 'w-full space-y-2 rounded-xl py-3! px-2 flex flex-col',
-                    styles: {
-                        border: '1px solid #DBEAFE',
-                    },
-                    filas: filasConsultas.length > 0
-                        ? filasConsultas
-                        : [['<p class="text-xs text-gray-500">No hay consultas registradas</p>']],
-                })
-            )
 
             // consultas
             .nuevaSeccion('Consultas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
@@ -1152,7 +1014,7 @@ const propiedades = computed(() => {
                     { titulo: 'medicamento', value: 'Medicamento', tamaño: 200, ordenar: true },
                     { titulo: 'dosis', value: 'Dosis', tamaño: 200, ordenar: true },
                     { titulo: 'cantidad', value: 'Cantidad', tamaño: 150 },
-                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
                 .setAcciones({
@@ -1160,7 +1022,7 @@ const propiedades = computed(() => {
                         { icon: estadoSemaforo, action: () => { } },
                         { icon: 'ver', action: verItemMedicamentoHistoria },
                         puedePutMedicacion ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '',
-                        { icon: 'pdf', action: pdfMedicinas }], botones: true,
+                        { icon: 'pdf', action: exportarFormulaPDF }], botones: true,
                 })
                 .setHeaderTabla({
                     titulo: 'Medicamentos del Paciente',
@@ -1264,6 +1126,5 @@ const propiedades = computed(() => {
 
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
-    <PDFFormulaMedica v-if="varView.showPDFMedicamentos"></PDFFormulaMedica>
     <ExportarPDFs v-if="varView.showExportarPDFs" :datos="analisis" />
 </template>

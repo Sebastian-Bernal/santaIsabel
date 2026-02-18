@@ -37,10 +37,18 @@ export const useInsumosStore = defineStore('Insumos', {
     },
 
     actions: {
-        async listInsumos() {
+        async listInsumos(online = true) {
             const varView = useVarView()
             const apiRest = useApiRest()
-            let insumos = await apiRest.getData('Insumo', 'insumos')
+
+            let insumos = []
+            if(online) {
+                insumos = await apiRest.getData('Insumo', 'insumos')
+            } else {
+                const store = useIndexedDBStore()
+                store.almacen = 'Insumo'
+                insumos = await store.leerdatos()
+            }
 
             insumos = insumos.map(item => {
                 // desestructuramos y renombramos la propiedad

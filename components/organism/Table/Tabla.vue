@@ -594,14 +594,17 @@ async function guardarCambios() {
         </div>
 
 
-        <select name="numRegistros"
-            class="ml-3 text-sm bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-            @change="cambiarItemsPorPagina($event.target.value)">
-            <option value="5">5</option>
-            <option value="10" selected>10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-        </select>
+        <div class="flex items-center">
+            <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
+            <select name="numRegistros"
+                class="ml-3 text-sm bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                @change="cambiarItemsPorPagina($event.target.value)">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+            </select>
+        </div>
 
     </div>
     </div>

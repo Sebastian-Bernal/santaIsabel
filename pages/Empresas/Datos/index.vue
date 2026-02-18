@@ -37,10 +37,9 @@ const secciones = ref([])
 const refresh = ref(1)
 
 async function llamadatos() {
-    varView.cargando = true
     EPSdata.value = await storeEPS.listEPS()
     Profesiones.value = await storeProfesion.listProfesiones()
-    varView.cargando = false
+    varView.datosActualizados()
 }
 
 // Refrescar pagina cuando se agrega o modifica Paciente
@@ -99,14 +98,11 @@ watch(() => showNuevoServicio.value,
 );
 
 onMounted(async () => {
-    varView.cargando = true
-    EPSdata.value = await storeEPS.listEPS()
-    Profesiones.value = await storeProfesion.listProfesion
+    EPSdata.value = await storeEPS.listEPS(false)
+    Profesiones.value = await storeProfesion.listProfesiones(false)
 
     secciones.value = await storeProfesion.listSecciones()
     Servicios.value = await apiRest.getData('Servicio', 'servicios')
-
-    varView.cargando = false
 });
 
 // Funciones Actualizar Profesion

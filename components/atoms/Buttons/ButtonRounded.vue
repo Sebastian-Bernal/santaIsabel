@@ -55,6 +55,7 @@ const props = defineProps({
   }
 })
 
+const varView = useVarView()
 const buttonRef = ref(null)
 const isVisible = ref(false)
 const tooltipStyle = reactive({
@@ -104,7 +105,7 @@ onMounted(() => {
   window.addEventListener('scroll', handler, true)
 
   // Si activo está en true, mostrar tooltip al cargar
-  if (props.activo) {
+  if (props.activo && !varView.cargando) {
     buttonRef.value?.focus()
     show()
     setTimeout(() => {

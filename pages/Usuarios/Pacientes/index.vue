@@ -35,9 +35,8 @@ const {
 } = useUsuarioValidaciones(pacientesStore.Formulario);
 
 async function llamadatos() {
-    varView.cargando = true
     pacientes.value = await pacientesStore.listPacientes(true);
-    varView.cargando = false
+    varView.datosActualizados()
 }
 
 const {
@@ -81,8 +80,7 @@ watch(() => showVer.value,
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
-    varView.cargando = true;
-
+    pacientes.value = await pacientesStore.listPacientes(false);
     await llamadatos();
     const EPS = await epsStore.listEPS(false);
     opcionesEPS.value = await EPS.map((eps) => ({
@@ -93,8 +91,6 @@ onMounted(async () => {
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
-    console.log(kardex.value)
-    varView.cargando = false;
 });
 
 function showKardex() {
