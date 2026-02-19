@@ -35,6 +35,7 @@ const diagnosticos = ref([])
 const diagnosticosCIF = ref([])
 const trabajosSocial = ref([])
 const id_paciente = ref(0)
+const medicos = ref([])
 
 const show = ref(false);
 const showItem = ref(false)
@@ -149,7 +150,7 @@ watch(() => showItem.value,
 
             }
 
-            
+
         }
         const his = historiasList.value.find(h => {
             return h.id === id_paciente.value
@@ -162,8 +163,8 @@ watch(() => showItem.value,
 
 // Cargar los pacientes desde el store
 onMounted(async () => {
+    medicos.value = await medicosStore.listMedicos();
     await llamadatos()
-    await medicosStore.listMedicos();
     varView.datosActualizados()
 });
 
@@ -199,19 +200,30 @@ async function cargaHistorial(id) {
         // Clasificar análisis según servicio
         const analisisDatos = [];
 
+        const medicosMap = new Map(medicos.value.map(m => [m.id_profesional, m]));
+        // función auxiliar para formatear fecha
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            return new Date(dateString).toISOString().split('T')[0];
+            // o: return new Date(dateString).toLocaleDateString();
+        };
+
+
         for (const analisis of allAnalisis) {
+            let profesional = medicosMap.get(analisis.id_medico);
+
             if (analisis.servicio === 'Evolucion') {
-                nutricion.value.push({ ...analisis });
+                nutricion.value.push({ ...analisis, profesional: profesional ? profesional.name : 'No encontrado', fecha: formatDate(analisis.created_at) });
             } else if (analisis.servicio === 'Trabajo Social') {
-                trabajosSocial.value.push({ ...analisis });
+                trabajosSocial.value.push({ ...analisis, profesional: profesional ? profesional.name : 'No encontrado', fecha: formatDate(analisis.created_at) });
             } else if (analisis.servicio === 'Medicina') {
-                analisisDatos.push({ ...analisis });
+                analisisDatos.push({ ...analisis, profesional: profesional ? profesional.name : 'No encontrado', fecha: formatDate(analisis.created_at) });
             } else if (analisis.servicio === 'Nota') {
                 let nota = await historiasStore.listDatos(analisis.id, 'Nota', 'id_analisis')
-                notas.value.push({ ...nota[0] });
+                notas.value.push({ ...nota[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado' });
             } else if (analisis.servicio === 'Terapia') {
                 let terapia = await historiasStore.listDatos(analisis.id, 'Terapia', 'id_analisis')
-                evoluciones.value.push({ ...terapia[0] })
+                evoluciones.value.push({ ...terapia[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado' });
             }
         }
 
@@ -228,11 +240,14 @@ async function cargaHistorial(id) {
         if (allAnalisis.length > 0) {
             const medicamentosPorAnalisis = await Promise.all(
                 allAnalisis.map(async (h) => {
+                    let profesional = medicosMap.get(h.id_medico);
                     const medicamentos = await historiasStore.listDatos(h.id, 'Plan_manejo_medicamentos', 'id_analisis') || [];
                     return medicamentos.map((tratamiento) => ({
                         ...tratamiento,
                         ...h,
-                        id: tratamiento.id
+                        profesional: profesional ? profesional.name : 'No encontrado',
+                        id: tratamiento.id,
+                        fecha: formatDate(h.created_at)
                     }));
                 })
             );
@@ -243,14 +258,37 @@ async function cargaHistorial(id) {
         if (allAnalisis.length > 0) {
             const diagnosticosPorAnalisis = await Promise.all(
                 allAnalisis.map(async (h) => {
+                    let profesional = medicosMap.get(h.id_medico);
                     const diagnostico = await historiasStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || [];
                     const diagnosticoCIF = await historiasStore.listDatos(h.id, 'DiagnosticosCIF', 'id_analisis') || [];
-                    return { diagnostico, diagnosticoCIF };
+
+                    // función auxiliar para formatear fecha
+                    const formatDate = (dateString) => {
+                        if (!dateString) return null;
+                        return new Date(dateString).toISOString().split('T')[0];
+                    };
+
+                    return {
+                        diagnostico: diagnostico.map(d => ({
+                            ...d,
+                            ...h,
+                            profesional: profesional ? profesional.name : 'No encontrado',
+                            fecha: formatDate(h.created_at)
+                        })),
+                        diagnosticoCIF: diagnosticoCIF.map(dc => ({
+                            ...dc,
+                            ...h,
+                            profesional: profesional ? profesional.name : 'No encontrado',
+                            fecha: formatDate(h.created_at)
+                        }))
+                    };
                 })
             );
+
             diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat();
             diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat();
         }
+
 
         // 🔹 Ordenamientos
         notas.value.sort((a, b) => new Date(b.fecha_nota) - new Date(a.fecha_nota));
@@ -259,7 +297,7 @@ async function cargaHistorial(id) {
         nutricion.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         trabajosSocial.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         medicinas.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+console.log(diagnosticos.value)
     } catch (error) {
         console.error("Error cargando historial:", error);
     } finally {
@@ -479,6 +517,7 @@ const tablaBuilder = new TablaBuilder()
 const restriccionCard = new CardBuilder()
 const consultasCard = new CardBuilder()
 const evolucionesCard = new CardBuilder()
+const diagnosticosCard = new CardBuilder()
 const notasCard = new CardBuilder()
 const tratamientosCard = new CardBuilder()
 const medicacionCard = new CardBuilder()
@@ -530,6 +569,7 @@ const propiedades = computed(() => {
     const puedeVerNotas = varView.getPermisos.includes('Notas_view')
     const puedeVerEvoluciones = varView.getPermisos.includes('Evoluciones_view')
     const puedeVerTerapias = varView.getPermisos.includes('Terapias_view')
+    const puedeVerDiagnosticos = varView.getPermisos.includes('Diagnosticos_view')
     const puedeVerTratamientos = varView.getPermisos.includes('Tratamientos_view')
     const puedeVerMedicacion = varView.getPermisos.includes('Medicacion_view')
     const puedeVerMedicina = varView.getPermisos.includes('MedicinaGeneral_view')
@@ -550,6 +590,7 @@ const propiedades = computed(() => {
     const tablaMedicacion = new TablaBuilder()
     const tablaNutricion = new TablaBuilder()
     const tablaTrabajoSocial = new TablaBuilder()
+    const tablaDiagnosticos = new TablaBuilder()
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
@@ -576,7 +617,7 @@ const propiedades = computed(() => {
                 color: 'bg-[var(--color-default)] text-white',
                 buscador: true,
                 filtros: [
-                    { columna: 'estado', placeholder: 'Estado', datos: [{ text: 'Creada', value: 'Creada' }, { text: 'Nueva', value: 'Nueva' }] },
+                    { columna: 'estado', placeholder: 'Estado', },
                 ],
                 acciones: [
                     {
@@ -624,10 +665,10 @@ const propiedades = computed(() => {
                         },
                     },
                 ])
-                .setContenedor('col-span-2')
+                .setContenedor('')
                 .setheaderSubTitle('')
-                .setcontenedorCards('w-full flex justify-center w-full col-span-2')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
+                .setcontenedorCards('w-full flex justify-center w-full ')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-100)]! cursor-pointer text-white! w-[100%]!')
                 .build()
                 : consultasCard
                     .setCards([
@@ -642,9 +683,44 @@ const propiedades = computed(() => {
                             },
                         },
                     ])
-                    .setContenedor('col-span-2')
+                    .setContenedor('')
                     .setheaderSubTitle('')
-                    .setcontenedorCards('w-full flex justify-center w-full col-span-2')
+                    .setcontenedorCards('w-full flex justify-center w-full ')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .build()
+            )
+            .addComponente('Card', puedeVerDiagnosticos ? diagnosticosCard
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-clipboard-list text-white',
+                            iconBg: 'bg-inherit',
+                            title: 'Diagnosticos',
+                            subtitle: 'Diagnosticos del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-400)]! hover:bg-[var(--color-default-300)]! cursor-pointer text-white! w-[100%]!')
+                .build()
+                : diagnosticosCard
+                    .setCards([
+                        {
+                            header: {
+                                icon: 'fa-solid fa-clipboard-list text-white',
+                                iconBg: 'bg-inherit',
+                                title: 'Diagnosticos',
+                                subtitle: 'Diagnosticos del paciente',
+                                titleClass: 'text-white',
+                                subtitleClass: 'text-gray-300!'
+                            },
+                        },
+                    ])
+                    .setContenedor('')
+                    .setcontenedorCards('w-full flex justify-center w-full')
                     .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
                     .build()
             )
@@ -863,8 +939,12 @@ const propiedades = computed(() => {
             .nuevaSeccion('Consultas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaConsultas
                 .setColumnas([
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, ordenar: true },
-                    { titulo: 'observacion', value: 'Observacion', tamaño: 250, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
+                    { titulo: 'observacion', value: 'Observacion', tamaño: 200, },
+                    { titulo: 'tratamiento', value: 'Tratamiento', tamaño: 200, },
                     { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 250 },
                 ])
                 .setHeaderTabla(
@@ -872,10 +952,14 @@ const propiedades = computed(() => {
                         titulo:
                             'Consultas y Analisis',
                         color: 'bg-[var(--color-default-600)] text-white',
-                        espacioMargen: '500',
+                        espacioMargen: '520',
                         buscador: true,
                         filtros: [
+                            { columna: 'nombreServicio', placeholder: 'Servicio', },
+                            { columna: 'profesional', placeholder: 'Profesional' },
                             { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                            { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                            { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                         ],
                         acciones: [
                             {
@@ -903,22 +987,55 @@ const propiedades = computed(() => {
             )
             .addComponente('Form', propiedadesItemHistoria)
 
+            //  Diagnosticos
+            .nuevaSeccion('diagnosticos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
+            .addComponente('Tabla', tablaDiagnosticos
+                .setColumnas([
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160 },
+                    { titulo: 'descripcion', value: 'Descripcion', tamaño: 280, ordenar: true },
+                    { titulo: 'codigo', value: 'CIE10', tamaño: 250, ordenar: true },
+                    { titulo: 'dias_asignados', value: 'No. Dias', tamaño: 250 },
+                ])
+                .setDatos(puedeVerDiagnosticos ? diagnosticos : [])
+                .setHeaderTabla({
+                    titulo: 'Diagnosticos',
+                    color: 'bg-[var(--color-default-600)] text-white',
+                    espacioMargen: '500',
+                    excel: true,
+                    buscador: true,
+                    filtros: [
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
+                        { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                    ]
+                })
+            )
 
             // Terapias
             .nuevaSeccion('evoluciones', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
                     { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
-                    { titulo: 'hora', value: 'Hora', tamaño: 250, ordenar: true },
-                    { titulo: 'evolucion', value: 'Evolucion', tamaño: 150 },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Sericio', tamaño: 160, ordenar: true },
+                    { titulo: 'sesion', value: 'Sesión', tamaño: 60, },
+                    { titulo: 'objetivos', value: 'Objetivos', tamaño: 250, },
+                    { titulo: 'evolucion', value: 'Evolucion', tamaño: 250 },
                 ])
                 .setHeaderTabla({
                     titulo: 'Avances de Tratamientos',
                     color: 'bg-[var(--color-default-600)] text-white',
-                    espacioMargen: '500',
+                    espacioMargen: '520',
                     buscador: true,
                     filtros: [
-                        { columna: 'fecha', placeholder: 'Fecha' },
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ],
                     acciones: [
                         {
@@ -945,8 +1062,10 @@ const propiedades = computed(() => {
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
                     { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
-                    { titulo: 'hora_nota', value: 'Hora', tamaño: 150 },
-                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 400 },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'servicio', tamaño: 160, ordenar: true },
+                    { titulo: 'direccion', value: 'Direccion', tamaño: 100 },
+                    { titulo: 'tipoAnalisis', value: 'Estado', tamaño: 200 },
                 ])
                 .setDatos(puedeVerNotas ? notas : [])
                 .setAcciones({
@@ -959,10 +1078,14 @@ const propiedades = computed(() => {
                 .setHeaderTabla({
                     titulo: 'Notas Medicas',
                     color: 'bg-[var(--color-default-600)] text-white',
-                    espacioMargen: '500',
+                    espacioMargen: '520',
                     buscador: true,
                     filtros: [
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
                         { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ],
                     acciones: [
                         {
@@ -986,7 +1109,8 @@ const propiedades = computed(() => {
             .nuevaSeccion('tratamientos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaTratamientos
                 .setColumnas([
-                    { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 300, ordenar: true },
+                    { titulo: 'created_at', value: 'Fecha', tamaño: 120, ordenar: true },
+                    { titulo: 'procedimiento', value: 'Procedimiento', tamaño: 250, ordenar: true },
                     { titulo: 'codigo', value: 'CUPS', tamaño: 250, ordenar: true },
                     { titulo: 'dias_asignados', value: 'No. Dias', tamaño: 250 },
                 ])
@@ -1000,7 +1124,7 @@ const propiedades = computed(() => {
                 .setHeaderTabla({
                     titulo: 'Tratamientos',
                     color: 'bg-[var(--color-default-600)] text-white',
-                    espacioMargen: '500',
+                    espacioMargen: '520',
                     buscador: true,
                 })
             )
@@ -1011,9 +1135,12 @@ const propiedades = computed(() => {
             .nuevaSeccion('medicinas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160 },
                     { titulo: 'medicamento', value: 'Medicamento', tamaño: 200, ordenar: true },
-                    { titulo: 'dosis', value: 'Dosis', tamaño: 200, ordenar: true },
-                    { titulo: 'cantidad', value: 'Cantidad', tamaño: 150 },
+                    { titulo: 'dosis', value: 'Dosis', tamaño: 200, },
+                    { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
@@ -1030,7 +1157,11 @@ const propiedades = computed(() => {
                     espacioMargen: '500',
                     buscador: true,
                     filtros: [
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
                         { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ]
                 })
             )
@@ -1041,9 +1172,11 @@ const propiedades = computed(() => {
             .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaNutricion
                 .setColumnas([
-                    { titulo: 'analisis', value: 'Analisis', tamaño: 200, ordenar: true },
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
-                    { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
+                    { titulo: 'analisis', value: 'Analisis', tamaño: 250, },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
                 ])
                 .setDatos(puedeVerEvoluciones ? nutricion : [])
                 .setAcciones({
@@ -1057,7 +1190,10 @@ const propiedades = computed(() => {
                     color: 'bg-[var(--color-default-600)] text-white',
                     buscador: true,
                     filtros: [
-                        { columna: 'created_at', placeholder: 'Fecha' },
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ],
                     acciones: [
                         {
@@ -1081,9 +1217,11 @@ const propiedades = computed(() => {
             .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaTrabajoSocial
                 .setColumnas([
-                    { titulo: 'analisis', value: 'Analisis', tamaño: 200, ordenar: true },
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 200, ordenar: true },
-                    { titulo: 'created_at', value: 'Fecha', tamaño: 150 },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
+                    { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
+                    { titulo: 'analisis', value: 'Analisis', tamaño: 250, },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
                 ])
                 .setDatos(puedeVerTrabajo ? trabajosSocial : [])
                 .setAcciones({
@@ -1097,7 +1235,11 @@ const propiedades = computed(() => {
                     color: 'bg-[var(--color-default-600)] text-white',
                     buscador: true,
                     filtros: [
-                        { columna: 'creted_at', placeholder: 'Fecha' },
+                        { columna: 'nombreServicio', placeholder: 'Servicio', },
+                        { columna: 'profesional', placeholder: 'Profesional' },
+                        { columna: 'tipoAnalisis', placeholder: 'Estado' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ],
                     acciones: [
                         {

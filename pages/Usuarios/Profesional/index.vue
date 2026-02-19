@@ -167,12 +167,12 @@ const propiedades = computed(() => {
     // Tabla de profesionales
     builderTabla
         .setColumnas([
-            { titulo: 'name', value: 'Nombre', tamaño: 200 },
             { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100 },
-            { titulo: 'profesion', value: 'Profesión', tamaño: 100 },
-            { titulo: 'celular', value: 'Celular', tamaño: 100 },
-            { titulo: 'zona', value: 'Zona', tamaño: 50 },
-            { titulo: 'municipio', value: 'Municipio', tamaño: 150 }
+            { titulo: 'name', value: 'Nombre', tamaño: 250 },
+            { titulo: 'profesion', value: 'Profesión', tamaño: 150 },
+            { titulo: 'celular', value: 'Celular', tamaño: 120 },
+            { titulo: 'zona', value: 'Zona', tamaño: 100 },
+            { titulo: 'municipio_laboral', value: 'Municipio', tamaño: 150 }
         ])
         .setHeaderTabla({
             titulo: 'Gestión de Profesionales de Medicina',
@@ -182,8 +182,8 @@ const propiedades = computed(() => {
             buscador: true,
             excel: true,
             filtros: [
-                { columna: 'municipio', placeholder: 'Ciudad', datos: [{ text: 'Palmira', value: 'Palmira' }, { text: 'Cali', value: 'Cali' }] },
-                { columna: 'zona', placeholder: 'Zona', datos: [{ text: 'Urbana', value: 'urbana' }, { text: 'Rural', value: 'rural' }] },
+                { columna: 'municipio_laboral', placeholder: 'Ciudad' },
+                { columna: 'zona', placeholder: 'Zona',},
             ]
         })
         .setDatos(medicos);

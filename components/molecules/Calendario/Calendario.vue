@@ -190,7 +190,7 @@ const siguienteMes = () => {
             class="w-full bg-white dark:bg-gray-700 dark:border-gray-600 dark:text-white rounded-xl shadow-md px-4 py-2 flex justify-around items-center">
             <div class="flex flex-col items-center">
                 <span class="text-base font-bold text-red-600 dark:text-red-300">{{ diasVencidos.length }}</span>
-                <span class="text-xs text-gray-600 dark:text-gray-300">Dias con vencidas</span>
+                <span class="text-xs text-gray-600 dark:text-gray-300">Citas vencidas</span>
             </div>
             <div class="flex flex-col items-center">
                 <span class="text-base font-bold text-blue-600">{{ diasConCitas.length }}</span>

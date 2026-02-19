@@ -262,10 +262,13 @@ const propiedades = computed(() => {
 
     builderTabla
         .setColumnas([
-            { titulo: 'name', value: 'Nombre', tamaño: 180, ordenar: true },
-            { titulo: 'No_document', value: 'Documento', tamaño: 150 },
-            { titulo: 'celular', value: 'Celular', tamaño: 100 },
+            { titulo: 'No_document', value: 'Documento', tamaño: 100 },
+            { titulo: 'name', value: 'Nombre', tamaño: 250, ordenar: true },
+            { titulo: 'celular', value: 'Celular', tamaño: 150 },
+            { titulo: 'departamento', value: 'Departamento', tamaño: 150 },
             { titulo: 'municipio', value: 'Ciudad', tamaño: 150 },
+            { titulo: 'zona', value: 'Zona', tamaño: 100 },
+            { titulo: 'correo', value: 'Correo', tamaño: 200 },
         ])
         .setHeaderTabla({
             titulo: 'Gestion de Administradores',

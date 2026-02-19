@@ -1,6 +1,5 @@
 export const Tablas = [
-  { text: 'Administrativo', value: 'Administrativo' },
-  { text: 'AnalisisTratamiento', value: 'AnalisisTratamiento' },
+  { text: 'Analisis', value: 'Analisis' },
   { text: 'Antecedentes', value: 'Antecedentes' },
   { text: 'Cita', value: 'Cita' },
   { text: 'Diagnosticos', value: 'Diagnosticos' },
@@ -8,10 +7,10 @@ export const Tablas = [
   { text: 'Empresa', value: 'Empresa' },
   { text: 'Enfermedad', value: 'Enfermedad' },
   { text: 'ExamenFisico', value: 'ExamenFisico' },
-  { text: 'Facturacion', value: 'Facturacion' },
   { text: 'HistoriaClinica', value: 'HistoriaClinica' },
   { text: 'Medico', value: 'Medico' },
   { text: 'Nota', value: 'Nota' },
+  { text: 'Terapia', value: 'Terapia' },
   { text: 'Paciente', value: 'Paciente' },
   { text: 'User', value: 'User' },
   { text: 'Plan_manejo_equipos', value: 'Plan_manejo_equipos' },
@@ -19,5 +18,4 @@ export const Tablas = [
   { text: 'Plan_manejo_medicamentos', value: 'Plan_manejo_medicamentos' },
   { text: 'Plan_manejo_procedimientos', value: 'Plan_manejo_procedimientos' },
   { text: 'Profesion', value: 'Profesion' },
-  { text: 'Software', value: 'Software' },
 ]

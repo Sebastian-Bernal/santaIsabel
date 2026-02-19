@@ -109,85 +109,95 @@ function mostrar() {
 
 <template>
     <FondoBlur>
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 md:w-[65%] md:h-[70%] w-[90%] h-[80%]">
-            <div class="py-5 h-full flex flex-col justify-between">
-                <h2 class="text-2xl font-semibold text-center py-2">Configuracion datos a exportar</h2>
-                <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
-                    <div class="flex justify-between items-center">
-                        <p class="text-lg text-gray-600"><i class="fa-solid fa-gear"></i> {{ props.tabla }}</p>
+            <div
+                class="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300 animate-fadeIn">
+                <div class="py-6 h-full flex flex-col justify-between">
+                    <h2 class="text-2xl font-bold text-center py-3 text-gray-800 dark:text-gray-100 tracking-wide">
+                        Configuración de Exportación
+                    </h2>
+                    <div class="h-full pt-5 overflow-y-auto scrollForm px-10">
+                        <div class="flex justify-between items-center">
+                            <p class="text-lg text-gray-600"><i class="fa-solid fa-gear"></i> {{ props.tabla }}</p>
 
-                        <div class="text-lg text-blue-500 cursor-pointer flex gap-1" @click="agregarDB">
-                            <ButtonRounded color="bg-white w-[30px]! h-[30px]! mr-3" tooltip="Descargar" tooltipPosition="left">
-                                <i v-if="showInsertar" class="fa-solid fa-download text-green-700"
-                                    @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
-                            </ButtonRounded>
-                            <ButtonRounded color="bg-white w-[30px]! h-[30px]! gap-1" tooltip="Agregar Datos" tooltipPosition="left">
-                                <i class="fa-solid fa-plus text-blue-600"></i> 
-                                <i class="fa-solid fa-database text-blue-600"></i> 
-                            </ButtonRounded>
+                            <div class="text-lg text-blue-500 cursor-pointer flex gap-1" @click="agregarDB">
+                                <ButtonRounded color="bg-white w-[30px]! h-[30px]! mr-3" tooltip="Descargar"
+                                    tooltipPosition="left">
+                                    <i v-if="showInsertar" class="fa-solid fa-download text-green-700"
+                                        @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
+                                </ButtonRounded>
+                                <ButtonRounded color="bg-white w-[30px]! h-[30px]! gap-1" tooltip="Agregar Datos"
+                                    tooltipPosition="left">
+                                    <i class="fa-solid fa-plus text-blue-600"></i>
+                                    <i class="fa-solid fa-database text-blue-600"></i>
+                                </ButtonRounded>
+                            </div>
+                        </div>
+                        <div v-if="insertarTabla" class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
+                            <Select v-model="tablaInsert.tabla" :Propiedades="{
+                                placeholder: 'Tabla de datos',
+                                id: 'datos',
+                                name: 'datos',
+                                options: Tablas,
+                                tamaño: 'w-full'
+                            }" />
+                            <Select v-model="tablaInsert.id_comparar" :Propiedades="{
+                                placeholder: 'Campo a comparar',
+                                id: 'campoComparar',
+                                name: 'campoComparar',
+                                options: datosOptions,
+                            }">
+                            </Select>
+                            <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
+                                placeholder: 'Campo de Tabla a insertar',
+                                id: 'campoCompararTabla',
+                                name: 'campoCompararTabla',
+                                options: datosOptionsTabla,
+                            }" />
+                            <div class="bg-gray-300 dark:bg-gray-700 h-[2px] w-full col-span-3"></div>
+                        </div>
+                        <div class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
+                            <Input v-model="excel.nombreArchivo" :Propiedades="{
+                                placeholder: 'Nombre Archivo',
+                                id: 'nombre',
+                                name: 'nombre',
+                                type: 'text',
+                            }" />
+                            <Select v-model="excel.tipoArchivo" :Propiedades="{
+                                placeholder: 'Formato Hoja de calculo',
+                                id: 'tipoArchivo',
+                                name: 'tipoArchivo',
+                                options: [{ text: 'xlsx', value: 'xlsx' }, { text: 'xls', value: 'xls' }, { text: 'csv', value: 'csv' }],
+                            }">
+                            </Select>
+                            <Input v-model="excel.worksheet" :Propiedades="{
+                                placeholder: 'Worksheet',
+                                id: 'worksheet',
+                                name: 'worksheet',
+                                type: 'text',
+                            }" />
+                        </div>
+                        <div class="flex md:flex-row pt-5 relative">
+                            <SelectMultiple v-model="excel.opciones" :Propiedades="{
+                                placeholder: 'Seleccione los campos que deseas',
+                                id: 'campos',
+                                name: 'campos',
+                                options: datos,
+                                opciones: [{ text: '', value: '' }],
+                                tamaño: 'w-full'
+                            }" />
                         </div>
                     </div>
-                    <div v-if="insertarTabla" class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
-                        <Select v-model="tablaInsert.tabla" :Propiedades="{
-                            placeholder: 'Tabla de datos',
-                            id: 'datos',
-                            name: 'datos',
-                            options: Tablas,
-                            tamaño: 'w-full'
-                        }" />
-                        <Select v-model="tablaInsert.id_comparar" :Propiedades="{
-                            placeholder: 'Campo a comparar',
-                            id: 'campoComparar',
-                            name: 'campoComparar',
-                            options: datosOptions,
-                        }">
-                        </Select>
-                        <Select v-model="tablaInsert.id_compararTabla" :Propiedades="{
-                            placeholder: 'Campo de Tabla a insertar',
-                            id: 'campoCompararTabla',
-                            name: 'campoCompararTabla',
-                            options: datosOptionsTabla,
-                        }" />
-                        <div class="bg-gray-300 dark:bg-gray-700 h-[2px] w-full col-span-3"></div>
-                    </div>
-                    <div class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
-                        <Input v-model="excel.nombreArchivo" :Propiedades="{
-                            placeholder: 'Nombre Archivo',
-                            id: 'nombre',
-                            name: 'nombre',
-                            type: 'text',
-                        }" />
-                        <Select v-model="excel.tipoArchivo" :Propiedades="{
-                            placeholder: 'Formato Hoja de calculo',
-                            id: 'tipoArchivo',
-                            name: 'tipoArchivo',
-                            options: [{ text: 'xlsx', value: 'xlsx' }, { text: 'xls', value: 'xls' }, { text: 'csv', value: 'csv' }],
-                        }">
-                        </Select>
-                        <Input v-model="excel.worksheet" :Propiedades="{
-                            placeholder: 'Worksheet',
-                            id: 'worksheet',
-                            name: 'worksheet',
-                            type: 'text',
-                        }" />
-                    </div>
-                    <div class="flex md:flex-row pt-5 relative">
-                        <SelectMultiple v-model="excel.opciones" :Propiedades="{
-                            placeholder: 'Seleccione los campos que deseas',
-                            id: 'campos',
-                            name: 'campos',
-                            options: datos,
-                            opciones: [{ text: '', value: '' }],
-                            tamaño: 'w-full'
-                        }" />
-                    </div>
-                </div>
-                    <div class="w-full flex justify-center items-center gap-3 px-2">
-                        <ButtonForm color="bg-gray-500 md:w-[200px] sm:w-[2/3] w-full" @click="cerrar">
+
+                    <div class="w-full flex justify-center items-center gap-4 px-4 mt-6">
+                        <ButtonForm
+                            color="bg-gray-500 hover:bg-gray-600 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
+                            @click="cerrar">
                             Cancelar
                         </ButtonForm>
 
-                        <ButtonForm color="bg-blue-500 md:w-[200px] sm:w-[2/3] w-full" @click="validarform">
+                        <ButtonForm
+                            color="bg-blue-600 hover:bg-blue-700 text-white font-semibold md:w-[200px] sm:w-[2/3] w-full shadow-md transition-all duration-300"
+                            @click="validarform">
                             <download-excel v-if="varView.formComplete" :data="datosAExportar"
                                 :name="excel.nombreArchivo" :type="excel.tipoArchivo" :fields="jsonfields"
                                 :worksheet="excel.worksheet" :before-finish="cerrar" :before-generate="mostrar">
@@ -198,8 +208,9 @@ function mostrar() {
                             </div>
                         </ButtonForm>
                     </div>
+
+                </div>
             </div>
-        </div>
     </FondoBlur>
 </template>
 

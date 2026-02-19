@@ -67,11 +67,11 @@ const variantClase = computed(() => {
         case 'movimiento':
             return ' text-amber-600 dark:text-amber-700';
         case 'Rojo':
-            return 'bg-red-500 w-[10px] h-[10px]';
+            return 'bg-red-500 hover:bg-red-500! w-[10px] h-[10px]';
         case 'Naranja':
-            return 'bg-orange-400 w-[10px] h-[10px]';
+            return 'bg-orange-400 hover:bg-orange-400! w-[10px] h-[10px]';
         case 'Verde':
-            return 'bg-green-600 w-[10px] h-[10px]';
+            return 'bg-green-600 hover:bg-green-600! w-[10px] h-[10px]';
         default:
             return '';
     }

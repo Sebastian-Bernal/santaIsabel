@@ -192,8 +192,8 @@ const propiedades = computed(() => {
     // Tabla de pacientes
     builderTabla
         .setColumnas([
-            { titulo: "name", value: "Nombre", tamaño: 250, ordenar: true },
             { titulo: "No_document", value: "Documento", tamaño: 120, ordenar: true },
+            { titulo: "name", value: "Nombre", tamaño: 250, ordenar: true },
             { titulo: "celular", value: "Celular", tamaño: 100 },
             { titulo: "sexo", value: "Sexo", tamaño: 100 },
             { titulo: "municipio", value: "Ciudad", tamaño: 120 },
@@ -217,10 +217,10 @@ const propiedades = computed(() => {
 
     builderTablaKardex
         .setColumnas([
-            { titulo: "Eps", value: "EPS", tamaño: 200, ordenar: true, pinned: true },
-            { titulo: "name", value: "NOMBRE", tamaño: 200, ordenar: true, pinned: true },
-            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100 },
             { titulo: "No_document", value: "DOCUMENTO", tamaño: 120, ordenar: true, pinned: true },
+            { titulo: "name", value: "NOMBRE", tamaño: 200, ordenar: true, pinned: true },
+            { titulo: "Eps", value: "EPS", tamaño: 200, ordenar: true, pinned: true },
+            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100 },
             { titulo: "celular", value: "N. Tel", tamaño: 150 },
             { titulo: "direccion", value: "DIRECCION", tamaño: 100 },
             { titulo: "barrio", value: "Barrio", tamaño: 130 },

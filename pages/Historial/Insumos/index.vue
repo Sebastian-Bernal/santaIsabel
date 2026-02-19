@@ -213,12 +213,12 @@ const propiedades = computed(() => {
 
     tablaBuilder
         .setColumnas([
-            { titulo: "nombre", value: "Nombre", tamaño: 350, ordenar: true },
-            { titulo: "activoL", value: "Activo", tamaño: 100 },
             { titulo: "vencimiento", value: "Vencimiento", tamaño: 100 },
+            { titulo: "nombre", value: "Nombre", tamaño: 350, ordenar: true },
+            { titulo: "activoL", value: "Activo", tamaño: 120 },
             { titulo: "ubicacion", value: "Ubicacion", tamaño: 100 },
-            { titulo: "categoria", value: "Tipo", tamaño: 150, ordenar: true },
-            { titulo: "stock", value: "Stock", tamaño: 150, ordenar: true },
+            { titulo: "categoria", value: "Tipo", tamaño: 200, ordenar: true },
+            { titulo: "stock", value: "Stock", tamaño: 100, ordenar: true },
         ])
         .setHeaderTabla({
             titulo: "Gestión de Insumos",

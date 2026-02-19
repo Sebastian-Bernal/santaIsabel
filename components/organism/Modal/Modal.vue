@@ -30,6 +30,7 @@ const components = {
 }
 
 const seccionActual = ref(0)
+const tamañoModal = ref(false)
 
 function cambiarSeccion(tipo, key) {
     if (tipo === 'Card') {
@@ -41,12 +42,21 @@ function cambiarAInicio() {
     seccionActual.value = 0
 }
 
+function cambiarTamañoModal() {
+    tamañoModal.value = !tamañoModal.value
+    if (tamañoModal.value) {
+        props.Propiedades.tamaño = 'w-[90%] h-[90%]'
+    } else {
+        props.Propiedades.tamaño = 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[98%] h-[80%]'
+    }
+}
+
 </script>
 
 <template>
     <component v-if="unref(Propiedades.show)" :is="fondos[Propiedades.fondo]">
-        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7"
-            :class="[Propiedades.estilos, Propiedades.tamaño]">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 animate-fadeIn"
+            :class="[Propiedades.estilos, {'w-[90%]! h-[90%]!': tamañoModal,}], Propiedades.tamaño">
             <!-- Header Modal -->
             <div
                 class="w-full flex justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
@@ -63,6 +73,10 @@ function cambiarAInicio() {
                     <div v-for="icono in Propiedades.headerModal.acciones" @click="icono.accion?.()"
                         class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
                         <i class="hover:text-white" :class="icono.icon"></i>
+                    </div>
+                    <div @click="cambiarTamañoModal"
+                        class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
+                        <i class="fa-solid fa-expand hover:text-white"></i>
                     </div>
                     <div @click="Propiedades.cerrarModal"
                         class="w-10 h-10 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
