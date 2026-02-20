@@ -11,21 +11,26 @@ import { municipios } from "~/data/municipios.js";
 import { useDatosEPSStore } from "~/stores/Formularios/empresa/EPS.js";
 import { CardBuilder } from "~/build/Constructores/CardBuilder.js";
 import { useUsuarioValidaciones } from "~/composables/Usuarios/Usuarios.js";
-import { usePacienteActions } from "~/composables/Usuarios/Paciente/Paciente.js";
+import { usePacienteActions } from "~/composables/Usuarios/Paciente.js";
+import { usePlanesBuilder } from "~/build/Historial/usePlanesBuilder.js";
+import { useInsumosStore } from "~/stores/Formularios/insumos/Insumos.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const pacientesStore = usePacientesStore();
 const apiRest = useApiRest()
+const insumoStore = useInsumosStore();
 
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
 const pacientes = ref([]);
 const kardex = ref([]);
+const insumos = ref([]);
 const refresh = ref(1);
 
 const show = ref(false);
 const showVer = ref(false);
+const showItem = ref(false);
 
 const {
     validarFecha,
@@ -87,6 +92,7 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
+    insumos.value = await insumoStore.listInsumos();
 
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
@@ -143,6 +149,7 @@ const propiedades = computed(() => {
     }
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
+    const puedediagnosticar = varView.getPermisos.includes('Diagnosticos_view');
 
     // Formulario para crear paciente
     const propiedadesUser = puedePost
@@ -189,6 +196,17 @@ const propiedades = computed(() => {
         })
         : null;
 
+    const propiedadesItemHistoria = usePlanesBuilder({
+        storeId: 'AgregarPlan',
+        storePinia: 'Historias',
+        cerrarModal: () => {
+            showItem.value = false
+        },
+        formularioItem: 'Medicamento',
+        show: showItem,
+        insumos,
+    })
+
     // Tabla de pacientes
     builderTabla
         .setColumnas([
@@ -214,6 +232,23 @@ const propiedades = computed(() => {
             ]
         })
         .setDatos(pacientes)
+    const acciones = [];
+    if (puedePut) {
+        acciones.push({ icon: "ver", action: verPaciente });
+        // acciones.push({ icon: "download", action: exportarPDF });
+    }
+
+    if(puedediagnosticar) {
+        acciones.push({ icon: "agregar", action: (fila) => {
+            showItem.value = true
+            varView.tipoHistoria = 'Medicamento'
+            pacientesStore.PacienteSeleccionado = fila.id_paciente
+        } });
+    }
+
+    if (acciones.length > 0) {
+        builderTabla.setAcciones({ icons: acciones, botones: true });
+    }
 
     builderTablaKardex
         .setColumnas([
@@ -289,16 +324,6 @@ const propiedades = computed(() => {
             }
         });
 
-    const acciones = [];
-    if (puedePut) {
-        acciones.push({ icon: "ver", action: verPaciente });
-        // acciones.push({ icon: "download", action: exportarPDF });
-    }
-
-    if (acciones.length > 0) {
-        builderTabla.setAcciones({ icons: acciones, botones: true });
-    }
-
     // Construcción de la página
     pagina
         .setFondo("FondoDefault")
@@ -337,6 +362,7 @@ const propiedades = computed(() => {
 
     if (propiedadesUser) pagina.addComponente("Form", propiedadesUser);
     if (propiedadesVerUser) pagina.addComponente("Form", propiedadesVerUser);
+    if (propiedadesItemHistoria) pagina.addComponente("Form", propiedadesItemHistoria);
 
     return pagina.build();
 

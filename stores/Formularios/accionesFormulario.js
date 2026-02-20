@@ -40,6 +40,8 @@ import { validarYEnviarNuevoInusmo } from '~/Core/Historial/Insumos/PostInsumos'
 // Movimientos Insumos
 import { validarYEnviarNuevoMovimiento } from '~/Core/Historial/Insumos/PostMovimiento';
 import { validarYEnviarActualizarInusmo } from '~/Core/Historial/Insumos/PutInsumos';
+// Planes de Manejo
+import { validarYEnviarPlan } from '~/Core/Historial/PlanesManejo/PostPlanes';
 
 
 // Importa accion de cada formulario desde el core
@@ -86,12 +88,14 @@ export const accionesFormularios = {
     },
     ActualizarHistorias: async (data) => {
         const respuesta = await validarYEnviarActualizarHistoria(data)
-        // window.location.reload()
+        return respuesta;
+    },
+    AgregarPlan: async (data) => {
+        const respuesta = await validarYEnviarPlan(data)
         return respuesta;
     },
     DatosEmpresa: async (data) => {
         const respuesta = await validarYEnviarDatosEmpresa(data)
-        console.log(respuesta)
         return respuesta
     },
     DatosSoftware: async (data) => {

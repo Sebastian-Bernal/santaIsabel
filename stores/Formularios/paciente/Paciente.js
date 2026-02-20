@@ -36,7 +36,8 @@ export const usePacientesStore = defineStore('Pacientes', {
             },
             Plan_manejo_procedimientos: [],
             Antecedentes: [],
-        }
+        },
+        PacienteSeleccionado: null,
     }),
 
     getters: {

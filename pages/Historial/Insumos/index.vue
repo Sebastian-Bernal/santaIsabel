@@ -10,6 +10,7 @@ import { mapCampos, mapCamposLimpios } from '~/components/organism/Forms/useForm
 import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 import { useMovimientoBuilder } from '~/build/Historial/useMovimientoBuilder'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
+import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import PDFMovimientoInsumo from '~/components/paginas/PDFMovimientoInsumo.vue'
 import { eliminarInsumo } from '~/Core/Historial/Insumos/DeleteInsumo'
 
@@ -24,9 +25,12 @@ const showMovimiento = ref(false);
 const refresh = ref(1);
 const medicosStore = useMedicosStore();
 const medicosList = ref([]);
+const pacientesStore = usePacientesStore();
+const pacientesList = ref([]);
 const analisis = ref([])
 const insumos = ref([]);
 const movimientos = ref([])
+const movimentosPaciente = ref([])
 
 async function llamadatos() {
     insumos.value = await insumoStore.listInsumos();
@@ -64,8 +68,11 @@ watch(() => showMovimiento.value,
 onMounted(async () => {
     insumos.value = await insumoStore.listInsumos(false);
     await llamadatos()
-    medicosList.value = await medicosStore.listMedicos();
+    medicosList.value = await medicosStore.listMedicos(true);
+    pacientesList.value = await pacientesStore.listPacientes(false);
     analisis.value = await apiRest.getData('Analisis', 'analisis')
+    movimentosPaciente.value = await insumoStore.listMovimientos(medicosList.value, pacientesList.value, analisis.value, insumos.value)
+    console.log(movimentosPaciente.value)
 });
 
 // Funciones para manejar la visibilidad de los formularios
@@ -138,6 +145,7 @@ const propiedades = computed(() => {
 
     const pagina = new ComponenteBuilder()
     const tablaBuilder = new TablaBuilder()
+    const tablaMovimientoPaciente = new TablaBuilder()
 
     const puedeVer = varView.getPermisos.includes('Insumos_view');
     if (!puedeVer) {
@@ -243,10 +251,35 @@ const propiedades = computed(() => {
         tablaBuilder.setAcciones({ icons: acciones, botones: true });
     }
 
+    tablaMovimientoPaciente
+        .setColumnas([
+            { titulo: "fecha", value: "Fecha", tamaño: 100 },
+            { titulo: "name_paciente", value: "Paciente", tamaño: 200 },
+            { titulo: "name_medico", value: "Profesional", tamaño: 200, ordenar: true },
+            { titulo: "nombre", value: "Nombre", tamaño: 200 },
+            { titulo: "activoL", value: "Activo", tamaño: 120 },
+            { titulo: "nombreServicio", value: "Servicio", tamaño: 150 },
+            { titulo: "categoria", value: "Tipo", tamaño: 200, ordenar: true },
+            { titulo: "dosis", value: "Dosis", tamaño: 150 },
+        ])
+        .setHeaderTabla({
+            titulo: "Movimientos relacionados a pacientes",
+            descripcion: "Visualiza y administra el almacen de insumos.",
+            color: "bg-[var(--color-default)] text-white",
+            buscador: true,
+            excel: true,
+            filtros: [
+                { columna: 'categoria', placeholder: 'Tipo' },
+                { columna: 'ubicacion', placeholder: 'Ubicacion' },
+            ]
+        })
+        .setDatos(movimentosPaciente);
+
     pagina
         .setFondo('FondoDefault')
         .setContenedor('grid grid-cols-1 gap-3')
         .addComponente('Tabla', tablaBuilder.build())
+        .addComponente('Tabla', tablaMovimientoPaciente.build())
     if (formularioInsumo) pagina.addComponente("Form", formularioInsumo);
     if (formularioVerInsumo) pagina.addComponente("Form", formularioVerInsumo);
     if (formularioRegistrarMovimiento) pagina.addComponente("Form", formularioRegistrarMovimiento);

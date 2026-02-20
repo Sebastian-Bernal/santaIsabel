@@ -192,11 +192,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 // Recorremos cada colección y guardamos en IndexedDB
                 for (const [almacen, datos] of Object.entries(colecciones)) {
                     store.almacen = almacen;
-                    await store.borrartodo();
-
-                    for (const item of datos) {
-                        await store.guardardatosID({ ...item });
-                    }
+                    store.bulkPut(datos)
                 }
 
             }
@@ -221,11 +217,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 // Recorremos cada colección y guardamos en IndexedDB
                 for (const [almacen, datos] of Object.entries(coleccionesPlan)) {
                     store.almacen = almacen;
-                    await store.borrartodo();
-
-                    for (const item of datos) {
-                        await store.guardardatosID({ ...item });
-                    }
+                    store.bulkPut(datos)
                 }
 
             }

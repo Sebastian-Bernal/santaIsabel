@@ -9,7 +9,7 @@ import { nombresMeses } from '~/data/Fechas.js'
 import { storeToRefs } from 'pinia';
 import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 import { usePaginacion } from '~/composables/Tabla/usePaginacion';
-import { useCitasActions } from '~/composables/Usuarios/Citas';
+import { useCitasActions } from '~/composables/Citas/Citas';
 
 const props = defineProps({
     citas: {

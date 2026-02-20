@@ -8,7 +8,7 @@ import { useCitasStore } from '~/stores/Formularios/citas/Cita'
 import { ref, onMounted } from 'vue'
 import { CardBuilder } from '~/build/Constructores/CardBuilder'
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder'
-import { useCitasActions } from '~/composables/Usuarios/Citas'
+import { useCitasActions } from '~/composables/Citas/Citas'
 
 const varView = useVarView()
 const citasStore = useCitasStore();

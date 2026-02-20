@@ -74,18 +74,14 @@ export const useMedicosStore = defineStore('Medicos', {
                     const store = useIndexedDBStore();
                     // Definir mapeo entre nombre del almacén y propiedad en dataHistoria
                     const colecciones = {
-                        Paciente: dataProfesionales.profesionales,
+                        Profesional: dataProfesionales.profesionales,
                         InformacionUser: dataProfesionales.informacionUsers,
                     };
 
                     // Recorremos cada colección y guardamos en IndexedDB
                     for (const [almacen, datos] of Object.entries(colecciones)) {
                         store.almacen = almacen;
-                        await store.borrartodo();
-
-                        for (const item of datos) {
-                            await store.guardardatosID({ ...item });
-                        }
+                        store.bulkPut(datos)
                     }
 
                     usuarios = dataProfesionales.informacionUsers;

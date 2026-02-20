@@ -15,7 +15,9 @@ import { mapCamposLimpios, mapCampos } from '~/components/organism/Forms/useForm
 import { useNotasBuilder } from '~/build/Historial/useNotasBuilder';
 import { useNotasStore } from '~/stores/Formularios/historias/Notas';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
-import { decryptData } from '~/composables/Formulario/crypto';
+import { historialManejoModales } from '~/composables/Historias/historialManejoModales';
+import { usePDFExporter } from '~/composables/Historias/exportarServicioPDF';
+import { formatDate } from '~/composables/Formulario/FormatearFecha';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -201,13 +203,6 @@ async function cargaHistorial(id) {
         const analisisDatos = [];
 
         const medicosMap = new Map(medicos.value.map(m => [m.id_profesional, m]));
-        // función auxiliar para formatear fecha
-        const formatDate = (dateString) => {
-            if (!dateString) return null;
-            return new Date(dateString).toISOString().split('T')[0];
-            // o: return new Date(dateString).toLocaleDateString();
-        };
-
 
         for (const analisis of allAnalisis) {
             let profesional = medicosMap.get(analisis.id_medico);
@@ -220,7 +215,7 @@ async function cargaHistorial(id) {
                 analisisDatos.push({ ...analisis, profesional: profesional ? profesional.name : 'No encontrado', fecha: formatDate(analisis.created_at) });
             } else if (analisis.servicio === 'Nota') {
                 let nota = await historiasStore.listDatos(analisis.id, 'Nota', 'id_analisis')
-                notas.value.push({ ...nota[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado' });
+                notas.value.push({ ...nota[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado', id: nota[0].id });
             } else if (analisis.servicio === 'Terapia') {
                 let terapia = await historiasStore.listDatos(analisis.id, 'Terapia', 'id_analisis')
                 evoluciones.value.push({ ...terapia[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado' });
@@ -262,12 +257,6 @@ async function cargaHistorial(id) {
                     const diagnostico = await historiasStore.listDatos(h.id, 'Diagnosticos', 'id_analisis') || [];
                     const diagnosticoCIF = await historiasStore.listDatos(h.id, 'DiagnosticosCIF', 'id_analisis') || [];
 
-                    // función auxiliar para formatear fecha
-                    const formatDate = (dateString) => {
-                        if (!dateString) return null;
-                        return new Date(dateString).toISOString().split('T')[0];
-                    };
-
                     return {
                         diagnostico: diagnostico.map(d => ({
                             ...d,
@@ -297,7 +286,7 @@ async function cargaHistorial(id) {
         nutricion.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         trabajosSocial.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         medicinas.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-console.log(diagnosticos.value)
+
     } catch (error) {
         console.error("Error cargando historial:", error);
     } finally {
@@ -305,98 +294,27 @@ console.log(diagnosticos.value)
     }
 }
 
+// Manejo de modales ver, actualizar
+const { loadItem } = historialManejoModales({
+    historiasStore,
+    showItem,
+    formularioItem,
+    varView,
+    actualizar
+})
+
+// PDF
+const { exportar } = usePDFExporter()
+
 function cerrarModalVer() {
     showItem.value = false
 }
-
 function cerrarModal() {
     mapCamposLimpios(historiasStore.Formulario)
     showVerHistorial.value = false
 }
-// Visibilidad modal items
-function verItemMedicamentoHistoria(item) {
-    console.log(item)
-    formularioItem.value = 'Medicamento'
-    varView.tipoHistoria = 'Medicamento'
-    actualizar.value = false
-    mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
-    historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
-    historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
-    showItem.value = true
-}
 
-function actualizarItemMedicamentoHistoria(item) {
-    formularioItem.value = 'Medicamento'
-    varView.tipoHistoria = 'Medicamento'
-    actualizar.value = true
-    mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_medicamentos.medicamento = item.medicamento
-    historiasStore.Formulario.Plan_manejo_medicamentos.dosis = item.dosis
-    historiasStore.Formulario.Plan_manejo_medicamentos.cantidad = item.cantidad
-    historiasStore.Formulario.Plan_manejo_medicamentos.id = item.id
-    showItem.value = true
-}
-
-function verItemTratamientoHistoria(item) {
-    formularioItem.value = 'Tratamientos'
-    varView.tipoHistoria = 'Tratamientos'
-    actualizar.value = false
-    mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
-    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
-    historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
-    showItem.value = true
-}
-
-function actualizarItemTratamientoHistoria(item) {
-    formularioItem.value = 'Tratamientos'
-    varView.tipoHistoria = 'Tratamientos'
-    actualizar.value = true
-    mapCampos(item, historiasStore.Formulario)
-    historiasStore.Formulario.Plan_manejo_procedimientos.procedimiento = item.procedimiento
-    historiasStore.Formulario.Plan_manejo_procedimientos.codigo = item.codigo
-    historiasStore.Formulario.Plan_manejo_procedimientos.dias_asignados = item.dias_asignados
-    historiasStore.Formulario.Plan_manejo_procedimientos.id = item.id
-    showItem.value = true
-}
-
-function verItemConsultasHistoria(item) {
-    formularioItem.value = 'Consulta'
-    varView.tipoHistoria = 'Consulta'
-    actualizar.value = false
-    const datos = { ...item, ...item.signosVitales }
-    mapCampos(datos, historiasStore.Formulario)
-    showItem.value = true
-}
-
-function actualizarItemConsultasHistoria(item) {
-    formularioItem.value = 'Consulta'
-    varView.tipoHistoria = 'Consulta'
-    actualizar.value = true
-    const datos = { ...item, ...item.signosVitales }
-    mapCampos(datos, historiasStore.Formulario)
-    showItem.value = true
-}
-
-function actualiazrItemTerapia(item) {
-    formularioItem.value = 'Terapia'
-    varView.tipoHistoria = 'Terapia'
-    actualizar.value = true
-    const datos = { ...item }
-    mapCampos(datos, historiasStore.Formulario)
-    historiasStore.Formulario.Terapia.id = item.id
-    showItem.value = true
-}
-
-function actualizarItemEvolucionHistoria(item) {
-    formularioItem.value = 'Evolucion'
-    varView.tipoHistoria = 'Evolucion'
-    actualizar.value = true
-    mapCampos(item, historiasStore.Formulario)
-    showItem.value = true
-}
-
+// formulario actualizar nota
 async function actualizarNota(nota) {
     mapCampos(nota, notasStore.Formulario)
 
@@ -423,73 +341,15 @@ async function actualizarNota(nota) {
     notasStore.Formulario.Nota.id_temporal = nota.id_temporal
     showActualizarNota.value = true
 }
-
-function actualizarItemTrabajoSocial(item) {
-    formularioItem.value = 'TrabajoSocial'
-    varView.tipoHistoria = 'TrabajoSocial'
-    actualizar.value = true
-    mapCampos(item, historiasStore.Formulario)
-    showItem.value = true
-}
-
 function cerrarNota() {
     showActualizarNota.value = false
 }
-
-// PDF
-async function exportarNotaPDF(data) {
-    exportarServicioPDF('Nota', data.id_analisis)
-}
-
-async function exportarEvolucionPDF(data) {
-    exportarServicioPDF('Terapia', data.id_analisis)
-}
-
-async function exportarMedicinaPDF(data) {
-    exportarServicioPDF('Medicina', data.id_analisis)
-}
-
-async function exportarNutricionPDF(data) {
-    exportarServicioPDF('Evolucion', data.id)
-}
-
-async function exportarTrabajoSocialPDF(data) {
-    exportarServicioPDF('Trabajo Social', data.id)
-}
-
-function exportarFormulaPDF(data) {
-    exportarServicioPDF('Formula', data.id_analisis)
-}
-
-async function exportarServicioPDF(servicio, id_analisis) {
-    try {
-        varView.cargando = true
-        const config = useRuntimeConfig()
-        const token = decryptData(sessionStorage.getItem('token'))
-        const res = await fetch(`${config.public.api}/api/v1/${servicio}/${id_analisis}/pdf`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/pdf'
-            }
-        });
-        if (!res.ok) {
-            throw new Error(`Error en la petición: ${res.status}`);
-        }
-
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-
-        // Opcion de abrimos el PDF en una nueva pestaña sin descargar
-        window.open(url, '_blank');
-
-        setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-        varView.cargando = false
-    } catch (err) {
-        console.error("Error al obtener el PDF:", err);
-        varView.cargando = false
-    }
-}
+const propiedadesActualizarNota = useNotasBuilder({
+    storeId: 'ActualizarNota',
+    storePinia: 'Notas',
+    cerrarModal: cerrarNota,
+    show: showActualizarNota,
+})
 
 // Propiedades calculadas
 function estadoSemaforo(fila) {
@@ -504,14 +364,7 @@ function estadoSemaforo(fila) {
     }
 }
 
-const propiedadesActualizarNota = useNotasBuilder({
-    storeId: 'ActualizarNota',
-    storePinia: 'Notas',
-    cerrarModal: cerrarNota,
-    show: showActualizarNota,
-})
 
-// const builderCitas = new CitasBuilder()
 const tablaBuilder = new TablaBuilder()
 
 const restriccionCard = new CardBuilder()
@@ -979,9 +832,9 @@ const propiedades = computed(() => {
                 .setAcciones({
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
-                        { icon: 'ver', action: verItemConsultasHistoria },
-                        puedePutMedicina ? { icon: 'actualizar', action: actualizarItemConsultasHistoria } : '',
-                        { icon: 'pdf', action: exportarMedicinaPDF }
+                        { icon: 'ver', action: (item) => loadItem('Consulta', item) },
+                        puedePutMedicina ? { icon: 'actualizar', action: (item) => loadItem('Consulta', item, 'update') } : '',
+                        { icon: 'pdf', action: (item) => exportar('Medicina', item.id_analisis) }
                     ], botones: true,
                 })
             )
@@ -1051,7 +904,10 @@ const propiedades = computed(() => {
                         },
                     ]
                 })
-                .setAcciones({ icons: [{ icon: 'pdf', action: exportarEvolucionPDF }, puedePutTerapias ? { icon: 'actualizar', action: actualiazrItemTerapia } : ''], botones: true, })
+                .setAcciones({ icons: [
+                    puedePutTerapias ? { icon: 'actualizar', action: (item) => loadItem('Terapia', item, 'update') } : '',
+                    { icon: 'pdf', action: (item) => exportar('Terapia', item.id_analisis) }, 
+                ], botones: true, })
                 .setDatos(puedeVerTerapias ? evoluciones : [])
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -1071,8 +927,8 @@ const propiedades = computed(() => {
                 .setAcciones({
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
-                        { icon: 'pdf', action: exportarNotaPDF },
-                        puedePutNotas ? { icon: 'actualizar', action: actualizarNota } : ''
+                        puedePutNotas ? { icon: 'actualizar', action: actualizarNota } : '',
+                        { icon: 'pdf', action: (item) => exportar('Nota', item.id_analisis) },
                     ], botones: true,
                 })
                 .setHeaderTabla({
@@ -1118,8 +974,8 @@ const propiedades = computed(() => {
                 .setAcciones({
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
-                        { icon: 'ver', action: verItemTratamientoHistoria },
-                        puedePutTratamientos ? { icon: 'actualizar', action: actualizarItemTratamientoHistoria } : ''], botones: true,
+                        { icon: 'ver', action: (item) => loadItem('Tratamientos', item) },
+                        puedePutTratamientos ? { icon: 'actualizar', action: (item) => loadItem('Tratamientos', item, 'update') } : ''], botones: true,
                 })
                 .setHeaderTabla({
                     titulo: 'Tratamientos',
@@ -1147,9 +1003,9 @@ const propiedades = computed(() => {
                 .setAcciones({
                     icons: [
                         { icon: estadoSemaforo, action: () => { } },
-                        { icon: 'ver', action: verItemMedicamentoHistoria },
-                        puedePutMedicacion ? { icon: 'actualizar', action: actualizarItemMedicamentoHistoria } : '',
-                        { icon: 'pdf', action: exportarFormulaPDF }], botones: true,
+                        { icon: 'ver', action: (item) => loadItem('Medicamento', item) },
+                        puedePutMedicacion ? { icon: 'actualizar', action: (item) => loadItem('Medicamento', item, 'update') } : '',
+                        { icon: 'pdf', action: (item) => exportar('Formula', item.id_analisis) }], botones: true,
                 })
                 .setHeaderTabla({
                     titulo: 'Medicamentos del Paciente',
@@ -1181,8 +1037,8 @@ const propiedades = computed(() => {
                 .setDatos(puedeVerEvoluciones ? nutricion : [])
                 .setAcciones({
                     icons: [
-                        { icon: 'pdf', action: exportarNutricionPDF },
-                        puedePutEvoluciones ? { icon: 'actualizar', action: actualizarItemEvolucionHistoria } : ''
+                        puedePutEvoluciones ? { icon: 'actualizar', action: (item) => loadItem('Evolucion', item, 'update') } : '',
+                        { icon: 'pdf', action: (item) => exportar('Evolucion', item.id) },
                     ], botones: true,
                 })
                 .setHeaderTabla({
@@ -1226,8 +1082,8 @@ const propiedades = computed(() => {
                 .setDatos(puedeVerTrabajo ? trabajosSocial : [])
                 .setAcciones({
                     icons: [
-                        { icon: 'pdf', action: exportarTrabajoSocialPDF },
-                        puedePutTrabajo ? { icon: 'actualizar', action: actualizarItemTrabajoSocial } : ''
+                        puedePutTrabajo ? { icon: 'actualizar', action: (item) => loadItem('TrabajoSocial', item, 'update') } : '',
+                        { icon: 'pdf', action: (item) => exportar('Trabajo Social', item.id) },
                     ], botones: true,
                 })
                 .setHeaderTabla({
