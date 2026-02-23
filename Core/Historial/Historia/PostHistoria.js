@@ -187,12 +187,12 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 !nota?.direccion ||
                 !nota?.fecha_nota ||
                 !nota?.hora_nota ||
-                !nota?.subjetivo ||
-                !nota?.objetivo ||
-                !nota?.actividades ||
-                !nota?.plan ||
-                !nota?.intervencion ||
-                !nota?.evaluacion ||
+                !nota?.subjetivo.length ||
+                !nota?.objetivo.length ||
+                !nota?.actividades.length ||
+                !nota?.plan.length ||
+                !nota?.intervencion.length ||
+                !nota?.evaluacion.length ||
                 !nota?.tipoAnalisis
             ) {
                 const msg = 'Todos los campos son obligatorios. Verifica que no haya ninguno vacío.';
@@ -206,37 +206,37 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             datos.Nota.objetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Objetivo incompleto.`);
                 }
             });
 
             datos.Nota.subjetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Subjetivo incompleto.`);
                 }
             });
 
             datos.Nota.actividades.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Actividades incompleto.`);
                 }
             });
 
             datos.Nota.plan.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Plan incompleto.`);
                 }
             });
 
             datos.Nota.intervencion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Intervencion incompleto.`);
                 }
             });
 
             datos.Nota.evaluacion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
-                    errores.push(`Descripcion ${idx + 1} de ${i.tipo} incompleto.`);
+                    errores.push(`Descripcion ${idx + 1} de Evaluacion incompleto.`);
                 }
             });
 

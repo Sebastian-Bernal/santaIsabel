@@ -14,6 +14,7 @@ import { useUsuarioValidaciones } from "~/composables/Usuarios/Usuarios.js";
 import { usePacienteActions } from "~/composables/Usuarios/Paciente.js";
 import { usePlanesBuilder } from "~/build/Historial/usePlanesBuilder.js";
 import { useInsumosStore } from "~/stores/Formularios/insumos/Insumos.js";
+import { validarYEnviarKardex } from "~/Core/Usuarios/Paciente/POSTKardex.js";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -97,6 +98,7 @@ onMounted(async () => {
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
+    console.log(kardex.value)
 });
 
 function showKardex() {
@@ -266,12 +268,13 @@ const propiedades = computed(() => {
             // { titulo: "correo", value: "Correo", tamaño: 100 },
             // { titulo: "fecha", value: "Fecha Inicio", tamaño: 100 },
             { titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, },
-            { titulo: "kit_sonda", value: "Kit sonda", tamaño: 180, },
+            { titulo: "kit_cambioSonda", value: "Kit sonda", tamaño: 180, },
             { titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, },
             { titulo: "traqueo", value: "Traqueo", tamaño: 180, },
             { titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, },
             { titulo: "oxigeno", value: "Oxigeno", tamaño: 180, },
             { titulo: "vm", value: "VM", tamaño: 180, },
+            { titulo: "estado", value: "Estado", tamaño: 180, },
             { titulo: "cuidadores", value: "Cuidadores", tamaño: 180, },
             { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, },
             // { titulo: "mes", value: "Mes", tamaño: 180, },
@@ -314,6 +317,12 @@ const propiedades = computed(() => {
             titulo: "Kardex Cronicos",
             descripcion: "Administra y consulta información de pacientes",
             color: "bg-[var(--color-default)] text-white",
+            excel: true,
+            buscador: true,
+            filtros: [
+                { columna: 'municipio', placeholder: 'Ciudad' },
+                { columna: 'Eps', placeholder: 'EPS' },
+            ]
         })
         .setDatos(kardex)
         .setConfiguracion({
@@ -321,6 +330,11 @@ const propiedades = computed(() => {
             camposEditables: true,
             onUpdate: async (fila) => {
                 console.log(fila)
+                    try {
+                        await validarYEnviarKardex(fila);
+                        console.log('Kardex actualizado correctamente');
+                    } catch (error) {
+                    }
             }
         });
 

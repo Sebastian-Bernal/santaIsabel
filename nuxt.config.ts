@@ -2,11 +2,21 @@
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-    ssr: false,
-  nitro: {
-    preset: 'static'
+  ssr: false,
+  nitro: { preset: 'static' },
+  css: ['~/assets/css/main.css'],
+  modules: [ '@pinia/nuxt','@nuxtjs/color-mode', ],
+  colorMode: { preference: 'system', classSuffix: '' },
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
   },
-
+  postcss: {
+    plugins: {
+      autoprefixer: {},
+    },
+  },
   runtimeConfig: {
     public: {
       api: 'https://api.ctsantaisabel.com',
@@ -56,39 +66,12 @@ export default defineNuxtConfig({
       traePacientes: 'api/v1/traePacientes',
       traeKardex: 'api/v1/traeKardex',
       traeProfesionales: 'api/v1/traeProfesionales',
+      kardex: 'api/v1/kardex',
     }
   },
   app: {
     head: {
-      script: [
-        {
-          async: true,
-          src: "https://unpkg.com/@material-tailwind/html/scripts/ripple.js",
-        },
-      ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/cruz.png' }
-      ]
-    },
-  },
-  css: ['~/assets/css/main.css'],
-  modules: [
-    '@pinia/nuxt',
-    '@nuxtjs/color-mode',
-  ],
-  colorMode: {
-    preference: 'system', // usa el tema del sistema por defecto
-    classSuffix: ''         // evita el sufijo "-mode"
-  },
-  vite: {
-    plugins: [
-      tailwindcss(),
-    ],
-  },
-  postcss: {
-    plugins: {
-      '@tailwindcss/postcss': {},
-      autoprefixer: {},
+      link: [ { rel: 'icon', type: 'image/x-icon', href: '/cruz.png' } ]
     },
   },
 });
