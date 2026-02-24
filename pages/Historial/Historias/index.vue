@@ -38,6 +38,8 @@ const diagnosticosCIF = ref([])
 const trabajosSocial = ref([])
 const id_paciente = ref(0)
 const medicos = ref([])
+const kardex = ref({})
+const historialCambioSonda = ref([])
 
 const show = ref(false);
 const showItem = ref(false)
@@ -166,6 +168,8 @@ watch(() => showItem.value,
 // Cargar los pacientes desde el store
 onMounted(async () => {
     medicos.value = await medicosStore.listMedicos();
+    await apiRest.getData('Kardex', 'kardex')
+    await apiRest.getData('Historial_cambio_sonda', 'historialCambioSonda')
     await llamadatos()
     varView.datosActualizados()
 });
@@ -194,6 +198,7 @@ async function cargaHistorial(id) {
         diagnosticos.value = [];
         trabajosSocial.value = [];
         diagnosticosCIF.value = [];
+        kardex.value = {};
 
         // Historia clínica
         const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id');
@@ -277,7 +282,9 @@ async function cargaHistorial(id) {
             diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat();
             diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat();
         }
-
+        console.log(id)
+        kardex.value = await historiasStore.listDatos(parseInt(id), 'Kardex', 'id_paciente');
+        historialCambioSonda.value = await historiasStore.listDatos(kardex.value[0].id, 'Historial_cambio_sonda', 'id_kardex');
 
         // 🔹 Ordenamientos
         notas.value.sort((a, b) => new Date(b.fecha_nota) - new Date(a.fecha_nota));
@@ -376,6 +383,7 @@ const tratamientosCard = new CardBuilder()
 const medicacionCard = new CardBuilder()
 const nutricionCard = new CardBuilder()
 const trabajoSocialCard = new CardBuilder()
+const KardexInfo = new CardBuilder()
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
@@ -444,6 +452,7 @@ const propiedades = computed(() => {
     const tablaNutricion = new TablaBuilder()
     const tablaTrabajoSocial = new TablaBuilder()
     const tablaDiagnosticos = new TablaBuilder()
+    const tablaKardex = new TablaBuilder()
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
@@ -521,7 +530,7 @@ const propiedades = computed(() => {
                 .setContenedor('')
                 .setheaderSubTitle('')
                 .setcontenedorCards('w-full flex justify-center w-full ')
-                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-100)]! cursor-pointer text-white! w-[100%]!')
+                .setTamaño('flex flex-row justify-between items-center shadow-md rounded-lg bg-[var(--color-default-300)]! hover:bg-[var(--color-default-100)]! cursor-pointer text-white! w-[100%]!')
                 .build()
                 : consultasCard
                     .setCards([
@@ -539,7 +548,7 @@ const propiedades = computed(() => {
                     .setContenedor('')
                     .setheaderSubTitle('')
                     .setcontenedorCards('w-full flex justify-center w-full ')
-                    .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
+                    .setTamaño('flex flex-row justify-between items-center rounded-lg shadow-md bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
                     .build()
             )
             .addComponente('Card', puedeVerDiagnosticos ? diagnosticosCard
@@ -787,12 +796,30 @@ const propiedades = computed(() => {
                     .setTamaño('flex flex-row justify-between items-center rounded-lg bg-gray-600! hover:bg-gray-700! cursor-not-allowed text-white! w-[100%]!')
                     .build()
             )
+            .addComponente('Card', KardexInfo
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-crutch' + (kardex.value[0]?.ultimoCambio ? ' text-white' : ' text-gray-300'),
+                            iconBg: 'bg-inherit',
+                            title: 'Kardex',
+                            subtitle: `Ultimo cambio de sonda: ${kardex.value[0]?.ultimoCambio ? kardex.value[0].ultimoCambio : 'No hay cambio de sonda'} - ${kardex.value[0]?.rango ? kardex.value[0].rango : 'No hay rango'}`,
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('col-span-2 mt-5')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-gray-500)]! hover:bg-[var(--color-gray-500)]! cursor-pointer text-white! w-[100%]!')
+                .build()
+            )
 
             // consultas
             .nuevaSeccion('Consultas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaConsultas
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
                     { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
@@ -844,7 +871,7 @@ const propiedades = computed(() => {
             .nuevaSeccion('diagnosticos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaDiagnosticos
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160 },
                     { titulo: 'descripcion', value: 'Descripcion', tamaño: 280, ordenar: true },
@@ -872,7 +899,7 @@ const propiedades = computed(() => {
             .nuevaSeccion('evoluciones', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaEvoluciones
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Sericio', tamaño: 160, ordenar: true },
                     { titulo: 'sesion', value: 'Sesión', tamaño: 60, },
@@ -917,7 +944,7 @@ const propiedades = computed(() => {
             .nuevaSeccion('notas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaNotas
                 .setColumnas([
-                    { titulo: 'fecha_nota', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha_nota', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'servicio', tamaño: 160, ordenar: true },
                     { titulo: 'direccion', value: 'Direccion', tamaño: 100 },
@@ -991,12 +1018,11 @@ const propiedades = computed(() => {
             .nuevaSeccion('medicinas', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaMedicacion
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160 },
                     { titulo: 'medicamento', value: 'Medicamento', tamaño: 200, ordenar: true },
                     { titulo: 'dosis', value: 'Dosis', tamaño: 200, },
-                    { titulo: 'cantidad', value: 'Cantidad', tamaño: 100 },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 250 },
                 ])
                 .setDatos(puedeVerMedicacion ? medicinas : [])
@@ -1028,11 +1054,11 @@ const propiedades = computed(() => {
             .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaNutricion
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
-                    { titulo: 'analisis', value: 'Analisis', tamaño: 250, },
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
+                    { titulo: 'analisis', value: 'Analisis', tamaño: 220, },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 220, },
                 ])
                 .setDatos(puedeVerEvoluciones ? nutricion : [])
                 .setAcciones({
@@ -1073,11 +1099,11 @@ const propiedades = computed(() => {
             .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaTrabajoSocial
                 .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'profesional', value: 'Profesional', tamaño: 200, ordenar: true },
                     { titulo: 'nombreServicio', value: 'Servicio', tamaño: 160, ordenar: true },
-                    { titulo: 'analisis', value: 'Analisis', tamaño: 250, },
-                    { titulo: 'motivo', value: 'Motivo', tamaño: 250, },
+                    { titulo: 'analisis', value: 'Analisis', tamaño: 220, },
+                    { titulo: 'motivo', value: 'Motivo', tamaño: 220, },
                 ])
                 .setDatos(puedeVerTrabajo ? trabajosSocial : [])
                 .setAcciones({
@@ -1113,6 +1139,25 @@ const propiedades = computed(() => {
                 })
             )
             .addComponente('Form', propiedadesItemHistoria)
+
+            // kardex
+            .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
+            .addComponente('Tabla', tablaKardex
+                .setColumnas([
+                    { titulo: 'fecha_cambio', value: 'Fecha', tamaño: 110, ordenar: true },
+                    { titulo: 'tipo_sonda', value: 'Tipo de sonda', tamaño: 200, ordenar: true },
+                    { titulo: 'observacion', value: 'Observación', tamaño: 160, ordenar: true },
+                ])
+                .setDatos(historialCambioSonda)
+                .setHeaderTabla({
+                    titulo: 'Historial de cambios de sonda',
+                    color: 'bg-[var(--color-default-600)] text-white',
+                    filtros: [
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                    ],
+                })
+            )
 
 
         )

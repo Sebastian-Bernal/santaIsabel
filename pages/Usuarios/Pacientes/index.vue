@@ -267,16 +267,140 @@ const propiedades = computed(() => {
             { titulo: "diagnostico", value: "Diagnostico", tamaño: 160 },
             // { titulo: "correo", value: "Correo", tamaño: 100 },
             // { titulo: "fecha", value: "Fecha Inicio", tamaño: 100 },
-            { titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, },
-            { titulo: "kit_cambioSonda", value: "Kit sonda", tamaño: 180, },
-            { titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, },
-            { titulo: "traqueo", value: "Traqueo", tamaño: 180, },
-            { titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, },
-            { titulo: "oxigeno", value: "Oxigeno", tamaño: 180, },
-            { titulo: "vm", value: "VM", tamaño: 180, },
-            { titulo: "estado", value: "Estado", tamaño: 180, },
-            { titulo: "cuidadores", value: "Cuidadores", tamaño: 180, },
-            { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, },
+            { titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            { titulo: "rango", value: "C/ cuanto", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'Cada 4 horas',
+                    value: 'Cada 4 horas',
+                },
+                {
+                    text: 'Cada 6 horas',
+                    value: 'Cada 6 horas',
+                },
+                {
+                    text: 'Cada 8 horas',
+                    value: 'Cada 8 horas',
+                },
+                {
+                    text: 'Cada 12 horas',
+                    value: 'Cada 12 horas',
+                },
+                {
+                    text: 'No requiere',
+                    value: 'No requiere',
+                },
+            ] },
+            { titulo: "kit_cambioSonda", value: "Cambio de sonda", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ] },
+            { titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            { titulo: "traqueo", value: "Traqueo", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            { titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            { titulo: "oxigeno", value: "Oxigeno", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            { titulo: "estado", value: "Estado", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'ACTIVO',
+                    value: 'ACTIVO',
+                },
+                {
+                    text: 'FALLECIDO',
+                    value: 'FALLECIDO',
+                },
+                {
+                    text: 'CAMBIO DE PRESTADOR',
+                    value: 'CAMBIO DE PRESTADOR',
+                },
+                {
+                    text: 'RETIRADO',
+                    value: 'RETIRADO',
+                },
+                {
+                    text: 'EGRESO',
+                    value: 'EGRESO',
+                },
+                {
+                    text: 'SUSPENDIDO',
+                    value: 'SUSPENDIDO',
+                },
+                {
+                    text: 'CANCELADO',
+                    value: 'CANCELADO',
+                },
+            ]},
+            { titulo: "vm", value: "VM", tamaño: 180, campo: 'select', options: [
+                {
+                    text: 'SI',
+                    value: 1,
+                },
+                {
+                    text: 'NO',
+                    value: 0,
+                },
+            ]},
+            // { titulo: "cuidadores", value: "Cuidadores", tamaño: 180, campo: 'select', options: [
+            //     {
+            //         text: 'SI',
+            //         value: true,
+            //     },
+            //     {
+            //         text: 'NO',
+            //         value: false,
+            //     },
+            // ]},
+            { titulo: "ultimoCambio", value: "Ultimo cambio de sonda", tamaño: 180, campo:'input', type: 'date'},
+            { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, campo:'input', type: 'date'},
             // { titulo: "mes", value: "Mes", tamaño: 180, },
             { titulo: "terapia_respiratoria", value: "TR", tamaño: 180, },
             { titulo: "terapeuta_respiratoria", value: "Terapeuta Respiratoria", tamaño: 180, },
@@ -294,24 +418,24 @@ const propiedades = computed(() => {
             { titulo: "trabajo_social", value: "T social", tamaño: 180, },
             { titulo: "profesional_trabajo_social", value: "Control T social", tamaño: 180, },
             { titulo: "guia_espiritual", value: "Guia Espiritual", tamaño: 180, },
-            { titulo: "complejidad", value: "Complejidad", tamaño: 180, },
-            { titulo: "tipoHerida", value: "Tipo de Herida", tamaño: 180, },
-            { titulo: "profesionalTEO", value: "Profesional TEO", tamaño: 180, },
-            { titulo: "observacionTeo", value: "Observacion TEO", tamaño: 180, },
-            { titulo: "enfermeriaJefe", value: "Enfermeria Jefe", tamaño: 180, },
-            { titulo: "internista", value: "Medico Internista", tamaño: 180, },
-            { titulo: "control", value: "Control M/ Internista", tamaño: 180, },
-            { titulo: "fisiatra", value: "Medico Fisiatra", tamaño: 180, },
-            { titulo: "fisiatria", value: "Control de Fisitria", tamaño: 180, },
-            { titulo: "familiar", value: "Medicina Familiar", tamaño: 180, },
-            { titulo: "controlFamiliar", value: "Control Medicina Familiar", tamaño: 180, },
-            { titulo: "enfermeria", value: "Auxiliar de Enfermeria", tamaño: 180, },
-            { titulo: "admon", value: "ADMON MTOS", tamaño: 180, },
-            { titulo: "laboratorio", value: "Orden de laboratorio", tamaño: 180, },
-            { titulo: "resultado", value: "Fecha de resultado", tamaño: 180, },
-            { titulo: "pagor", value: "Pago como rural", tamaño: 180, },
-            { titulo: "llama", value: "Fecha de la llamada y hora", tamaño: 180, },
-            { titulo: "observacion", value: "Observacion", tamaño: 180, },
+            // { titulo: "complejidad", value: "Complejidad", tamaño: 180, },
+            // { titulo: "tipoHerida", value: "Tipo de Herida", tamaño: 180, },
+            // { titulo: "profesionalTEO", value: "Profesional TEO", tamaño: 180, },
+            // { titulo: "observacionTeo", value: "Observacion TEO", tamaño: 180, },
+            // { titulo: "enfermeriaJefe", value: "Enfermeria Jefe", tamaño: 180, },
+            // { titulo: "internista", value: "Medico Internista", tamaño: 180, },
+            // { titulo: "control", value: "Control M/ Internista", tamaño: 180, },
+            // { titulo: "fisiatra", value: "Medico Fisiatra", tamaño: 180, },
+            // { titulo: "fisiatria", value: "Control de Fisitria", tamaño: 180, },
+            // { titulo: "familiar", value: "Medicina Familiar", tamaño: 180, },
+            // { titulo: "controlFamiliar", value: "Control Medicina Familiar", tamaño: 180, },
+            // { titulo: "enfermeria", value: "Auxiliar de Enfermeria", tamaño: 180, },
+            // { titulo: "admon", value: "ADMON MTOS", tamaño: 180, },
+            // { titulo: "laboratorio", value: "Orden de laboratorio", tamaño: 180, },
+            // { titulo: "resultado", value: "Fecha de resultado", tamaño: 180, },
+            // { titulo: "pagor", value: "Pago como rural", tamaño: 180, },
+            // { titulo: "llama", value: "Fecha de la llamada y hora", tamaño: 180, },
+            // { titulo: "observacion", value: "Observacion", tamaño: 180, },
         ])
         .setHeaderTabla({
             titulo: "Kardex Cronicos",
@@ -332,7 +456,14 @@ const propiedades = computed(() => {
                 console.log(fila)
                     try {
                         await validarYEnviarKardex(fila);
-                        console.log('Kardex actualizado correctamente');
+                        notificaciones.options = {
+                            tipo: 'success',
+                            background: '#22c55e',
+                            texto: 'Kardex actualizado correctamente',
+                            tiempo: 3000,
+                            position: 'top-right',
+                        }
+                        notificaciones.mensaje()
                     } catch (error) {
                     }
             }

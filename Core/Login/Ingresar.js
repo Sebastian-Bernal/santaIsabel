@@ -52,7 +52,13 @@ const enviarFormulario = async (datos) => {
                 });
                 actualizarProgreso(100, 'completado')
                 const ultimaSeccion = localStorage.getItem('seccion')
-                window.location.href = ultimaSeccion || respuesta.user.rol === 'Profesional' ? '/Usuarios/Citas' : '/Home'
+                // window.location.href = ultimaSeccion || respuesta.user.rol === 'Profesional' ? '/Usuarios/Citas' : '/Home'
+                await navigateTo(
+                    ultimaSeccion ||
+                    (respuesta.user.rol === 'Profesional'
+                        ? '/Usuarios/Citas'
+                        : '/Home')
+                )
                 notificacionesStore.close()
                 return true
             } else {

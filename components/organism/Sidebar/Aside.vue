@@ -79,7 +79,7 @@ function accesoRapidoSelected(nombre) {
     <div class="section-asidebar" :class="{ 'expandido': varView.expandido }">
         <div class="asidebar-shadow flex items-center h-full">
             <div class="section-asidebar__content w-full flex flex-col p-[5px] items-center rounded-r-lg dark:bg-[var(--color-default-claro)] bg-[var(--color-default-700)] shadow-lg"
-                :class="{ 'h-full': varView.expandido, 'h-[75%] clip': !varView.expandido }"">
+                :class="{ 'h-full': varView.expandido, 'h-[75%] clip': !varView.expandido }">
 
             <!-- Estado colapsado -->
             <div v-if="!varView.expandido"

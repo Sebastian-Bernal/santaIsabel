@@ -1,23 +1,29 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = import.meta.env.NUXT_SECRET_KEY || "clave_fallback_123";
-
 export function encryptData(data) {
-  try {
-    return CryptoJS.AES.encrypt(JSON.stringify(data), SECRET_KEY).toString();
-  } catch (error) {
-    console.error("Error encriptando:", error);
-    return null;
-  }
+  const config = useRuntimeConfig()
+  const key = config.public.SECRET_KEY
+
+  return CryptoJS.AES.encrypt(
+    JSON.stringify(data),
+    key
+  ).toString()
 }
 
 export function decryptData(ciphertext) {
+  if (!ciphertext) return null;
+
   try {
-    const bytes = CryptoJS.AES.decrypt(ciphertext, SECRET_KEY);
+    const config = useRuntimeConfig()
+    const key = config.public.SECRET_KEY
+
+    const bytes = CryptoJS.AES.decrypt(ciphertext, key);
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+    if (!decrypted || decrypted.length < 2) return null;
+
     return JSON.parse(decrypted);
-  } catch (error) {
-    console.error("Error desencriptando:", error);
+  } catch {
     return null;
   }
 }

@@ -191,6 +191,10 @@ async function guardarCambios() {
 
 }
 
+const campos = {
+    input: Input,
+    select: Select,
+}
 
 </script>
 
@@ -442,13 +446,18 @@ async function guardarCambios() {
                                     {{ fila[col.titulo] }}
 
                                 </span>
+                                <!-- <component v-if="!estaEditando(id, col.titulo)" :is="campos[col.campo]" v-model="fila[col.titulo]"
+                                    class="block truncate text-gray-800 dark:text-gray-200"
+                                    :Propiedades="{...col, placeholder: 'Editar dato...', estilo: 'bg-transparent border-none! outline-none rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }"
+                                /> -->
 
-                                <!-- INPUT SOLO EN EDICION -->
-                                <input v-else ref="inputEditable" v-model="fila[col.titulo]"
+                                <!-- INPUT O SELECT SOLO EN EDICION -->
+                                <component v-else :is="campos[col.campo]" ref="inputEditable" v-model="fila[col.titulo]"
                                     @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
                                     @keydown.enter="celdaActiva = { fila: null, columna: null }"
                                     class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 hover:dark:bg-[var(--color-default-oscuro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
-                                    type="text" />
+                                    :Propiedades="{...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }"
+                                />
                             </div>
 
                             <p v-else class="w-full truncate py-2 px-2"

@@ -204,36 +204,42 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 return;
             }
 
+            datos.Nota.objetivo = datos.Nota.objetivo.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.objetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Objetivo incompleto.`);
                 }
             });
 
+            datos.Nota.subjetivo = datos.Nota.subjetivo.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.subjetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Subjetivo incompleto.`);
                 }
             });
 
+            datos.Nota.actividades = datos.Nota.actividades.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.actividades.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Actividades incompleto.`);
                 }
             });
 
+            datos.Nota.plan = datos.Nota.plan.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.plan.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Plan incompleto.`);
                 }
             });
 
+            datos.Nota.intervencion = datos.Nota.intervencion.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.intervencion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Intervencion incompleto.`);
                 }
             });
 
+            datos.Nota.evaluacion = datos.Nota.evaluacion.filter(d => !Object.values(d).every(v => v === '' || v == null)),
             datos.Nota.evaluacion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Evaluacion incompleto.`);
@@ -241,7 +247,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null)),
-
             datos.Diagnosticos.forEach((d, i) => {
                 if (!d.descripcion || !d.codigo) {
                     errores.push(`Diagnóstico ${i + 1} incompleto.`);

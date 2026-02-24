@@ -95,6 +95,12 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
                     const movimiento = db.createObjectStore('Movimiento', { keyPath: 'id', autoIncrement: true });
                     movimiento.createIndex("buscaMovimiento", "id", { unique: false });
+
+                    const kardex = db.createObjectStore('Kardex', { keyPath: 'id' });
+                    kardex.createIndex("buscaKardex", "id", { unique: false });
+
+                    const historialCambioSonda = db.createObjectStore('Historial_cambio_sonda', { keyPath: 'id',});
+                    historialCambioSonda.createIndex("buscaHistorialCambioSonda", "id", { unique: false });
                 }
 
                 request.onerror = (event) => {

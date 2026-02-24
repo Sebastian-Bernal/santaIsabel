@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
+      SECRET_KEY: 'THESALUS943875PL',
       api: 'https://api.ctsantaisabel.com',
       // api: 'http://127.0.0.1:8000',
       login: 'api/v1/login',
@@ -67,8 +68,10 @@ export default defineNuxtConfig({
       traeKardex: 'api/v1/traeKardex',
       traeProfesionales: 'api/v1/traeProfesionales',
       kardex: 'api/v1/kardex',
+      historialCambioSonda: 'api/v1/historialCambioSonda',
     }
   },
+
   app: {
     head: {
       link: [ { rel: 'icon', type: 'image/x-icon', href: '/cruz.png' } ]
