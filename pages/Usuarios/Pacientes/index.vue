@@ -40,6 +40,12 @@ const {
     municipiosOptions
 } = useUsuarioValidaciones(pacientesStore.Formulario);
 
+const {
+    options,
+    mensaje,
+    alertRespuestaInput
+} = useNotificacionesStore();
+
 async function llamadatos() {
     pacientes.value = await pacientesStore.listPacientes(true);
     varView.datosActualizados()
@@ -98,7 +104,6 @@ onMounted(async () => {
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
-    console.log(kardex.value)
 });
 
 function showKardex() {
@@ -152,6 +157,8 @@ const propiedades = computed(() => {
     const puedePost = varView.getPermisos.includes('Pacientes_post');
     const puedePut = varView.getPermisos.includes('Pacientes_put');
     const puedediagnosticar = varView.getPermisos.includes('Diagnosticos_view');
+    const puedeVerKardex = varView.getPermisos.includes('Kardex_view');
+    const puedePutKardex = varView.getPermisos.includes('Kardex_put');
 
     // Formulario para crear paciente
     const propiedadesUser = puedePost
@@ -240,12 +247,14 @@ const propiedades = computed(() => {
         // acciones.push({ icon: "download", action: exportarPDF });
     }
 
-    if(puedediagnosticar) {
-        acciones.push({ icon: "agregar", action: (fila) => {
-            showItem.value = true
-            varView.tipoHistoria = 'Medicamento'
-            pacientesStore.PacienteSeleccionado = fila.id_paciente
-        } });
+    if (puedediagnosticar) {
+        acciones.push({
+            icon: "agregar", action: (fila) => {
+                showItem.value = true
+                varView.tipoHistoria = 'Medicamento'
+                pacientesStore.PacienteSeleccionado = fila.id_paciente
+            }
+        });
     }
 
     if (acciones.length > 0) {
@@ -257,138 +266,156 @@ const propiedades = computed(() => {
             { titulo: "No_document", value: "DOCUMENTO", tamaño: 120, ordenar: true, pinned: true },
             { titulo: "name", value: "NOMBRE", tamaño: 200, ordenar: true, pinned: true },
             { titulo: "Eps", value: "EPS", tamaño: 200, ordenar: true, pinned: true },
-            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100 },
-            { titulo: "celular", value: "N. Tel", tamaño: 150 },
-            { titulo: "direccion", value: "DIRECCION", tamaño: 100 },
-            { titulo: "barrio", value: "Barrio", tamaño: 130 },
-            { titulo: "nacimiento", value: "Fecha Nto", tamaño: 100 },
-            { titulo: "municipio", value: "Municipio Atencion", tamaño: 130 },
-            { titulo: "regimen", value: "Regimen", tamaño: 150 },
-            { titulo: "diagnostico", value: "Diagnostico", tamaño: 160 },
+            { titulo: "type_doc", value: "TIPO DOC", tamaño: 100, campo: 'input' },
+            { titulo: "celular", value: "N. Tel", tamaño: 150, campo: 'input'  },
+            { titulo: "direccion", value: "DIRECCION", tamaño: 100, campo: 'input'  },
+            { titulo: "barrio", value: "Barrio", tamaño: 130, campo: 'input'  },
+            { titulo: "nacimiento", value: "Fecha Nto", tamaño: 100, campo: 'input'  },
+            { titulo: "municipio", value: "Municipio Atencion", tamaño: 130, campo: 'input'  },
+            { titulo: "regimen", value: "Regimen", tamaño: 150, campo: 'input'  },
+            { titulo: "diagnostico", value: "Diagnostico", tamaño: 160, campo: 'input'  },
             // { titulo: "correo", value: "Correo", tamaño: 100 },
             // { titulo: "fecha", value: "Fecha Inicio", tamaño: 100 },
-            { titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
-            { titulo: "rango", value: "C/ cuanto", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'Cada 4 horas',
-                    value: 'Cada 4 horas',
-                },
-                {
-                    text: 'Cada 6 horas',
-                    value: 'Cada 6 horas',
-                },
-                {
-                    text: 'Cada 8 horas',
-                    value: 'Cada 8 horas',
-                },
-                {
-                    text: 'Cada 12 horas',
-                    value: 'Cada 12 horas',
-                },
-                {
-                    text: 'No requiere',
-                    value: 'No requiere',
-                },
-            ] },
-            { titulo: "kit_cambioSonda", value: "Cambio de sonda", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ] },
-            { titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
-            { titulo: "traqueo", value: "Traqueo", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
-            { titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
-            { titulo: "oxigeno", value: "Oxigeno", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
-            { titulo: "estado", value: "Estado", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'ACTIVO',
-                    value: 'ACTIVO',
-                },
-                {
-                    text: 'FALLECIDO',
-                    value: 'FALLECIDO',
-                },
-                {
-                    text: 'CAMBIO DE PRESTADOR',
-                    value: 'CAMBIO DE PRESTADOR',
-                },
-                {
-                    text: 'RETIRADO',
-                    value: 'RETIRADO',
-                },
-                {
-                    text: 'EGRESO',
-                    value: 'EGRESO',
-                },
-                {
-                    text: 'SUSPENDIDO',
-                    value: 'SUSPENDIDO',
-                },
-                {
-                    text: 'CANCELADO',
-                    value: 'CANCELADO',
-                },
-            ]},
-            { titulo: "vm", value: "VM", tamaño: 180, campo: 'select', options: [
-                {
-                    text: 'SI',
-                    value: 1,
-                },
-                {
-                    text: 'NO',
-                    value: 0,
-                },
-            ]},
+            {
+                titulo: "kit_cateterismo", value: "Kit Cateterismo", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "rango", value: "C/ cuanto", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'Cada 4 horas',
+                        value: 'Cada 4 horas',
+                    },
+                    {
+                        text: 'Cada 6 horas',
+                        value: 'Cada 6 horas',
+                    },
+                    {
+                        text: 'Cada 8 horas',
+                        value: 'Cada 8 horas',
+                    },
+                    {
+                        text: 'Cada 12 horas',
+                        value: 'Cada 12 horas',
+                    },
+                    {
+                        text: 'No requiere',
+                        value: 'No requiere',
+                    },
+                ]
+            },
+            {
+                titulo: "kit_cambioSonda", value: "Cambio de sonda", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "kit_gastro", value: "Kit gastro", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "traqueo", value: "Traqueo", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "equipos_biomedicos", value: "Equipos Biomedicos", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "oxigeno", value: "Oxigeno", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
+            {
+                titulo: "estado", value: "Estado", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'ACTIVO',
+                        value: 'ACTIVO',
+                    },
+                    {
+                        text: 'FALLECIDO',
+                        value: 'FALLECIDO',
+                    },
+                    {
+                        text: 'CAMBIO DE PRESTADOR',
+                        value: 'CAMBIO DE PRESTADOR',
+                    },
+                    {
+                        text: 'RETIRADO',
+                        value: 'RETIRADO',
+                    },
+                    {
+                        text: 'EGRESO',
+                        value: 'EGRESO',
+                    },
+                    {
+                        text: 'SUSPENDIDO',
+                        value: 'SUSPENDIDO',
+                    },
+                    {
+                        text: 'CANCELADO',
+                        value: 'CANCELADO',
+                    },
+                ]
+            },
+            {
+                titulo: "vm", value: "VM", tamaño: 180, campo: 'select', options: [
+                    {
+                        text: 'SI',
+                        value: 1,
+                    },
+                    {
+                        text: 'NO',
+                        value: 0,
+                    },
+                ]
+            },
             // { titulo: "cuidadores", value: "Cuidadores", tamaño: 180, campo: 'select', options: [
             //     {
             //         text: 'SI',
@@ -399,25 +426,25 @@ const propiedades = computed(() => {
             //         value: false,
             //     },
             // ]},
-            { titulo: "ultimoCambio", value: "Ultimo cambio de sonda", tamaño: 180, campo:'input', type: 'date'},
-            { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, campo:'input', type: 'date'},
+            { titulo: "ultimoCambio", value: "Ultimo cambio de sonda", tamaño: 180, campo: 'input', type: 'date' },
+            { titulo: "fecha_ultima_visita", value: "Fecha ultima visita medica", tamaño: 180, campo: 'input', },
             // { titulo: "mes", value: "Mes", tamaño: 180, },
-            { titulo: "terapia_respiratoria", value: "TR", tamaño: 180, },
-            { titulo: "terapeuta_respiratoria", value: "Terapeuta Respiratoria", tamaño: 180, },
-            { titulo: "terapia_fisica", value: "TF", tamaño: 180, },
-            { titulo: "terapeuta_fisica", value: "Terapeuta Fisico", tamaño: 180, },
-            { titulo: "terapia_fonoaudiologia", value: "TFO", tamaño: 180, },
-            { titulo: "terapeuta_fonoaudiologia", value: "Terapeuta Fonoaudiologia", tamaño: 180, },
-            { titulo: "terapia_ocupacional", value: "TO", tamaño: 180, },
-            { titulo: "terapeuta_ocupacional", value: "Terapeuta Ocupacional", tamaño: 180, },
-            { titulo: "TEO_cantidad", value: "TEO Cantidad", tamaño: 180, },
-            { titulo: "profesional_nutricionista", value: "Nutricionista", tamaño: 180, },
-            { titulo: "nutricionista", value: "Control Nutricion", tamaño: 180, },
-            { titulo: "VPSico", value: "VPSico", tamaño: 180, },
-            { titulo: "psicologia", value: "Control Psicologia", tamaño: 180, },
-            { titulo: "trabajo_social", value: "T social", tamaño: 180, },
-            { titulo: "profesional_trabajo_social", value: "Control T social", tamaño: 180, },
-            { titulo: "guia_espiritual", value: "Guia Espiritual", tamaño: 180, },
+            { titulo: "terapia_respiratoria", value: "TR", tamaño: 180, campo: 'input',  },
+            { titulo: "terapeuta_respiratoria", value: "Terapeuta Respiratoria", tamaño: 180, campo: 'input',  },
+            { titulo: "terapia_fisica", value: "TF", tamaño: 180, campo: 'input',  },
+            { titulo: "terapeuta_fisica", value: "Terapeuta Fisico", tamaño: 180, campo: 'input', },
+            { titulo: "terapia_fonoaudiologia", value: "TFO", tamaño: 180, campo: 'input', },
+            { titulo: "terapeuta_fonoaudiologia", value: "Terapeuta Fonoaudiologia", tamaño: 180, campo: 'input', },
+            { titulo: "terapia_ocupacional", value: "TO", tamaño: 180, campo: 'input', },
+            { titulo: "terapeuta_ocupacional", value: "Terapeuta Ocupacional", tamaño: 180, campo: 'input', },
+            { titulo: "TEO_cantidad", value: "TEO Cantidad", tamaño: 180, campo: 'input', },
+            { titulo: "profesional_nutricionista", value: "Nutricionista", tamaño: 180, campo: 'input', },
+            { titulo: "nutricionista", value: "Control Nutricion", tamaño: 180, campo: 'input', },
+            { titulo: "VPSico", value: "VPSico", tamaño: 180, campo: 'input', },
+            { titulo: "psicologia", value: "Control Psicologia", tamaño: 180, campo: 'input', },
+            { titulo: "trabajo_social", value: "T social", tamaño: 180, campo: 'input', },
+            { titulo: "profesional_trabajo_social", value: "Control T social", tamaño: 180, campo: 'input', },
+            { titulo: "guia_espiritual", value: "Guia Espiritual", tamaño: 180, campo: 'input', },
             // { titulo: "complejidad", value: "Complejidad", tamaño: 180, },
             // { titulo: "tipoHerida", value: "Tipo de Herida", tamaño: 180, },
             // { titulo: "profesionalTEO", value: "Profesional TEO", tamaño: 180, },
@@ -451,21 +478,45 @@ const propiedades = computed(() => {
         .setDatos(kardex)
         .setConfiguracion({
             tipo: 'pinned',
-            camposEditables: true,
+            camposEditables: !puedePutKardex,
+            camposInputs: true,
             onUpdate: async (fila) => {
-                console.log(fila)
-                    try {
-                        await validarYEnviarKardex(fila);
-                        notificaciones.options = {
-                            tipo: 'success',
-                            background: '#22c55e',
-                            texto: 'Kardex actualizado correctamente',
-                            tiempo: 3000,
-                            position: 'top-right',
-                        }
-                        notificaciones.mensaje()
-                    } catch (error) {
+                if (fila.ultimoCambio) {
+                    options.icono = 'warning'
+                    options.titulo = 'Agrega detalles del cambio de sonda'
+                    options.html = `<div class="flex flex-col items-start">`
+                    options.input = 'text'
+                    options.inputAtributes = { placeholder: 'Observaciones de cambio de sonda' }
+                    options.confirmtext = 'Si, Guardar'
+                    options.canceltext = 'Atras'
+
+                    const respuesta = await alertRespuestaInput()
+
+                    if (respuesta.estado !== 'confirmado') return
+
+                    if (!respuesta.valor) {
+                        options.position = 'top-end'
+                        options.texto = 'Ingrese una observación de cambio de sonda.'
+                        options.background = '#d33'
+                        options.tiempo = 1500
+                        mensaje()
+                        return
                     }
+
+                    fila.observacion = respuesta.valor
+                }
+                try {
+                    await validarYEnviarKardex(fila);
+                    notificaciones.options = {
+                        tipo: 'success',
+                        background: '#22c55e',
+                        texto: 'Kardex actualizado correctamente',
+                        tiempo: 3000,
+                        position: 'top-right',
+                    }
+                    notificaciones.mensaje()
+                } catch (error) {
+                }
             }
         });
 
@@ -475,29 +526,29 @@ const propiedades = computed(() => {
         .setEstilos("")
         .setLayout("")
         .setContenedor("w-full")
-    if (varView.getRol === 'Admin') {
+    if (puedeVerKardex) {
         pagina
         if (varView.pacienteKardex) {
             pagina
-            .setHeaderPage({
-                titulo: 'Gestión información de pacientes',
-                button: [
-                    { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showKardex },
-                ]
-            })
-            .addComponente("Tabla", builderTablaKardex)
-            
+                .setHeaderPage({
+                    titulo: 'Gestión información de pacientes',
+                    button: [
+                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showKardex },
+                    ]
+                })
+                .addComponente("Tabla", builderTablaKardex)
+
         } else {
             pagina
-            .setHeaderPage({
-                titulo: 'Gestión información de pacientes',
-                button: [
-                    { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-gray-500', action: showKardex },
-                ]
-            })
-            
-            .addComponente("Tabla", builderTabla)
-            .addComponente("Tabla", builderTablaKardex)
+                .setHeaderPage({
+                    titulo: 'Gestión información de pacientes',
+                    button: [
+                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-gray-500', action: showKardex },
+                    ]
+                })
+
+                .addComponente("Tabla", builderTabla)
+                .addComponente("Tabla", builderTablaKardex)
         }
     }
     else {

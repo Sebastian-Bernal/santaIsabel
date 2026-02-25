@@ -433,7 +433,7 @@ export function useVerHistoriaBuilder({
                 text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Recomendaciones'
             })
             .addCampo({
-                component: 'Input',
+                component: 'Textarea',
                 vmodel: 'Analisis.analisis',
                 id: 'observacion',
                 name: 'observacion',
@@ -555,8 +555,34 @@ export function useVerHistoriaBuilder({
                 text: '<i class="fa-solid fa-clock text-red-300 mr-1"></i>Recomendaciones'
             })
             .addCampo({
-                component: 'Input',
+                component: 'Textarea',
                 vmodel: 'Analisis.analisis',
+                id: 'observacion',
+                name: 'observacion',
+                tamaño: 'w-full md:col-span-2'
+            })
+    }
+    else if (formularioItem.value === 'Historial_cambios_sonda') {
+        builder
+            .nuevaSeccion('Historial cambios sonda')
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fecha_cambio',
+                size: 'text-sm',
+                tamaño: 'w-full md:col-span-2',
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Registro'
+            })
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Historial_cambios_sonda.fecha_cambio',
+                id: 'fecha_cambio',
+                name: 'fecha_cambio',
+                placeholder: 'Describa la fecha de cambio...',
+                tamaño: 'w-full md:col-span-2'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Historial_cambios_sonda.observacion',
                 id: 'observacion',
                 name: 'observacion',
                 tamaño: 'w-full md:col-span-2'

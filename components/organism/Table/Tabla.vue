@@ -69,14 +69,6 @@ const mostrarAcciones = (id) => {
     btnAcciones.value = btnAcciones.value === id ? null : id;
 };
 
-onMounted(() => {
-    // timepoCArgando
-    setTimeout(() => {
-        tiempoLoading.value = false
-    }, 10000)
-
-})
-
 // Al buscar cambia a primera pagina
 watch(busqueda, (nuevoValor, anteriorValor) => {
     if (nuevoValor !== anteriorValor) {
@@ -94,6 +86,58 @@ function getAccionesVisibles(fila) {
         return tipo !== undefined && tipo !== null && tipo !== '';
     });
 }
+
+const datosCargados = computed(() =>
+    props.Propiedades?.datos.content !== undefined
+)
+
+const cargaFinalizada = computed(() =>
+    datosCargados.value && !tiempoLoading.value
+)
+
+const hayBusquedaOFiltros = computed(() => {
+
+    return (
+        busqueda.value !== '' ||
+        Object.values(filtros.value).some(v => v !== '')
+    )
+
+})
+
+const mostrarSinResultados = computed(() => {
+
+    return (
+        cargaFinalizada.value &&
+        datosPaginados.value.length === 0
+    )
+
+})
+
+watch(
+    () => props.Propiedades?.datos.content,
+    (nuevoValor) => {
+
+        if (nuevoValor !== undefined) {
+
+            setTimeout(() => {
+                tiempoLoading.value = false
+            }, 1000)
+
+        } else {
+
+            tiempoLoading.value = true
+        }
+    },
+    { immediate: true }
+)
+
+const mostrarSkeleton = computed(() => {
+    return (
+        !datosCargados.value ||
+        (datosCargados.value && tiempoLoading.value)
+    )
+
+})
 
 
 // Scroll del header calculado por columnas scrolleables
@@ -160,15 +204,41 @@ const celdaActiva = ref({
     fila: null,
     columna: null
 })
+
+const pintarCeldas = ref(false)
+const celdasPintadas = ref([]);
+const colorPicker = ref(null)
+
 const filasCambiadas = ref(new Set());
 const actualizarCambios = ref(false);
+
+const pintarCelda = (fila, columna, color) => {
+  const index = celdasPintadas.value.findIndex(
+    c => c.fila === fila && c.columna === columna
+  );
+  if (index !== -1) {
+    // actualizar color
+    celdasPintadas.value[index].color = color;
+  } else {
+    // agregar nueva celda
+    celdasPintadas.value.push({ fila, columna, color });
+  }
+};
+
+
+const obtenerColorCelda = (fila, columna) => {
+  const celda = celdasPintadas.value.find(
+    c => c.fila === fila && c.columna === columna
+  );
+  return celda ? celda.color : 'transparent';
+};
+
 
 const estaEditando = (f, c) =>
     celdaActiva.value.fila === f &&
     celdaActiva.value.columna === c
 
 function actualizarFila(id) {
-
     // marcar la fila como cambiada
     actualizarCambios.value = true;
     filasCambiadas.value.add(id);
@@ -303,319 +373,328 @@ const campos = {
                     estilo: 'bg-white dark:bg-gray-900'
                 }" v-model="busqueda" />
 
-            <div class="flex flex-wrap justify-end gap-3">
-                <Select v-for="(filtro, key) in filtrosConOpciones.slice(0, 3)" :key="key" :Propiedades="{
+                <div class="flex flex-wrap justify-end gap-3">
+                    <Select v-for="(filtro, key) in filtrosConOpciones.slice(0, 3)" :key="key" :Propiedades="{
+                        placeholder: filtro.placeholder,
+                        label: filtro.placeholder,
+                        modelValue: busqueda,
+                        tamaño: 'md:w-[180px] w-full',
+                        estilo: 'bg-white dark:bg-gray-900',
+                        options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
+                    }" v-model="filtros[filtro.columna]" />
+                </div>
+            </div>
+            <div v-if="mostrarFiltrosAvanzados"
+                class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-end">
+                <Select v-for="(filtro, key) in filtrosConOpciones.slice(3)" :key="key" :Propiedades="{
                     placeholder: filtro.placeholder,
                     label: filtro.placeholder,
                     modelValue: busqueda,
-                    tamaño: 'md:w-[180px] w-full',
+                    tamaño: 'w-full',
                     estilo: 'bg-white dark:bg-gray-900',
                     options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
                 }" v-model="filtros[filtro.columna]" />
             </div>
         </div>
-        <div v-if="mostrarFiltrosAvanzados"
-            class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-end">
-            <Select v-for="(filtro, key) in filtrosConOpciones.slice(3)" :key="key" :Propiedades="{
-                placeholder: filtro.placeholder,
-                label: filtro.placeholder,
-                modelValue: busqueda,
-                tamaño: 'w-full',
-                estilo: 'bg-white dark:bg-gray-900',
-                options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
-            }" v-model="filtros[filtro.columna]" />
-        </div>
-    </div>
-    <Transition name="slide-up">
 
-        <div v-if="actualizarCambios" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-3 rounded-xl shadow-xl bg-yellow-400 dark:bg-gray-800 border border-yellow-500 dark:border-gray-600 animate-fadeIn">
-            <span class="text-sm font-medium">
-                Tienes cambios sin guardar
-            </span>
-            <!-- <ButtonRounded color="w-3! h-3! dark:text-gray-200 dark:bg-red-600! text-gray-700! bg-yellow-400"
-                tooltip="Cancelar" tooltipPosition="top" @click="guardarCambios">
-                <i class="fa-solid fa-close"></i>
-            </ButtonRounded> -->
-            <ButtonRounded color="dark:text-gray-200 dark:bg-red-600 text-gray-700 bg-yellow-400"
-                tooltip="Guardar Cambios" tooltipPosition="top" @click="guardarCambios">
-                <i class="fa-solid fa-floppy-disk"></i>
-            </ButtonRounded>
-        </div>
-
-    </Transition>
-    <!-- Tabla -->
-    <div
-        class="mt-5 shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
-        <div class="w-full" role="table">
-
-            <!-- Header Columnas -->
-            <div class="flex w-max min-w-full relative">
-
-                <!-- COLUMNAS FIJAS -->
-                <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
-                    class="sticky top-0 z-20 grid justify-between text-xs font-bold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-white"
-                    :style="estiloColumnasPinned"
-                    :class="{ 'rounded-lt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }"
-                    role="row">
-
-                    <h2 v-for="(col, key) in columnasPinned" :key="col.titulo" class="flex items-center py-4 px-2"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
-                        {{ col.value }}
-                        <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
-                            color="bg-inherit h-fit " tooltip="Ordenar">
-                            <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
-                                :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
-                        </ButtonRounded>
-                    </h2>
-
-                </div>
-
-                <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
-                <div ref="headerInner"
-                    class="w-full sticky top-0 z-3 grid justify-between text-xs bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 font-bold"
-                    :class="[Propiedades.headerTabla?.color, { 'rounded-rt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }]"
-                    :style="estiloColumnasScrollable" role="row">
-
-                    <h2 v-for="(col, key) in columnasScrollable" :key="col.titulo" class="flex items-center px-2 py-4"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
-                        {{ col.value }}
-                        <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
-                            color="bg-inherit h-fit " tooltip="Ordenar">
-                            <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
-                                :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
-                        </ButtonRounded>
-                    </h2>
-                    <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class" role="cell" class="py-4 pr-2 text-center">Acciones
-                    </h2>
-
-                </div>
+        <Transition name="slide-up">
+            <div v-if="actualizarCambios"
+                class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-4 px-6 py-3 rounded-xl shadow-xl bg-yellow-400 dark:bg-gray-800 border border-yellow-500 dark:border-gray-600 animate-fadeIn">
+                <span class="text-sm font-medium">
+                    Tienes cambios sin guardar
+                </span>
+                <ButtonRounded color="dark:text-gray-200 dark:bg-red-600 text-gray-700 bg-yellow-400"
+                    tooltip="Guardar Cambios" tooltipPosition="top" @click="guardarCambios">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                </ButtonRounded>
             </div>
+        </Transition>
 
-            <!-- Skeleton cuando no hay datos -->
-            <template v-if="!datosPaginados && tiempoLoading || (datosPaginados.length === 0 && busqueda === '' && tiempoLoading) ||
-                (datosPaginados.length === 0 && Object.values(filtros).some(v => v === '') && tiempoLoading)">
-                <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
-                    class="bodyTable justify-between grid text-center animate-pulse"
-                    :style="estiloColumnasScrollable">
-                    <div v-for="(col, key) in columnasVisibles" :key="key"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <div class="h-3 bg-gray-200 rounded w-3/4 my-[15px] mx-2"></div>
-                    </div>
-                    <div v-if="Propiedades.acciones.botones"
-                        class="flex items-center justify-center accionesTabla text-center gap-2"
-                        :class="Propiedades.acciones.class">
-                        <div class="h-3 bg-gray-200 rounded w-1/2 mt-1 my-2"></div>
-                    </div>
-                </div>
-            </template>
+        <!-- Tabla -->
+        <div
+            class="mt-5 shadow-lg dark:shadow-[0_2px_4px_rgba(255,255,255,0.1)] bg-white dark:bg-gray-900 rounded-lg overflow-hidden">
+            <div class="w-full" role="table">
 
-            <!-- Body tabla -->
-            <div ref="bodyScroll" @scroll="syncHeaderScroll" class="overflow-auto max-h-[412px] relative scrollFormT">
-
-                <div v-for="(fila, id) in datosPaginados" role="row"
-                    :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(id) }"
-                    class="bodyTable justify-between flex w-max min-w-full odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700">
-                    <div
-                        class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
-                    </div>
+                <!-- Header Columnas -->
+                <div class="flex w-max min-w-full relative">
 
                     <!-- COLUMNAS FIJAS -->
                     <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
-                        class="sticky left-0 z-20 shadow-[4px_0_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[4px_0_6px_-1px_rgba(255,255,255,0.05)] flex flex-col justify-center backdrop-blur-3xl">
-                        <div class="grid w-full justify-between " :style="estiloColumnasPinned">
-                            <div v-for="col in columnasPinned" :key="col.titulo" :style="{ width: `${col.tamaño}px` }">
-                                <p class="font-medium text-gray-900 dark:text-white truncate p-2 py-2">
-                                    {{ fila[col.titulo] }}
-                                </p>
-                            </div>
-                        </div>
+                        class="sticky top-0 z-20 grid justify-between text-xs font-bold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-white"
+                        :style="estiloColumnasPinned"
+                        :class="{ 'rounded-lt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }"
+                        role="row">
+
+                        <h2 v-for="(col, key) in columnasPinned" :key="col.titulo" class="flex items-center py-4 px-2"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+                            {{ col.value }}
+                            <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
+                                color="bg-inherit h-fit " tooltip="Ordenar">
+                                <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
+                                    :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
+                            </ButtonRounded>
+                        </h2>
+
                     </div>
 
                     <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
-                    <div class="grid w-full justify-between" :style="estiloColumnasScrollable">
-                        <div v-for="(col, key) in columnasScrollable" :key="key"
+                    <div ref="headerInner"
+                        class="w-full sticky top-0 z-3 grid justify-between text-xs bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 font-bold"
+                        :class="[Propiedades.headerTabla?.color, { 'rounded-rt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }]"
+                        :style="estiloColumnasScrollable" role="row">
+
+                        <h2 v-for="(col, key) in columnasScrollable" :key="col.titulo" class="flex items-center px-2 py-4"
                             :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+                            {{ col.value }}
+                            <ButtonRounded id="key" v-if="col.ordenar" @click="sortedItems(col.titulo)"
+                                color="bg-inherit h-fit " tooltip="Ordenar">
+                                <i class="fa-solid fa-sort cursor-pointer text-gray-300 dark:text-gray-300"
+                                    :class="{ 'text-blue-400! dark:text-blue-800': col.titulo == columnaOrden }"></i>
+                            </ButtonRounded>
+                        </h2>
+                        <h2 v-if="Propiedades.acciones.botones" :class="Propiedades.acciones.class" role="cell"
+                            class="py-4 pr-2 text-center">Acciones
+                        </h2>
 
-                            <div v-if="props.Propiedades.configuracion.camposEditables" class="relative w-full h-full px-2 py-2 cursor-text rounded-md transition-all duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700"
-                                @click="celdaActiva = { fila: id, columna: col.titulo }">
+                    </div>
+                </div>
 
-                                <!-- TEXTO NORMAL -->
-                                <span v-if="!estaEditando(id, col.titulo)"
-                                    class="block truncate text-gray-800 dark:text-gray-200">
+                <!-- Skeleton cuando se cargan los daotos -->
+                <template v-if="mostrarSkeleton">
+                    <div v-for="i in itemsPorPagina" :key="`skeleton-${i}`"
+                        class="bodyTable justify-between grid text-center animate-pulse" :style="estiloColumnasScrollable">
+                        <div v-for="(col, key) in columnasVisibles" :key="key"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                            <div class="h-3 bg-gray-200 rounded w-3/4 my-[15px] mx-2"></div>
+                        </div>
+                        <div v-if="Propiedades.acciones.botones"
+                            class="flex items-center justify-center accionesTabla text-center gap-2"
+                            :class="Propiedades.acciones.class">
+                            <div class="h-3 bg-gray-200 rounded w-1/2 mt-1 my-2"></div>
+                        </div>
+                    </div>
+                </template>
 
-                                    {{ fila[col.titulo] }}
+                <div v-else-if="mostrarSinResultados" class="flex flex-col items-center justify-center py-16 text-center">
+                    <i class="fa-regular fa-folder-open text-4xl text-gray-300 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400 font-medium">
+                        No hay resultados
+                    </p>
+                    <p class="text-sm text-gray-400 mt-1">
+                        Ajusta los filtros o cambia el término de búsqueda.
+                    </p>
 
-                                </span>
-                                <!-- <component v-if="!estaEditando(id, col.titulo)" :is="campos[col.campo]" v-model="fila[col.titulo]"
-                                    class="block truncate text-gray-800 dark:text-gray-200"
-                                    :Propiedades="{...col, placeholder: 'Editar dato...', estilo: 'bg-transparent border-none! outline-none rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }"
-                                /> -->
+                </div>
 
-                                <!-- INPUT O SELECT SOLO EN EDICION -->
-                                <component v-else :is="campos[col.campo]" ref="inputEditable" v-model="fila[col.titulo]"
-                                    @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
-                                    @keydown.enter="celdaActiva = { fila: null, columna: null }"
-                                    class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 hover:dark:bg-[var(--color-default-oscuro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
-                                    :Propiedades="{...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }"
-                                />
-                            </div>
+                <!-- Body tabla -->
+                <div v-else ref="bodyScroll" @scroll="syncHeaderScroll"
+                    class="overflow-auto max-h-[412px] relative scrollFormT">
 
-                            <p v-else class="w-full truncate py-2 px-2"
-                                :class="{ 'font-medium text-gray-900 dark:text-white': key === 0 && props.Propiedades.configuracion.tipo !== 'pinned', 'text-gray-800 dark:text-gray-200': key != 0 }">
-                                {{ fila[col.titulo] }}
-                            </p>
-
+                    <div v-for="(fila, id) in datosPaginados" role="row"
+                        :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(id) }"
+                        class="bodyTable justify-between flex w-max min-w-full odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700">
+                        <div
+                            class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
                         </div>
 
-                        <!-- Acciones -->
-                        <div v-if="Propiedades.acciones.botones"
-                            class="flex items-center justify-center accionesTabla text-center gap-2 group"
-                            :class="Propiedades.acciones.class">
+                        <!-- COLUMNAS FIJAS -->
+                        <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
+                            class="sticky left-0 z-20 shadow-[4px_0_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[4px_0_6px_-1px_rgba(255,255,255,0.05)] flex flex-col justify-center backdrop-blur-3xl">
+                            <div class="grid w-full justify-between " :style="estiloColumnasPinned">
+                                <div v-for="col in columnasPinned" :key="col.titulo" :style="{ width: `${col.tamaño}px` }">
+                                    <p class="font-medium text-gray-900 dark:text-white truncate p-2 py-2">
+                                        {{ fila[col.titulo] }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
-                            <!-- Acciones por props -->
-                            <BotonAccion
-                                v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
-                                v-for="action in getAccionesVisibles(fila)" :key="action"
-                                :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                @click="action.action(fila)" />
+                        <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
+                        <div class="grid w-full justify-between" :style="estiloColumnasScrollable">
+                            <div v-for="(col, key) in columnasScrollable" :key="key"
+                                :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
+
+                                <div v-if="props.Propiedades.configuracion.camposInputs"
+                                    class="relative w-full h-full px-2 py-2 cursor-text rounded-md transition-all duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700"
+                                    :style="{
+                                        backgroundColor: obtenerColorCelda(id, col.titulo)
+                                    }"
+                                    @click="celdaActiva = { fila: id, columna: col.titulo }">
+
+                                    <!-- TEXTO NORMAL -->
+                                    <!-- <span v-if="!estaEditando(id, col.titulo)"
+                                        class="block truncate text-gray-800 dark:text-gray-200">
+
+                                        {{ fila[col.titulo] }}
+
+                                    </span> -->
+                                    <component v-if="!estaEditando(id, col.titulo)" :is="campos[col.campo]"
+                                        v-model="fila[col.titulo]" class=" truncate text-gray-800 dark:text-gray-200"
+                                        :Propiedades="{ ...col, placeholder: '...', estilo: 'bg-transparent border-none! outline-none rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full px-0! py-0!' }" />
+
+                                    <!-- INPUT O SELECT SOLO EN EDICION -->
+                                    <component v-else :is="campos[col.campo]" ref="inputEditable" v-model="fila[col.titulo]"
+                                        @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
+                                        @keydown.enter="celdaActiva = { fila: null, columna: null }"
+                                        class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 hover:dark:bg-[var(--color-default-oscuro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
+                                        :Propiedades="{ ...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', disabled: props.Propiedades.configuracion.camposEditables, estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }" />
+                                </div>
+
+                                <p v-else class="w-full truncate py-2 px-2"
+                                    :class="{ 'font-medium text-gray-900 dark:text-white': key === 0 && props.Propiedades.configuracion.tipo !== 'pinned', 'text-gray-800 dark:text-gray-200': key != 0 }">
+                                    {{ fila[col.titulo] }}
+                                </p>
+
+                            </div>
+
+                            <!-- Acciones -->
+                            <div v-if="Propiedades.acciones.botones"
+                                class="flex items-center justify-center accionesTabla text-center gap-2 group"
+                                :class="Propiedades.acciones.class">
+
+                                <!-- Acciones por props -->
+                                <BotonAccion
+                                    v-if="!collapse && Propiedades.acciones.icons.length < 4 || Propiedades.acciones.icons.length < 2"
+                                    v-for="action in getAccionesVisibles(fila)" :key="action"
+                                    :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                    @click="action.action(fila)" />
 
 
-                            <!-- Boton de tablas ocultas por responsive  -->
-                            <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)"
-                                v-if="collapse && props.Propiedades.configuracion.tipo !== 'pinned'"
-                                class="flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 text-xs rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
-                                <i v-if="!activeCollapse || id !== idActivo"
-                                    class="fa-solid fa-angle-down text-gray-600 dark:text-gray-200"></i>
-                                <i v-if="activeCollapse && id === idActivo"
-                                    class="fa-solid fa-angle-up text-gray-600 dark:text-gray-200"></i>
-                            </button>
-
-                            <!-- Boton para desplegar acciones porp props Responsive -->
-                            <div class="relative inline-block text-left">
-                                <button @click="mostrarAcciones(id)"
-                                    v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
-                                    class="btn-accionesOcultas flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
-                                    <i
-                                        class="fa-solid fa-ellipsis-vertical text-gray-600 dark:text-gray-200 text-xs"></i>
+                                <!-- Boton de tablas ocultas por responsive  -->
+                                <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)"
+                                    v-if="collapse && props.Propiedades.configuracion.tipo !== 'pinned'"
+                                    class="flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 text-xs rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
+                                    <i v-if="!activeCollapse || id !== idActivo"
+                                        class="fa-solid fa-angle-down text-gray-600 dark:text-gray-200"></i>
+                                    <i v-if="activeCollapse && id === idActivo"
+                                        class="fa-solid fa-angle-up text-gray-600 dark:text-gray-200"></i>
                                 </button>
 
-                                <!-- Dropdown -->
-                                <div v-if="btnAcciones === id"
-                                    class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
-                                    :id="id">
-                                    <BotonAccion v-for="action in getAccionesVisibles(fila)" :key="action"
-                                        :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
-                                        @click="() => { action.action(fila); mostrarAcciones(id) }"
-                                        class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
-                                    </BotonAccion>
+                                <!-- Boton para desplegar acciones porp props Responsive -->
+                                <div class="relative inline-block text-left">
+                                    <button @click="mostrarAcciones(id)"
+                                        v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
+                                        class="btn-accionesOcultas flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
+                                        <i
+                                            class="fa-solid fa-ellipsis-vertical text-gray-600 dark:text-gray-200 text-xs"></i>
+                                    </button>
+
+                                    <!-- Dropdown -->
+                                    <div v-if="btnAcciones === id"
+                                        class="acciones absolute right-0 mt-2 w-16 bg-white dark:bg-gray-800 shadow-lg rounded-md z-5"
+                                        :id="id">
+                                        <BotonAccion v-for="action in getAccionesVisibles(fila)" :key="action"
+                                            :tipo="typeof action.icon === 'function' ? action.icon(fila) : action.icon"
+                                            @click="() => { action.action(fila); mostrarAcciones(id) }"
+                                            class="w-full text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700 rounded-md">
+                                        </BotonAccion>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- collapse -->
+                            <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
+                                <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
+                                    <div v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate px-2 my-2">
+                                        <p
+                                            class="text-gray-600 dark:text-gray-200 text-xs font-bold border-t-1 border-t-gray-100 dark:border-t-gray-600 mb-1 truncate">
+                                            {{ col.titulo }}
+                                        </p>
+                                        {{ fila[col.titulo] }}
+                                    </div>
                                 </div>
                             </div>
 
                         </div>
+                    </div>
 
 
-                        <!-- collapse -->
-                        <div class="collapse-text col-span-full" :id="`${id}-${Propiedades.headerTabla.titulo}`">
-                            <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
-                                <div v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate px-2 my-2">
-                                    <p
-                                        class="text-gray-600 dark:text-gray-200 text-xs font-bold border-t-1 border-t-gray-100 dark:border-t-gray-600 mb-1 truncate">
-                                        {{ col.titulo }}
-                                    </p>
-                                    {{ fila[col.titulo] }}
-                                </div>
-                            </div>
+                    <!-- filas vacías para rellenar -->
+                    <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
+                        :key="`empty-${n}`"
+                        class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
+                        :style="estiloColumnasScrollable">
+
+                        <div v-for="(col, key) in columnasVisibles" :key="key"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                            <p class="text-transparent select-none">.</p>
                         </div>
-
                     </div>
+
                 </div>
 
-
-                <!-- filas vacías para rellenar -->
-                <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
-                    :key="`empty-${n}`"
-                    class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
-                    :style="estiloColumnasScrollable">
-
-                    <div v-for="(col, key) in columnasVisibles" :key="key"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-transparent select-none">.</p>
-                    </div>
-                </div>
             </div>
-
-            <div class="flex flex-col items-center justify-center py-16 text-center"
-                v-if="datosPaginados.length === 0 && (busqueda !== '' || Object.values(filtros).some(v => v !== '')) || datosPaginados.length === 0 && !tiempoLoading">
-                <i class="fa-regular fa-folder-open text-4xl text-gray-300 mb-4"></i>
-                <p class="text-gray-600 dark:text-gray-400 font-medium">
-                    No hay resultados
-                </p>
-                <p class="text-sm text-gray-400 mt-1">
-                    Ajusta los filtros o cambia el término de búsqueda.
-                </p>
-
-            </div>
-
         </div>
-    </div>
 
-    <!-- Paginador -->
-    <div class="flex items-center justify-between px-4 py-2 mt-2">
-        <p class="text-sm text-gray-500 md:flex gap-1 hidden">
-            Mostrando
-            <span class="text-gray-500">{{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</span>
-            <span class="text-gray-500">de {{ datosOrdenados.length }}</span>
-        </p>
-
-        <div class="btnsPagina flex items-center gap-2">
-            <!-- <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
-                color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
-                @click="irAPagina(1)">
-                <i class="fa-solid fa-angles-left"></i>
-            </ButtonRounded> -->
-
-            <ButtonRounded tooltip="Atras" :disabled="paginaActual === 1"
-                color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
-                @click="paginaAnterior()">
-                <i class="fa-solid fa-chevron-left"></i>
-            </ButtonRounded>
-            <div class="flex gap-2 pagina select-none">
-
-                <!-- Página actual -->
-                <span class="text-sm text-gray-600 dark:text-gray-300">
-                    Página
-                    <span class="font-semibold">
-                        {{ paginaActual }}
-                    </span>
-                    de
-                    <span @click="irAPagina(totalPaginas)"
-                        class="font-semibold underline cursor-pointer hover:text-gray-900 dark:hover:text-gray-400">
-                        {{ totalPaginas }}
-                    </span>
-                </span>
-
-            </div>
-            <ButtonRounded :disabled="paginaActual === totalPaginas" tooltip="Siguiente"
-                color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
-                @click="siguientePagina()">
-                <i class="fa-solid fa-chevron-right"></i>
+        <div v-if="celdaActiva.fila !== null && celdaActiva.columna !== null" class="flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-800 rounded-md shadow-md">
+            <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Selecciona color:</label>
+            <input v-model="colorPicker" type="color" 
+                class="w-5 h-5 cursor-pointer rounded-full border border-gray-300 shadow-sm hover:scale-110 transition-transform duration-200"
+            >
+            <ButtonRounded v-if="colorPicker" color="bg-inherit w-fit! h-fit! p-0" tooltip="Pintar celda" @click="pintarCelda(celdaActiva.fila, celdaActiva.columna, colorPicker)">
+                <i class="fa-solid fa-paintbrush text-sm text-black dark:text-white"></i>
             </ButtonRounded>
         </div>
 
+        <!-- Paginador -->
+        <div class="flex items-center justify-between px-4 py-2 mt-2">
+            <p class="text-sm text-gray-500 md:flex gap-1 hidden">
+                Mostrando
+                <span class="text-gray-500">{{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</span>
+                <span class="text-gray-500">de {{ datosOrdenados.length }}</span>
+            </p>
 
-        <div class="flex items-center">
-            <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
-            <select name="numRegistros"
-                class="ml-3 text-sm bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-                @change="cambiarItemsPorPagina($event.target.value)">
-                <option value="5">5</option>
-                <option value="10" selected>10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-            </select>
+            <div class="btnsPagina flex items-center gap-2">
+                <!-- <ButtonRounded v-if="paginaActual > 2" tooltip="Ir a Primera Pagina"
+                    color="text-l p-2 text-white !w-[30px] !h-[30px] flex justify-center items-center rounded-full cursor-pointer md:mr-4"
+                    @click="irAPagina(1)">
+                    <i class="fa-solid fa-angles-left"></i>
+                </ButtonRounded> -->
+
+                <ButtonRounded tooltip="Atras" :disabled="paginaActual === 1"
+                    color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
+                    @click="paginaAnterior()">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </ButtonRounded>
+                <div class="flex gap-2 pagina select-none">
+
+                    <!-- Página actual -->
+                    <span class="text-sm text-gray-600 dark:text-gray-300">
+                        Página
+                        <span class="font-semibold">
+                            {{ paginaActual }}
+                        </span>
+                        de
+                        <span @click="irAPagina(totalPaginas == 0 ? 1 : totalPaginas)"
+                            class="font-semibold underline cursor-pointer hover:text-gray-900 dark:hover:text-gray-400">
+                            {{ totalPaginas === 0 ? 1 : totalPaginas }}
+                        </span>
+                    </span>
+
+                </div>
+                <ButtonRounded :disabled="paginaActual === (totalPaginas == 0 ? 1 : totalPaginas)" tooltip="Siguiente"
+                    color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
+                    @click="siguientePagina()">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </ButtonRounded>
+            </div>
+
+
+            <div class="flex items-center">
+                <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>
+                <select name="numRegistros"
+                    class="ml-3 text-sm bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+                    @change="cambiarItemsPorPagina($event.target.value)">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
         </div>
-
-    </div>
     </div>
     <DatosExcel v-if="varView.showDatosExcel" :datos="datosOrdenados" :tabla="props.Propiedades.headerTabla.titulo" />
 </template>

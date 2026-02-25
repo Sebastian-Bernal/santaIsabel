@@ -41,6 +41,12 @@ export const adaptacionHistoria = {
 
   TrabajoSocial: (item, formulario) => {
     mapCampos(item, formulario)
+  },
+
+  Historial_cambios_sonda: (item, formulario) => {
+    mapCampos(item, formulario)
+    formulario.Historial_cambios_sonda.fecha_cambio = item.fecha_cambio
+    formulario.Historial_cambios_sonda.observacion = item.observacion
   }
 }
 
@@ -52,6 +58,7 @@ export function historialManejoModales({
 }) {
 
     function loadItem(tipo, item, mode = 'view') {
+      console.log(item)
         const varView = useVarView()
         formularioItem.value = tipo
         varView.tipoHistoria = tipo

@@ -185,6 +185,7 @@ const verHistoria = async (his) => {
 };
 
 async function cargaHistorial(id) {
+    console.log("Cargando historial para paciente ID:", id);
     try {
         varView.cargando = true;
 
@@ -282,7 +283,7 @@ async function cargaHistorial(id) {
             diagnosticos.value = diagnosticosPorAnalisis.map(d => d.diagnostico).flat();
             diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat();
         }
-        console.log(id)
+
         kardex.value = await historiasStore.listDatos(parseInt(id), 'Kardex', 'id_paciente');
         historialCambioSonda.value = await historiasStore.listDatos(kardex.value[0].id, 'Historial_cambio_sonda', 'id_kardex');
 
@@ -802,9 +803,9 @@ const propiedades = computed(() => {
                         header: {
                             icon: 'fa-solid fa-crutch' + (kardex.value[0]?.ultimoCambio ? ' text-white' : ' text-gray-300'),
                             iconBg: 'bg-inherit',
-                            title: 'Kardex',
+                            title: 'Cambio de Sonda',
                             subtitle: `Ultimo cambio de sonda: ${kardex.value[0]?.ultimoCambio ? kardex.value[0].ultimoCambio : 'No hay cambio de sonda'} - ${kardex.value[0]?.rango ? kardex.value[0].rango : 'No hay rango'}`,
-                            titleClass: 'text-white',
+                            titleClass: (kardex.value[0]?.ultimoCambio && kardex.value[0]?.rango && (kardex.value[0].ultimoCambio - kardex.value[0].rango) < 0 ? 'text-red-500' : 'text-white'),
                             subtitleClass: 'text-gray-300!'
                         },
                     },
@@ -1145,9 +1146,13 @@ const propiedades = computed(() => {
             .addComponente('Tabla', tablaKardex
                 .setColumnas([
                     { titulo: 'fecha_cambio', value: 'Fecha', tamaño: 110, ordenar: true },
-                    { titulo: 'tipo_sonda', value: 'Tipo de sonda', tamaño: 200, ordenar: true },
-                    { titulo: 'observacion', value: 'Observación', tamaño: 160, ordenar: true },
+                    { titulo: 'observacion', value: 'Observación', tamaño: 500, },
                 ])
+                .setAcciones({
+                    icons: [
+                        { icon: 'ver', action: (item) => loadItem('Historial_cambios_sonda', item, 'view')} ,
+                    ], botones: true,
+                })
                 .setDatos(historialCambioSonda)
                 .setHeaderTabla({
                     titulo: 'Historial de cambios de sonda',
@@ -1158,6 +1163,7 @@ const propiedades = computed(() => {
                     ],
                 })
             )
+            .addComponente('Form', propiedadesItemHistoria)
 
 
         )

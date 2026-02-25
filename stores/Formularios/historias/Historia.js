@@ -74,6 +74,11 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 intervencion: [],
                 evaluacion: [],
             },
+            Historial_cambios_sonda: {
+                fecha_cambio: '',
+                observacion: '',
+                id: ''
+            },
             Cita: {},
         },
         Historias: [],

@@ -1,20 +1,13 @@
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente.js';
 import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
 import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
-import { useDatosEPSStore } from '~/stores/Formularios/empresa/EPS.js';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarKardex = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
-    const storePacientes = usePacientesStore();
-    const pacientes = await storePacientes.listPacientes();
-console.log(datos)
+    console.log(datos)
     // 🔍 Validar campos obligatorios
-
-
     const errores = []
-
 
     if(errores.length > 0) {
         errores.forEach(msg => {
@@ -33,13 +26,6 @@ console.log(datos)
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
 export const enviarFormularioKardex = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
-    const epsStore = useDatosEPSStore()
-    const EPSList = await epsStore.listEPS()
-    const mapaEPS = EPSList.reduce((acc, eps) => {
-        acc[eps.id] = eps.nombre;
-        return acc;
-    }, {});
-
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
@@ -65,6 +51,7 @@ export const enviarFormularioKardex = async (datos, reintento = false) => {
                     estado: datos.estado,
                     vm: datos.vm,
                     ultimoCambio: datos.ultimoCambio,
+                    observacion: datos.observacion,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -75,11 +62,6 @@ export const enviarFormularioKardex = async (datos, reintento = false) => {
             }
         } catch (error) {
             console.error('Fallo al enviar. Guardando localmente', error);
-            // notificacionesStore.options.icono = 'warning'
-            // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!'
-            // notificacionesStore.options.texto = 'No se pudo enviar formulario, datos guardados localmente'
-            // notificacionesStore.options.tiempo = 3000
-            // notificacionesStore.simple()
         }
     } else {
         try {
