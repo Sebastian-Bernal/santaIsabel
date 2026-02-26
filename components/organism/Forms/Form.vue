@@ -115,7 +115,7 @@ function limpiar() {
             <div v-if="props.Propiedades.formulario.botones.length > 0" class="border-t border-gray-200 dark:border-gray-800 px-4 py-3 flex flex-row-reverse justify-center gap-3">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)"
-                    class="md:w-[180px] w-full">
+                    class="md:w-[180px] w-1/3">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>

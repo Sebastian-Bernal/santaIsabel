@@ -37,6 +37,8 @@ const iconoClase = computed(() => {
             return 'fa-solid fa-file-pdf';
         case 'movimiento':
             return 'fa-solid fa-cart-plus';
+        case 'configurar':
+            return 'fa-solid fa-cog';
         default:
             return '';
     }

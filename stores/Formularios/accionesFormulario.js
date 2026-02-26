@@ -12,6 +12,7 @@ import { validarYEnviarActualizarHistoria } from '~/Core/Historial/Historia/PUTH
 // Profesionales
 import { validarYEnviarNuevoMedico } from '~/Core/Usuarios/Profesional/POSTMedico';
 import { validarYEnviarModificarMedico } from '~/Core/Usuarios/Profesional/PUTMedico';
+import { validarYEnviarPermisosProfesional } from '~/Core/Empresa/Datos/Profesion/POSTPermisosProfesional';
 // Empresa
 import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/Configuracion/Empresa/POSTEmpresa';
 import { validarYEnviarDatosSoftware } from '~/Core/Empresa/Configuracion/Software/POSTSoftware';
@@ -168,6 +169,10 @@ export const accionesFormularios = {
     },
     NuevoMovimiento: async (data) => {
         const respuesta = await validarYEnviarNuevoMovimiento(data)
+        return respuesta
+    },
+    AgregarPermisos: async (data) => {
+        const respuesta = await validarYEnviarPermisosProfesional(data)
         return respuesta
     }
 };

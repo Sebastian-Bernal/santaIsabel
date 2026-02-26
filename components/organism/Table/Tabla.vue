@@ -351,7 +351,7 @@ const campos = {
 
                 <div class="flex gap-2">
                     <ButtonRounded v-if="filtrosConOpciones.length > 3"
-                        @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados" :activo="true"
+                        @click="mostrarFiltrosAvanzados = !mostrarFiltrosAvanzados"
                         :color="mostrarFiltrosAvanzados ? 'bg-blue-800 dark:bg-blue-700' : 'bg-gray-800 text-gray-700 dark:bg-gray-700 dark:text-gray-200'"
                         tooltip="Filtros Avanzados">
                         <i class="fa-solid fa-sliders"></i>

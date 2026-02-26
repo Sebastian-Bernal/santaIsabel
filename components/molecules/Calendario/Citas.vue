@@ -222,7 +222,7 @@ function changeShowPendientes() {
         :class="props.Propiedades.estilos"
         class="pb-5 flex flex-col gap-3 shadow-md rounded-xl md:h-[64vh] h-[50vh] overflow-y-auto bg-white dark:bg-gray-700 scrollForm relative">
         <div v-if="!props.Propiedades.showTodas"
-            class="flex justify-between items-center px-6 py-3 sticky top-0 bg-white dark:bg-gray-700 shadow-xs z-10">
+            class="flex justify-between items-center px-6 py-3 sticky top-0 bg-white dark:bg-gray-700 shadow-xs z-3">
             <p class="text-xl font-semibold">
                 {{ calendarioCitasStore.diaSemana }}, {{ dias }} {{ mes }}
             </p>

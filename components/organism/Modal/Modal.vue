@@ -45,9 +45,9 @@ function cambiarAInicio() {
 function cambiarTamañoModal() {
     tamañoModal.value = !tamañoModal.value
     if (tamañoModal.value) {
-        props.Propiedades.tamaño = 'w-[90%] h-[90%]'
+        props.Propiedades.tamaño = 'w-[95%] h-[90%]'
     } else {
-        props.Propiedades.tamaño = 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[98%] h-[80%]'
+        props.Propiedades.tamaño = 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[95%] h-[80%]'
     }
 }
 
@@ -56,7 +56,7 @@ function cambiarTamañoModal() {
 <template>
     <component v-if="unref(Propiedades.show)" :is="fondos[Propiedades.fondo]">
         <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-lg pb-7 animate-fadeIn"
-            :class="[Propiedades.estilos, {'w-[90%]! h-[90%]!': tamañoModal,}], Propiedades.tamaño">
+            :class="[Propiedades.estilos, {'w-[95%]! h-[90%]!': tamañoModal,}], Propiedades.tamaño">
             <!-- Header Modal -->
             <div
                 class="w-full flex justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
@@ -107,7 +107,7 @@ function cambiarTamañoModal() {
                 </div>
             </div>
             <!-- Componentes -->
-            <div :class="Propiedades.secciones[seccionActual].contenedor" class="scrollForm w-full gap-[15px] max-h-[90%] overflow-y-auto">
+            <div :class="Propiedades.secciones[seccionActual].contenedor" class="scrollForm w-full gap-[15px] md:max-h-[90%] max-h-[85%] overflow-y-auto">
 
                 <component v-for="(component, index) in Propiedades.secciones[seccionActual].componentes" :key="index"
                     :is="components[component.tipo]" :Propiedades="component"
