@@ -69,7 +69,10 @@ export default defineNuxtConfig({
       traeProfesionales: 'api/v1/traeProfesionales',
       kardex: 'api/v1/kardex',
       historialCambioSonda: 'api/v1/historialCambioSonda',
-      profesionalHasPermisos: 'api/v1/profesionalHasPermisos'
+      profesionalHasPermisos: 'api/v1/profesionalHasPermisos',
+      solicitarPermiso:  'api/v1/solicitarPermiso',
+      verificarPermisos: 'api/v1/verificarPermisos',
+      consumirPermiso: 'api/v1/consumirPermiso',
     }
   },
 

@@ -11,21 +11,17 @@ import { useUserBuilder } from '~/build/Usuarios/useUserFormBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { useUsuarioValidaciones } from "~/composables/Usuarios/Usuarios.js";
 import { useProfesionalActions } from '~/composables/Usuarios/Profesional';
-import { usePermisosProfesionalBuilder } from '~/build/Empresa/usePermisosProfesional';
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const medicosStore = useMedicosStore();
 const profesionStore = useDatosProfesionStore()
-const storeProfesion = useDatosProfesionStore()
 const medicos = ref([]);
 const profesiones = ref([]);
 const refresh = ref(1);
-const secciones = ref([])
 
 const show = ref(false)
 const showVer = ref(false)
-const addPermisos = ref(false)
 
 async function llamadatos() {
     medicos.value = await medicosStore.listMedicos();
@@ -77,18 +73,7 @@ onMounted(async () => {
     profesiones.value = listaProfesiones.map((profesion) => {
         return { text: profesion.nombre, value: profesion.id }
     });
-    secciones.value = await storeProfesion.listSecciones()
 });
-
-async function actualizarPermisos(profesional) {
-    storeProfesion.Formulario.Profesion.id_profesional = profesional.id_profesional
-
-    const permisos = await storeProfesion.traerPermisos(profesional.id_profesion)
-    storeProfesion.Formulario.Profesion.ListaPacientes = permisos.includes("ListaPacientes")
-    storeProfesion.Formulario.Profesion.Diagnosticos_view = permisos.includes("Diagnosticos_view")
-    storeProfesion.Formulario.Profesion.permisos = permisos
-    addPermisos.value = true
-}
 
 // Construccion de pagina
 const builderTabla = new TablaBuilder()
@@ -180,14 +165,6 @@ const propiedades = computed(() => {
         })
         : null;
 
-    const propiedadesPermisos = usePermisosProfesionalBuilder({
-        storeId: 'AgregarPermisos',
-        storePinia: 'Profesion',
-        permisos: secciones.value,
-        show: addPermisos.value,
-        cerrar: () => { addPermisos.value = false} ,
-    })
-
     // Tabla de profesionales
     builderTabla
         .setColumnas([
@@ -233,7 +210,6 @@ const propiedades = computed(() => {
 
     if (propiedadesUser) pagina.addComponente('Form', propiedadesUser);
     if (propiedadesVerUser) pagina.addComponente('Form', propiedadesVerUser);
-    if (propiedadesPermisos) pagina.addComponente('Form', propiedadesPermisos);
 
     return pagina.build();
 

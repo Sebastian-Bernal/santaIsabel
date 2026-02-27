@@ -40,11 +40,13 @@ const enviarFormulario = async (datos) => {
                 const userEncrypt = encryptData(respuesta.user.usuario);
                 const rolEncrypt = encryptData(respuesta.user.rol);
                 const permisosEncrypt = encryptData(respuesta.user.permisos);
+                const permisosIndividuales = respuesta.permisosTemporales
 
                 sessionStorage.setItem('token', tokenEncrypt);
                 sessionStorage.setItem('user', userEncrypt);
                 sessionStorage.setItem('Rol', rolEncrypt);
                 sessionStorage.setItem('Permisos', permisosEncrypt);
+                sessionStorage.setItem('permisosTemporales', JSON.stringify(permisosIndividuales))
 
                 // await traerDatos()
                 await traerDatos((porcentaje, texto) => {
@@ -52,7 +54,7 @@ const enviarFormulario = async (datos) => {
                 });
                 actualizarProgreso(100, 'completado')
                 const ultimaSeccion = localStorage.getItem('seccion')
-                // window.location.href = ultimaSeccion || respuesta.user.rol === 'Profesional' ? '/Usuarios/Citas' : '/Home'
+
                 await navigateTo(
                     ultimaSeccion ||
                     (respuesta.user.rol === 'Profesional'

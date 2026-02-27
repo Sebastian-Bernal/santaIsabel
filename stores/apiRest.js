@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { decryptData } from "~/composables/Formulario/crypto";
+import { consumirPermiso } from "~/Core/Empresa/Datos/Profesion/POSTConsumirPermiso";
 
 // Store para loader
 export const useApiRest = defineStore('apiRest', {

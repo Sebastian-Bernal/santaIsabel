@@ -9,61 +9,34 @@ export function usePermisosProfesionalBuilder({
   cerrar,
 }) {
   const builder = new FormularioBuilder()
-  const varView = useVarView()
 
 builder
       .setFormularioFondo(true)
-      .nuevaSeccion('Actualizar Permisos para el Profesional')
+      .nuevaSeccion('Solicitar Permisos')
       .setFormularioShow(show)
-      .setFormularioTipo('Wizard')
-      .setFormularioTituloFormulario('Permisos')
+      .setFormularioTipo('normal')
+      .setFormularioTituloFormulario('Solicitar Permisos')
       .setBotones([
         { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
         { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrar },
       ])
     .setStoreId(storeId)
     .setStorePinia(storePinia)
-    .setFormulariotamaño('MD')
-    .setCamposRequeridos(['Profesion.id_profesional', 'Profesion.permisos',])
+    .setFormulariotamaño('SM')
     .addCampo({
       component: 'Label',
-      text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Profesiones',
+      text: '<i class="fa-solid fa-user-doctor text-purple-500 mr-1"></i>Secciones',
       tamaño: 'w-full md:col-span-2',
-      forLabel: 'Profesion'
+      forLabel: 'permisos'
     })
     .addCampo({
-      component: 'Input',
-      type: 'date',
-      placeholder: 'Fecha Final',
-      label: 'Fecha Final',
-      id: 'fin',
-      name: 'fin',
-      minlength: 5,
-      tamaño: 'col-span-2',
-      vmodel: 'Profesion.fecha_fin',
-      upperCase: true
-    })
-      .addCampo({
-        component: 'Checkbox',
-        placeholder: 'Permitir mostrar todos los Pacientes?',
-        tamaño: 'w-full',
-        vmodel: 'Profesion.ListaPacientes',
-      })
-      .addCampo({
-        component: 'Checkbox',
-        placeholder: 'Permitir realizar diagnosticos?',
-        tamaño: 'w-full',
-        vmodel: 'Profesion.Diagnosticos_view',
-      })
-    .addCampo({
-      component: 'Permisos',
-      placeholder: 'Seleccione los permisos en cada Seccion',
+      component: 'Select',
+      placeholder: 'Seleccione unicamente un permiso que requiera',
       id: 'permisos',
-      name: 'permisos',
+      id: 'name',
       tamaño: 'w-full md:col-span-2',
-      vmodel: 'Profesion.permisos',
-      options: permisos,
-      showOptions: true,
+      vmodel: 'Profesion.id_seccion',
+      options: permisos
     })
 
   return builder.build()

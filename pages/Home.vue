@@ -10,10 +10,13 @@ import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales';
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 import { traerDashboard } from '~/Core/Empresa/Dashboard/GetDashboard';
+import { usePermisosProfesionalBuilder } from '~/build/Empresa/usePermisosProfesional';
+import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion';
 
 const citasStore = useCitasStore();
 const varView = useVarView()
 const apiRest = useApiRest()
+const storeProfesion = useDatosProfesionStore()
 const rol = ref(null)
 
 const Citas = ref([]);
@@ -30,6 +33,9 @@ const refresh = ref(1)
 const profesional = ref([])
 const dashboardData = ref([])
 const stats = ref([])
+
+const secciones = ref([])
+const addPermisos = ref(false)
 
 watch(() => showCita.value,
     async (estado) => {
@@ -82,6 +88,11 @@ onMounted(async () => {
         const profesionales = await profesionalesStore.listMedicos()
         medicosList.value = profesionales
         profesional.value = profesionales.find(p => p.id_infoUsuario === usuario.id)
+
+        const seccionesApp = await storeProfesion.traerSecciones()
+        const permisos = await storeProfesion.traerPermisos(profesional.value.id_profesion)
+        // Filtrar acciones según permisos
+        secciones.value = seccionesApp.filter(s => !permisos.includes(s.text))
 
         // Citas list
         const listCitas = await citasStore.listCitas();
@@ -357,11 +368,12 @@ async function DashboardRol(rol, Historias = [], citas) {
                 header: {
                     icon: 'fa-solid fa-file text-white',
                     iconBg: 'bg-inherit',
-                    title: 'Descargar Certificados',
-                    subtitle: 'Descarga constancias y archivos medicos',
+                    title: 'Solicitar Permisos',
+                    subtitle: 'solicitar a administradores permisos temporales',
                     titleClass: 'text-white',
                     subtitleClass: 'text-gray-300!'
                 },
+                accion: actualizarPermisos
             },
         ];
     }
@@ -382,6 +394,12 @@ function buscarHistoria() {
     location.href = '/Historial/Historias'
 }
 
+async function actualizarPermisos() {
+    const profesionalUser = profesional.value
+    storeProfesion.Formulario.Profesion.id_profesional = profesionalUser.id_profesional
+    addPermisos.value = true
+}
+
 // Construccion de pagina
 const cardsState = new CardBuilder();
 const cardsPacientes = new CardBuilder();
@@ -392,7 +410,13 @@ const cardsAcciones = new CardBuilder();
 const propiedades = computed(() => {
     varView.cargando = true
     if (!rol.value) return null
-
+    const propiedadesPermisos = usePermisosProfesionalBuilder({
+        storeId: 'AgregarPermisos',
+        storePinia: 'Profesion',
+        permisos: secciones.value,
+        show: addPermisos.value,
+        cerrar: () => { addPermisos.value = false} ,
+    })
     const pagina = new ComponenteBuilder();
     const paginaBase = pagina
         .setFondo('FondoDefault')
@@ -474,6 +498,7 @@ const propiedades = computed(() => {
                 .setheaderTitle('Acciones Rapidas')
                 .build()
             )
+            if (propiedadesPermisos) paginaBase.addComponente('Form', propiedadesPermisos);
     }
     varView.cargando = false
     return paginaBase.build()

@@ -5,7 +5,7 @@ import { computed } from 'vue';
 const route = useRoute();
 // Retorna array con cada ruta
 const breadCrumbs = computed(() => {
-    const path = route.path
+    const path = route.fullPath
     localStorage.setItem('seccion', path)
     const segments = path.split('/').filter(Boolean)
 

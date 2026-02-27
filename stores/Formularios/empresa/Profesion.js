@@ -64,9 +64,35 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
             return Object.values(mapa)
         },
 
+        async traerSecciones() {
+            let secciones = await traerdatosSecciones()
+
+            const accionesMap = {
+                get: "Ver",
+                post: "Crear",
+                put: "Editar",
+                delete: "Eliminar",
+                view: "Visualizar"
+            };
+
+            secciones = secciones.map(s => {
+            // Dividir en [modulo, accion]
+            const [modulo, accion] = s.nombre.split("_");
+            
+            // Buscar traducción de la acción
+            const accionTraducida = accionesMap[accion] || accion;
+            
+            return {
+                value: s.id,
+                text: `${accionTraducida} ${modulo.toLowerCase()}`
+            };
+            });
+
+            return secciones
+        },
+
         async traerPermisos(id) {
             let permisos = await traerdatosSecciones(id)
-
             return Object.values(permisos)
         },
 

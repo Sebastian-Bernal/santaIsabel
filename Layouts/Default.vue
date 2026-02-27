@@ -1,5 +1,6 @@
 <template>
-    <div class="containerMain transition-[grid-template-columns] duration-300 ease-in-out" :class="{'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido}">
+    <div class="containerMain transition-[grid-template-columns] duration-300 ease-in-out"
+        :class="{ 'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido }">
         <Loader v-if="varView.cargando"></Loader>
         <Actualizado v-if="varView.actualizando"></Actualizado>
         <Navbar></Navbar>
@@ -23,31 +24,50 @@ import Footer from '~/components/organism/Footer/Footer.vue';
 import Loader from '~/components/molecules/Spinner/Loader.vue';
 import Actualizado from '~/components/molecules/Spinner/Actualizado.vue';
 import { iniciarSincronizacionPeriodica } from '~/composables/Formulario/sincronizarDatos';
+import { verificarAPIPermisos } from '~/Core/Empresa/Datos/Profesion/GETPermisosTemporales';
+import { consumirPermiso } from '~/Core/Empresa/Datos/Profesion/POSTConsumirPermiso';
 
 const varView = useVarView();
 
 function manejarCambioRed() {
-  const ahora = Date.now();
-  const ultima = localStorage.getItem('ultimaSincronizacion');
-  const LIMITE_TIEMPO = 60 * 60 * 1000;
+    const ahora = Date.now();
+    const ultima = localStorage.getItem('ultimaSincronizacion');
+    const LIMITE_TIEMPO = 60 * 60 * 1000;
 
-  if (navigator.onLine && (!ultima || ahora - parseInt(ultima) > LIMITE_TIEMPO)) {
-    localStorage.setItem('ultimaSincronizacion', ahora.toString());
-    iniciarSincronizacionPeriodica();
-    console.log('Sincronización iniciada por cambio de red');
-  }
+    if (navigator.onLine && (!ultima || ahora - parseInt(ultima) > LIMITE_TIEMPO)) {
+        localStorage.setItem('ultimaSincronizacion', ahora.toString());
+        iniciarSincronizacionPeriodica();
+        console.log('Sincronización iniciada por cambio de red');
+    }
 }
 
-onMounted(() => {
-  window.addEventListener('online', manejarCambioRed);
-  // Opcional: iniciar si ya está en línea al cargar
-  if (navigator.onLine) {
-    manejarCambioRed();
-  }
+async function verificarPermisos() {
+    const usuario = varView.getUser
+
+    const profesionalesStore = useMedicosStore()
+    const profesionales = await profesionalesStore.listMedicos()
+    const profesional = profesionales.find(p => p.id_infoUsuario === usuario.id)
+
+    await verificarAPIPermisos(profesional.id_profesional)
+}
+
+onMounted(async() => {
+    window.addEventListener('online', manejarCambioRed);
+    // Opcional: iniciar si ya está en línea al cargar
+    if (navigator.onLine) {
+        manejarCambioRed();
+        if (sessionStorage.getItem('permisoSolicitado')) {
+            verificarPermisos()
+        }
+        if (sessionStorage.getItem('permisosTemporales') && varView.cambioEnApi) {
+            const data = JSON.parse(sessionStorage.getItem('permisosTemporales'))
+            await consumirPermiso(data)
+        }
+    }
 });
 
 onUnmounted(() => {
-  window.removeEventListener('online', manejarCambioRed);
+    window.removeEventListener('online', manejarCambioRed);
 });
 
 </script>
@@ -60,7 +80,8 @@ onUnmounted(() => {
         "aside main"
         "footer footer";
     grid-template-rows: 60px 1fr 30px;
-    min-height: 100vh;     /* fallback */
+    min-height: 100vh;
+    /* fallback */
     min-height: 100dvh;
     max-height: 100dvh;
     background: radial-gradient(at left top, var(--color-default), var(--color-default-oscuro));
