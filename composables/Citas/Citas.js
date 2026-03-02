@@ -107,6 +107,18 @@ export function useCitasActions({ fecha }) {
         simple()
     }
 
+    function normalizarFecha(fecha) {
+        const f = new Date(fecha);
+        f.setHours(0, 0, 0, 0); // fuerza a medianoche
+        return f;
+    }
+
+    function parseFechaLocal(fechaStr) {
+        const [year, month, day] = fechaStr.split('-').map(Number);
+        return new Date(year, month - 1, day); // año, mes (0-based), día
+    }
+
+
     /* =========================
        ACTIVAR CITA
     ========================= */
@@ -118,8 +130,8 @@ export function useCitasActions({ fecha }) {
         const now = new Date()
         const horaActual = now.toTimeString().slice(0, 5)
 
-        const fechaHoy = parseFechaISO(now.toISOString().split('T')[0])
-        const fechaHasta = parseFechaISO(cita.fechaHasta)
+        const fechaHoy = normalizarFecha(new Date());
+        const fechaHasta = parseFechaLocal(cita.fechaHasta);
 
         if (fechaHoy > fechaHasta) {
             options.icono = 'warning'

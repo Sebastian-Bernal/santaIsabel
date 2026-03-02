@@ -400,6 +400,10 @@ async function actualizarPermisos() {
     addPermisos.value = true
 }
 
+function cerrarPermisos() {
+    addPermisos.value = false
+}
+
 // Construccion de pagina
 const cardsState = new CardBuilder();
 const cardsPacientes = new CardBuilder();
@@ -414,8 +418,8 @@ const propiedades = computed(() => {
         storeId: 'AgregarPermisos',
         storePinia: 'Profesion',
         permisos: secciones.value,
-        show: addPermisos.value,
-        cerrar: () => { addPermisos.value = false} ,
+        show: addPermisos,
+        cerrar: cerrarPermisos,
     })
     const pagina = new ComponenteBuilder();
     const paginaBase = pagina

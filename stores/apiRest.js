@@ -58,7 +58,12 @@ export const useApiRest = defineStore('apiRest', {
                 if (response.status === 200 || response.status === 201 || response.status === 204) {
                     const data = await response.json();
                     this.data = data
+                        if(varView.permiso && opcion.metodo !== 'GET') {
+                            console.log('hola')
+                            window.location.href = '/'
+                        }
                 } else {
+
                     let errorData;
                     try {
                         errorData = await response.json();
@@ -108,12 +113,6 @@ export const useApiRest = defineStore('apiRest', {
             } catch (error) {
                 console.error('Error en functionCall:', error);
                 varView.cargando = false
-                // Notificación genérica si algo falla fuera del bloque anterior
-                // notificacionesStore.options.icono = 'warning';
-                // notificacionesStore.options.titulo = '¡Ha ocurrido un problema!';
-                // notificacionesStore.options.texto = error.message || 'No se pudo enviar formulario, intenta de nuevo en un momento';
-                // notificacionesStore.options.tiempo = 3000;
-                // notificacionesStore.simple();
 
                 throw error;
 

@@ -5,6 +5,7 @@ export async function verificarAPIPermisos(id) {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(sessionStorage.getItem('token'))
+    const varView = useVarView()
 
     try {
         // Mandar a API
@@ -21,10 +22,15 @@ export async function verificarAPIPermisos(id) {
         if (respuesta.success) {
             // actualizar datos local
             sessionStorage.setItem('permisosTemporales', JSON.stringify(respuesta.data))
-            const permisos = useVarView.getPermisos
-            permisos.push(respuesta.data.nombre)
-            const permisosEncrypt = encryptData(permisos);
+            const allPermisos = []
+            const permisos = varView.getPermisos
 
+            allPermisos.push(...permisos)
+            allPermisos.push(respuesta.data[0].nombre)
+            console.log(allPermisos)
+            const permisosEncrypt = encryptData(allPermisos);
+
+            sessionStorage.removeItem('Permisos')
             sessionStorage.setItem('Permisos', permisosEncrypt);
             sessionStorage.setItem('permisoSolicitado', false)
             return true

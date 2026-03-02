@@ -3,7 +3,6 @@ import Pagina from "~/components/organism/Pagina/Pagina.vue";
 
 import { ref, onMounted, watch } from "vue";
 import { usePacientesStore } from "~/stores/Formularios/paciente/Paciente.js";
-import { useVarView } from "../../stores/varview.js";
 import { ComponenteBuilder } from "~/build/Constructores/ComponentesBuilder.js";
 import { TablaBuilder } from "~/build/Constructores/TablaBuilder.js";
 import { useUserBuilder } from "~/build/Usuarios/useUserFormBuilder.js";

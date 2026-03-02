@@ -1,7 +1,6 @@
 import { ref, reactive, watch, onMounted } from 'vue';
 import { useIndexedDBStore } from '~/stores/indexedDB';
 import { useApiRest } from '~/stores/apiRest';
-import { useNotificacionesStore } from '~/stores/notificaciones';
 
 /**
  * Composable para gestionar estrategias de caché inteligente

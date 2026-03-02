@@ -1,6 +1,5 @@
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales.js';
 import { guardarEnDB } from '../composables/Formulario/useIndexedDBManager.js';
-import { useNotificacionesStore } from '../../stores/notificaciones.js'
 import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { decryptData } from '~/composables/Formulario/crypto';
 import { useDatosProfesionStore } from '~/stores/Formularios/empresa/Profesion.js';

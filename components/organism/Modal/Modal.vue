@@ -8,6 +8,7 @@ import PDFTemplate from '~/components/organism/PDFTemplate/PDFTemplate.vue';
 
 import FondoBlur from '~/components/atoms/Fondos/FondoBlur.vue';
 import FondoTransparent from '~/components/atoms/Fondos/FondoTransparent.vue';
+import ChartComponent from '~/components/molecules/Charts/ChartComponent.vue';
 
 const props = defineProps({
     Propiedades: {
@@ -26,7 +27,8 @@ const components = {
     Calendario,
     Citas,
     Card,
-    PDFTemplate
+    PDFTemplate,
+    ChartComponent
 }
 
 const seccionActual = ref(0)

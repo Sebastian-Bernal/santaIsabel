@@ -5,15 +5,15 @@ export default defineNuxtConfig({
   ssr: false,
   nitro: { preset: 'static' },
   css: ['~/assets/css/main.css'],
-  modules: [ '@pinia/nuxt','@nuxtjs/color-mode', ],
+  modules: [ 
+    '@pinia/nuxt',
+    '@nuxtjs/color-mode',
+    'nuxt-charts'
+  ],
   colorMode: { preference: 'system', classSuffix: '' },
-  vite: {
-    plugins: [
-      tailwindcss(),
-    ],
-  },
   postcss: {
     plugins: {
+      '@tailwindcss/postcss': {},
       autoprefixer: {},
     },
   },

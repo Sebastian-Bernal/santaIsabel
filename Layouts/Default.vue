@@ -3,6 +3,7 @@
         :class="{ 'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido }">
         <Loader v-if="varView.cargando"></Loader>
         <Actualizado v-if="varView.actualizando"></Actualizado>
+        <Permiso v-if="varView.permiso"></Permiso>
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
@@ -23,9 +24,8 @@ import FooterPage from '~/components/organism/FooterPage/FooterPage.vue';
 import Footer from '~/components/organism/Footer/Footer.vue';
 import Loader from '~/components/molecules/Spinner/Loader.vue';
 import Actualizado from '~/components/molecules/Spinner/Actualizado.vue';
+import Permiso from '~/components/molecules/Spinner/Permiso.vue';
 import { iniciarSincronizacionPeriodica } from '~/composables/Formulario/sincronizarDatos';
-import { verificarAPIPermisos } from '~/Core/Empresa/Datos/Profesion/GETPermisosTemporales';
-import { consumirPermiso } from '~/Core/Empresa/Datos/Profesion/POSTConsumirPermiso';
 
 const varView = useVarView();
 
@@ -41,29 +41,15 @@ function manejarCambioRed() {
     }
 }
 
-async function verificarPermisos() {
-    const usuario = varView.getUser
-
-    const profesionalesStore = useMedicosStore()
-    const profesionales = await profesionalesStore.listMedicos()
-    const profesional = profesionales.find(p => p.id_infoUsuario === usuario.id)
-
-    await verificarAPIPermisos(profesional.id_profesional)
-}
-
 onMounted(async() => {
     window.addEventListener('online', manejarCambioRed);
     // Opcional: iniciar si ya está en línea al cargar
     if (navigator.onLine) {
         manejarCambioRed();
-        if (sessionStorage.getItem('permisoSolicitado')) {
-            verificarPermisos()
-        }
-        if (sessionStorage.getItem('permisosTemporales') && varView.cambioEnApi) {
-            const data = JSON.parse(sessionStorage.getItem('permisosTemporales'))
-            await consumirPermiso(data)
-        }
     }
+
+    const permisos = JSON.parse(sessionStorage.getItem('permisosTemporales'))
+    varView.permiso = permisos.length > 0 ? true : false
 });
 
 onUnmounted(() => {

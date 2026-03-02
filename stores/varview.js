@@ -59,6 +59,7 @@ export const useVarView = defineStore('varView', {
         servicioPDF: '',
         //layout
         expandido: false,
+        permiso: false,
     }),
 
     getters: {

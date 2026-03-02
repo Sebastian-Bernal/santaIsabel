@@ -4,6 +4,10 @@ import { decryptData } from '~/composables/Formulario/crypto';
 const route = useRoute()
 const router = useRouter()
 const config = useRuntimeConfig()
+const {
+  options,
+  simple,
+} = useNotificacionesStore()
 
 const token = route.query.token
 const varView = useVarView()
@@ -31,7 +35,11 @@ onMounted(async () => {
       }
     })
 
-    alert('Permiso aprobado correctamente')
+    options.icono = 'success';
+    options.titulo = 'Solicitud de Permiso';
+    options.texto = 'Permiso aprobado correctamente';
+    options.tiempo = 5000;
+    await simple();
     // Si está logueado → redirigir según lógica
 
     router.push('Home')

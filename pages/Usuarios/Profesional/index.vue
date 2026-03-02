@@ -193,10 +193,6 @@ const propiedades = computed(() => {
         acciones.push({ icon: "ver", action: modificarMedico });
     }
 
-    if (varView.getRol === 'Admin') {
-        acciones.push({ icon: 'configurar', action: actualizarPermisos });
-    }
-
     if (acciones.length > 0) {
         builderTabla.setAcciones({ icons: acciones, botones: true });
     }

@@ -18,6 +18,7 @@ import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { historialManejoModales } from '~/composables/Historias/historialManejoModales';
 import { usePDFExporter } from '~/composables/Historias/exportarServicioPDF';
 import { formatDate } from '~/composables/Formulario/FormatearFecha';
+import { ChartBuilder } from '~/build/Constructores/ChartBuilder';
 
 const varView = useVarView();
 const historiasStore = useHistoriasStore();
@@ -40,6 +41,7 @@ const id_paciente = ref(0)
 const medicos = ref([])
 const kardex = ref({})
 const historialCambioSonda = ref([])
+const examenesFisicos = ref([])
 
 const show = ref(false);
 const showItem = ref(false)
@@ -200,6 +202,7 @@ async function cargaHistorial(id) {
         trabajosSocial.value = [];
         diagnosticosCIF.value = [];
         kardex.value = {};
+        examenesFisicos.value = [];
 
         // Historia clínica
         const historia = await pacientesStore.listDatos(id, 'HistoriaClinica', 'id');
@@ -231,6 +234,7 @@ async function cargaHistorial(id) {
         // Consultas (Analisis con examen físico)
         for (const item of analisisDatos) {
             const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
+            examenesFisicos.value.push(examenFisico[0])
             analisis.value.push({ ...item, ...examenFisico[0] });
         }
 
@@ -285,7 +289,7 @@ async function cargaHistorial(id) {
         }
 
         kardex.value = await historiasStore.listDatos(parseInt(id), 'Kardex', 'id_paciente');
-        historialCambioSonda.value = await historiasStore.listDatos(kardex.value[0].id, 'Historial_cambio_sonda', 'id_kardex');
+        historialCambioSonda.value = await historiasStore.listDatos(kardex.value[0]?.id, 'Historial_cambio_sonda', 'id_kardex');
 
         // 🔹 Ordenamientos
         notas.value.sort((a, b) => new Date(b.fecha_nota) - new Date(a.fecha_nota));
@@ -385,6 +389,7 @@ const medicacionCard = new CardBuilder()
 const nutricionCard = new CardBuilder()
 const trabajoSocialCard = new CardBuilder()
 const KardexInfo = new CardBuilder()
+const charts = new CardBuilder()
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
@@ -454,6 +459,7 @@ const propiedades = computed(() => {
     const tablaTrabajoSocial = new TablaBuilder()
     const tablaDiagnosticos = new TablaBuilder()
     const tablaKardex = new TablaBuilder()
+    const propiedadesChart = new ChartBuilder()
 
     const propiedadesItemHistoria = useVerHistoriaBuilder({
         storeId: 'ActualizarHistorias',
@@ -804,13 +810,31 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-crutch' + (kardex.value[0]?.ultimoCambio ? ' text-white' : ' text-gray-300'),
                             iconBg: 'bg-inherit',
                             title: 'Cambio de Sonda',
-                            subtitle: `Ultimo cambio de sonda: ${kardex.value[0]?.ultimoCambio ? kardex.value[0].ultimoCambio : 'No hay cambio de sonda'} - ${kardex.value[0]?.rango ? kardex.value[0].rango : 'No hay rango'}`,
+                            subtitle: `Ultimo cambio: ${kardex.value[0]?.ultimoCambio ? kardex.value[0].ultimoCambio : 'No hay cambio de sonda'} - ${kardex.value[0]?.rango ? kardex.value[0].rango : 'No hay rango'}`,
                             titleClass: (kardex.value[0]?.ultimoCambio && kardex.value[0]?.rango && (kardex.value[0].ultimoCambio - kardex.value[0].rango) < 0 ? 'text-red-500' : 'text-white'),
                             subtitleClass: 'text-gray-300!'
                         },
                     },
                 ])
-                .setContenedor('col-span-2 mt-5')
+                .setContenedor('mt-5')
+                .setcontenedorCards('w-full flex justify-center w-full')
+                .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-gray-500)]! hover:bg-[var(--color-gray-500)]! cursor-pointer text-white! w-[100%]!')
+                .build()
+            )
+            .addComponente('Card', charts
+                .setCards([
+                    {
+                        header: {
+                            icon: 'fa-solid fa-chart-simple',
+                            iconBg: 'bg-inherit',
+                            title: 'Graficos Evolucion',
+                            subtitle: 'Mira las graficas del paciente',
+                            titleClass: 'text-white',
+                            subtitleClass: 'text-gray-300!'
+                        },
+                    },
+                ])
+                .setContenedor('mt-5')
                 .setcontenedorCards('w-full flex justify-center w-full')
                 .setTamaño('flex flex-row justify-between items-center rounded-lg bg-[var(--color-gray-500)]! hover:bg-[var(--color-gray-500)]! cursor-pointer text-white! w-[100%]!')
                 .build()
@@ -1142,7 +1166,7 @@ const propiedades = computed(() => {
             .addComponente('Form', propiedadesItemHistoria)
 
             // kardex
-            .nuevaSeccion('nutricion', 'flex flex-col gap-3 w-full h-full py-5 px-8')
+            .nuevaSeccion('kardex', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('Tabla', tablaKardex
                 .setColumnas([
                     { titulo: 'fecha_cambio', value: 'Fecha', tamaño: 110, ordenar: true },
@@ -1165,12 +1189,31 @@ const propiedades = computed(() => {
             )
             .addComponente('Form', propiedadesItemHistoria)
 
-
+            .nuevaSeccion('graficos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
+            .addComponente('ChartComponent', propiedadesChart
+                .setDatos(examenesFisicos.value)
+                .setConfiguracion(
+                    {
+                        type: 'line',
+                        xLabel: 'Peso',
+                        yLabel: 'Altura',
+                        categories: {
+                            altura: {
+                                name: 'altura',
+                                color: '#10b981'
+                            },
+                            peso: {
+                                name: 'Peso',
+                                color: '#3b82f6'
+                            },
+                        }
+                    }
+                )
+            )
         )
 
     return pagina.build()
 });
-
 </script>
 
 <template>
