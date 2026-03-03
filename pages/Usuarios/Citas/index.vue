@@ -148,7 +148,10 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
 
     const puedeVer = varView.getPermisos.includes('Citas_view');
-    if (!puedeVer) {
+    const puedeGet = varView.getPermisos.includes('Citas_get');
+    const puedePost = varView.getPermisos.includes('Citas_post')
+
+    if (!puedeVer && !puedePost && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -184,7 +187,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePost = varView.getPermisos.includes('Citas_post')
+
 
     pagina
         .setFondo('FondoDefault')

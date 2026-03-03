@@ -16,17 +16,17 @@ onMounted(() => {
 
 <template>
     <button :class="{ 'active': data.active }"
-        class="z-9 border-none cursor-pointer text-[var(--color-gris-claro)] h-full px-[15px] py-[15px] flex items-center relative hover:text-[var(--color-blanco)] hover:bg-[var(--color-rojo-claro)]">
+        class="z-9 border-none cursor-pointer text-(--color-gris-claro) h-full px-3.75 py-3.75 flex items-center relative hover:text-(--color-blanco) hover:bg-(--color-rojo-claro)">
         <!-- Icono boton -->
-        <a class="link w-[24px] h-[24px] pointer-events-none md:pointer-events-all md:text-black text-white">
+        <a class="link w-6 h-6 pointer-events-none md:pointer-events-all md:text-black text-white">
             <i class="fa-solid text-xl" :class="data.icon"></i>
         </a>
 
-        <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-[var(--color-default-claro)] p-[10px] w-[150px]"
+        <div class="right absolute top-[50%] left-full flex justify-center items-center pointer-events-none bg-(--color-default-claro) p-2.5 w-37.5"
             :class="{ 'rounded-[0_30px_0_0] ': !data.showUp, 'rounded-[0_0_30px_0]': data.showUp }"
             @click="storeAside.activeButton(data.id)">
             <a @click="footer.cambiarSecciones(null)">
-                <h3 class="text-[var(--color-rojo)] p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
+                <h3 class="text-(--color-rojo) p-[5px_10px] cursor-pointer text-base font-bold">{{ data.nombre }}
                 </h3>
             </a>
 

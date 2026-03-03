@@ -48,19 +48,16 @@ const enviarFormulario = async (datos) => {
                 sessionStorage.setItem('Permisos', permisosEncrypt);
                 sessionStorage.setItem('permisosTemporales', JSON.stringify(permisosIndividuales))
 
-                // await traerDatos()
                 await traerDatos((porcentaje, texto) => {
                     actualizarProgreso(porcentaje, texto);
                 });
                 actualizarProgreso(100, 'completado')
                 const ultimaSeccion = localStorage.getItem('seccion')
 
-                await navigateTo(
-                    ultimaSeccion ||
+                window.location.href = ultimaSeccion ||
                     (respuesta.user.rol === 'Profesional'
                         ? '/Usuarios/Citas'
                         : '/Home')
-                )
                 notificacionesStore.close()
                 return true
             } else {

@@ -12,7 +12,6 @@ const footer = useSeccionFooter();
 onMounted(() => {
     storeAside.sessionActive();
     const permisosStore = varView.getPermisos
-    if (permisosStore.length < 1) { window.location.href = '/' }
     buttons.value = storeAside.getbuttons(permisosStore);
 });
 
@@ -60,7 +59,6 @@ function accesoRapidoSelected(nombre) {
         }
         case 'Citas': {
             const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
-            console.log(button);
             if (button) {
                 footer.cambiarSecciones(button.secciones);
                 footer.cambiarIdActivo(2)
@@ -78,7 +76,7 @@ function accesoRapidoSelected(nombre) {
 <template>
     <div class="section-asidebar" :class="{ 'expandido': varView.expandido }">
         <div class="asidebar-shadow flex items-center h-full">
-            <div class="section-asidebar__content w-full flex flex-col p-[5px] items-center rounded-r-lg dark:bg-[var(--color-default-claro)] bg-[var(--color-default-700)] shadow-lg"
+            <div class="section-asidebar__content w-full flex flex-col p-1.25 items-center rounded-r-lg dark:bg-(--color-default-claro) bg-(--color-default-700) shadow-lg"
                 :class="{ 'h-full': varView.expandido, 'h-[75%] clip': !varView.expandido }">
 
             <!-- Estado colapsado -->
@@ -138,7 +136,7 @@ function accesoRapidoSelected(nombre) {
 
             <!-- Estado expandido -->
             <div v-else
-                class="menu-expandido dark:bg-[var(--color-default-claro)] bg-[var(--color-default-700)] flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3">
+                class="menu-expandido dark:bg-(--color-default-claro) bg-(--color-default-700) flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3">
                 <!-- Header -->
                 <div>
                     <div

@@ -117,7 +117,15 @@ const propiedades = computed(() => {
 
     // Verificar permisos específicos
     const puedeVer = varView.getPermisos.includes('Pacientes_view');
-    if (!puedeVer) {
+    const puedeGet = varView.getPermisos.includes('Pacientes_get');
+    const puedePost = varView.getPermisos.includes('Pacientes_post');
+    const puedePut = varView.getPermisos.includes('Pacientes_put');
+    const puedediagnosticar = varView.getPermisos.includes('Diagnosticos_view');
+    const puedeVerKardex = varView.getPermisos.includes('Kardex_view');
+    const puedeGetKardex = varView.getPermisos.includes('Kardex_get');
+    const puedePutKardex = varView.getPermisos.includes('Kardex_put');
+
+    if (!puedeVer && !puedePost && !puedePut && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -153,11 +161,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePost = varView.getPermisos.includes('Pacientes_post');
-    const puedePut = varView.getPermisos.includes('Pacientes_put');
-    const puedediagnosticar = varView.getPermisos.includes('Diagnosticos_view');
-    const puedeVerKardex = varView.getPermisos.includes('Kardex_view');
-    const puedePutKardex = varView.getPermisos.includes('Kardex_put');
+
 
     // Formulario para crear paciente
     const propiedadesUser = puedePost
@@ -525,7 +529,7 @@ const propiedades = computed(() => {
         .setEstilos("")
         .setLayout("")
         .setContenedor("w-full")
-    if (puedeVerKardex) {
+    if (puedeVerKardex || puedePutKardex || puedeGetKardex) {
         pagina
         if (varView.pacienteKardex) {
             pagina

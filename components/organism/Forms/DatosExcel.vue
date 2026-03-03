@@ -110,7 +110,7 @@ function mostrar() {
 <template>
     <FondoBlur>
             <div
-                class="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300 animate-fadeIn">
+                class="bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300 animate-fadeIn">
                 <div class="py-6 h-full flex flex-col justify-between">
                     <h2 class="text-2xl font-bold text-center py-3 text-gray-800 dark:text-gray-100 tracking-wide">
                         Configuración de Exportación
@@ -153,7 +153,7 @@ function mostrar() {
                                 name: 'campoCompararTabla',
                                 options: datosOptionsTabla,
                             }" />
-                            <div class="bg-gray-300 dark:bg-gray-700 h-[2px] w-full col-span-3"></div>
+                            <div class="bg-gray-300 dark:bg-gray-700 h-0.5 w-full col-span-3"></div>
                         </div>
                         <div class="grid md:grid-cols-3 grid-cols-1 gap-3 pt-3">
                             <Input v-model="excel.nombreArchivo" :Propiedades="{

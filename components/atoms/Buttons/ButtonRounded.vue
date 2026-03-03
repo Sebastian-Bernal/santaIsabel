@@ -2,7 +2,7 @@
   <div class="relative inline-flex">
     <button
       type="button"
-      :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95 w-[30px] h-[30px] flex justify-center items-center text-white rounded-full hover:opacity-75',
+      :class="[color, 'transition-all duration-300 cursor-pointer active:scale-95 w-7.5 h-7.5 flex justify-center items-center text-white rounded-full hover:opacity-75',
         {'opacity-30': props.disabled}
       ]"
       ref="buttonRef"
@@ -18,7 +18,7 @@
     <teleport to="body">
       <div
         v-if="tooltip && isVisible"
-        class="fixed z-[9999] px-2 py-1 text-xs text-white font-semibold bg-[var(--color-default-600)] rounded-lg shadow-lg whitespace-nowrap sm:flex hidden"
+        class="fixed z-9999 px-2 py-1 text-xs text-white font-semibold bg-(--color-default-600) rounded-lg shadow-lg whitespace-nowrap sm:flex hidden"
         :style="tooltipStyle"
         role="tooltip"
       >

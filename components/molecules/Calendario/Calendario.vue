@@ -173,7 +173,7 @@ const siguienteMes = () => {
                     class="px-3 py-3 flex justify-center items-center border border-gray-200 dark:border-gray-500 rounded-xl cursor-pointer transition hover:bg-blue-50 dark:hover:bg-gray-600"
                     :class="{
                         'bg-blue-100 dark:bg-blue-700': num.fecha === fecha,
-                        'border-2 !border-gray-400 !dark:border-gray-600': num.fecha === fechaActual
+                        'border-2 border-gray-400 !dark:border-gray-600': num.fecha === fechaActual
                     }">
                     <h2 :class="{
                         'border-b-2 border-blue-500': diasConCitas.includes(num.fecha),

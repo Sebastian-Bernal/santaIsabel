@@ -271,7 +271,7 @@ const campos = {
 <template>
     <div class="h-[90%]">
         <!-- Header -->
-        <div class="flex w-[100%] justify-between items-center md:flex-row flex-col gap-3">
+        <div class="flex w-full justify-between items-center md:flex-row flex-col gap-3">
             <div>
                 <h1 class="font-bold md:text-2xl text-xl tituloTabla text-gray-800 dark:text-gray-200">
                     {{ props.Propiedades.headerTabla?.titulo }}
@@ -297,7 +297,7 @@ const campos = {
                             <h4 class="md:block hidden select-none">Exportar</h4>
                         </div>
                         <div
-                            class="configExcel flex flex-col absolute top-[100%] md:left-0 left-[-70%] bg-[var(--color-default-500)] text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-lg">
+                            class="configExcel flex flex-col absolute top-full md:left-0 left-[-70%] bg-(--color-default-500) text-gray-300 md:p-3 p-1 z-9 gap-4 items-center justify-center rounded-lg">
 
                             <download-excel class="flex gap-1 hover:text-white"
                                 :data="Array.isArray(datosOrdenados) ? unref(datosOrdenados) : unref(props.Propiedades.datos.content)"
@@ -420,7 +420,7 @@ const campos = {
 
                     <!-- COLUMNAS FIJAS -->
                     <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
-                        class="sticky top-0 z-20 grid justify-between text-xs font-bold bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 text-white"
+                        class="sticky top-0 z-20 grid justify-between text-xs font-bold bg-(--color-default) dark:bg-(--color-default-600) border-b border-gray-200 dark:border-gray-700 text-white"
                         :style="estiloColumnasPinned"
                         :class="{ 'rounded-lt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }"
                         role="row">
@@ -439,7 +439,7 @@ const campos = {
 
                     <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
                     <div ref="headerInner"
-                        class="w-full sticky top-0 z-3 grid justify-between text-xs bg-[var(--color-default)] dark:bg-[var(--color-default-600)] border-b border-gray-200 dark:border-gray-700 font-bold"
+                        class="w-full sticky top-0 z-3 grid justify-between text-xs bg-(--color-default) dark:bg-(--color-default-600) border-b border-gray-200 dark:border-gray-700 font-bold"
                         :class="[Propiedades.headerTabla?.color, { 'rounded-rt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }]"
                         :style="estiloColumnasScrollable" role="row">
 
@@ -465,7 +465,7 @@ const campos = {
                         class="bodyTable justify-between grid text-center animate-pulse" :style="estiloColumnasScrollable">
                         <div v-for="(col, key) in columnasVisibles" :key="key"
                             :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                            <div class="h-3 bg-gray-200 rounded w-3/4 my-[15px] mx-2"></div>
+                            <div class="h-3 bg-gray-200 rounded w-3/4 my-3.75 mx-2"></div>
                         </div>
                         <div v-if="Propiedades.acciones.botones"
                             class="flex items-center justify-center accionesTabla text-center gap-2"
@@ -492,7 +492,7 @@ const campos = {
 
                     <div v-for="(fila, id) in datosPaginados" role="row"
                         :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(id) }"
-                        class="bodyTable justify-between flex w-max min-w-full odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700">
+                        class="bodyTable justify-between flex w-max min-w-full odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700">
                         <div
                             class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
                         </div>
@@ -515,7 +515,7 @@ const campos = {
                                 :style="{ width: `${col.tamaño}px`, minWidth: '60px' }" role="cell">
 
                                 <div v-if="props.Propiedades.configuracion.camposInputs"
-                                    class="relative w-full h-full px-2 py-2 cursor-text rounded-md transition-all duration-150 hover:bg-[var(--color-default-claro)] dark:hover:bg-gray-700"
+                                    class="relative w-full h-full px-2 py-2 cursor-text rounded-md transition-all duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700"
                                     :style="{
                                         backgroundColor: obtenerColorCelda(id, col.titulo)
                                     }"
@@ -536,7 +536,7 @@ const campos = {
                                     <component v-else :is="campos[col.campo]" ref="inputEditable" v-model="fila[col.titulo]"
                                         @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
                                         @keydown.enter="celdaActiva = { fila: null, columna: null }"
-                                        class="absolute inset-0 w-full h-full hover:bg-[var(--color-default-claro)]/60 hover:dark:bg-[var(--color-default-oscuro)]/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
+                                        class="absolute inset-0 w-full h-full hover:bg-(--color-default-claro)/60 hover:dark:bg-(--color-default-oscuro)/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
                                         :Propiedades="{ ...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', disabled: props.Propiedades.configuracion.camposEditables, estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }" />
                                 </div>
 
@@ -599,7 +599,7 @@ const campos = {
                                 <div class="w-full grid md:grid-cols-3 lg:grid-cols-4 grid-cols-2">
                                     <div v-for="(col, key) in columnasSobrantes" class="flex-wrap truncate px-2 my-2">
                                         <p
-                                            class="text-gray-600 dark:text-gray-200 text-xs font-bold border-t-1 border-t-gray-100 dark:border-t-gray-600 mb-1 truncate">
+                                            class="text-gray-600 dark:text-gray-200 text-xs font-bold border-t border-t-gray-100 dark:border-t-gray-600 mb-1 truncate">
                                             {{ col.titulo }}
                                         </p>
                                         {{ fila[col.titulo] }}
@@ -614,7 +614,7 @@ const campos = {
                     <!-- filas vacías para rellenar -->
                     <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
                         :key="`empty-${n}`"
-                        class="bodyTable justify-between grid p-2 text-center hover:bg-[var(--color-default-claro)] odd:bg-[var(--color-default-claro-100)] odd:hover:bg-[var(--color-default-claro)] dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
+                        class="bodyTable justify-between grid p-2 text-center hover:bg-(--color-default-claro) odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
                         :style="estiloColumnasScrollable">
 
                         <div v-for="(col, key) in columnasVisibles" :key="key"

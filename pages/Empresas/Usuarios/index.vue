@@ -192,8 +192,11 @@ const propiedades = computed(() => {
 
     // Verifica permisos específicos
     const puedeVer = varView.getPermisos.includes('Usuarios_view');
+    const puedeGet = varView.getPermisos.includes('Usuarios_get');
     const puedePut = varView.getPermisos.includes('Usuarios_put');
-    if (!puedeVer) {
+    const puedePostUsuarios = varView.getPermisos.includes('Usuarios_post');
+
+    if (!puedeVer && !puedePostUsuarios && !puedePut && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -229,7 +232,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePostUsuarios = varView.getPermisos.includes('Usuarios_post');
+
     const propiedadesUser = useUserBuilder({
         storeId: 'NuevoUsuario',
         storePinia: 'Usuarios',

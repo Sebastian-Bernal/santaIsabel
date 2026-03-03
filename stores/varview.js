@@ -59,7 +59,7 @@ export const useVarView = defineStore('varView', {
         servicioPDF: '',
         //layout
         expandido: false,
-        permiso: false,
+        permisoTemporal: false,
     }),
 
     getters: {
@@ -107,6 +107,7 @@ export const useVarView = defineStore('varView', {
             setTimeout(() => {
                 this.actualizando = false
             }, 1500);
-        }
+        },
+
     }
 })

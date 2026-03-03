@@ -29,7 +29,7 @@ const breadCrumbs = computed(() => {
     </a>
     <!-- Dropdown -->
     <div
-        class="dropdown absolute top-[50px] ml-[-35px] bg-[var(--color-default-oscuro)] rounded-[5px] p-[10px] shadow-lg z-999 max-w-[200px] overflow-x-auto select-none">
+        class="dropdown absolute top-12.5 -ml-8.75 bg-(--color-default-oscuro) rounded-[5px] p-2.5 shadow-lg z-999 max-w-50 overflow-x-auto select-none">
         <div class="flex text-white borde rounded-lg" aria-label="Breadcrumb">
             <ol class="flex items-center">
                 <li class="flex items-center">

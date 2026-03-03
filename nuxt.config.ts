@@ -71,8 +71,6 @@ export default defineNuxtConfig({
       historialCambioSonda: 'api/v1/historialCambioSonda',
       profesionalHasPermisos: 'api/v1/profesionalHasPermisos',
       solicitarPermiso:  'api/v1/solicitarPermiso',
-      verificarPermisos: 'api/v1/verificarPermisos',
-      consumirPermiso: 'api/v1/consumirPermiso',
     }
   },
 

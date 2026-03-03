@@ -71,7 +71,7 @@ function limpiar() {
         <div class="bg-gray-50 dark:bg-gray-900 rounded-lg shadow-lg flex flex-col h-full animate-fadeIn"
             :class="[Propiedades.formulario.tamañoForm, Propiedades.formulario.estilos]">
 
-            <div class="flex flex-col flex-1 min-h-0" :class="{'h-[90%]': props.Propiedades.formulario.botones.length > 0, 'h-[100%]': !props.Propiedades.formulario.botones}">
+            <div class="flex flex-col flex-1 min-h-0" :class="{'h-[90%]': props.Propiedades.formulario.botones.length > 0, 'h-full': !props.Propiedades.formulario.botones}">
                 <!-- Formulario Wizard -->
                 <Wizard
                     v-if="Propiedades.formulario && Propiedades.formulario.tipo !== undefined && Propiedades.formulario.tipo === 'Wizard'"
@@ -82,10 +82,10 @@ function limpiar() {
                     <div v-if="Propiedades.formulario && Propiedades.formulario.tipo !== 'Wizard'"
                         class="relative pt-4 pb-3 px-4">
                         <h2
-                            class="lg:text-2xl text-xl text-[var(--color-default)] dark:text-white font-bold text-center">
+                            class="lg:text-2xl text-xl text-(--color-default) dark:text-white font-bold text-center">
                             {{ Propiedades.formulario.secciones[seccionActual].nombre }}
                         </h2>
-                        <div class="absolute top-[4px] right-[5px]" v-if="Propiedades.formulario.fondo !== 'FondoTransparent'">
+                        <div class="absolute top-1 right-1" v-if="Propiedades.formulario.fondo !== 'FondoTransparent'">
                             <div @click="limpiar"
                                 class="w-7 h-7 flex justify-center items-center rounded-xl hover:text-white hover:bg-[rgba(0,0,0,0.1)] cursor-pointer">
                                 <i
@@ -115,7 +115,7 @@ function limpiar() {
             <div v-if="props.Propiedades.formulario.botones.length > 0" class="border-t border-gray-200 dark:border-gray-800 px-4 py-3 flex flex-row-reverse justify-center gap-3">
                 <ButtonForm v-for="item in props.Propiedades.formulario.botones" :color="item.color"
                     @click="(event) => manejarClick(event, item, tablaStore?.Formulario, limpiar)"
-                    class="md:w-[180px] w-1/3">
+                    class="md:w-45 w-1/3">
                     {{ props.Propiedades.formulario.botones ? item.text : 'Cancelar' }}
                 </ButtonForm>
             </div>

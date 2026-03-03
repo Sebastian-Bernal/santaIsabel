@@ -234,7 +234,26 @@ async function cargaHistorial(id) {
         // Consultas (Analisis con examen físico)
         for (const item of analisisDatos) {
             const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
-            examenesFisicos.value.push(examenFisico[0])
+            if (examenFisico.length > 0) {
+                // Convertir altura a metros
+                const alturaMetros = examenFisico[0].altura / 100;
+
+                // Calcular IMC
+                const imcPaciente = examenFisico[0].peso / (alturaMetros ** 2);
+                const IMC = parseFloat(imcPaciente.toFixed(2))
+
+                // Formatear fecha
+                const fechaFormateada = new Date(examenFisico[0].created_at)
+                    .toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+                // Agregar al arreglo con IMC y fecha formateada
+                examenesFisicos.value.push({
+                    ...examenFisico[0],
+                    IMC,
+                    fecha: fechaFormateada.split('/').reverse().join('-')
+                });
+            }
+
             analisis.value.push({ ...item, ...examenFisico[0] });
         }
 
@@ -396,7 +415,8 @@ const propiedades = computed(() => {
     const modal = new ModalBuilder()
 
     const puedeVer = varView.getPermisos.includes('Historias_view');
-    if (!puedeVer) {
+    const puedeGet = varView.getPermisos.includes('Historias_get');
+    if (!puedeVer && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -956,10 +976,12 @@ const propiedades = computed(() => {
                         },
                     ]
                 })
-                .setAcciones({ icons: [
-                    puedePutTerapias ? { icon: 'actualizar', action: (item) => loadItem('Terapia', item, 'update') } : '',
-                    { icon: 'pdf', action: (item) => exportar('Terapia', item.id_analisis) }, 
-                ], botones: true, })
+                .setAcciones({
+                    icons: [
+                        puedePutTerapias ? { icon: 'actualizar', action: (item) => loadItem('Terapia', item, 'update') } : '',
+                        { icon: 'pdf', action: (item) => exportar('Terapia', item.id_analisis) },
+                    ], botones: true,
+                })
                 .setDatos(puedeVerTerapias ? evoluciones : [])
             )
             .addComponente('Form', propiedadesItemHistoria)
@@ -1174,7 +1196,7 @@ const propiedades = computed(() => {
                 ])
                 .setAcciones({
                     icons: [
-                        { icon: 'ver', action: (item) => loadItem('Historial_cambios_sonda', item, 'view')} ,
+                        { icon: 'ver', action: (item) => loadItem('Historial_cambios_sonda', item, 'view') },
                     ], botones: true,
                 })
                 .setDatos(historialCambioSonda)
@@ -1191,21 +1213,44 @@ const propiedades = computed(() => {
 
             .nuevaSeccion('graficos', 'flex flex-col gap-3 w-full h-full py-5 px-8')
             .addComponente('ChartComponent', propiedadesChart
-                .setDatos(examenesFisicos.value)
+                .setDatos(
+                    examenesFisicos.value.map(examen => ({
+                        x: examen.fecha,   // fecha formateada
+                        y: examen.IMC           // valor IMC
+                    }))
+                )
                 .setConfiguracion(
                     {
-                        type: 'line',
-                        xLabel: 'Peso',
-                        yLabel: 'Altura',
+                        type: 'Line',
+                        height: 400,
+                        xLabel: 'Fecha',
+                        yLabel: 'IMC',
                         categories: {
-                            altura: {
-                                name: 'altura',
-                                color: '#10b981'
-                            },
-                            peso: {
-                                name: 'Peso',
+                            y: {
+                                name: 'IMC',
                                 color: '#3b82f6'
                             },
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    type: 'time', // eje temporal
+                                    time: {
+                                        unit: 'week', // puedes usar 'month' o 'week' según tu evolución
+                                        tooltipFormat: 'yyyy/MM/dd'
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Fecha'
+                                    }
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'IMC'
+                                    }
+                                }
+                            }
                         }
                     }
                 )

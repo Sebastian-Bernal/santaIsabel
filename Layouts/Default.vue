@@ -49,7 +49,7 @@ onMounted(async() => {
     }
 
     const permisos = JSON.parse(sessionStorage.getItem('permisosTemporales'))
-    varView.permiso = permisos.length > 0 ? true : false
+    varView.permisoTemporal = permisos.length > 0 ? true : false
 });
 
 onUnmounted(() => {

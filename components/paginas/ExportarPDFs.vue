@@ -266,7 +266,7 @@ const enviarPDFs = async () => {
     <FondoBlur>
         <div class="bg-[rgba(0,0,0,0.5)] w-full h-full flex justify-center items-center">
             <div
-                class="bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300 animate-fadeIn">
+                class="bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 md:w-[55%] md:h-[65%] w-[90%] h-[80%] transform transition-all duration-300 animate-fadeIn">
                 <div class="py-6 h-full flex flex-col justify-between">
                     <!-- Título -->
                     <h2 class="text-2xl font-bold text-center py-3 text-gray-800 dark:text-gray-100 tracking-wide">
@@ -359,7 +359,7 @@ const enviarPDFs = async () => {
                                 <span class="text-sm font-bold text-blue-600">{{ progreso }}%</span>
                             </div>
                             <div class="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
-                                <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-full transition-all duration-500 ease-out"
+                                <div class="bg-linear-to-r from-blue-400 to-blue-600 h-full transition-all duration-500 ease-out"
                                     :style="{ width: progreso + '%' }"></div>
                             </div>
                         </div>

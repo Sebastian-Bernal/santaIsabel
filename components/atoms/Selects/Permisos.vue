@@ -59,7 +59,7 @@ function moduloSeleccionado(modulo) {
   <div class="relative select-none" :class="Propiedades.tamaño">
     <!-- Input visual -->
     <div
-      class="mt-1 w-full h-[35px] px-3 flex items-center justify-between
+      class="mt-1 w-full h-[8.75 px-3 flex items-center justify-between
              border border-gray-300 dark:border-blue-900 rounded-lg
              cursor-pointer bg-white dark:bg-gray-900"
       @click="mostrarOptions"
@@ -72,7 +72,7 @@ function moduloSeleccionado(modulo) {
     <!-- Dropdown -->
     <div
       v-show="showOptions"
-      class="absolute top-full left-0 right-0 mt-1 max-h-[300px]
+      class="absolute top-full left-0 right-0 mt-1 max-h-75
              overflow-y-auto scrollForm bg-white dark:bg-gray-900
              border border-gray-200 dark:border-gray-800 rounded-lg z-50 p-3"
     >

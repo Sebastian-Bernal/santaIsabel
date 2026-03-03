@@ -257,7 +257,15 @@ const propiedades = computed(() => {
 
     // Verifica permisos específicos
     const puedeVer = varView.getPermisos.includes('Datos_view');
-    if (!puedeVer) {
+    const puedeGet = varView.getPermisos.includes('Datos_get');
+    const puedePostEPS = varView.getPermisos.includes('Datos_post');
+    const puedePutEPS = varView.getPermisos.includes('Datos_put');
+    const puedePostProfesion = varView.getPermisos.includes('Datos_post');
+    const puedePutProfesion = varView.getPermisos.includes('Datos_put');
+    const puedePostServicio = varView.getPermisos.includes('Datos_post');
+    const puedePutServicio = varView.getPermisos.includes('Datos_put');
+
+    if (!puedeVer && !puedePostEPS && !puedePutEPS && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -293,12 +301,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePostEPS = varView.getPermisos.includes('Datos_post');
-    const puedePutEPS = varView.getPermisos.includes('Datos_put');
-    const puedePostProfesion = varView.getPermisos.includes('Datos_post');
-    const puedePutProfesion = varView.getPermisos.includes('Datos_put');
-    const puedePostServicio = varView.getPermisos.includes('Datos_post');
-    const puedePutServicio = varView.getPermisos.includes('Datos_put');
+
 
     // Builders condicionales
     const propiedadesProfesion = puedePostProfesion

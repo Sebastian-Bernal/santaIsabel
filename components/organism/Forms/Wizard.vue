@@ -20,7 +20,7 @@ function editar() {
 
 <template>
     <div
-        class="relative w-full flex md:flex-row justify-between items-center gap-2 py-4 md:px-8 px-2 bg-[var(--color-default)] rounded-t-lg">
+        class="relative w-full flex md:flex-row justify-between items-center gap-2 py-4 md:px-8 px-2 bg-(--color-default) rounded-t-lg">
         <div class="flex flex-col">
             <h2 class="text-white font-bold md:text-2xl text-xl">{{ Propiedades.tituloFormulario }}</h2>
             <div class="flex gap-3 pt-1">

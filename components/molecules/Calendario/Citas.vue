@@ -272,12 +272,12 @@ function changeShowPendientes() {
                     <div class="space-y-2">
                         <div class="w-full h-3">
                             <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                <i class="w-[25px] fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
+                                <i class="w-6.5 fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
                             </h3>
                         </div>
                         <div class="w-3/4 h-3">
                             <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                <i class="w-[25px] fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
+                                <i class="w-6.5 fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
                             </h3>
                         </div>
                     </div>
@@ -339,7 +339,7 @@ function changeShowPendientes() {
             </div>
 
 
-            <div class="h-[2px] w-full bg-gray-200 dark:bg-gray-800 my-3"></div>
+            <div class="h-0.5 w-full bg-gray-200 dark:bg-gray-800 my-3"></div>
 
             <div class="flex items-center my-2 px-5 gap-2">
                 <i class="fa-solid fa-calendar-day text-blue-300"></i>
@@ -405,12 +405,12 @@ function changeShowPendientes() {
                 <div class="space-y-2">
                     <div class="w-full h-3">
                         <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <i class=" w-[25px] fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
+                            <i class=" w-6.5 fa-solid fa-user-doctor text-gray-500"></i> {{ cita.name_medico }}
                         </h3>
                     </div>
                     <div class="w-3/4 h-3 mt-1">
                         <h3 class="text-sm flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                            <i class="w-[25px] fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
+                            <i class="w-6.5 fa-solid fa-stethoscope text-blue-500"></i> {{ cita.motivo }}
                         </h3>
                     </div>
                 </div>
@@ -477,7 +477,7 @@ function changeShowPendientes() {
 
     </div>
     <!-- Paginador -->
-    <div v-if="props.Propiedades.showTodas" class="mt-[10px] flex gap-3 justify-between items-center h-[30px] px-10">
+    <div v-if="props.Propiedades.showTodas" class="mt-2.5 flex gap-3 justify-between items-center h-7.5 px-10">
         <div class="text-sm md:flex gap-1 hidden">
             <p class="text-gray-500">Registros {{ ultimaPagina - itemsPorPagina + 1 }} al {{ ultimaPagina }}</p>
             <p class="text-gray-500">de {{ datosOrdenados.length }}</p>
@@ -497,19 +497,19 @@ function changeShowPendientes() {
             <div class="flex gap-2 pagina">
                 <!-- Página anterior -->
                 <h2 v-if="paginaActual === totalPaginas && paginaActual > 1" @click="irAPagina(paginaActual - 1)"
-                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-7.5 h-7.5 rounded-full transition-all">
                     {{ paginaActual - 1 }}
                 </h2>
 
                 <!-- Página actual -->
                 <h2
-                    class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm font-semibold">
+                    class="bg-gray-400 text-white dark:bg-gray-600 dark:text-gray-100 flex justify-center items-center w-7.5 h-7.5 rounded-full shadow-sm font-semibold">
                     {{ paginaActual }}
                 </h2>
 
                 <!-- Página siguiente -->
                 <h2 v-if="paginaActual < totalPaginas" @click="irAPagina(paginaActual + 1)"
-                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full transition-all">
+                    class="text-gray-600 hover:bg-gray-300 dark:text-gray-300 dark:hover:bg-gray-600 cursor-pointer flex justify-center items-center w-7.5 h-7.5 rounded-full transition-all">
                     {{ paginaActual + 1 }}
                 </h2>
 
@@ -517,7 +517,7 @@ function changeShowPendientes() {
                 <div v-if="paginaActual < totalPaginas - 1" class="flex gap-1 items-center">
                     <p v-if="paginaActual + 2 !== totalPaginas" class="text-gray-500 dark:text-gray-400">...</p>
                     <h2 @click="irAPagina(totalPaginas)" aria-label="Ir a última página"
-                        class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-[30px] h-[30px] rounded-full shadow-sm transition-all font-semibold">
+                        class="bg-gray-300 text-gray-600 hover:bg-gray-400 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-500 cursor-pointer flex justify-center items-center w-7.5 h-7.5 rounded-full shadow-sm transition-all font-semibold">
                         {{ totalPaginas }}
                     </h2>
                 </div>

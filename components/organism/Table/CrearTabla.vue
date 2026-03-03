@@ -228,7 +228,7 @@ const colores = ref([
                     </div>
 
                     <!-- Configuración de columnas -->
-                    <div class="grid grid-cols-3 gap-5 p-3 my-5 max-h-[200px] overflow-y-auto">
+                    <div class="grid grid-cols-3 gap-5 p-3 my-5 max-h-50 overflow-y-auto">
                         <div v-for="(col, index) in tabla.columnas" :key="index"
                             class="flex flex-col gap-2 mb-2 border border-gray-300 dark:border-gray-600 rounded-xl p-2">
                             <Label class="text-gray-600" :Propiedades="{

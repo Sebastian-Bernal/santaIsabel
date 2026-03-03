@@ -47,7 +47,7 @@ function seleccionarTodos() {
       :name="Propiedades.name"
       :id="Propiedades.id"
       :class="Propiedades.tamaño"
-      class="mt-1 w-full h-[35px] text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+      class="mt-1 w-full h-8.75 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
       @click="mostrarOptions"
       @change="Propiedades.events?.onChange"
       @blur="Propiedades.events?.onBlur"
@@ -58,7 +58,7 @@ function seleccionarTodos() {
 
     <ul
       v-show="showOptions"
-      class="autocomplete-list top-full left-0 right-0 max-h-[180px] overflow-y-auto scrollForm bg-white border border-[#d0d7de] dark:bg-gray-900 rounded-lg z-9 px-3 mt-1"
+      class="autocomplete-list top-full left-0 right-0 max-h-45 overflow-y-auto scrollForm bg-white border border-[#d0d7de] dark:bg-gray-900 rounded-lg z-9 px-3 mt-1"
     >
       <div class="flex gap-3 cursor-pointer" @click="seleccionarTodos">
         <label class="font-semibold w-full px-3 py-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-950">Seleccionar Todos</label>

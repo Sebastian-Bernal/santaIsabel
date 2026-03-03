@@ -53,7 +53,6 @@ const removeStorage = () => {
 
 function agenda() {
     const button = buttons.value.find(btn => btn.nombre === 'Usuarios');
-    console.log(button)
     if (button) {
         footer.cambiarSecciones(button.secciones);
         footer.cambiarIdActivo(2)
@@ -67,7 +66,7 @@ function agenda() {
         <div class="navbar__content">
 
             <a href="/Home"
-                class="seccionLogo text-white md:text-xl font-extrabold py-2 px-3 md:w-[20%] w-[40%] h-fit bg-[var(--color-default-200)] shadow-xl">
+                class="seccionLogo text-white md:text-xl font-extrabold py-2 px-3 md:w-[20%] w-[40%] h-fit bg-(--color-default-200) shadow-xl">
                 <i class="fa-solid fa-laptop-medical md:text-2xl text-lg"></i>
                 Thesalus
             </a>
@@ -82,7 +81,7 @@ function agenda() {
                 :class="{ 'mostrarResponsive': showNavbarBurguer, 'ocultarResponsive': !showNavbarBurguer }">
                 <li>
                     <nuxtLink to="/Usuarios/Citas" @click="agenda()"
-                        class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-[10px] shadow-lg">
+                        class="flex gap-1 text-xs text-white md:text-gray-100 hover:text-blue-500 rounded-[5px] p-2.5 shadow-lg">
                         <i class="fa-solid fa-calendar-day"></i>
                         <p class="text-white md:text-white">{{ fechaActualFormateada }}</p>
                     </nuxtLink>

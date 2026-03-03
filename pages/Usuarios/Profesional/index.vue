@@ -82,8 +82,11 @@ const propiedades = computed(() => {
     const pagina = new ComponenteBuilder()
     // Verificar permisos específicos
     const puedeVer = varView.getPermisos.includes('Profesional_view');
+    const puedeGet = varView.getPermisos.includes('Profesional_get');
+    const puedePost = varView.getPermisos.includes('Profesional_post');
+    const puedePut = varView.getPermisos.includes('Profesional_put');
 
-    if (!puedeVer) {
+    if (!puedeVer && !puedePost && !puedePut && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -119,8 +122,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePost = varView.getPermisos.includes('Profesional_post');
-    const puedePut = varView.getPermisos.includes('Profesional_put');
+
 
     // Builder para ver usuario (siempre se usa cuando hay acción "ver")
     const propiedadesVerUser = puedePut

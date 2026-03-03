@@ -148,7 +148,11 @@ const propiedades = computed(() => {
     const tablaMovimientoPaciente = new TablaBuilder()
 
     const puedeVer = varView.getPermisos.includes('Insumos_view');
-    if (!puedeVer) {
+    const puedeGet = varView.getPermisos.includes('Insumos_get');
+    const puedePost = varView.getPermisos.includes('Insumos_post')
+    const puedePut = varView.getPermisos.includes('Insumos_put')
+
+    if (!puedeVer && !puedePost && !puedePut && !puedeGet) {
         pagina
             .setFondo('FondoDefault')
             .setEstilos('')
@@ -184,8 +188,7 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-    const puedePost = varView.getPermisos.includes('Insumos_post')
-    const puedePut = varView.getPermisos.includes('Insumos_put')
+
 
     const formularioInsumo = puedePost
         ? useInsumosBuilder({
