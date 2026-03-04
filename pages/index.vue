@@ -24,11 +24,16 @@ const mostrarContraseña = ref(false)
 onMounted(async () => {
     try {
         varView.cargando = true
-        await indexedDB.deleteDatabase('db-thesalus');
+
+        await indexedDB.clearDatabase('db-thesalus');
         await indexedDB.initialize(); // tu lógica de inicialización
         await storeCodigos.initialize();
         await storeCodigos.guardardatos()
-        sessionStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('Rol');
+        localStorage.removeItem('Permisos');
+        localStorage.removeItem('permisosTemporales')
         varView.cargando = false;
     } catch (e) {
         console.error('No se pudo reiniciar IndexedDB:', e);

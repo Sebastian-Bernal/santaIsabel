@@ -2,7 +2,7 @@ import { decryptData } from '~/composables/Formulario/crypto';
 export async function traerAdministradores () {
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     const online = navigator.onLine;
     if (online) {

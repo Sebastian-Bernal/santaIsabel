@@ -110,7 +110,7 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     const profesionesStore = useDatosProfesionStore()
@@ -153,17 +153,17 @@ export const enviarFormularioProfesional = async (datos, reintento = false) => {
                 formData.append("selloFile", datos.Profesional.sello, "sello.jpg");
             }
 
-            const res = await fetch(`${config.public.api}/${config.public.profesionals}`, {
-                method: 'POST',
+            let options = {
+                metodo: 'POST',
+                url: config.public.profesionals,
+                token: token,
+                formData: true,
                 body: formData,
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            const respuesta = await res.json();
+            }
+            const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
+
                 // Actualizar local
                 const datosActualizadosLocal = {
                     InformacionUser: {

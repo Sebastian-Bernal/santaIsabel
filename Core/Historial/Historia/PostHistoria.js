@@ -69,6 +69,19 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 });
             }
 
+            // Validar Examen Físico
+            const examenT = datos.ExamenFisico;
+            if (!examenT?.peso || isNaN(examenT.peso)) errores.push("El peso debe ser un número.");
+            if (!examenT?.altura || isNaN(examenT.altura)) errores.push("La altura debe ser un número.");
+            if (!examenT?.signosVitales) {
+                errores.push("Los signos vitales son obligatorios.");
+            } else {
+                const sv = examenT.signosVitales;
+                if (!sv.ta || !sv.fc || !sv.fr || !sv.t || !sv.SATo2) {
+                    errores.push("Todos los signos vitales deben estar completos.");
+                }
+            }
+
             if (errores.length > 0) return mostrarErrores(errores, notificacionesStore);
 
             return await enviarFormularioNutricion(datos);
@@ -575,7 +588,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     const storeCodigos = useCodigos()
@@ -892,7 +905,7 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     const storeCodigos = useCodigos()
@@ -932,7 +945,7 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                         fecha: datos.Terapia.fecha,
                         hora: datos.Terapia.hora,
                         evolucion: datos.Terapia.evolucion,
-                        id_paciente: datos.Terapia.id_paciente,
+                        id_paciente: datos.HistoriaClinica.id_paciente,
                         id_profesional: datos.Terapia.id_profesional,
                         id_procedimiento: datos.Terapia.id_procedimiento || null,
                     },
@@ -1038,7 +1051,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     const storeCodigos = useCodigos()
@@ -1090,6 +1103,18 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         cantidad: parseInt(m.cantidad),
                         id_insumo: m.id_insumo
                     })),
+                    ExamenFisico: {
+                        peso: datos.ExamenFisico.peso,
+                        altura: datos.ExamenFisico.altura,
+                        otros: datos.ExamenFisico.otros || null,
+                        signosVitales: {
+                            ta: datos.ExamenFisico.signosVitales.ta,
+                            fc: datos.ExamenFisico.signosVitales.fc,
+                            fr: datos.ExamenFisico.signosVitales.fr,
+                            t: datos.ExamenFisico.signosVitales.t,
+                            SATo2: datos.ExamenFisico.signosVitales.SATo2
+                        }
+                    },
                     Cita: {
                         id: datos.Cita.id
                     }
@@ -1174,7 +1199,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     const storeCodigos = useCodigos()
@@ -1386,7 +1411,7 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
     const calendarioStore = useCalendarioCitas()
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
     datos.Nota.Descripcion = [
@@ -1447,7 +1472,7 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                         id_paciente: datos.HistoriaClinica.id_paciente
                     },
                     Nota: {
-                        id_paciente: datos.Nota.id_paciente,
+                        id_paciente: datos.HistoriaClinica.id_paciente,
                         id_profesional: datos.Nota.id_profesional,
                         direccion: datos.Nota.direccion,
                         fecha_nota: datos.Nota.fecha_nota,
@@ -1565,7 +1590,7 @@ export async function enviarDiagnostico(datos) {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     const online = navigator.onLine;
     if (online) {

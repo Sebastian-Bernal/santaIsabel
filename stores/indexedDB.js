@@ -99,7 +99,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const kardex = db.createObjectStore('Kardex', { keyPath: 'id' });
                     kardex.createIndex("buscaKardex", "id", { unique: false });
 
-                    const historialCambioSonda = db.createObjectStore('Historial_cambio_sonda', { keyPath: 'id',});
+                    const historialCambioSonda = db.createObjectStore('Historial_cambio_sonda', { keyPath: 'id', });
                     historialCambioSonda.createIndex("buscaHistorialCambioSonda", "id", { unique: false });
                 }
 
@@ -225,27 +225,25 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             })
         },
 
-async bulkPut(datos = []) {
-    if (!this.bd) {
-        await this.initialize();
-    }
+        async bulkPut(datos = []) {
+            if (!this.bd) {
+                await this.initialize();
+            }
 
-    return new Promise((resolve, reject) => {
-        let transaccion = this.bd.transaction(this.almacen, "readwrite");
-        let STlee = transaccion.objectStore(this.almacen);
+            return new Promise((resolve, reject) => {
+                let transaccion = this.bd.transaction(this.almacen, "readwrite");
+                let STlee = transaccion.objectStore(this.almacen);
 
-        for (const item of datos) {
-            // limpiar datos para evitar DataCloneError
-            const limpio = JSON.parse(JSON.stringify(item));
-            STlee.put(limpio);
-        }
+                for (const item of datos) {
+                    // limpiar datos para evitar DataCloneError
+                    const limpio = JSON.parse(JSON.stringify(item));
+                    STlee.put(limpio);
+                }
 
-        transaccion.oncomplete = () => resolve(true);
-        transaccion.onerror = (event) => reject(event.target.error);
-    });
-},
-
-
+                transaccion.oncomplete = () => resolve(true);
+                transaccion.onerror = (event) => reject(event.target.error);
+            });
+        },
 
         async borrartodo() {
             if (!this.bd) {
@@ -301,6 +299,39 @@ async bulkPut(datos = []) {
                 };
             });
         },
+
+        async clearDatabase(dbName) {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName);
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+                    const transaction = db.transaction(db.objectStoreNames, "readwrite");
+
+                    transaction.oncomplete = () => {
+                        console.log(`✅ Base de datos '${dbName}' limpiada correctamente.`);
+                        resolve(true);
+                    };
+
+                    transaction.onerror = (event) => {
+                        console.error(`❌ Error al limpiar la base de datos '${dbName}':`, event);
+                        reject(event);
+                    };
+
+                    // Limpiar cada objectStore
+                    for (const storeName of db.objectStoreNames) {
+                        const store = transaction.objectStore(storeName);
+                        store.clear();
+                    }
+                };
+
+                request.onerror = (event) => {
+                    console.error(`❌ Error al abrir la base de datos '${dbName}':`, event);
+                    reject(event);
+                };
+            });
+        }
+
 
     }
 })

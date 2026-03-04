@@ -18,12 +18,12 @@ const mostrarLista = ref(false);
 const opcionesFiltradas = ref([]);
 const errorMensaje = ref();
 const desplegarArriba = ref(false);
-const opcionActiva = ref(-1);
+const opcionActiva = ref(0);
 const showOptions = ref(false);
 const placeholder = ref(props.Propiedades.placeholder || 'Buscar por nombre o valor...');
 
 watch(() => props.modelValue, (nuevoValor) => {
-    opcionActiva.value = -1;
+    opcionActiva.value = 0;
     const propiedadFiltrar1 = unref(props.Propiedades.opciones?.[0]?.value ?? '');
     const propiedadFiltrar2 = unref(props.Propiedades.opciones?.[1]?.value ?? '');
     const opciones = unref(props.Propiedades?.options?.value ?? props.Propiedades?.options ?? []);

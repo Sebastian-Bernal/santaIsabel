@@ -84,7 +84,8 @@ export const useDatosProfesionStore = defineStore('DatosProfesion', {
             
             return {
                 value: s.id,
-                text: `${accionTraducida} ${modulo.toLowerCase()}`
+                text: `${accionTraducida} ${modulo.toLowerCase()}`,
+                nombre: `${modulo}_${accion}`
             };
             });
 

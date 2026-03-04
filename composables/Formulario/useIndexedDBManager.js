@@ -227,7 +227,7 @@ async function guardarRelacionado(store, almacen, contenido, foreignKey, foreign
 export async function getAll(url) {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
-    const token = sessionStorage.getItem('token')
+    const token = localStorage.getItem('token')
 
     const online = navigator.onLine;
     if (online) {

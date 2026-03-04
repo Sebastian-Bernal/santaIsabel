@@ -171,7 +171,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
         async indexDBDatos() {
             const apiRest = useApiRest()
-            const token = decryptData(sessionStorage.getItem('token'))
+            const token = decryptData(localStorage.getItem('token'))
             const config = useRuntimeConfig()
             const dataHistoria = await apiRest.functionCall({
                 metodo: 'GET',
@@ -239,7 +239,7 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
                 'HistoriaClinica',
                 async () => {
 
-                    const token = decryptData(sessionStorage.getItem('token'))
+                    const token = decryptData(localStorage.getItem('token'))
                     const config = useRuntimeConfig()
                     const api = useApiRest();
                     // const respuesta = await api.functionCall({

@@ -20,7 +20,7 @@ async function exportarNutricionPDF(data) {
     try {
         varView.cargando = true
         const config = useRuntimeConfig()
-        const token = decryptData(sessionStorage.getItem('token'))
+        const token = decryptData(localStorage.getItem('token'))
         const res = await fetch(`${config.public.api}/api/v1/${data.servicio}/${data.id}/pdf`, {
             method: 'GET',
             headers: {
@@ -86,7 +86,7 @@ const cerrarPDF = () => {
         <div class="bg-white rounded-xl overflow-hidden shadow-2xl w-4/5 max-w-4xl relative">
 
             <!-- Encabezado -->
-            <div class="bg-[var(--color-default)] px-5 py-2 flex justify-between items-center">
+            <div class="bg-(--color-default) px-5 py-2 flex justify-between items-center">
                 <h3 class="text-white text-lg font-semibold">📄 Documento cargado para vista previa</h3>
 
                 <div class="flex gap-1">
@@ -111,7 +111,7 @@ const cerrarPDF = () => {
             </div>
 
             <!-- Contenedor del visor -->
-            <iframe id="visorPDF" class="w-full h-[600px] border-0 relative z-10"></iframe>
+            <iframe id="visorPDF" class="w-full h-150 border-0 relative z-10"></iframe>
 
             <!-- Pie de página -->
             <div class="bg-gray-100 px-5 py-1 text-right text-sm text-gray-600">

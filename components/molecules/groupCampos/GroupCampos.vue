@@ -200,12 +200,12 @@ const itemsCompletos = computed(() =>
             </label>
 
             <div class="flex items-center gap-1">
-                <div v-if="Propiedades.labelGroup && !Propiedades.disabled" @click="showCampos = !showCampos" class="w-7.5 h-7.5 flex justify-center items-center gap-1 hover:bg-gray-200 
-                            hover:dark:bg-gray-700 cursor-pointer rounded-full">
+                <ButtonRounded v-if="Propiedades.labelGroup && !Propiedades.disabled" @click="showCampos = !showCampos" color="w-7.5 h-7.5 flex justify-center items-center gap-1 hover:bg-gray-200 
+                            hover:dark:bg-gray-700 bg-inherit cursor-pointer rounded-full" tooltip="Desplegar/ocultar">
                     <i class="fa-solid text-blue-700 font-bold"
                         :class="{ 'fa-angle-up': showCampos, 'fa-angle-down': !showCampos }">
                     </i>
-                </div>
+                </ButtonRounded>
             </div>
         </div>
 
@@ -287,7 +287,7 @@ const itemsCompletos = computed(() =>
         </div>
 
         <!-- Vacío -->
-        <p v-else class="text-center text-gray-400 py-4">
+        <p v-else @click="showCampos = !showCampos" class="text-center text-gray-400 py-4 cursor-pointer">
             No hay registros agregados.
         </p>
 

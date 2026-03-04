@@ -19,20 +19,20 @@ onMounted(async () => {
   if (!token) return
 
   // ❌ No logueado → login
-  console.log(varView.getRol)
   if (!varView.getRol || varView.getRol === '') {
     window.location.href = '/'
   }
 
   try {
 
-    const tokenLogin = decryptData(sessionStorage.getItem('token'))
+    const tokenLogin = decryptData(localStorage.getItem('token'))
     if (varView.getRol !== 'Admin') {
       options.icono = 'error';
       options.titulo = 'Solicitud de Permiso';
       options.texto = 'Rol de usuario sin permiso';
       options.tiempo = 5000;
       await simple();
+      window.location.href = '/'
       return
     }
 
@@ -73,7 +73,7 @@ onMounted(async () => {
 
 <template>
   <FondoDefault>
-  <div class="flex flex-col items-center justify-center min-h-screen">
+  <div class="flex flex-col items-center justify-center">
     <div v-if="estado === 'cargando'" class="text-gray-600">
       Procesando tu solicitud de permiso...
     </div>

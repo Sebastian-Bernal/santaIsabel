@@ -320,7 +320,7 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     // Guardar Local
     const online = navigator.onLine;
@@ -372,7 +372,7 @@ const enviarFormularioActualizarTratamiento = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     // Guardar Local
     const online = navigator.onLine;
@@ -424,7 +424,7 @@ const enviarFormularioActualizarConsulta = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     // Guardar Local
     const online = navigator.onLine;
@@ -473,7 +473,7 @@ const enviarFormularioActualizarNutricion = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     // Guardar Local
     const online = navigator.onLine;
@@ -522,7 +522,7 @@ const enviarFormularioActualizarTrabajoSocial = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     // Guardar Local
     const online = navigator.onLine;
@@ -571,7 +571,7 @@ export const enviarFormularioActualizarTerapia = async (datos, reintento = false
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const varView = useVarView()
 
 

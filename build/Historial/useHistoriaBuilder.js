@@ -4,7 +4,6 @@ import { CUPS } from '~/data/CUPS'
 import { useHistoriasStore } from '~/stores/Formularios/historias/Historia'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { onMounted, ref } from 'vue'
-import { decryptData } from '~/composables/Formulario/crypto';
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { CIF } from '~/data/CIF'
 import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
@@ -30,7 +29,6 @@ export function useHistoriaBuilder({
     const CIE10 = ref([])
     const insumos = ref([])
     const id_paciente = ref(null)
-    const sugerencia = ref("")
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
     onMounted(async () => {
@@ -127,46 +125,6 @@ export function useHistoriaBuilder({
             }
         }
     }
-
-    function debounce(fn, delay) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn(...args), delay);
-        };
-    }
-
-    const sugerenciaMotivo = async (event) => {
-        let nuevoTexto = event.target.value
-        if (!nuevoTexto && nuevoTexto.length < 10) {
-            sugerencia.value = "";
-            return;
-        }
-
-        varView.cargando = true
-        const api = useApiRest()
-        const config = useRuntimeConfig()
-        const token = decryptData(sessionStorage.getItem('token'))
-
-        let options = {
-            metodo: 'POST',
-            url: config.public.obtenerSugerencia,
-            token: token,
-            body: {
-                texto: nuevoTexto
-            }
-        }
-
-        const respuesta = await api.functionCall(options)
-
-        if (respuesta.success) {
-            sugerencia.value = respuesta.sugerencia || "";
-        }
-
-        varView.cargando = false
-    };
-
-    const sugerenciaMotivoDebounced = debounce(sugerenciaMotivo, 500);
 
 
     const builder = new FormularioBuilder()
@@ -497,6 +455,159 @@ export function useHistoriaBuilder({
                 ]
             })
 
+            .nuevaSeccion('Examen Fisico')
+            .addCampo({
+                component: 'Label',
+                forLabel: 'ta',
+                text: '<i class="fa-solid fa-heart-pulse text-blue-500 mr-1"></i>Signos Vitales',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: TA ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.ta',
+                type: 'text',
+                id: 'ta',
+                name: 'ta',
+                placeholder: 'TA (90-140/60-90 mmHg)',
+                tamaño: 'w-full col-span-0.5',
+                slot: {
+                    tooltip: `<div id="error-ta" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                },
+            })
+
+            // --- Input: FC ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.fc',
+                type: 'number',
+                id: 'fc',
+                name: 'fc',
+                placeholder: 'FC (60-100 lpm)',
+                max: 100,
+                tamaño: 'w-full col-span-0.5',
+                slot: {
+                    tooltip: `<div id="error-fc" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                }
+            })
+
+            // --- Input: FR ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.fr',
+                type: 'number',
+                id: 'fr',
+                name: 'fr',
+                placeholder: 'FR (12-20 rpm)',
+                max: 250,
+                tamaño: 'w-full',
+                slot: {
+                    tooltip: `<div id="error-fr" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                }
+            })
+
+            // --- Input: Temperatura (Tº) ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.t',
+                type: 'number',
+                id: 't',
+                name: 't',
+                placeholder: 'Tº (36.1-37.2°C)',
+                max: 50,
+                tamaño: 'w-full',
+                slot: {
+                    tooltip: `<div id="error-t" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                }
+            })
+
+            // --- Input: Saturación O2 ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.SATo2',
+                type: 'number',
+                id: 'sat',
+                name: 'sat',
+                placeholder: 'Sat O2 (90% - 100%)',
+                max: 100,
+                tamaño: 'w-full col-span-1',
+                slot: {
+                    tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                }
+            })
+            // --- Input: Otros ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.otros',
+                type: 'text',
+                id: 'otros',
+                name: 'otros',
+                placeholder: 'Otros (opcional)',
+                tamaño: 'w-full col-span-1'
+            })
+
+            // --- Label: Medidas Antropométricas ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'altura',
+                text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Peso ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.peso',
+                type: 'number',
+                id: 'peso',
+                name: 'peso',
+                placeholder: 'Peso (KG)',
+                tamaño: 'w-full col-span-1'
+            })
+
+            // --- Input: Altura ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.altura',
+                type: 'number',
+                id: 'altura',
+                name: 'altura',
+                placeholder: 'Altura (CM)',
+                tamaño: 'w-full col-span-1'
+            })
+
+            .addCampo({
+                component: 'Label',
+                forLabel: 'motivo',
+                size: 'text-sm',
+                tamaño: 'w-full col-span-2',
+                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
+            })
+            .addCampo({
+                component: 'Textarea',
+                vmodel: 'Analisis.motivo',
+                id: 'motivo',
+                name: 'motivo',
+                placeholder: 'Describa el motivo principal de la consulta...',
+                tamaño: 'w-full col-span-2'
+            })
+
             .nuevaSeccion(varView.tipoConsulta.name)
             // --- Diagnosticos ---
             .addCampo({
@@ -531,22 +642,6 @@ export function useHistoriaBuilder({
                     },
                 ],
                 containerCampos: 'grid grid-cols-2 gap-1'
-            })
-
-            .addCampo({
-                component: 'Label',
-                forLabel: 'motivo',
-                size: 'text-sm',
-                tamaño: 'w-full col-span-2',
-                text: '<i class="fa-solid fa-comment text-blue-500 mr-1"></i>Consulta'
-            })
-            .addCampo({
-                component: 'Textarea',
-                vmodel: 'Analisis.motivo',
-                id: 'motivo',
-                name: 'motivo',
-                placeholder: 'Describa el motivo principal de la consulta...',
-                tamaño: 'w-full col-span-2'
             })
 
             // --- Label: Evolución ---
@@ -1020,7 +1115,7 @@ export function useHistoriaBuilder({
                 name: 'fecha_nota',
                 placeholder: 'Fecha',
                 tamaño: 'w-full',
-                slot: '<input v-model="Nota.fecha_nota" type="date" class="w-[20px]">'
+                slot: '<input v-model="Nota.fecha_nota" type="date" class="w-5">'
             })
             .addCampo({
                 component: 'Input',
@@ -1030,7 +1125,7 @@ export function useHistoriaBuilder({
                 name: 'hora_nota',
                 placeholder: 'Hora (00:00)',
                 tamaño: 'w-full',
-                slot: '<input v-model="Nota.hora_nota" type="time" class="w-[30px]">'
+                slot: '<input v-model="Nota.hora_nota" type="time" class="w-7.5">'
             })
             .addCampo({
                 component: 'Input',

@@ -42,11 +42,11 @@ const enviarFormulario = async (datos) => {
                 const permisosEncrypt = encryptData(respuesta.user.permisos);
                 const permisosIndividuales = respuesta.permisosTemporales
 
-                sessionStorage.setItem('token', tokenEncrypt);
-                sessionStorage.setItem('user', userEncrypt);
-                sessionStorage.setItem('Rol', rolEncrypt);
-                sessionStorage.setItem('Permisos', permisosEncrypt);
-                sessionStorage.setItem('permisosTemporales', JSON.stringify(permisosIndividuales))
+                localStorage.setItem('token', tokenEncrypt);
+                localStorage.setItem('user', userEncrypt);
+                localStorage.setItem('Rol', rolEncrypt);
+                localStorage.setItem('Permisos', permisosEncrypt);
+                localStorage.setItem('permisosTemporales', JSON.stringify(permisosIndividuales ?? []))
 
                 await traerDatos((porcentaje, texto) => {
                     actualizarProgreso(porcentaje, texto);

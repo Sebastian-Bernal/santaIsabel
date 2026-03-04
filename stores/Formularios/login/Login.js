@@ -27,7 +27,7 @@ export const useUsuariosStore = defineStore('Usuario', {
                 return 'Usuario';
             }
 
-            const Usuario = JSON.parse(sessionStorage.getItem('User'));
+            const Usuario = JSON.parse(localStorage.getItem('User'));
             console.log(Usuario)
 
             if (!Usuario) return 'Usuario';

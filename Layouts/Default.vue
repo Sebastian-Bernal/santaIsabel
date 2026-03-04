@@ -3,7 +3,7 @@
         :class="{ 'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido }">
         <Loader v-if="varView.cargando"></Loader>
         <Actualizado v-if="varView.actualizando"></Actualizado>
-        <Permiso v-if="varView.permiso"></Permiso>
+        <Permiso v-if="varView.permisoTemporal"></Permiso>
         <Navbar></Navbar>
         <Aside></Aside>
         <div class="section-content">
@@ -48,7 +48,8 @@ onMounted(async() => {
         manejarCambioRed();
     }
 
-    const permisos = JSON.parse(sessionStorage.getItem('permisosTemporales'))
+    const permisos = JSON.parse(localStorage.getItem('permisosTemporales') ?? "[]");
+
     varView.permisoTemporal = permisos.length > 0 ? true : false
 });
 

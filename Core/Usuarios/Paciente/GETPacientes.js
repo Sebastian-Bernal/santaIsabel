@@ -14,7 +14,7 @@ export async function traerPacientes({ online = true, filtrar = true } = {}) {
   let EPSs = ''
   if (online) {
 
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const config = useRuntimeConfig()
     const dataPacientes = await apiRest.functionCall({
       metodo: 'GET',

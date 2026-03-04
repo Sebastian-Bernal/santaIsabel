@@ -176,7 +176,7 @@ const enviarPDFs = async () => {
         }
 
         const totalAnalisis = analisisFiltrados.length;
-        const token = decryptData(sessionStorage.getItem('token'))
+        const token = decryptData(localStorage.getItem('token'))
         // Generar y descargar PDFs secuencialmente
         for (let i = 0; i < analisisFiltrados.length; i++) {
             // 🔹 Verificar si se canceló

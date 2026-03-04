@@ -29,7 +29,6 @@ const CIE10 = ref([])
 
 onMounted(async () => {
     varView.cargando = true
-    const rol = sessionStorage.getItem('Rol')
     pacientesList.value = await pacientesStore.listPacientes(true, true);
     medicosList.value = await medicosStore.listMedicos();
 

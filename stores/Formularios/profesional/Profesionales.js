@@ -61,7 +61,7 @@ export const useMedicosStore = defineStore('Medicos', {
             let usuarios = ''
 
             if (online) {
-                const token = decryptData(sessionStorage.getItem('token'))
+                const token = decryptData(localStorage.getItem('token'))
                 const config = useRuntimeConfig()
                 const dataProfesionales = await apiRest.functionCall({
                     metodo: 'GET',

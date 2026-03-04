@@ -2,7 +2,7 @@ import { decryptData } from '~/composables/Formulario/crypto';
 export async function exportarServicioPDF(servicio, id) {
 
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     const res = await fetch(
         `${config.public.api}/api/v1/${servicio}/${id}/pdf`,

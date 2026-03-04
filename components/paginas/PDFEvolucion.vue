@@ -19,7 +19,7 @@ async function exportarNutricionPDF(data) {
     try {
         varView.cargando = true
         const config = useRuntimeConfig()
-        const token = decryptData(sessionStorage.getItem('token'))
+        const token = decryptData(localStorage.getItem('token'))
         const res = await fetch(`${config.public.api}/api/v1/Evolucion/${data.id}/pdf`, {
             method: 'GET',
             headers: {

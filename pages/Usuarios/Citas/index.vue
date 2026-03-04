@@ -239,7 +239,7 @@ const propiedades = computed(() => {
                 pagina
                 .addComponente('Tabla', tablabuilder
                     .setColumnas([
-                    { titulo: 'fecha', value: 'Fecha', tamaño: 100, ordenar: true },
+                    { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'name_paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },
                     { titulo: 'motivo', value: 'Motivo', tamaño: 200 },

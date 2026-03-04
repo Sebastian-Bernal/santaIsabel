@@ -16,14 +16,12 @@ export const useApiRest = defineStore('apiRest', {
             const varView = useVarView()
             this.baseUrl = config.public.api // URL API
 
-
             if (!opcion || !opcion.metodo) {
                 throw new Error('Debes definir el método y la tabla antes de llamar a functionCall')
             }
 
-            const permisosUsuario = varView.getPermisos; // tu array de permisos
-
             // Validar permisos antes de llamar
+            const permisosUsuario = varView.getPermisos;
             const tienePermiso = this.validarPermiso(opcion, permisosUsuario, config);
 
             if (!tienePermiso && opcion.metodo !== 'GET') {
@@ -37,18 +35,8 @@ export const useApiRest = defineStore('apiRest', {
 
             const url = new URL(`${this.baseUrl}/${opcion.url}`)
 
-            /*  // Agregar query params si existen
-              if (opcion.metodo === 'GET' && Object.keys(opcion.params).length > 0) {
-                  Object.entries(opcion.params).forEach(([key, value]) => {
-                      url.searchParams.append(key, value)
-                  })
-              }*/
-            const empresa = sessionStorage.getItem('Empresa')
-
             const headers = {
-                'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                ...(empresa ? { 'X-Company': empresa } : {}),
                 ...opcion.head
             }
 
@@ -64,8 +52,17 @@ export const useApiRest = defineStore('apiRest', {
 
             // Agregar body
             if (opcion.body) {
-                options.body = JSON.stringify(opcion.body)
+                if (opcion.formData) {
+                    // eliminar Content-Type para que el navegador lo maneje automáticamente
+                    options.body = opcion.body;
+                    delete options.headers['Content-Type'];
+                } else {
+                    // Por defecto, JSON
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(opcion.body);
+                }
             }
+
             // console.log(url, options)
             try {
                 const response = await fetch(url.toString(), options)
@@ -74,7 +71,13 @@ export const useApiRest = defineStore('apiRest', {
                     this.data = data
 
                     // Ejemplo de consumir permiso temporal
-                    if (varView.permisoTemporal && this.permisoUsado) {
+                    if (varView.permisoTemporal && this.permisoUsado && opcion.metodo !== 'GET') {
+
+                        notificacionesStore.options.icono = 'warning';
+                        notificacionesStore.options.titulo = 'Permiso Usado';
+                        notificacionesStore.options.texto = 'Vuelve a ingresar con tu contraseña';
+                        notificacionesStore.options.tiempo = 5000;
+                        await notificacionesStore.simple();
                         window.location.href = '/';
                         varView.permisoTemporal = null;
                         return
@@ -137,7 +140,7 @@ export const useApiRest = defineStore('apiRest', {
             const { metodo, url } = opcion;
             const baseUrl = config.public.api;
 
-            const permisosTemporales = JSON.parse(sessionStorage.getItem('permisosTemporales'))
+            const permisosTemporales = JSON.parse(localStorage.getItem('permisosTemporales') ?? "[]");
 
             if(!permisosUsuario.length && metodo === 'GET'){
                 return true
@@ -161,8 +164,8 @@ export const useApiRest = defineStore('apiRest', {
                     return true
 
                 // Pacientes
-                case config.public.pacientes:
                 case config.public.traePacientes:
+                case config.public.pacientes:
                     if (metodo === 'GET') permisoNecesario = 'Pacientes_get';
                     else if (metodo === 'POST') permisoNecesario = 'Pacientes_post';
                     else if (metodo === 'PUT') permisoNecesario = 'Pacientes_put';
@@ -171,8 +174,8 @@ export const useApiRest = defineStore('apiRest', {
                     break;
 
                 // Profesionales
-                case config.public.profesionals:
                 case config.public.traeProfesionales:
+                case config.public.profesionals:
                     if (metodo === 'GET') permisoNecesario = 'Profesional_get';
                     else if (metodo === 'POST') permisoNecesario = 'Profesional_post';
                     else if (metodo === 'PUT') permisoNecesario = 'Profesional_put';
@@ -273,8 +276,8 @@ export const useApiRest = defineStore('apiRest', {
                     break;
 
                 // Kardex
-                case config.public.kardex:
                 case config.public.traeKardex:
+                case config.public.kardex:
                     if (metodo === 'GET') permisoNecesario = 'Kardex_get';
                     else if (metodo === 'PUT' || metodo === 'POST') permisoNecesario = 'Kardex_put';
                     else permisoNecesario = 'Kardex_view';
@@ -328,14 +331,14 @@ export const useApiRest = defineStore('apiRest', {
                     return false;
             }
 
-            // 🔑 Validar si el permiso existe en el array del usuario
-            if (permisosUsuario.includes(permisoNecesario)) {
+            // 🔑 Validar si el permiso temporal coincide
+            if (permisosTemporales[0]?.nombre.includes(permisoNecesario)) {
+                this.permisoUsado = true; // marcar que se usó
                 return true;
             }
 
-            // 🔑 Validar si el permiso temporal coincide
-            if (permisosTemporales.includes(permisoNecesario)) {
-                this.permisoUsado = true; // marcar que se usó
+            // 🔑 Validar si el permiso existe en el array del usuario
+            if (permisosUsuario.includes(permisoNecesario)) {
                 return true;
             }
 
@@ -347,7 +350,7 @@ export const useApiRest = defineStore('apiRest', {
         async getData(almacen, nombre, time = true) {
             let datos = [];
             const varView = useVarView()
-            const token = decryptData(sessionStorage.getItem('token'));
+            const token = decryptData(localStorage.getItem('token'));
             const config = useRuntimeConfig()
 
             if (navigator.onLine) {

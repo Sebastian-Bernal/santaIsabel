@@ -91,8 +91,11 @@ onMounted(async () => {
 
         const seccionesApp = await storeProfesion.traerSecciones()
         const permisos = await storeProfesion.traerPermisos(profesional.value.id_profesion)
+
         // Filtrar acciones según permisos
-        secciones.value = seccionesApp.filter(s => !permisos.includes(s.text))
+        secciones.value = seccionesApp.filter(s => {
+            return !permisos.includes(s.nombre) && !s.text.includes("Visualizar") && !s.text.includes("Ver")
+        })
 
         // Citas list
         const listCitas = await citasStore.listCitas();

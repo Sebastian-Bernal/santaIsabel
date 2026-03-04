@@ -91,7 +91,7 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     const profesionesStore = useDatosProfesionStore()
     const profesiones = await profesionesStore.listProfesion
@@ -134,6 +134,15 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
             }
 
             formData.append("_method", "PUT");
+
+            // let options = {
+            //     metodo: 'POST',
+            //     url: config.public.profesionals + '/' + datos.Profesional.id,
+            //     token: token,
+            //     formData: true,
+            //     body: formData,
+            // }
+            // const respuesta = await api.functionCall(options)
             const res = await fetch(`${config.public.api}/${config.public.profesionals}/${datos.Profesional.id}`, {
                 method: 'POST',
                 body: formData,
@@ -145,7 +154,6 @@ export const enviarFormularioPutMedico = async (datos, reintento = false) => {
             const respuesta = await res.json();
 
             if (respuesta.success) {
-                console.log(respuesta)
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify({
                     InformacionUser: {
                         ...datos.InformacionUser,

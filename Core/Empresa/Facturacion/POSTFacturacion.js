@@ -12,7 +12,7 @@ const enviarFormulario = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
     const online = navigator.onLine;
 
     const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({Facturacion: {...datos.Facturacion, sincronizado: 0}})));

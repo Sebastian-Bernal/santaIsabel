@@ -190,7 +190,8 @@ export function useCitasActions({ fecha }) {
         historiasStore.Formulario.Cita = { ...cita }
     }
 
-    function resolverPlantilla(cita, paciente, horaActual) {
+    async function resolverPlantilla(cita, paciente, horaActual) {
+        const historiaStore = useHistoriasStore()
         const fechaForm = fecha?.value
             ? fecha.value.split('/').reverse().join('-')
             : cita.fecha
@@ -208,6 +209,28 @@ export function useCitasActions({ fecha }) {
                 direccion: paciente.direccion,
                 fecha_nota: fechaForm,
                 hora_nota: horaActual
+            })
+        }
+
+        if (varView.tipoConsulta.plantilla === 'Evolucion') {
+            const allAnalisis = await historiaStore.listDatos(paciente.id_paciente, 'Analisis', 'id_paciente')
+            let examenes = []
+            for (const item of allAnalisis) {
+                const examenFisico = await historiasStore.listDatos(item.id, 'ExamenFisico', 'id_analisis') || [];
+                examenFisico[0] ? examenes.push(examenFisico[0]) : ''
+            }
+
+            console.log(examenes)
+            Object.assign(historiasStore.Formulario.ExamenFisico, {
+                signosVitales : {
+                    ta: examenes.at(-1).signosVitales.ta,
+                    fc: examenes.at(-1).signosVitales.fc,
+                    fr: examenes.at(-1).signosVitales.fr,
+                    t: examenes.at(-1).signosVitales.t,
+                    SATo2: examenes.at(-1).signosVitales.SATo2,
+                },
+                peso: examenes.at(-1).peso,
+                altura: examenes.at(-1).altura,
             })
         }
     }

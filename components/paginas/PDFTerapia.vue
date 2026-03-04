@@ -17,7 +17,7 @@ async function exportarEvolucionPDF(data) {
     try {
         varView.cargando = true
         const config = useRuntimeConfig()
-        const token = decryptData(sessionStorage.getItem('token'))
+        const token = decryptData(localStorage.getItem('token'))
         const res = await fetch(`${config.public.api}/api/v1/Terapia/${data.id_analisis}/pdf`, {
             method: 'GET',
             headers: {

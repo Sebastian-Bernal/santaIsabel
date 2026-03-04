@@ -73,30 +73,30 @@ export const useVarView = defineStore('varView', {
 
         getPermisos: () => {
             try {
-                const permisos = decryptData(sessionStorage.getItem('Permisos'));
+                const permisos = decryptData(localStorage.getItem('Permisos'));
                 return Array.isArray(permisos) ? permisos : [];
             } catch (error) {
-                console.error('Error al obtener permisos desde sessionStorage:', error);
+                console.error('Error al obtener permisos desde localStorage:', error);
                 return [];
             }
         },
 
         getUser: () => {
             try {
-                const usuario = decryptData(sessionStorage.getItem('user'));
+                const usuario = decryptData(localStorage.getItem('user'));
                 return usuario || {};
             } catch (error) {
-                console.error('Error al obtener usuario desde sessionStorage:', error);
+                console.error('Error al obtener usuario desde localStorage:', error);
                 return {};
             }
         },
 
         getRol: () => {
             try {
-                const rol = decryptData(sessionStorage.getItem('Rol'));
+                const rol = decryptData(localStorage.getItem('Rol'));
                 return rol
             } catch (error) {
-                console.error('Error al obtener usuario desde sessionStorage:', error);
+                console.error('Error al obtener usuario desde localStorage:', error);
             }
         }
     },

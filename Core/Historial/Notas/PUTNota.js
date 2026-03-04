@@ -86,7 +86,7 @@ export const enviarFormularioPutNota = async (datos, reintento = false) => {
     const notificacionesStore = useNotificacionesStore();
     const api = useApiRest();
     const config = useRuntimeConfig()
-    const token = decryptData(sessionStorage.getItem('token'))
+    const token = decryptData(localStorage.getItem('token'))
 
     datos.Nota.Descripcion = [
         ...datos.Nota.objetivo,
