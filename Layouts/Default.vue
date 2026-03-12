@@ -2,6 +2,7 @@
     <div class="containerMain transition-[grid-template-columns] duration-300 ease-in-out"
         :class="{ 'grid-cols-[180px_1fr]': varView.expandido, 'grid-cols-[20px_1fr]': !varView.expandido }">
         <Loader v-if="varView.cargando"></Loader>
+        <LoaderPorcentaje v-if="varView.loader.cargando"></LoaderPorcentaje>
         <Actualizado v-if="varView.actualizando"></Actualizado>
         <Permiso v-if="varView.permisoTemporal"></Permiso>
         <Navbar></Navbar>
@@ -25,6 +26,7 @@ import Footer from '~/components/organism/Footer/Footer.vue';
 import Loader from '~/components/molecules/Spinner/Loader.vue';
 import Actualizado from '~/components/molecules/Spinner/Actualizado.vue';
 import Permiso from '~/components/molecules/Spinner/Permiso.vue';
+import LoaderPorcentaje from '~/components/molecules/Spinner/LoaderPorcentaje.vue';
 import { iniciarSincronizacionPeriodica } from '~/composables/Formulario/sincronizarDatos';
 
 const varView = useVarView();

@@ -142,10 +142,13 @@ export const validarYEnviarNuevaCita = async (datos) => {
         }
 
 
-        varView.cargando = true
+        varView.loader.cargando = true
+        varView.loader.titulo = 'Generando citas...'
+        varView.loader.progreso = 0
 
         // Generar todas las citas
         for (let i = 0; i < cantidad; i++) {
+
             // Clonar la fecha inicial
             const fechaCita = new Date(fechaInicial);
 
@@ -169,8 +172,9 @@ export const validarYEnviarNuevaCita = async (datos) => {
                 codigo: datos.Cita.codigo,
             };
             await enviarFormularioCita({ Cita: { ...body } });
+            varView.loader.progreso = Math.round(((i + 1) / cantidad) * 100);
         }
-        varView.cargando = false
+        varView.loader.cargando = false
         return true;
     }
 

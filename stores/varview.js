@@ -6,6 +6,11 @@ export const useVarView = defineStore('varView', {
     state: () => ({
         cargando: false,
         actualizando: false,
+        loader: {
+            cargando: false,
+            titulo: 'Generando',
+            progreso: 0
+        },
         // Formularios Paciente
         showNuevoPaciente: false,
         pacienteKardex: false,
