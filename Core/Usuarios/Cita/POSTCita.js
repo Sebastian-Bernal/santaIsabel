@@ -143,7 +143,7 @@ export const validarYEnviarNuevaCita = async (datos) => {
 
 
         varView.loader.cargando = true
-        varView.loader.titulo = 'Generando citas...'
+        varView.loader.titulo = 'Generando citas'
         varView.loader.progreso = 0
 
         // Generar todas las citas

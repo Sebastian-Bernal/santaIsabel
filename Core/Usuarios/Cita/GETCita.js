@@ -26,3 +26,120 @@ export async function traerCitas () {
         return false
     }
 }
+
+export async function traerCitasHoy () {
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(localStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'GET',
+                url: config.public.citasHoy,
+                token: token
+            }
+            const respuesta = await api.functionCall(options)
+
+            if(respuesta.success){
+                return respuesta.data
+            }
+        } catch (error) {
+            console.error('Fallo al traer datos', error);
+        }
+    } else {
+        return false
+    }
+}
+
+export async function traerCitasPorRango (rango) {
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(localStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.citasPorRango,
+                token: token,
+                body: {
+                    inicio: rango.fechaInicion,
+                    fin: rango.fechaFin,
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if(respuesta.success){
+                return respuesta.data
+            }
+        } catch (error) {
+            console.error('Fallo al traer datos', error);
+        }
+    } else {
+        return false
+    }
+}
+
+export async function traerCitasPaginadas (configuracion) {
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(localStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.citasPaginadas,
+                token: token,
+                body: {
+                    pagina: configuracion.pagina,
+                    por_pagina: configuracion.por_pagina,
+                }
+            }
+            const respuesta = await api.functionCall(options)
+
+            if(respuesta.success){
+                return respuesta.data
+            }
+        } catch (error) {
+            console.error('Fallo al traer datos', error);
+        }
+    } else {
+        return false
+    }
+}
+
+export async function traerCitasFiltradas (configuracion) {
+    const api = useApiRest();
+    const config = useRuntimeConfig()
+    const token = decryptData(localStorage.getItem('token'))
+
+    const online = navigator.onLine;
+    if (online) {
+        try {
+            // mandar a api
+            let options = {
+                metodo: 'POST',
+                url: config.public.citasFiltradas,
+                token: token,
+                body: configuracion
+            }
+            const respuesta = await api.functionCall(options)
+
+            if(respuesta.success){
+                return respuesta.data
+            }
+        } catch (error) {
+            console.error('Fallo al traer datos', error);
+        }
+    } else {
+        return false
+    }
+}

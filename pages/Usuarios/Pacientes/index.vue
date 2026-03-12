@@ -14,6 +14,7 @@ import { usePacienteActions } from "~/composables/Usuarios/Paciente.js";
 import { usePlanesBuilder } from "~/build/Historial/usePlanesBuilder.js";
 import { useInsumosStore } from "~/stores/Formularios/insumos/Insumos.js";
 import { validarYEnviarKardex } from "~/Core/Usuarios/Paciente/POSTKardex.js";
+import { traerCeldasPintadas } from "~/Core/Usuarios/Paciente/GETColores";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -27,6 +28,7 @@ const pacientes = ref([]);
 const kardex = ref([]);
 const insumos = ref([]);
 const refresh = ref(1);
+const celdasPintadasKardex = ref([]);
 
 const show = ref(false);
 const showVer = ref(false);
@@ -103,6 +105,10 @@ onMounted(async () => {
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
+    kardex.value = kardex.value.map(k => {
+        return {...k, id: k.paciente_id}
+    })
+    celdasPintadasKardex.value = await traerCeldasPintadas()
 });
 
 function showKardex() {
@@ -481,6 +487,7 @@ const propiedades = computed(() => {
         .setDatos(kardex)
         .setConfiguracion({
             tipo: 'pinned',
+            celdasPintadas: celdasPintadasKardex.value,
             camposEditables: !puedePutKardex,
             camposInputs: true,
             onUpdate: async (fila) => {

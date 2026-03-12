@@ -6,6 +6,7 @@ import Input from '~/components/atoms/Inputs/Input.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import DatosExcel from '~/components/organism/Forms/DatosExcel.vue';
+import { guardarColores } from '~/Core/Usuarios/Paciente/POSTColores';
 
 import { usePaginacion } from '~/composables/Tabla/usePaginacion.js'
 import { useColumnasResponsivas } from '~/composables/Tabla/useTablasResponsive';
@@ -206,13 +207,14 @@ const celdaActiva = ref({
 })
 
 const pintarCeldas = ref(false)
-const celdasPintadas = ref([]);
+const celdasPintadas = ref(props.Propiedades.configuracion.celdasPintadas);
 const colorPicker = ref(null)
 
 const filasCambiadas = ref(new Set());
 const actualizarCambios = ref(false);
 
 const pintarCelda = (fila, columna, color) => {
+    console.log(celdasPintadas.value)
   const index = celdasPintadas.value.findIndex(
     c => c.fila === fila && c.columna === columna
   );
@@ -225,6 +227,11 @@ const pintarCelda = (fila, columna, color) => {
   }
 };
 
+const despintarCelda = (fila, columna, color) => {
+    celdasPintadas.value = celdasPintadas.value.filter(C => { 
+        return C.fila !== fila && C.columna !== columna && C.color !== color 
+    });
+};
 
 const obtenerColorCelda = (fila, columna) => {
   const celda = celdasPintadas.value.find(
@@ -491,7 +498,7 @@ const campos = {
                     class="overflow-auto max-h-[412px] relative scrollFormT">
 
                     <div v-for="(fila, id) in datosPaginados" role="row"
-                        :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(id) }"
+                        :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(fila.id) }"
                         class="bodyTable justify-between flex w-max min-w-full odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700">
                         <div
                             class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
@@ -517,9 +524,9 @@ const campos = {
                                 <div v-if="props.Propiedades.configuracion.camposInputs"
                                     class="relative w-full h-full px-2 py-2 cursor-text rounded-md transition-all duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700"
                                     :style="{
-                                        backgroundColor: obtenerColorCelda(id, col.titulo)
+                                        backgroundColor: obtenerColorCelda(fila.id, col.titulo)
                                     }"
-                                    @click="celdaActiva = { fila: id, columna: col.titulo }">
+                                    @click="celdaActiva = { fila: fila.id, columna: col.titulo }">
 
                                     <!-- TEXTO NORMAL -->
                                     <!-- <span v-if="!estaEditando(id, col.titulo)"
@@ -528,13 +535,13 @@ const campos = {
                                         {{ fila[col.titulo] }}
 
                                     </span> -->
-                                    <component v-if="!estaEditando(id, col.titulo)" :is="campos[col.campo]"
+                                    <component v-if="!estaEditando(fila.id, col.titulo)" :is="campos[col.campo]"
                                         v-model="fila[col.titulo]" class=" truncate text-gray-800 dark:text-gray-200"
                                         :Propiedades="{ ...col, placeholder: '...', estilo: 'bg-transparent border-none! outline-none rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full px-0! py-0!' }" />
 
                                     <!-- INPUT O SELECT SOLO EN EDICION -->
                                     <component v-else :is="campos[col.campo]" ref="inputEditable" v-model="fila[col.titulo]"
-                                        @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(id)"
+                                        @blur="celdaActiva = { fila: null, columna: null }" @change="actualizarFila(fila.id)"
                                         @keydown.enter="celdaActiva = { fila: null, columna: null }"
                                         class="absolute inset-0 w-full h-full hover:bg-(--color-default-claro)/60 hover:dark:bg-(--color-default-oscuro)/60 dark:bg-gray-800 border border-blue-400 outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-sm transition-all duration-150"
                                         :Propiedades="{ ...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', disabled: props.Propiedades.configuracion.camposEditables, estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }" />
@@ -628,7 +635,7 @@ const campos = {
             </div>
         </div>
 
-        <div v-if="celdaActiva.fila !== null && celdaActiva.columna !== null" class="flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-800 rounded-md shadow-md">
+        <div v-if="celdaActiva.fila !== null && celdaActiva.columna !== null" class="w-full flex items-center gap-3 p-2 bg-gray-100 dark:bg-gray-800 rounded-md shadow-md relative">
             <label class="text-xs font-medium text-gray-700 dark:text-gray-300">Selecciona color:</label>
             <input v-model="colorPicker" type="color" 
                 class="w-5 h-5 cursor-pointer rounded-full border border-gray-300 shadow-sm hover:scale-110 transition-transform duration-200"
@@ -636,6 +643,19 @@ const campos = {
             <ButtonRounded v-if="colorPicker" color="bg-inherit w-fit! h-fit! p-0" tooltip="Pintar celda" @click="pintarCelda(celdaActiva.fila, celdaActiva.columna, colorPicker)">
                 <i class="fa-solid fa-paintbrush text-sm text-black dark:text-white"></i>
             </ButtonRounded>
+            <ButtonRounded color="bg-inherit w-fit! h-fit! p-0" tooltip="Borrar Color" @click="despintarCelda(celdaActiva.fila, celdaActiva.columna, colorPicker)">
+                <i class="fa-solid fa-trash text-sm text-black dark:text-white"></i>
+            </ButtonRounded>
+
+            <div class="absolute right-3">
+                <ButtonRounded color="bg-inherit w-fit! h-fit! p-0" tooltip="Guardar" @click="guardarColores({
+                        celdasPintadas: unref(celdasPintadas),
+                        tabla: props.Propiedades.headerTabla.titulo,
+                        id_infoUsuario: varView.getUser.id
+                    })">
+                    <i class="fa-solid fa-floppy-disk text-sm text-black dark:text-white"></i>
+                </ButtonRounded>
+            </div>
         </div>
 
         <!-- Paginador -->

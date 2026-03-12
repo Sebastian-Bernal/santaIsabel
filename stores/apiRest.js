@@ -24,14 +24,15 @@ export const useApiRest = defineStore('apiRest', {
             const permisosUsuario = varView.getPermisos;
             const tienePermiso = this.validarPermiso(opcion, permisosUsuario, config);
 
-            if (!tienePermiso && opcion.metodo !== 'GET') {
-                notificacionesStore.options.icono = 'warning';
-                notificacionesStore.options.titulo = 'Acceso denegado';
-                notificacionesStore.options.texto = 'No tienes permisos para esta acción';
-                notificacionesStore.options.tiempo = 5000;
-                await notificacionesStore.simple();
-                throw new Error('Permiso denegado');
-            }
+
+            // if (!tienePermiso && opcion.metodo !== 'GET') {
+            //     notificacionesStore.options.icono = 'warning';
+            //     notificacionesStore.options.titulo = 'Acceso denegado';
+            //     notificacionesStore.options.texto = 'No tienes permisos para esta acción';
+            //     notificacionesStore.options.tiempo = 5000;
+            //     await notificacionesStore.simple();
+            //     throw new Error('Permiso denegado');
+            // }
 
             const url = new URL(`${this.baseUrl}/${opcion.url}`)
 
@@ -336,6 +337,7 @@ export const useApiRest = defineStore('apiRest', {
                 this.permisoUsado = true; // marcar que se usó
                 return true;
             }
+            console.log(permisoNecesario)
 
             // 🔑 Validar si el permiso existe en el array del usuario
             if (permisosUsuario.includes(permisoNecesario)) {

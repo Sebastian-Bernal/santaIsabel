@@ -1,7 +1,6 @@
 <script setup>
 import ButtonRounded from '~/components/atoms/Buttons/ButtonRounded.vue';
 import Select from '~/components/atoms/Selects/Select.vue';
-import Input from '~/components/atoms/Inputs/Input.vue';
 
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { computed, ref } from 'vue';

@@ -19,8 +19,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       SECRET_KEY: 'THESALUS943875PL',
-      api: 'https://api.ctsantaisabel.com',
-      // api: 'http://127.0.0.1:8000',
+      // api: 'https://api.ctsantaisabel.com',
+      api: 'http://127.0.0.1:8000',
       login: 'api/v1/login',
       eps: 'api/v1/eps',
       professions: 'api/v1/professions',
@@ -30,10 +30,10 @@ export default defineNuxtConfig({
       profesionals: 'api/v1/profesionals',
       informacionUsers: 'api/v1/informacionUsers',
       citas: 'api/v1/citas',
-      // citasHoy: 'api/v1/citasHoy',
-      // citasPorRango: 'api/v1/citasPorRango',
-      // citasPaginadas: 'api/v1/citasPaginadas',
-      // citasFiltradas: 'api/v1/citasFiltradas',
+      citasHoy: 'api/v1/citasHoy',
+      citasPorRango: 'api/v1/citasPorRango',
+      citasPaginadas: 'api/v1/citasPaginadas',
+      citasFiltradas: 'api/v1/citasFiltradas',
       historiasClinicas: 'api/v1/historiasClinicas',
       historiasNutricion: 'api/v1/historiasClinicasNutricion',
       historiasClinicasTrabajoSocial: 'api/v1/historiasClinicasTrabajoSocial',
@@ -74,12 +74,19 @@ export default defineNuxtConfig({
       historialCambioSonda: 'api/v1/historialCambioSonda',
       profesionalHasPermisos: 'api/v1/profesionalHasPermisos',
       solicitarPermiso:  'api/v1/solicitarPermiso',
+      celdaColors: 'api/v1/celdaColors',
     }
   },
 
   app: {
     head: {
-      link: [ { rel: 'icon', type: 'image/x-icon', href: '/cruz.png' } ]
+      link: [ 
+          { rel: 'icon', type: 'image/x-icon', href: '/cruz.png' },
+          {
+            href: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css',
+            rel: 'stylesheet'
+          }
+       ]
     },
   },
 });

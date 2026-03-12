@@ -1,3 +1,4 @@
+import { traerCitasHoy } from "~/Core/Usuarios/Cita/GETCita";
 import { useMedicosStore } from "../profesional/Profesionales";
 
 // Estructura de datos de Citas
@@ -68,6 +69,11 @@ export const useCitasStore = defineStore('Citas', {
 
             this.Citas = citas;
             return citas;
+        },
+
+        async citasHoy() {
+            const citas = traerCitasHoy()
+            return citas
         },
 
         async listCitasHoy() {
