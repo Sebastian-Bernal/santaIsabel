@@ -902,6 +902,27 @@ export function useHistoriaBuilder({
                 minlength: 10
             })
 
+            .addCampo({
+                component: 'Label',
+                forLabel: '',
+                text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
+                tamaño: 'w-full col-span-2',
+            })
+            // --- Select: Condición de rehabilitación ---
+            .addCampo({
+                component: 'Select',
+                vmodel: 'Analisis.tratamiento',
+                id: 'rehabilitacion',
+                name: 'rehabilitacion',
+                placeholder: 'Condición de rehabilitación',
+                tamaño: 'w-full md:col-span-2',
+                options: [
+                    { text: 'Total o Parcial', value: 'Total o Parcial' },
+                    { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                    { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                ]
+            })
+
             // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
 
             .addCampo({
@@ -1019,27 +1040,7 @@ export function useHistoriaBuilder({
                 containerCampos: 'grid grid-cols-3 gap-2'
             })
 
-            // --- Select: Condición de rehabilitación ---
-            .addCampo({
-                component: 'Select',
-                vmodel: 'Analisis.tratamiento',
-                id: 'rehabilitacion',
-                name: 'rehabilitacion',
-                placeholder: 'Condición de rehabilitación',
-                tamaño: 'w-full md:col-span-2',
-                options: [
-                    { text: 'Total o Parcial', value: 'Total o Parcial' },
-                    { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                    { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-                ]
-            })
 
-            .addCampo({
-                component: 'Label',
-                forLabel: '',
-                text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
-                tamaño: 'w-full col-span-2',
-            })
 
     } else if (varView.tipoConsulta?.plantilla === 'Nota') {
         builder
@@ -1171,7 +1172,13 @@ export function useHistoriaBuilder({
                 ],
                 containerCampos: 'grid grid-cols-2 gap-1'
             })
-
+            .addCampo({
+                component: 'Label',
+                icon: 'fa-solid fa-comment text-blue-500',
+                text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnosticos',
+                forLabel: 'departamento',
+                tamaño: 'md:col-span-2 w-full'
+            })
             .addCampo({
                 component: 'Select',
                 vmodel: 'Nota.tipoAnalisis',
@@ -1185,20 +1192,18 @@ export function useHistoriaBuilder({
                     { text: 'Cambios críticos', value: 'Cambios criticos' }
                 ]
             })
-
             .addCampo({
                 component: 'Label',
-                icon: 'fa-solid fa-comment text-blue-500',
-                text: '<i class="fa-solid fa-file text-blue-500 mr-1"></i>Diagnosticos',
-                forLabel: 'departamento',
+                text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Notas de enfermeria',
+                forLabel: 'tipo',
                 tamaño: 'md:col-span-2 w-full'
             })
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Evaluacion',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'evaluacion' } }],
+                labelGroup: 'Subjetivo',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'subjetivo' } }],
                 tamaño: 'w-full col-span-2',
-                vmodel: 'Nota.evaluacion',
+                vmodel: 'Nota.subjetivo',
                 value: [],
                 campos: [
                     {
@@ -1207,95 +1212,14 @@ export function useHistoriaBuilder({
                         typeCampo: 'Input',
                         type: 'time',
                         placeholder: 'Hora del registro',
-                        tamaño: 'w-full',
+                        tamaño: 'w-full mt-1',
                         label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Registre la valoración del paciente (signos, síntomas, estado general)',
-                        tamaño: 'w-full',
-                    },
-                ],
-                containerCampos: 'flex flex-col gap-1'
-            })
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Intervencion',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'intervencion' } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Nota.intervencion',
-                value: [],
-                campos: [
-                    {
-                        name: 'hora',
-                        id: 'hora',
-                        typeCampo: 'Input',
-                        type: 'time',
-                        placeholder: 'Hora del registro',
-                        tamaño: 'w-full',
-                        label: 'Hora del registro'
-                    },
-                    {
-                        name: 'descripcion',
-                        id: 'descripcion',
-                        typeCampo: 'Textarea',
-                        placeholder: 'Describa la intervención realizada (procedimiento, cuidado o acción aplicada)',
-                        tamaño: 'w-full',
-                    },
-                ],
-                containerCampos: 'flex flex-col gap-1'
-            })
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Plan',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'plan' } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Nota.plan',
-                value: [],
-                campos: [
-                    {
-                        name: 'hora',
-                        id: 'hora',
-                        typeCampo: 'Input',
-                        type: 'time',
-                        placeholder: 'Hora del registro',
-                        tamaño: 'w-full',
-                        label: 'Hora del registro'
-                    },
-                    {
-                        name: 'descripcion',
-                        id: 'descripcion',
-                        typeCampo: 'Textarea',
-                        placeholder: 'Indique el plan de cuidado a seguir según la valoración del paciente',
-                        tamaño: 'w-full',
-                    },
-                ],
-                containerCampos: 'flex flex-col gap-1'
-            })
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Actividades',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'actividades' } }],
-                tamaño: 'w-full col-span-2',
-                vmodel: 'Nota.actividades',
-                value: [],
-                campos: [
-                    {
-                        name: 'hora',
-                        id: 'hora',
-                        typeCampo: 'Input',
-                        type: 'time',
-                        placeholder: 'Hora del registro',
-                        tamaño: 'w-full',
-                        label: 'Hora del registro'
-                    },
-                    {
-                        name: 'descripcion',
-                        id: 'descripcion',
-                        typeCampo: 'Textarea',
-                        placeholder: 'Detalle las actividades de enfermería realizadas durante el turno',
+                        placeholder: 'Registre lo manifestado por el paciente o familiar (dolor, molestias, percepción)',
                         tamaño: 'w-full',
                     },
                 ],
@@ -1330,10 +1254,10 @@ export function useHistoriaBuilder({
             })
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Subjetivo',
-                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'subjetivo' } }],
+                labelGroup: 'Actividades',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'actividades' } }],
                 tamaño: 'w-full col-span-2',
-                vmodel: 'Nota.subjetivo',
+                vmodel: 'Nota.actividades',
                 value: [],
                 campos: [
                     {
@@ -1342,24 +1266,99 @@ export function useHistoriaBuilder({
                         typeCampo: 'Input',
                         type: 'time',
                         placeholder: 'Hora del registro',
-                        tamaño: 'w-full mt-1',
+                        tamaño: 'w-full',
                         label: 'Hora del registro'
                     },
                     {
                         name: 'descripcion',
                         id: 'descripcion',
                         typeCampo: 'Textarea',
-                        placeholder: 'Registre lo manifestado por el paciente o familiar (dolor, molestias, percepción)',
+                        placeholder: 'Detalle las actividades de enfermería realizadas durante el turno',
                         tamaño: 'w-full',
                     },
                 ],
                 containerCampos: 'flex flex-col gap-1'
             })
             .addCampo({
-                component: 'Label',
-                text: '<i class="fa-solid fa-note-sticky text-blue-500 mr-1"></i>Notas de enfermeria',
-                forLabel: 'tipo',
-                tamaño: 'md:col-span-2 w-full'
+                component: 'GroupCampos',
+                labelGroup: 'Plan',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'plan' } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Nota.plan',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora del registro',
+                        tamaño: 'w-full',
+                        label: 'Hora del registro'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Indique el plan de cuidado a seguir según la valoración del paciente',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
+            })
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Intervencion',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'intervencion' } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Nota.intervencion',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora del registro',
+                        tamaño: 'w-full',
+                        label: 'Hora del registro'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Describa la intervención realizada (procedimiento, cuidado o acción aplicada)',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
+            })
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Evaluacion',
+                buttons: [{ icon: 'fa-solid fa-plus', label: 'Agregar', color: 'bg-blue-500', addItem: { hora: '', descripcion: '', tipo: 'evaluacion' } }],
+                tamaño: 'w-full col-span-2',
+                vmodel: 'Nota.evaluacion',
+                value: [],
+                campos: [
+                    {
+                        name: 'hora',
+                        id: 'hora',
+                        typeCampo: 'Input',
+                        type: 'time',
+                        placeholder: 'Hora del registro',
+                        tamaño: 'w-full',
+                        label: 'Hora del registro'
+                    },
+                    {
+                        name: 'descripcion',
+                        id: 'descripcion',
+                        typeCampo: 'Textarea',
+                        placeholder: 'Registre la valoración del paciente (signos, síntomas, estado general)',
+                        tamaño: 'w-full',
+                    },
+                ],
+                containerCampos: 'flex flex-col gap-1'
             })
     } else if (varView.tipoConsulta?.plantilla === 'Medicina') {
         builder
@@ -1613,6 +1612,23 @@ export function useHistoriaBuilder({
                     onChange: validarCampo
                 }
             })
+            // --- Input: Saturación O2 ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'ExamenFisico.signosVitales.SATo2',
+                type: 'number',
+                id: 'sat',
+                name: 'sat',
+                placeholder: 'Sat O2 (90% - 100%)',
+                max: 100,
+                tamaño: 'w-full col-span-1',
+                slot: {
+                    tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
+                },
+                events: {
+                    onChange: validarCampo
+                }
+            })
 
             // --- Input: Otros ---
             .addCampo({
@@ -1625,6 +1641,13 @@ export function useHistoriaBuilder({
                 tamaño: 'w-full col-span-1'
             })
 
+            // --- Label: Medidas Antropométricas ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'altura',
+                text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
+                tamaño: 'w-full md:col-span-2'
+            })
             // --- Input: Peso ---
             .addCampo({
                 component: 'Input',
@@ -1645,33 +1668,6 @@ export function useHistoriaBuilder({
                 name: 'altura',
                 placeholder: 'Altura (CM)',
                 tamaño: 'w-full col-span-1'
-            })
-
-            // --- Label: Medidas Antropométricas ---
-            .addCampo({
-                component: 'Label',
-                forLabel: 'altura',
-                text: '<i class="fa-solid fa-weight-hanging text-blue-600 mr-1"></i>Medidas Antropométricas',
-                tamaño: 'w-full md:col-span-2'
-            })
-
-
-            // --- Input: Saturación O2 ---
-            .addCampo({
-                component: 'Input',
-                vmodel: 'ExamenFisico.signosVitales.SATo2',
-                type: 'number',
-                id: 'sat',
-                name: 'sat',
-                placeholder: 'Sat O2 (90% - 100%)',
-                max: 100,
-                tamaño: 'w-full col-span-1',
-                slot: {
-                    tooltip: `<div id="error-sat" class="text-red-300 text-xs mt-1"></div>`
-                },
-                events: {
-                    onChange: validarCampo
-                }
             })
 
         if (puedePostAnalisis.value) {
@@ -1759,6 +1755,26 @@ export function useHistoriaBuilder({
                     minlength: 10
                 })
 
+                .addCampo({
+                    component: 'Label',
+                    forLabel: '',
+                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
+                    tamaño: 'w-full col-span-2',
+                })
+                // --- Select: Condición de rehabilitación ---
+                .addCampo({
+                    component: 'Select',
+                    vmodel: 'Analisis.tratamiento',
+                    id: 'rehabilitacion',
+                    name: 'rehabilitacion',
+                    placeholder: 'Condición de rehabilitación',
+                    tamaño: 'w-full md:col-span-2',
+                    options: [
+                        { text: 'Total o Parcial', value: 'Total o Parcial' },
+                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
+                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
+                    ]
+                })
                 // --- Botones: Medicinas, Servicios, Insumos, Equipos ---
 
                 .addCampo({
@@ -1911,29 +1927,6 @@ export function useHistoriaBuilder({
                         },
                     ],
                     containerCampos: 'grid md:grid-cols-2 grid-cols-1 gap-2'
-                })
-
-                // --- Select: Condición de rehabilitación ---
-                .addCampo({
-                    component: 'Select',
-                    vmodel: 'Analisis.tratamiento',
-                    id: 'rehabilitacion',
-                    name: 'rehabilitacion',
-                    placeholder: 'Condición de rehabilitación',
-                    tamaño: 'w-full md:col-span-2',
-                    options: [
-                        { text: 'Total o Parcial', value: 'Total o Parcial' },
-                        { text: 'Sin potencial de rehabilitación', value: 'Sin potencial de rehabilitacion' },
-                        { text: 'Cuidados paliativos o de mantenimiento', value: 'Cuidados paliativos o de mantenimiento' }
-                    ]
-                })
-
-
-                .addCampo({
-                    component: 'Label',
-                    forLabel: '',
-                    text: '<i class="fa-solid fa-file-medical text-purple-500 mr-1"></i>Plan de Manejo',
-                    tamaño: 'w-full col-span-2',
                 })
 
         }

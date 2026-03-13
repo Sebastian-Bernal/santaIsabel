@@ -99,6 +99,9 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const kardex = db.createObjectStore('Kardex', { keyPath: 'id' });
                     kardex.createIndex("buscaKardex", "id", { unique: false });
 
+                    const celdaColors = db.createObjectStore('CeldaColors', { keyPath: 'id', });
+                    celdaColors.createIndex("buscaCeldaColors", "id", { unique: false });
+
                     const historialCambioSonda = db.createObjectStore('Historial_cambio_sonda', { keyPath: 'id', });
                     historialCambioSonda.createIndex("buscaHistorialCambioSonda", "id", { unique: false });
                 }
@@ -301,6 +304,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
         },
 
         async clearDatabase(dbName) {
+            if (!this.bd) {
+                await this.initialize()
+            }
+            console.log(this.bd)
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(dbName);
 

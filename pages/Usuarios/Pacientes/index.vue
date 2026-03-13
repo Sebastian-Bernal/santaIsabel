@@ -487,7 +487,7 @@ const propiedades = computed(() => {
         .setDatos(kardex)
         .setConfiguracion({
             tipo: 'pinned',
-            celdasPintadas: celdasPintadasKardex.value,
+            celdasPintadas: unref(celdasPintadasKardex.value),
             camposEditables: !puedePutKardex,
             camposInputs: true,
             onUpdate: async (fila) => {
@@ -536,7 +536,7 @@ const propiedades = computed(() => {
         .setEstilos("")
         .setLayout("")
         .setContenedor("w-full")
-    if (puedeVerKardex || puedePutKardex || puedeGetKardex) {
+    if ((puedeVerKardex || puedePutKardex || puedeGetKardex) && celdasPintadasKardex.value.length ) {
         pagina
         if (varView.pacienteKardex) {
             pagina

@@ -66,7 +66,7 @@ export function useNotasBuilder({
             name: 'fecha_nota',
             placeholder: 'Fecha',
             tamaño: 'w-full',
-            slot: '<input v-model="Nota.fecha_nota" type="date" class="w-[20px]">'
+            slot: '<input v-model="Nota.fecha_nota" type="date" class="w-5">'
         })
         .addCampo({
             component: 'Input',
@@ -76,7 +76,7 @@ export function useNotasBuilder({
             name: 'hora_nota',
             placeholder: 'Hora (00:00)',
             tamaño: 'w-full',
-            slot: '<input v-model="Nota.hora_nota" type="time" class="w-[30px]">'
+            slot: '<input v-model="Nota.hora_nota" type="time" class="w-5">'
         })
         .addCampo({
             component: 'Input',

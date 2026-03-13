@@ -25,10 +25,12 @@ onMounted(async () => {
     try {
         varView.cargando = true
 
-        await indexedDB.clearDatabase('db-thesalus');
         await indexedDB.initialize(); // tu lógica de inicialización
         await storeCodigos.initialize();
         await storeCodigos.guardardatos()
+        if(indexedDB.bd){
+            await indexedDB.clearDatabase('db-thesalus');
+        }
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('Rol');
