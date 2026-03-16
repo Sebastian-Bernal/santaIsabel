@@ -26,11 +26,20 @@ onMounted(async () => {
         varView.cargando = true
 
         await indexedDB.initialize(); // tu lógica de inicialización
+
+
+        const isValid = await indexedDB.validateVersion('db-thesalus');
+        if (isValid) {
+            console.log("✅ Versión válida, limpiando datos...");
+            await indexedDB.clearDatabase('db-thesalus');
+        } else {
+            console.log("⚠️ Versión inválida o tabla faltante, eliminando...");
+            await indexedDB.deleteDatabase('db-thesalus');
+            await indexedDB.initialize(); // recrea la base con la versión correcta
+        }
+
         await storeCodigos.initialize();
         await storeCodigos.guardardatos()
-        if(indexedDB.bd){
-            await indexedDB.clearDatabase('db-thesalus');
-        }
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         localStorage.removeItem('Rol');

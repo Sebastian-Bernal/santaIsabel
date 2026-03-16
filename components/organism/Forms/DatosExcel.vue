@@ -120,12 +120,12 @@ function mostrar() {
                             <p class="text-lg text-gray-600"><i class="fa-solid fa-gear"></i> {{ props.tabla }}</p>
 
                             <div class="text-lg text-blue-500 cursor-pointer flex gap-1" @click="agregarDB">
-                                <ButtonRounded color="bg-white w-[30px]! h-[30px]! mr-3" tooltip="Descargar"
+                                <ButtonRounded color="bg-inherit w-[30px]! h-[30px]! mr-3" tooltip="Descargar"
                                     tooltipPosition="left">
                                     <i v-if="showInsertar" class="fa-solid fa-download text-green-700"
                                         @click="InsertarTabla(tablaInsert.tabla, tablaInsert.id_comparar, tablaInsert.id_compararTabla)"></i>
                                 </ButtonRounded>
-                                <ButtonRounded color="bg-white w-[30px]! h-[30px]! gap-1" tooltip="Agregar Datos"
+                                <ButtonRounded color="bg-inherit w-[30px]! h-[30px]! gap-1" tooltip="Agregar Datos"
                                     tooltipPosition="left">
                                     <i class="fa-solid fa-plus text-blue-600"></i>
                                     <i class="fa-solid fa-database text-blue-600"></i>

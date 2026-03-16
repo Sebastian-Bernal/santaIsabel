@@ -75,6 +75,7 @@ export default defineNuxtConfig({
       profesionalHasPermisos: 'api/v1/profesionalHasPermisos',
       solicitarPermiso:  'api/v1/solicitarPermiso',
       celdaColors: 'api/v1/celdaColors',
+      importarInsumos: 'api/v1/importarInsumos',
     }
   },
 

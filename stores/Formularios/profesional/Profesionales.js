@@ -124,7 +124,7 @@ export const useMedicosStore = defineStore('Medicos', {
                     id_profesional: medico.id,
                     id_temporal: medico.id_temporal,
                     id_temporalUsuario: usuario.id_temporal,
-                    profesion: mapaProfesion[medico.id_profesion] || medico.id_profesion,
+                    profesion: mapaProfesion[medico.id_profesion],
                 }
             })
 

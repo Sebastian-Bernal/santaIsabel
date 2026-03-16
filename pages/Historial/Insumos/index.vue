@@ -13,6 +13,7 @@ import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import PDFMovimientoInsumo from '~/components/paginas/PDFMovimientoInsumo.vue'
 import { eliminarInsumo } from '~/Core/Historial/Insumos/DeleteInsumo'
+import ImportarCSV from '~/components/paginas/ImportarCSV.vue'
 
 const varView = useVarView()
 const notificaciones = useNotificacionesStore()
@@ -40,7 +41,7 @@ async function llamadatos() {
 // Refrescar pagina cuando se agrega o modifica Paciente
 watch(() => show.value,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
             await llamadatos();
             refresh.value++;
         }
@@ -49,7 +50,16 @@ watch(() => show.value,
 
 watch(() => showVer.value,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
+            await llamadatos();
+            refresh.value++;
+        }
+    }
+);
+
+watch(() => varView.importarArchivo,
+    async (estado) => {
+        if (!estado && varView.cambioEnApi) {
             await llamadatos();
             refresh.value++;
         }
@@ -58,7 +68,7 @@ watch(() => showVer.value,
 
 watch(() => showMovimiento.value,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
             await llamadatos();
             refresh.value++;
         }
@@ -72,7 +82,6 @@ onMounted(async () => {
     pacientesList.value = await pacientesStore.listPacientes(false);
     analisis.value = await apiRest.getData('Analisis', 'analisis')
     movimentosPaciente.value = await insumoStore.listMovimientos(medicosList.value, pacientesList.value, analisis.value, insumos.value)
-    console.log(movimentosPaciente.value)
 });
 
 // Funciones para manejar la visibilidad de los formularios
@@ -87,7 +96,7 @@ const verInsumo = async (insumo) => {
     showVer.value = true;
 }
 
-const confirmarEliminarUsuario = async() => {
+const confirmarEliminarUsuario = async () => {
     const insumoAEliminar = insumoStore.Formulario.Insumos;
 
     notificaciones.options = {
@@ -125,6 +134,12 @@ const agregarMovimiento = (insumo) => {
     mapCampos(insumo, insumoStore.Formulario);
     insumoStore.Formulario.Movimiento.id_insumo = insumo.id
     showMovimiento.value = true;
+}
+
+async function cerrar () {
+    varView.importarArchivo = false
+    await llamadatos()
+    refresh.value += 1
 }
 
 function validarStock(insumo) {
@@ -235,6 +250,16 @@ const propiedades = computed(() => {
             titulo: "Gestión de Insumos",
             descripcion: "Visualiza y administra el almacen de insumos.",
             accionAgregar: puedePost ? agregarInsumo : null,
+            acciones: [
+                {
+                    icon: 'fa-solid fa-file-import',
+                    accion: () => {
+                        varView.importarArchivo = true
+                    },
+                    color: 'bg-gray-800 text-white hover:bg-gray-900 dark:bg-gray-200 dark:text-black',
+                    text: 'Importar'
+                },
+            ],
             color: "bg-[var(--color-default)] text-white",
             buscador: true,
             excel: true,
@@ -246,7 +271,7 @@ const propiedades = computed(() => {
         .setDatos(insumos);
     const acciones = [];
     if (puedePut) {
-        acciones.push({ icon: validarStock, action: () => {} });
+        acciones.push({ icon: validarStock, action: () => { } });
         acciones.push({ icon: "ver", action: verInsumo });
         acciones.push({ icon: "movimiento", action: agregarMovimiento });
     }
@@ -295,4 +320,5 @@ const propiedades = computed(() => {
 <template>
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <PDFMovimientoInsumo v-if="varView.showPDFInsumo" />
+    <ImportarCSV v-if="varView.importarArchivo" :cerrar="cerrar"></ImportarCSV>
 </template>

@@ -117,7 +117,7 @@ export function useInsumosBuilder({
         })
         .addCampo({
             component: 'Input',
-            type: 'text',
+            type: 'number',
             label: 'Cantidad Actual',
             placeholder: '0',
             id: 'stock',

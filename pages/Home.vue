@@ -449,7 +449,7 @@ const propiedades = computed(() => {
                 .setcontenedorCards('flex flex-col')
                 .setTamaño('flex sm:flex-row justify-between items-center rounded-lg')
                 .setheaderTitle('Pacientes Recientes')
-                .setheaderHtml(`<a href="Historial/Historias" class="text-xs text-blue-500 hover:text-blue-700">Ver Todos</a>`)
+                .setheaderHtml(`<a href="/Historial/Historias" class="text-xs text-blue-500 hover:text-blue-700">Ver Todos</a>`)
                 .build()
             )
             .addComponente('Card', cardsCitas

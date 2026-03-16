@@ -9,6 +9,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             almacen: '',
             aguardar: {},
             respuesta: null,
+            EXPECTED_VERSION: 1,
         };
     },
     actions: {
@@ -104,6 +105,13 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
                     const historialCambioSonda = db.createObjectStore('Historial_cambio_sonda', { keyPath: 'id', });
                     historialCambioSonda.createIndex("buscaHistorialCambioSonda", "id", { unique: false });
+
+                    // Tabla de versión
+                    if (!db.objectStoreNames.contains("Version")) {
+                        const versionStore = db.createObjectStore("Version", { keyPath: "id" });
+                        versionStore.put({ id: 1, version: this.EXPECTED_VERSION });
+                    }
+
                 }
 
                 request.onerror = (event) => {
@@ -284,6 +292,11 @@ export const useIndexedDBStore = defineStore("indexeddb", {
         },
 
         async deleteDatabase(dbName) {
+            if (this.bd) {
+                this.bd.close();
+                this.bd = null;
+            }
+
             return new Promise((resolve, reject) => {
                 const request = indexedDB.deleteDatabase(dbName);
 
@@ -336,6 +349,43 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     console.error(`❌ Error al abrir la base de datos '${dbName}':`, event);
                     reject(event);
                 };
+            });
+        },
+
+        async validateVersion(dbName) {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName);
+
+                request.onsuccess = (event) => {
+                    const db = event.target.result;
+
+                    if (!db.objectStoreNames.contains("Version")) {
+                        db.close();
+                        resolve(false); // no existe la tabla
+                        return;
+                    }
+
+                    const tx = db.transaction("Version", "readonly");
+                    const store = tx.objectStore("Version");
+                    const getReq = store.get(1);
+
+                    getReq.onsuccess = () => {
+                        const record = getReq.result;
+                        db.close();
+                        if (record && record.version === this.EXPECTED_VERSION) {
+                            resolve(true); // versión correcta
+                        } else {
+                            resolve(false); // versión incorrecta
+                        }
+                    };
+
+                    getReq.onerror = () => {
+                        db.close();
+                        reject(getReq.error);
+                    };
+                };
+
+                request.onerror = (event) => reject(event.target.errorCode);
             });
         }
 

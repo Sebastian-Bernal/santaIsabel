@@ -227,7 +227,7 @@ const pintarCelda = (fila, columna, color) => {
 };
 
 const despintarCelda = (fila, columna, color) => {
-        console.log(fila, columna)
+    console.log(fila, columna)
     celdasPintadas.value = celdasPintadas.value.filter(C => {
         return !(C.fila === fila && C.columna === columna)
     });
@@ -271,6 +271,18 @@ async function guardarCambios() {
 const campos = {
     input: Input,
     select: Select,
+}
+
+// Función para verificar si el texto necesita tooltip
+const necesitaTooltip = (texto) => {
+    const textoStr = String(texto || '');
+    return textoStr.length > 30;
+}
+
+// Función para obtener el título truncado
+const obtenerTituloTooltip = (texto) => {
+    const textoStr = String(texto || '');
+    return necesitaTooltip(texto) ? textoStr : '';
 }
 
 </script>
@@ -527,13 +539,6 @@ const campos = {
                                     backgroundColor: obtenerColorCelda(fila.id, col.titulo)
                                 }" @click="celdaActiva = { fila: fila.id, columna: col.titulo }">
 
-                                <!-- TEXTO NORMAL -->
-                                <!-- <span v-if="!estaEditando(id, col.titulo)"
-                                        class="block truncate text-gray-800 dark:text-gray-200">
-
-                                        {{ fila[col.titulo] }}
-
-                                    </span> -->
                                 <component v-if="!estaEditando(fila.id, col.titulo)" :is="campos[col.campo]"
                                     v-model="fila[col.titulo]" class=" truncate text-gray-800 dark:text-gray-200"
                                     :Propiedades="{ ...col, placeholder: '...', estilo: 'bg-transparent border-none! outline-none rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full px-0! py-0!' }" />
@@ -547,9 +552,16 @@ const campos = {
                                     :Propiedades="{ ...col, placeholder: fila[col.titulo] ? fila[col.titulo] : 'Editar dato...', disabled: props.Propiedades.configuracion.camposEditables, estilo: 'bg-transparent border-none! outline-none px-2 rounded-md text-gray-900 dark:text-white shadow-none! transition-all duration-150 w-full h-full' }" />
                             </div>
 
-                            <p v-else class="w-full truncate py-2 px-2"
-                                :class="{ 'font-medium text-gray-900 dark:text-white': key === 0 && props.Propiedades.configuracion.tipo !== 'pinned', 'text-gray-800 dark:text-gray-200': key != 0 }">
+                            <p v-else class="w-full truncate py-2 px-2 relative group" :class="{
+                                'font-medium text-gray-900 dark:text-white': key === 0 && props.Propiedades.configuracion.tipo !== 'pinned',
+                                'text-gray-800 dark:text-gray-200': key != 0,
+                                'hasTooltip': necesitaTooltip(fila[col.titulo])
+                            }">
                                 {{ fila[col.titulo] }}
+                                <!-- Tooltip con div -->
+                            <!-- <div v-if="necesitaTooltip(fila[col.titulo])" class="tooltip">
+                                {{ obtenerTituloTooltip(fila[col.titulo]) }}
+                            </div> -->
                             </p>
 
                         </div>
@@ -813,5 +825,64 @@ input {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+.hasTooltip {
+    position: relative;
+    cursor: help;
+}
+
+/* Tooltip oculto por defecto */
+.hasTooltip .tooltip {
+    position: absolute;
+    bottom: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(241, 241, 241, 0.92);
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    max-width: 260px;
+    white-space: normal;
+    word-wrap: break-word;
+    z-index: 50;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(75, 85, 99, 0.25);
+    pointer-events: none;
+}
+
+/* Flecha */
+.hasTooltip .tooltip::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: rgba(31, 41, 55, 0.92);
+}
+
+/* Mostrar al hover */
+.hasTooltip:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+/* Dark mode */
+:dark .hasTooltip .tooltip {
+    background: rgba(17, 24, 39, 0.95);
+    color: #e5e7eb;
+    border-color: rgba(55, 65, 81, 0.3);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+:dark .hasTooltip .tooltip::before {
+    border-bottom-color: rgba(17, 24, 39, 0.95);
 }
 </style>

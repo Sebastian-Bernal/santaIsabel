@@ -46,6 +46,8 @@ export const useVarView = defineStore('varView', {
         // Modales Login
         showRecuperarContraseña: false,
         showCambiarContraseña: false,
+        // Insumos
+        importarArchivo: false,
         // validacion de formularios
         soloVer: true,
         formComplete: false,
