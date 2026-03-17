@@ -88,15 +88,19 @@ const enviarArchivo = async () => {
                     </h2>
 
                     <!-- Contenido scrollable -->
-                    <div class="h-full pt-5 overflow-y-auto scrollForm px-10 space-y-6">
+                    <div class="h-full pt-10 overflow-y-auto scrollForm px-10 space-y-6">
                         <!-- Sección rango de fechas -->
                         <div class="flex items-center gap-2 mb-5">
                             <i class="fa-solid fa-file text-blue-500"></i>
                             <p class="text-lg font-medium text-gray-700 dark:text-gray-300">Elige el archivo en formato .CSV</p>
                         </div>
 
+                        <a href="/Plantilla_Insumos.xlsm" download="Formato_Insumos" class="hover:text-blue-500">
+                            <p>Descargar Formato <i class="fa-solid fa-download"></i></p>
+                        </a>
+
                         <!-- Inputs fechas -->
-                        <div class="">
+                        <div class="pt-10">
                             <Input @change="handleFile" :Propiedades="{
                                 id: 'archivo',
                                 name: 'archivo',

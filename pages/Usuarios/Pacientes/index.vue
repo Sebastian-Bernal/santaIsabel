@@ -29,6 +29,7 @@ const kardex = ref([]);
 const insumos = ref([]);
 const refresh = ref(1);
 const celdasPintadasKardex = ref([]);
+const cargandoColors = ref(false)
 
 const show = ref(false);
 const showVer = ref(false);
@@ -101,14 +102,15 @@ onMounted(async () => {
         value: eps.id,
     }));
     insumos.value = await insumoStore.listInsumos();
-
+    cargandoColors.value = true
+    celdasPintadasKardex.value = await traerCeldasPintadas()
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
     kardex.value = kardex.value.map(k => {
         return {...k, id: k.paciente_id}
     })
-    celdasPintadasKardex.value = await traerCeldasPintadas()
+    cargandoColors.value = false
 });
 
 function showKardex() {
@@ -491,6 +493,7 @@ const propiedades = computed(() => {
             camposEditables: !puedePutKardex,
             camposInputs: true,
             onUpdate: async (fila) => {
+                console.log(fila)
                 if (fila.ultimoCambio) {
                     options.icono = 'warning'
                     options.titulo = 'Agrega detalles del cambio de sonda'
@@ -536,7 +539,7 @@ const propiedades = computed(() => {
         .setEstilos("")
         .setLayout("")
         .setContenedor("w-full")
-    if ((puedeVerKardex || puedePutKardex || puedeGetKardex) && celdasPintadasKardex.value.length ) {
+    if ((puedeVerKardex || puedePutKardex || puedeGetKardex) && !cargandoColors.value ) {
         pagina
         if (varView.pacienteKardex) {
             pagina

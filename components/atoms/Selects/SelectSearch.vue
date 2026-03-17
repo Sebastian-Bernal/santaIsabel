@@ -208,6 +208,6 @@ function handleEnter(event) {
             <i class="fa-solid fa-search text-sm text-blue-600 transition-all duration-300 cursor-pointer active:scale-85"></i>
         </div>
 
-        <p class="text-xs text-red-400">{{ errorMensaje }}</p>
+        <p class="text-xs text-red-400" v-if="!props.Propiedades.ocultarError">{{ errorMensaje }}</p>
     </div>
 </template>

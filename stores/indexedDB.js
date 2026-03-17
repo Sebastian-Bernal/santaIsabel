@@ -341,7 +341,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     // Limpiar cada objectStore
                     for (const storeName of db.objectStoreNames) {
                         const store = transaction.objectStore(storeName);
-                        store.clear();
+                        if(storeName !== 'Version') store.clear();
                     }
                 };
 

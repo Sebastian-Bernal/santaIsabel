@@ -23,14 +23,14 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Terapia?.evolucion) errores.push("La evolución es obligatoria.");
 
             // Validar Diagnosticos
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null) )
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
                     errores.push(`Diagnostico ${idx + 1} incompleto o codigo incompleto.`);
                 }
             });
 
-            datos.DiagnosticosCIF = datos.DiagnosticosCIF.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.DiagnosticosCIF = datos.DiagnosticosCIF.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null))
             datos.DiagnosticosCIF.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
                     errores.push(`Diagnostico CIF ${idx + 1} incompleto o codigo incompleto.`);
@@ -48,7 +48,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Analisis?.analisis) errores.push("El análisis es obligatorio.");
             if (!datos.Analisis?.motivo) errores.push("El motivo de consulta es obligatorio.");
 
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null));
             // Validar Diagnosticos
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
@@ -93,7 +93,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             if (!datos.Analisis?.tipoAnalisis) errores.push("El tipo de analisis es obligatorio.");
             if (!datos.Analisis?.tratamiento) errores.push("El tratamiento es obligatorio.");
 
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null))
             // Validar Diagnosticos
             datos.Diagnosticos.forEach((i, idx) => {
                 if (!i.descripcion || !i.codigo) {
@@ -136,10 +136,10 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             // Validar Insumos con stock
 
-            const insumosList = await apiRest.getOfflineData('Insumo')
-            datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumosList, 'insumo', errores);
-            datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumosList, 'medicamento', errores);
-            datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumosList, 'equipo', errores);
+            // const insumosList = await apiRest.getOfflineData('Insumo')
+            // datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumosList, 'insumo', errores);
+            // datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumosList, 'medicamento', errores);
+            // datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumosList, 'equipo', errores);
 
             // Validar Cita
             if (!datos.Cita?.id) {
@@ -170,18 +170,21 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     medicamento: m.medicamento,
                     dosis: m.dosis,
                     cantidad: parseInt(m.cantidad),
-                    id_insumo: m.id_insumo
+                    id_insumo: m.id_insumo,
+                    observacion: m.observacion
                 })),
                 Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
                     nombre: i.nombre,
                     cantidad: parseInt(i.cantidad),
-                    id_insumo: i.id_insumo
+                    id_insumo: i.id_insumo,
+                    observacion: i.observacion
                 })),
                 Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
                     descripcion: e.descripcion,
                     uso: e.uso,
                     id_insumo: e.id_insumo,
                     usado: e.usado || false,
+                    observacion: e.observacion
                 })),
                 Cita: {
                     id: datos.Cita.id,
@@ -216,49 +219,49 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 return;
             }
 
-            datos.Nota.objetivo = datos.Nota.objetivo.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.objetivo = datos.Nota.objetivo.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.objetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Objetivo incompleto.`);
                 }
             });
 
-            datos.Nota.subjetivo = datos.Nota.subjetivo.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.subjetivo = datos.Nota.subjetivo.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.subjetivo.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Subjetivo incompleto.`);
                 }
             });
 
-            datos.Nota.actividades = datos.Nota.actividades.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.actividades = datos.Nota.actividades.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.actividades.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Actividades incompleto.`);
                 }
             });
 
-            datos.Nota.plan = datos.Nota.plan.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.plan = datos.Nota.plan.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.plan.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Plan incompleto.`);
                 }
             });
 
-            datos.Nota.intervencion = datos.Nota.intervencion.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.intervencion = datos.Nota.intervencion.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.intervencion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Intervencion incompleto.`);
                 }
             });
 
-            datos.Nota.evaluacion = datos.Nota.evaluacion.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Nota.evaluacion = datos.Nota.evaluacion.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Nota.evaluacion.forEach((i, idx) => {
                 if (!i.descripcion || !i.hora) {
                     errores.push(`Descripcion ${idx + 1} de Evaluacion incompleto.`);
                 }
             });
 
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null)),
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null)),
             datos.Diagnosticos.forEach((d, i) => {
                 if (!d.descripcion || !d.codigo) {
                     errores.push(`Diagnóstico ${i + 1} incompleto.`);
@@ -325,7 +328,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             // Validar Profesional
             if (!datos.Cita?.id_medico) errores.push("El médico que registra historia es obligatorio.");
 
-            datos.Diagnosticos = datos.Diagnosticos.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Diagnosticos = datos.Diagnosticos.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null))
             // Validar Diagnosticos
             if (datos.Diagnosticos.length === 0 && puedePostAnalisis) {
                 errores.push("Debe haber por lo menos un diagnostico.");
@@ -337,7 +340,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 });
             }
 
-            datos.Antecedentes = datos.Antecedentes.filter(d => !Object.values(d).every(v => v === '' || v == null))
+            datos.Antecedentes = datos.Antecedentes.filter(d => Object.keys(d).length > 0 && Object.values(d).some(v => v !== '' || v != null))
             // Validar Antecedentes
             if (!Array.isArray(datos.Antecedentes)) {
                 errores.push("Los antecedentes deben ser un arreglo.");
@@ -382,7 +385,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
 
             // Validar Procedimientos
             datos.Plan_manejo_procedimientos = datos.Plan_manejo_procedimientos.filter(d => {
-                return d && Object.values(d).every(v => v !== '' && v != null);
+                return d && Object.values(d).some(v => v !== '' && v != null);
             });
             datos.Plan_manejo_procedimientos.forEach((p, i) => {
                 if (!p.procedimiento || !p.codigo) {
@@ -411,12 +414,10 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
             });
 
             // Validar Insumos con stock
-            const insumos = await apiRest.getOfflineData('Insumo')
-            datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumos, 'insumo', errores);
-            datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumos, 'medicamento', errores);
-            datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumos, 'equipo', errores);
-
-
+            // const insumos = await apiRest.getOfflineData('Insumo')
+            // datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumos, 'insumo', errores);
+            // datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumos, 'medicamento', errores);
+            // datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumos, 'equipo', errores);
 
             // Validar Cita
             if (!datos.Cita?.id) {
@@ -481,25 +482,29 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     medicamento: m.medicamento,
                     dosis: m.dosis,
                     cantidad: parseInt(m.cantidad),
-                    id_insumo: m.id_insumo
+                    id_insumo: m.id_insumo,
+                    observacion: m.observacion
                 })),
                 Plan_manejo_procedimientos: datos.Plan_manejo_procedimientos.map(p => ({
                     procedimiento: p.procedimiento,
                     codigo: p.codigo,
                     dias_asignados: p.dias_asignados,
                     id_medico: p.id_medico,
-                    id_paciente: datos.HistoriaClinica.id_paciente
+                    id_paciente: datos.HistoriaClinica.id_paciente,
+                    observacion: p.observacion
                 })),
                 Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
                     nombre: i.nombre,
                     cantidad: parseInt(i.cantidad),
-                    id_insumo: i.id_insumo
+                    id_insumo: i.id_insumo,
+                    observacion: i.observacion
                 })),
                 Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
                     descripcion: e.descripcion,
                     uso: e.uso,
                     id_insumo: e.id_insumo,
-                    usado: e.usado || false
+                    usado: e.usado || false,
+                    observacion: e.observacion
                 })),
                 Terapia: {
                     sesion: datos.Terapia.sesion,
@@ -661,25 +666,29 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         medicamento: m.medicamento,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
-                        id_insumo: m.id_insumo
+                        id_insumo: m.id_insumo,
+                        observacion: m.observacion
                     })),
                     Plan_manejo_procedimientos: (datos.Plan_manejo_procedimientos ?? []).map(p => ({
                         procedimiento: p.procedimiento,
                         codigo: p.codigo,
                         id_medico: p.id_medico,
                         dias_asignados: p.dias_asignados,
-                        id_paciente: p.id_paciente
+                        id_paciente: p.id_paciente,
+                        observacion: p.observacion
                     })),
                     Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
                         nombre: i.nombre,
                         cantidad: parseInt(i.cantidad),
-                        id_insumo: i.id_insumo
+                        id_insumo: i.id_insumo,
+                        observacion: i.observacion
                     })),
                     Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
                         descripcion: e.descripcion,
                         uso: e.uso,
                         usado: e.usado,
-                        id_insumo: e.id_insumo
+                        id_insumo: e.id_insumo,
+                        observacion: e.observacion
                     })),
                     Cita: {
                         id: datos.Cita.id
@@ -1101,7 +1110,8 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                         medicamento: m.medicamento,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
-                        id_insumo: m.id_insumo
+                        id_insumo: m.id_insumo,
+                        observacion: m.observacion
                     })),
                     ExamenFisico: {
                         peso: datos.ExamenFisico.peso,
@@ -1249,18 +1259,21 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                         medicamento: m.medicamento,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
-                        id_insumo: m.id_insumo
+                        id_insumo: m.id_insumo,
+                        observacion: m.observacion
                     })),
                     Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
                         nombre: i.nombre,
                         cantidad: parseInt(i.cantidad),
-                        id_insumo: i.id_insumo
+                        id_insumo: i.id_insumo,
+                        observacion: i.observacion
                     })),
                     Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
                         descripcion: e.descripcion,
                         uso: e.uso,
                         usado: e.usado,
-                        id_insumo: e.id_insumo
+                        id_insumo: e.id_insumo,
+                        observacion: e.observacion
                     })),
                     Cita: {
                         id: datos.Cita.id
