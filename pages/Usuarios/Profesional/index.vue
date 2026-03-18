@@ -172,7 +172,7 @@ const propiedades = computed(() => {
         .setColumnas([
             { titulo: 'No_document', value: 'Documento', ordenar: true, tamaño: 100 },
             { titulo: 'name', value: 'Nombre', tamaño: 250 },
-            { titulo: 'profesion', value: 'Profesión', tamaño: 150 },
+            { titulo: 'nombreProfesion', value: 'Profesión', tamaño: 150 },
             { titulo: 'celular', value: 'Celular', tamaño: 120 },
             { titulo: 'zona', value: 'Zona', tamaño: 100 },
             { titulo: 'municipio_laboral', value: 'Municipio', tamaño: 150 }

@@ -95,14 +95,6 @@ export const useMedicosStore = defineStore('Medicos', {
                 medicos = await store.leerdatos()
             }
 
-            store.almacen = 'Profesion'
-            const profesiones = await store.leerdatos()
-
-            const mapaProfesion = profesiones.reduce((acc, profesion) => {
-                acc[profesion.id] = profesion.nombre;
-                return acc;
-            }, {});
-
             // Asociar cada medico con su usuario correspondiente
             const usuariosProfesionales = medicos.map((medico) => {
 
@@ -122,9 +114,6 @@ export const useMedicosStore = defineStore('Medicos', {
                     ...medico,
                     ...usuario, // Agregamos los datos del usuario (o null si no se encuentra)
                     id_profesional: medico.id,
-                    id_temporal: medico.id_temporal,
-                    id_temporalUsuario: usuario.id_temporal,
-                    profesion: mapaProfesion[medico.id_profesion],
                 }
             })
 

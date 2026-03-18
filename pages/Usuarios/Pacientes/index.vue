@@ -26,6 +26,7 @@ const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
 const pacientes = ref([]);
 const kardex = ref([]);
+let copiaKardex = [];
 const insumos = ref([]);
 const refresh = ref(1);
 const celdasPintadasKardex = ref([]);
@@ -107,6 +108,7 @@ onMounted(async () => {
     await apiRest.getData('Antecedentes', 'antecedentes')
     await apiRest.getData('Plan_manejo_procedimientos', 'planManejoProcedimientos')
     kardex.value = await apiRest.getData('', 'traeKardex')
+    copiaKardex = kardex.value
     kardex.value = kardex.value.map(k => {
         return {...k, id: k.paciente_id}
     })
@@ -231,8 +233,8 @@ const propiedades = computed(() => {
     builderTabla
         .setColumnas([
             { titulo: "No_document", value: "Documento", tamaño: 120, ordenar: true },
-            { titulo: "name", value: "Nombre", tamaño: 250, ordenar: true },
-            { titulo: "celular", value: "Celular", tamaño: 100 },
+            { titulo: "name", value: "Nombre", tamaño: 230, ordenar: true },
+            { titulo: "celular", value: "Celular", tamaño: 120 },
             { titulo: "sexo", value: "Sexo", tamaño: 100 },
             { titulo: "municipio", value: "Ciudad", tamaño: 120 },
             { titulo: "regimen", value: "Regimen", tamaño: 150 },
@@ -493,8 +495,9 @@ const propiedades = computed(() => {
             camposEditables: !puedePutKardex,
             camposInputs: true,
             onUpdate: async (fila) => {
-                console.log(fila)
-                if (fila.ultimoCambio) {
+                const filaAfectada = copiaKardex.find(k => k.id_paciente === fila.id_paciente)
+                const cambioSonda = filaAfectada.ultimoCambio !== fila.ultimoCambio
+                if (fila.ultimoCambio && cambioSonda) {
                     options.icono = 'warning'
                     options.titulo = 'Agrega detalles del cambio de sonda'
                     options.html = `<div class="flex flex-col items-start">`
@@ -529,6 +532,14 @@ const propiedades = computed(() => {
                     }
                     notificaciones.mensaje()
                 } catch (error) {
+                    notificaciones.options = {
+                        tipo: 'error',
+                        background: '#d33',
+                        texto: 'No se pudo actualizar Kardex',
+                        tiempo: 3000,
+                        position: 'top-right',
+                    }
+                    notificaciones.mensaje()
                 }
             }
         });
@@ -541,28 +552,8 @@ const propiedades = computed(() => {
         .setContenedor("w-full")
     if ((puedeVerKardex || puedePutKardex || puedeGetKardex) && !cargandoColors.value ) {
         pagina
-        if (varView.pacienteKardex) {
-            pagina
-                .setHeaderPage({
-                    titulo: 'Gestión información de pacientes',
-                    button: [
-                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showKardex },
-                    ]
-                })
-                .addComponente("Tabla", builderTablaKardex)
-
-        } else {
-            pagina
-                .setHeaderPage({
-                    titulo: 'Gestión información de pacientes',
-                    button: [
-                        { text: 'Kardex', icon: 'fa-solid fa-table', color: 'bg-gray-500', action: showKardex },
-                    ]
-                })
-
-                .addComponente("Tabla", builderTabla)
-                .addComponente("Tabla", builderTablaKardex)
-        }
+            .addComponente("Tabla", builderTabla)
+            .addComponente("Tabla", builderTablaKardex)
     }
     else {
         pagina

@@ -29,7 +29,7 @@ export const validarYEnviarModificarMedico = async (datos) => {
         departamento: info.departamento,
         barrio: info.barrio,
         zona: info.zona,
-        id_profesion: profesional.profesion,
+        id_profesion: profesional.id_profesion,
         departamento_laboral: profesional.departamento_laboral,
         municipio_laboral: profesional.municipio_laboral,
         zona_laboral: profesional.zona_laboral,

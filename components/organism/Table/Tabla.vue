@@ -256,7 +256,9 @@ function filaFueCambiada(id) {
 }
 
 async function guardarCambios() {
-    const datosActualizados = datosPaginados.value.filter((_, index) => filasCambiadas.value.has(index));
+    const datosActualizados = datosPaginados.value.filter((dato, index) => {
+        return filasCambiadas.value.has(dato.id)
+    });
 
     for (const fila of datosActualizados) {
         await props.Propiedades.configuracion.onUpdate(fila);
@@ -507,7 +509,7 @@ const obtenerTituloTooltip = (texto) => {
 
             <!-- Body tabla -->
             <div v-else ref="bodyScroll" @scroll="syncHeaderScroll"
-                class="overflow-auto max-h-[412px] relative scrollFormT">
+                class="overflow-auto max-h-103 relative scrollFormT">
 
                 <div v-for="(fila, id) in datosPaginados" role="row"
                     :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(fila.id) }"
@@ -634,9 +636,9 @@ const obtenerTituloTooltip = (texto) => {
                 <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
                     :key="`empty-${n}`"
                     class="bodyTable w-full justify-between grid p-2 text-center hover:bg-(--color-default-claro) odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
-                    :style="estiloColumnasScrollable">
+                    :style="estiloColumnasScrollable" role="row">
 
-                    <div v-for="(col, key) in columnasVisibles" :key="key"
+                    <div v-for="(col, key) in columnasScrollable" :key="key" role="cell"
                         :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
                         <p class="text-transparent select-none">.</p>
                     </div>
