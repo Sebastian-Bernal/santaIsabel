@@ -11,12 +11,12 @@ let blobGuardado = '';
 // Cargar los pacientes desde el store
 onMounted(async () => {
     varView.cargando = true
-    await exportarNutricionPDF(varView.propiedadesPDF)
+    await exportarServicioPDF(varView.propiedadesPDF)
     varView.cargando = false
 });
 
 // PDF
-async function exportarNutricionPDF(data) {
+async function exportarServicioPDF(data) {
     try {
         varView.cargando = true
         const config = useRuntimeConfig()

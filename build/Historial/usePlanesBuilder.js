@@ -42,7 +42,7 @@ export function usePlanesBuilder({
             .addCampo({
                 component: 'GroupCampos',
                 labelGroup: 'Medicamentos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '' } },],
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', observacion: '' } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_medicamentos',
                 value: [],
@@ -76,6 +76,13 @@ export function usePlanesBuilder({
                         placeholder: 'Dosis',
                         tamaño: 'w-full',
                     },
+                    {
+                        name: 'observacion',
+                        id: 'observacion',
+                        typeCampo: 'Input',
+                        placeholder: 'Registrar Observacion / Autorizacion',
+                        tamaño: 'w-full'
+                    }
                 ],
                 containerCampos: 'grid grid-cols-2 gap-2'
             })

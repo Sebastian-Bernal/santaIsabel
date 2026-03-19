@@ -1222,6 +1222,7 @@ const propiedades = computed(() => {
                 .setConfiguracion(
                     {
                         type: 'Line',
+                        title: 'Grafico IMC del paciente',
                         height: 400,
                         xLabel: 'Fecha',
                         yLabel: 'IMC',

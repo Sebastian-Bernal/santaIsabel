@@ -17,7 +17,7 @@ export const validarYEnviarPlan = async (datos) => {
     const profesionales = await store.leerdatos()
 
     const profesional = profesionales.find(p => parseInt(p.id_infoUsuario) === parseInt(user.id))
-
+console.log(profesional)
     const errores = [];
     // --- Validaciones por tipo de consulta ---
     switch (varView.tipoHistoria) {
@@ -33,7 +33,7 @@ export const validarYEnviarPlan = async (datos) => {
                     return {
                         ...m,
                         id_paciente: pacientesStore.PacienteSeleccionado,
-                        id_medico: profesional?.id_profesional
+                        id_medico: profesional?.id
                     };
                 });
 
@@ -46,7 +46,7 @@ export const validarYEnviarPlan = async (datos) => {
             // Ahora tienes cada medicamento con id_paciente e id_medico
             const medicamentos = datos.Plan_manejo_medicamentos;
 
-            return await enviarFormularioActualizarMedicamento({Plan_manejo_medicamentos : medicamentos});
+            return await enviarFormularioActualizarMedicamento({ Plan_manejo_medicamentos: medicamentos, id_paciente: pacientesStore.PacienteSeleccionado, id_medico: profesional?.id });
 
         case 'Tratamientos':
             if (!datos.Plan_manejo_procedimientos?.procedimiento) errores.push("El procedimiento es obligatorio.");
@@ -90,21 +90,45 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
     if (online) {
         try {
             // mandar a api
-            let options = {
-                metodo: 'POST',
-                url: config.public.planManejoMedicamentos,
-                token: token,
-                body: datos
-            }
-            const respuesta = await api.functionCall(options)
+            const respuesta = await fetch(`${config.public.api}/${config.public.planManejoMedicamentos}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/pdf',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datos)
+            });
 
-            if (respuesta.success) {
-
-                return true
+            if (!respuesta.ok) {
+                throw new Error(`Error en la petición: ${respuesta.status}`);
             }
+
+            const blob = await respuesta.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            // Leer el nombre desde el header
+            const disposition = respuesta.headers.get('Content-Disposition');
+            let fileName = `ActaEntrega.pdf`;
+            if (disposition) {
+                const match = disposition.match(/filename\*?=(?:UTF-8''|")?([^";]+)/);
+                if (match && match[1]) {
+                    fileName = decodeURIComponent(match[1]);
+                }
+            }
+
+            // Descargar
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName; // nombre dinámico
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            setTimeout(() => window.URL.revokeObjectURL(url), 10000);
 
         } catch (error) {
-            console.error('Fallo al enviar. Guardando localmente', error);
+            console.error('Fallo al enviar.', error);
         }
     } else {
         notificacionesStore.options.icono = 'warning'

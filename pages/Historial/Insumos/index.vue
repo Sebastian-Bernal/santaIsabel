@@ -11,7 +11,6 @@ import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
 import { useMovimientoBuilder } from '~/build/Historial/useMovimientoBuilder'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
-import PDFMovimientoInsumo from '~/components/paginas/PDFMovimientoInsumo.vue'
 import { eliminarInsumo } from '~/Core/Historial/Insumos/DeleteInsumo'
 import ImportarCSV from '~/components/paginas/ImportarCSV.vue'
 
