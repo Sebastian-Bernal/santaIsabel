@@ -16,7 +16,7 @@ import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 const btnAcciones = ref(null)
 const showFiltros = ref(false)
 const mostrarFiltrosAvanzados = ref(false)
-const tiempoLoading = ref(true)
+const tiempoLoading = ref(false)
 const varView = useVarView()
 // funciones
 const props = defineProps({

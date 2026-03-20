@@ -262,7 +262,7 @@ const propiedades = computed(() => {
 
     if (puedediagnosticar) {
         acciones.push({
-            icon: "agregar", action: (fila) => {
+            icon: "fa-solid fa-pills text-gray-700 dark:text-gray-300", action: (fila) => {
                 showItem.value = true
                 varView.tipoHistoria = 'Medicamento'
                 pacientesStore.PacienteSeleccionado = fila.id_paciente

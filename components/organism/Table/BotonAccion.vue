@@ -40,7 +40,7 @@ const iconoClase = computed(() => {
         case 'configurar':
             return 'fa-solid fa-cog';
         default:
-            return '';
+            return props.tipo;
     }
 });
 

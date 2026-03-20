@@ -126,7 +126,7 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
             a.remove();
 
             setTimeout(() => window.URL.revokeObjectURL(url), 10000);
-
+            return true
         } catch (error) {
             console.error('Fallo al enviar.', error);
         }
