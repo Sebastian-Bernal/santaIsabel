@@ -31,6 +31,7 @@ const insumos = ref([]);
 const refresh = ref(1);
 const celdasPintadasKardex = ref([]);
 const cargandoColors = ref(false)
+const conveniosOptions = ref([]);
 
 const show = ref(false);
 const showVer = ref(false);
@@ -102,6 +103,12 @@ onMounted(async () => {
         text: eps.nombre,
         value: eps.id,
     }));
+    const convenios = await apiRest.getData('', 'convenios');
+    conveniosOptions.value = await convenios.map((convenio) => ({
+        text: convenio.nombre,
+        value: convenio.id,
+    }));
+console.log(conveniosOptions.value)
     insumos.value = await insumoStore.listInsumos();
     cargandoColors.value = true
     celdasPintadasKardex.value = await traerCeldasPintadas()
@@ -189,6 +196,7 @@ const propiedades = computed(() => {
             EPS: opcionesEPS,
             agregarDiagnostico: () => { },
             tipoUsuario: "Paciente",
+            conveniosOptions: conveniosOptions.value,
             validarFecha,
             validarTipoDoc,
         })
@@ -213,6 +221,7 @@ const propiedades = computed(() => {
             soloVer: varView.soloVer,
             eliminar: eliminarPaciente,
             tipoUsuario: "Paciente",
+            conveniosOptions: conveniosOptions.value,
             validarFecha,
             validarTipoDoc,
         })

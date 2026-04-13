@@ -43,6 +43,7 @@ import { validarYEnviarNuevoMovimiento } from '~/Core/Historial/Insumos/PostMovi
 import { validarYEnviarActualizarInusmo } from '~/Core/Historial/Insumos/PutInsumos';
 // Planes de Manejo
 import { validarYEnviarPlan } from '~/Core/Historial/PlanesManejo/PostPlanes';
+import { guardarConvenio } from '~/Core/Convenios/PostConvenios';
 
 
 // Importa accion de cada formulario desde el core
@@ -174,5 +175,9 @@ export const accionesFormularios = {
     AgregarPermisos: async (data) => {
         const respuesta = await validarYEnviarPermisosProfesional(data)
         return respuesta
-    }
+    },
+    ConvenioNuevo : async (data) => {
+        const respuesta = await guardarConvenio(data.Convenio)
+        return respuesta
+    },
 };

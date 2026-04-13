@@ -1,0 +1,247 @@
+========================================================
+CONFIGURACIÓN RESUMIDA: REPORTES, SISTEMAS, COMPONENTES
+========================================================
+
+📋 RESUMEN GENERAL
+-----------------
+Se implementaron 3 nuevas entidades siguiendo el patrón existente:
+- SISTEMAS: CRUD completo con tabla avanzada (Productos-style)
+- COMPONENTES: CRUD completo con tabla avanzada (Productos-style)
+- REPORTES: Vista-only con modal Nuxt UI 3.3.7 (sin editar/eliminar)
+
+
+========================================================
+1. CONFIGURACIÓN SISTEMAS
+========================================================
+
+Core/Sistemas/ (3 archivos)
+  ✓ GetSistemas.js: traerSistemas() y traerSistemaDetalle(id)
+  ✓ PostSistemas.js: guardar/actualizar sistemas
+  ✓ DeleteSistemas.js: eliminar sistema
+
+stores/Formularios/Sistemas/ (1 archivo)
+  ✓ Sistema.js: Store Pinia con estado Formulario
+    - Campos: id, nombre, descripcion
+    - Acciones: guardar(), actualizar(), eliminar(), traer()
+
+build/Sistemas/ (1 archivo)
+  ✓ useSistemasBuilder.js: FormularioBuilder con:
+    - Input text: nombre (requerido)
+    - Textarea: descripcion (opcional)
+    - Modal tamaño: SM
+
+composables/Usuarios/ (1 archivo)
+  ✓ Sistema.js: useActions con agregarSistema(), verSistema(), eliminarSistemas(), cerrar()
+
+pages/Historial/ (1 archivo)
+  ✓ Sistemas.vue: Tabla Nuxt UI con:
+    - Columnas: id, nombre, descripcion (truncate)
+    - Dropdown menu: Editar, Eliminar
+    - Computed properties para formulario y tabla
+    - h() render functions para acciones
+
+
+========================================================
+2. CONFIGURACIÓN COMPONENTES
+========================================================
+
+Core/Componentes/ (3 archivos)
+  ✓ GetComponentes.js: traerComponentes() y traerComponentesPorSistema(sistemaId)
+  ✓ PostComponentes.js: guardar/actualizar componentes
+  ✓ DeleteComponentes.js: eliminar componente
+
+stores/Formularios/Componentes/ (1 archivo)
+  ✓ Componente.js: Store Pinia con estado Formulario
+    - Campos: id, sistema_id, nombre, descripcion
+    - Acciones: guardar(), actualizar(), eliminar(), traer()
+
+build/Componentes/ (1 archivo)
+  ✓ useComponentesBuilder.js: FormularioBuilder con:
+    - Input number: sistema_id (requerido)
+    - Input text: nombre (requerido)
+    - Textarea: descripcion (opcional)
+    - Modal tamaño: SM
+
+composables/Usuarios/ (1 archivo)
+  ✓ Componente.js: useActions con agregarComponente(), verComponente(), eliminarComponentes(), cerrar()
+
+pages/Historial/ (1 archivo)
+  ✓ Componentes.vue: Tabla Nuxt UI (estructura idéntica a Sistemas)
+
+
+========================================================
+3. CONFIGURACIÓN REPORTES
+========================================================
+
+Core/Reportes/ (3 archivos)
+  ✓ GetReportes.js: traerReportes() endpoint /api/getreportes
+  ✓ PostReportes.js: guardar/actualizar reportes (no usado en UI)
+  ✓ DeleteReportes.js: eliminar reporte (no usado en UI)
+
+stores/Formularios/Reportes/ (1 archivo)
+  ✓ Reporte.js: Store Pinia con estado completo
+    - Campos principales: id, equipo_id, tecnico_id, cliente_id, fecha, estado
+    - Datos relacionados: componentes, materiales, mediciones, repuestos, actividades
+    - Datos de referencia: equipo, cita
+
+build/Reportes/ (1 archivo)
+  ✓ useReportesViewBuilder.js: Solo estructurador de datos (NO form builder)
+
+composables/Usuarios/ (1 archivo)
+  ✓ Reporte.js: useActions SOLO lectura
+    - verReporte(reporte): carga datos en modal
+    - cerrar(): cierra modal
+    - NO incluye: agregar, editar, eliminar
+
+pages/Historial/ (1 archivo)
+  ✓ Reportes.vue: Tabla + Modal Vista-Only
+    - Tabla: id, equipo_id, tecnico_id, cliente_id, fecha, estado (badge)
+    - Acción: Botón "Ver" ÚNICO (no edit/delete)
+    - Modal Nuxt UI 4 secciones principales:
+      1. Información General: ID, Fecha, Cliente, Técnico
+      2. Componentes: Estado + Observaciones (grid badges)
+      3. Materiales: Tabla con Descripción y Cantidad
+      4. Mediciones: Tabla con Variable, Unidad, Medido vs Esperado
+      5. Repuestos: Badges de accesorios requeridos
+      6. Actividades: Texto descriptivo formateado
+
+
+========================================================
+4. CONFIGURACIÓN NUXT (nuxt.config.ts)
+========================================================
+
+Agregar en `app.config.ts` o `nuxt.config.ts`:
+
+  export default defineAppConfig({
+    public: {
+      // Sistemas
+      sistema: '/api/sistema',
+      
+      // Componentes
+      componente: '/api/componente',
+      
+      // Reportes
+      reporte: '/api/reporte',
+    }
+  })
+
+
+========================================================
+5. DIFERENCIAS CLAVE
+========================================================
+
+✓ SISTEMAS vs COMPONENTES:
+  - Sistemas: estructura simple (id, nombre, descripcion)
+  - Componentes: requiere sistema_id (relación 1:N)
+  - Ambos: CRUD completo + tabla Productos-style
+
+✓ REPORTES vs SISTEMAS/COMPONENTES:
+  - Sistemas/Componentes: Modal form-based, editable
+  - Reportes: Modal view-only, NO editable
+  - Reportes: Muestra datos multi-nivel (equipos, materiales, etc)
+  - Reportes: Botón "Ver" únicamente en tabla
+  - Reportes: Composable sin funciones de guardar/eliminar
+
+
+========================================================
+6. ESTRUCTURA DE DIRECTORIOS CREADA
+========================================================
+
+Core/
+  Reportes/ (3 archivos)
+  Sistemas/ (3 archivos - mejorados)
+  Componentes/ (3 archivos - mejorados)
+
+build/
+  Reportes/
+  Sistemas/ (actualizado)
+  Componentes/ (actualizado)
+
+composables/Usuarios/
+  Reporte.js (nuevo)
+  Sistema.js (actualizado)
+  Componente.js (actualizado)
+
+stores/Formularios/
+  Reportes/ (nuevo)
+  Sistemas/ (actualizado)
+  Componentes/ (actualizado)
+
+pages/Historial/
+  Reportes.vue (nuevo)
+  Sistemas.vue (actualizado)
+  Componentes.vue (actualizado)
+
+
+========================================================
+7. TECNOLOGÍAS UTILIZADAS
+========================================================
+
+✓ Vue 3 + Composition API (<script setup>)
+✓ Nuxt 3 (defineNuxtComponent, useRuntimeConfig)
+✓ Pinia (defineStore)
+✓ Nuxt UI 3.3.7 (UButton, UBadge, UCard, UDropdownMenu, UModal)
+✓ Tailwind CSS (grid, flex, responsive)
+✓ Custom TablaNuxt component
+✓ Custom FormularioBuilder
+✓ h() render functions para columnas dinámicas
+
+
+========================================================
+8. PATRONES IMPLEMENTADOS
+========================================================
+
+✓ Store Pattern: useStore() + defineStore con Formulario
+✓ Actions Pattern: useActions() con CRUD functions
+✓ Builder Pattern: FormularioBuilder chain methods
+✓ Modal Pattern: Nuxt UModal con UCard + footer
+✓ Table Pattern: h() rendering + responsive columns
+✓ Authentication: Bearer token en headers (tokenAuth)
+✓ Error Handling: notificaciones store para feedback
+✓ Reactivity: computed properties + ref watchers
+
+
+========================================================
+9. ENDPOINTS REQUERIDOS EN BACKEND
+========================================================
+
+SISTEMAS:
+  GET    /api/getsistemas - lista todos
+  GET    /api/sistema/{id} - detalle
+  POST   /api/sistema - crear
+  PUT    /api/sistema/{id} - actualizar
+  DELETE /api/sistema/{id} - eliminar
+
+COMPONENTES:
+  GET    /api/getcomponentes - lista todos
+  GET    /api/componente?sistema_id={id} - filtrar por sistema
+  POST   /api/componente - crear
+  PUT    /api/componente/{id} - actualizar
+  DELETE /api/componente/{id} - eliminar
+
+REPORTES:
+  GET    /api/getreportes - lista todos
+  GET    /api/reporte/{id} - detalle (con nested data)
+  POST   /api/reporte - crear (opcional)
+  PUT    /api/reporte/{id} - actualizar (opcional)
+  DELETE /api/reporte/{id} - eliminar (opcional)
+
+
+========================================================
+10. NOTAS IMPORTANTES
+========================================================
+
+✓ Reportes es READ-ONLY en UI (modal sin formulario)
+✓ Todos los endpoints requieren token Bearer en Authorization header
+✓ Las tablas usan computed properties para re-render reactivo
+✓ Modal de Reportes es view-only con solo botón "Cerrar"
+✓ Materiales, Mediciones y Repuestos son arrays mostrados como tablas/badges
+✓ Componentes del modal tiene badges con estado (bueno/regular/malo)
+✓ Descriptiones se truncan en tabla con max-w-[250px]
+✓ Filtros disponibles: por columna (estado, etc)
+✓ Estados de reporte: completado, pendiente, error
+
+
+========================================================
+✅ CONFIGURACIÓN COMPLETADA
+========================================================

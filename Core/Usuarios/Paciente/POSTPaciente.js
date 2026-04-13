@@ -147,6 +147,8 @@ export const enviarFormularioPaciente = async (datos, reintento = false) => {
                         tipo: a.tipo,
                         descripcion: a.descripcion,
                     })).filter(d => !Object.values(d).every(v => v === '' || v == null)),
+
+                    convenio_id: datos.Paciente.convenio_id,
                 }
             }
             const respuesta = await api.functionCall(options)

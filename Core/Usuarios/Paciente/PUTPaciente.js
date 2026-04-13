@@ -132,6 +132,8 @@ export const enviarFormularioPutPaciente = async (datos, reintento = false) => {
                         tipo: a.tipo,
                         descripcion: a.descripcion,
                     })),
+
+                    convenio_id: datos.Paciente.convenio_id,
                 }
             }
             const respuesta = await api.functionCall(options)

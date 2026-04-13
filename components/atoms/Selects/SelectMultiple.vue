@@ -43,41 +43,33 @@ function seleccionarTodos() {
 
 <template>
   <div class="relative" :class="Propiedades.tamaño">
-    <select
-      :name="Propiedades.name"
-      :id="Propiedades.id"
-      :class="Propiedades.tamaño"
+    <select :name="Propiedades.name" :id="Propiedades.id" :class="Propiedades.tamaño"
       class="mt-1 w-full h-8.75 text-gray-900 block px-3 py-2 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-      @click="mostrarOptions"
-      @change="Propiedades.events?.onChange"
-      @blur="Propiedades.events?.onBlur"
-      @keyup.enter="Propiedades.events?.onKeyUp"
-    >
+      @click="mostrarOptions" @change="Propiedades.events?.onChange" @blur="Propiedades.events?.onBlur"
+      @keyup.enter="Propiedades.events?.onKeyUp">
       <option disabled selected hidden>{{ Propiedades.placeholder }}</option>
     </select>
 
-    <ul
-      v-show="showOptions"
-      class="autocomplete-list top-full left-0 right-0 max-h-45 overflow-y-auto scrollForm bg-white border border-[#d0d7de] dark:bg-gray-900 rounded-lg z-9 px-3 mt-1"
-    >
+    <ul v-show="showOptions"
+      class="autocomplete-list top-full left-0 right-0 max-h-45 overflow-y-auto scrollForm bg-white border border-[#d0d7de] dark:bg-gray-900 rounded-lg z-9 px-3 mt-1">
       <div class="flex gap-3 cursor-pointer" @click="seleccionarTodos">
-        <label class="font-semibold w-full px-3 py-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-950">Seleccionar Todos</label>
+        <label
+          class="font-semibold w-full px-3 py-2 text-black dark:text-white hover:bg-blue-100 dark:hover:bg-blue-950">
+          Seleccionar Todos
+        </label>
       </div>
-      <li
-        v-for="dato in Propiedades.options"
-        :key="dato"
+
+      <li v-for="dato in Propiedades.options" :key="typeof dato === 'object' ? dato.value : dato"
         class="flex gap-3 items-center cursor-pointer"
-        @click="añadirDato(dato)"
-      >
-        <input
-          type="checkbox"
-          :checked="modelValue.includes(dato)"
-          :value="dato"
-          :id="dato"
-          readonly
-        />
-        <label class="text-black dark:text-white">{{ dato }}</label>
+        @click="añadirDato(typeof dato === 'object' ? dato.value : dato)">
+        <input type="checkbox" :checked="modelValue.includes(typeof dato === 'object' ? dato.value : dato)"
+          :value="typeof dato === 'object' ? dato.value : dato" :id="typeof dato === 'object' ? dato.value : dato"
+          readonly />
+        <label class="text-black dark:text-white">
+          {{ typeof dato === 'object' ? dato.label : dato }}
+        </label>
       </li>
     </ul>
+
   </div>
 </template>

@@ -21,6 +21,14 @@ export const buttons = ref([
                 titulo: 'Usuarios',
                 ruta: '/Empresas/Usuarios'
             },
+            {
+                titulo: 'Codigos',
+                ruta: '/Empresas/Codigos'
+            },
+            {
+                titulo: 'Convenios',
+                ruta: '/Empresas/Convenios'
+            },
             // {
             //     titulo: 'Inventarios',
             // },

@@ -105,6 +105,16 @@ export async function cargarStore(storeName) {
       tablaStore = useInsumosStore();
       break;
     }
+    case 'Convenio': {
+      const { useConvenioStore } = await import('~/stores/Formularios/Convenios/Convenio');
+      tablaStore = useConvenioStore();
+      break;
+    }
+    case 'Vadecum': {
+      const { useVadecumStore } = await import('~/stores/Formularios/Codigos/Vadecum');
+      tablaStore = useVadecumStore();
+      break;
+    }
     default:
       console.warn(`Store "${storeName}" no reconocido.`);
       break;

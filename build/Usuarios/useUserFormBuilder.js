@@ -24,6 +24,7 @@ export function useUserBuilder({
     verUser,
     soloVer,
     eliminar,
+    conveniosOptions = [],
     validarFecha = () => { },
     validarTipoDoc = () => { },
 }) {
@@ -361,7 +362,7 @@ export function useUserBuilder({
                 placeholder: 'Población Vulnerable',
                 id: 'poblacionVulnerable',
                 name: 'poblacionVulnerable',
-                tamaño: 'col-span-2 w-full',
+                tamaño: 'w-full',
                 options: [
                     { text: 'Ninguno', value: 'Ninguno' },
                     { text: 'Adultos Mayores', value: 'Adultos Mayores' },
@@ -378,6 +379,15 @@ export function useUserBuilder({
                     { text: 'Personas con enfermedades huerfanas o catastroficas', value: 'Personas con enfermedades huerfanas o catastroficas' },
                 ],
                 vmodel: 'Paciente.vulnerabilidad',
+            })
+            .addCampo({
+                component: 'Select',
+                placeholder: 'Selecciona Convenio (opcional)',
+                id: 'convenio',
+                name: 'convenio',
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                options: conveniosOptions,
+                vmodel: 'Paciente.convenio_id',
             })
 
         if (user === 'Admin') {

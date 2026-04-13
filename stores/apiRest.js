@@ -21,8 +21,8 @@ export const useApiRest = defineStore('apiRest', {
             }
 
             // Validar permisos antes de llamar
-            const permisosUsuario = varView.getPermisos;
-            const tienePermiso = this.validarPermiso(opcion, permisosUsuario, config);
+            // const permisosUsuario = varView.getPermisos;
+            // const tienePermiso = this.validarPermiso(opcion, permisosUsuario, config);
 
 
             // if (!tienePermiso && opcion.metodo !== 'GET') {
