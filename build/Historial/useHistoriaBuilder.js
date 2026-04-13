@@ -37,6 +37,13 @@ export function useHistoriaBuilder({
         MedicosList.value = medicoStore.Medicos;
         CIE10.value = await storeCodigos.leerdatos();
         insumos.value = await insumoStore.listInsumos();
+<<<<<<< HEAD
+=======
+
+        const response = await fetch('/data/medicamentos.json.gz')
+        const data = await response.json()
+        medicamentos.value = data
+>>>>>>> d3784f8 (medicamentos)
         varView.cargando = false
     });
 
