@@ -65,6 +65,14 @@ function accesoRapidoSelected(nombre) {
             }
             break;
         }
+        case 'Inventario': {
+            const button = buttons.value.find(btn => btn.nombre === 'Historial');
+            if (button) {
+                footer.cambiarSecciones(button.secciones);
+                footer.cambiarIdActivo(1)
+            }
+            break;
+        }
         default:
             console.log("No se encontró el caso para:", nombre);
     }
@@ -198,6 +206,11 @@ function accesoRapidoSelected(nombre) {
                             @click="accesoRapidoSelected('Citas')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Citas</span>
                             <i class="fa-solid fa-calendar-day text-lg text-gray-400 dark:text-gray-600 transition"></i>
+                        </a>
+                        <a class="flex items-center justify-between gap-2 py-2" href="/Historial/Insumos"
+                            @click="accesoRapidoSelected('Inventario')">
+                            <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Inventario</span>
+                            <i class="fa-solid fa-store text-lg text-gray-400 dark:text-gray-600 transition"></i>
                         </a>
                     </div>
                 </div>

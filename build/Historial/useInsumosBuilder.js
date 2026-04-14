@@ -70,30 +70,34 @@ export function useInsumosBuilder({
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Insumos.categoria',
         })
-        .addCampo({
-            component: 'Label',
-            text: '<i class="fa-solid fa-capsules text-blue-500 mr-1"></i>Informacion Farmacologica',
-            tamaño: 'w-full col-span-2',
-            forLabel: 'activoL'
-        })
-        .addCampo({
-            component: 'Input',
-            type: 'text',
-            label: 'Ingrediente Activo',
-            placeholder: 'Principio activo',
-            id: 'activoL',
-            name: 'activoL',
-            tamaño: 'md:col-span-1 col-span-3',
-            vmodel: 'Insumos.activoL'
-        })
-        .addCampo({
-            component: 'Checkbox',
-            placeholder: '¿Requiere receta médica?',
-            id: 'receta',
-            name: 'receta',
-            tamaño: 'md:col-span-1 col-span-3 pt-6',
-            vmodel: 'Insumos.receta',
-        })
+        if(insumoStore.Formulario.Insumos.categoria === 'Medicamento'){
+            builder
+            .addCampo({
+                component: 'Label',
+                text: '<i class="fa-solid fa-capsules text-blue-500 mr-1"></i>Informacion Farmacologica',
+                tamaño: 'w-full col-span-2',
+                forLabel: 'activoL'
+            })
+            .addCampo({
+                component: 'Input',
+                type: 'text',
+                label: 'Ingrediente Activo',
+                placeholder: 'Principio activo',
+                id: 'activoL',
+                name: 'activoL',
+                tamaño: 'md:col-span-1 col-span-3',
+                vmodel: 'Insumos.activoL'
+            })
+            .addCampo({
+                component: 'Checkbox',
+                placeholder: '¿Requiere receta médica?',
+                id: 'receta',
+                name: 'receta',
+                tamaño: 'md:col-span-1 col-span-3 pt-6',
+                vmodel: 'Insumos.receta',
+            })
+        }
+        builder
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-boxes-stacked text-blue-500 mr-1"></i>Informacion de Stock',

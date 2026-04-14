@@ -15,6 +15,7 @@ import { usePlanesBuilder } from "~/build/Historial/usePlanesBuilder.js";
 import { useInsumosStore } from "~/stores/Formularios/insumos/Insumos.js";
 import { validarYEnviarKardex } from "~/Core/Usuarios/Paciente/POSTKardex.js";
 import { traerCeldasPintadas } from "~/Core/Usuarios/Paciente/GETColores";
+import { useMedicosStore } from "~/stores/Formularios/profesional/Profesionales";
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
@@ -24,10 +25,12 @@ const insumoStore = useInsumosStore();
 
 const epsStore = useDatosEPSStore();
 const opcionesEPS = ref([]);
+const profesionalStore = useMedicosStore();
 const pacientes = ref([]);
 const kardex = ref([]);
 let copiaKardex = [];
 const insumos = ref([]);
+const profesionales = ref([])
 const refresh = ref(1);
 const celdasPintadasKardex = ref([]);
 const cargandoColors = ref(false)
@@ -108,7 +111,9 @@ onMounted(async () => {
         text: convenio.nombre,
         value: convenio.id,
     }));
-console.log(conveniosOptions.value)
+    const dataProfesionales = await profesionalStore.listMedicos(false)
+    profesionales.value = dataProfesionales.map(p => {return {text: p.name, value: p.id_profesional}})
+
     insumos.value = await insumoStore.listInsumos();
     cargandoColors.value = true
     celdasPintadasKardex.value = await traerCeldasPintadas()
@@ -236,6 +241,7 @@ const propiedades = computed(() => {
         formularioItem: 'Medicamento',
         show: showItem,
         insumos,
+        profesionales
     })
 
     // Tabla de pacientes

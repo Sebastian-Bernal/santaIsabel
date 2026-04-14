@@ -3,25 +3,27 @@ export class FormularioBuilder {
   constructor() {
     this.propiedades = {
       formulario: {
-        fondo: true,  // Fondo Blur por defecto
+        fondo: true,  // Fondo por defecto
         contenedorCampos: '', // class Contenedor de campos
         estilos: '', // class Modal
         botones: [], // Lista de botones que se mostrarán en el formulario
-        tamañoForm: '', // "LG", "XS", "SM"
-        tipo: '', // "Wizard"
+        tamañoForm: '', // "LG", "XS", "SM", "MD"
+        tipo: 'Form', // "Wizard", "Form"
         tituloFormulario: '', // Titulo en formulario Wizard
-        secciones: [], // Secciones o páginas del formulario; debe inicializarse con al menos una
+        esquemas: [], // Esquemas con campos agrupados
+        secciones: [], // Secciones o páginas del formulario
         show: false, // Visibilidad del formulario
         soloVer: false, // Campos disabled (no se pueden editar)
         editarFormulario: false, // Campos editables (disabled cambiable)
         eliminar: null, // Funcion de eliminar
+        footer: null, // Configuración del footer con botones
       },
       content: {
         storeId: '', // Identificador de la acción en el módulo accionesFormulario
         storePinia: '', // Nombre del store de pinia asociado
         camposRequeridos: '', // Lista de campos requeridos
       },
-      seccionActual: []
+      seccionActual: null
     }
   }
 
@@ -38,6 +40,11 @@ export class FormularioBuilder {
   setSoloVer(estado) {
     this.propiedades.formulario.soloVer = estado
     return this
+  }
+
+  // Alias para setSoloVer
+  setFormularioSoloVer(estado) {
+    return this.setSoloVer(estado)
   }
 
   setEditarFormulario(boolean) {
@@ -58,6 +65,11 @@ export class FormularioBuilder {
   setFormularioFondo(fondo) {
     this.propiedades.formulario.fondo = fondo
     return this
+  }
+
+  // Alias para setFormularioFondo
+  setFondo(fondo) {
+    return this.setFormularioFondo(fondo)
   }
 
   setFormularioEstilos(estilos) {
@@ -82,6 +94,11 @@ export class FormularioBuilder {
     return this
   }
 
+  // Alias para setFormulariotamaño
+  setTamaño(tamañoClave = 'LG') {
+    return this.setFormulariotamaño(tamañoClave)
+  }
+
   setFormularioShow(show) {
     this.propiedades.formulario.show = show
     return this
@@ -90,6 +107,11 @@ export class FormularioBuilder {
   setFormularioTipo(tipo) {
     this.propiedades.formulario.tipo = tipo
     return this
+  }
+
+  // Alias para setFormularioTipo
+  setTipoFormulario(tipo) {
+    return this.setFormularioTipo(tipo)
   }
 
   setFormularioTituloFormulario(tituloFormulario) {
@@ -122,6 +144,16 @@ export class FormularioBuilder {
     return this;
   }
 
+  setEsquemas(esquemas) {
+    this.propiedades.formulario.esquemas = esquemas;
+    return this;
+  }
+
+  setFooter(footer) {
+    this.propiedades.formulario.footer = footer;
+    return this;
+  }
+
   build() {
     return this.propiedades
   }
@@ -132,4 +164,5 @@ const tamañosDisponibles = {
   LG: 'lg:w-[70%] md:w-[85%] md:h-[85%] w-[95%] h-[80%]',
   XS: 'md:w-[65%] md:h-[70%] w-[95%] h-[80%]',
   SM: 'lg:w-[45%] lg:h-[65%] md:w-[50%] md:h-[70%] w-[95%] h-[80%]',
+  MD: 'lg:w-[55%] lg:h-[70%] md:w-[65%] md:h-[75%] w-[95%] h-[80%]',
 }

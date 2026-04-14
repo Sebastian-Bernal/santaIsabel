@@ -12,52 +12,56 @@ export function useCie10Builder({
 
     const builder = new FormularioBuilder();
 
+    if (eliminar) {
+        builder
+            .setFormularioTituloFormulario('CIE-10')
+            .setFormularioTipo(tipoFormulario)
+    }
+
     builder
+        .setFormularioFondo(true)
+        .setFormulariotamaño('SM')
+        .nuevaSeccion('Información CIE-10')
+        .setFormularioShow(show)
+        .setBotones([
+            { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
+            { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrarModal },
+        ])
         .setStoreId(storeId)
         .setStorePinia(storePinia)
-        .setFormularioShow(show)
-        .setTipoFormulario(tipoFormulario)
-        .setTamaño('MD')
-        .setFondo('FondoClaroOutlined')
-        .setEsquemas([
-            {
-                columnas: 'w-full',
-                campos: [
-                    {
-                        modelo: 'Cie10.codigo',
-                        tipo: 'input',
-                        label: 'Código CIE-10',
-                        placeholder: 'Ej: A00',
-                        required: true,
-                        atributos: { maxlength: 10 }
-                    },
-                    {
-                        modelo: 'Cie10.nombre',
-                        tipo: 'input',
-                        label: 'Nombre de la Condición',
-                        placeholder: 'Ej: Cólera',
-                        required: true,
-                        atributos: { maxlength: 255 }
-                    }
-                ]
-            }
-        ])
-        .setFooter({
-            botones: [
-                {
-                    label: 'Guardar',
-                    action: 'guardar',
-                    tipo: 'primary'
-                },
-                {
-                    label: soloVer ? 'Cerrar' : 'Cancelar',
-                    action: 'cerrar',
-                    tipo: 'secondary'
-                }
-            ],
-            mostrarEliminar: eliminar && !soloVer
+        .setEliminarFormulario(eliminar)
+        .setCamposRequeridos(['Cie10.codigo', 'Cie10.nombre'])
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Datos basicos',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'codigo'
         })
-        .setSoloVer(soloVer);
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Ej: A00',
+            id: 'codigo',
+            name: 'codigo',
+            tamaño: 'w-full col-span-2',
+            minlength: 3,
+            maxLength: 10,
+            vmodel: 'Cie10.codigo',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Ej: Cólera',
+            id: 'nombre',
+            name: 'nombre',
+            tamaño: 'w-full col-span-2',
+            minlength: 3,
+            maxLength: 255,
+            vmodel: 'Cie10.nombre',
+            upperCase: true
+        })
 
-    return builder.build();
+    builder.build()
+    return builder
 }

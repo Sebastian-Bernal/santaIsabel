@@ -17,7 +17,7 @@ export const validarYEnviarPlan = async (datos) => {
     const profesionales = await store.leerdatos()
 
     const profesional = profesionales.find(p => parseInt(p.id_infoUsuario) === parseInt(user.id))
-console.log(profesional)
+
     const errores = [];
     // --- Validaciones por tipo de consulta ---
     switch (varView.tipoHistoria) {
@@ -33,7 +33,7 @@ console.log(profesional)
                     return {
                         ...m,
                         id_paciente: pacientesStore.PacienteSeleccionado,
-                        id_medico: profesional?.id
+                        id_medico: profesional?.id || parseInt(datos.id_profesional)
                     };
                 });
 
@@ -46,7 +46,7 @@ console.log(profesional)
             // Ahora tienes cada medicamento con id_paciente e id_medico
             const medicamentos = datos.Plan_manejo_medicamentos;
 
-            return await enviarFormularioActualizarMedicamento({ Plan_manejo_medicamentos: medicamentos, id_paciente: pacientesStore.PacienteSeleccionado, id_medico: profesional?.id });
+            return await enviarFormularioActualizarMedicamento({ Plan_manejo_medicamentos: medicamentos, id_paciente: pacientesStore.PacienteSeleccionado, id_medico: profesional?.id || parseInt(datos.id_profesional)});
 
         case 'Tratamientos':
             if (!datos.Plan_manejo_procedimientos?.procedimiento) errores.push("El procedimiento es obligatorio.");

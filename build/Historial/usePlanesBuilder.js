@@ -11,10 +11,12 @@ export function usePlanesBuilder({
     formularioItem,
     show,
     insumos,
-    id_paciente
+    id_paciente,
+    profesionales
 }) {
 
     const builder = new FormularioBuilder()
+    const varView = useVarView()
     const historiaStore = useHistoriasStore()
     builder
         .setStoreId(storeId)
@@ -30,18 +32,31 @@ export function usePlanesBuilder({
     if (formularioItem === 'Medicamento') {
         builder
             // 📌 Sección: Diagnósticos
-            .nuevaSeccion('Formula Médica')
+            .nuevaSeccion('Asignar productos')
         builder
             .addCampo({
                 component: 'Label',
-                forLabel: 'Medicamento',
-                text: '<i class="fa-solid fa-prescription-bottle-medical text-blue-500 mr-1"></i>Formula Médica',
+                forLabel: 'medicamento',
+                text: '<i class="fa-solid fa-prescription-bottle-medical text-blue-500 mr-1"></i>Item de Inventario',
                 tamaño: 'col-span-2 w-full'
             })
-
+            if(varView.getRol == 'Admin'){
+                builder
+                .addCampo({
+                    component: 'Select',
+                    name: 'profesional',
+                    id: 'profesional',
+                    label: 'Selecciona el profesional que autoriza',
+                    placeholder: 'Profesional',
+                    tamaño: 'w-full md:col-span-2',
+                    options: profesionales,
+                    vmodel: 'id_profesional',
+                })
+            }
+            builder
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Medicamentos (opcional)',
+                labelGroup: 'Insumos (opcional)',
                 buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', observacion: '' } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_medicamentos',
@@ -51,7 +66,7 @@ export function usePlanesBuilder({
                         name: 'medicamento',
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
-                        placeholder: 'Medicamento',
+                        placeholder: 'Insumo',
                         tamaño: 'w-full col-span-2',
                         upperCase: true,
                         options: insumos,
@@ -108,7 +123,6 @@ export function usePlanesBuilder({
                 opciones: [{ value: 'DESCRIPCION' }, { text: 'Codigo', value: 'CODIGO' }],
                 vmodel: 'Plan_manejo_procedimientos.procedimiento',
                 seleccionarItem: (item) => {
-                    console.log(item)
                     historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).procedimiento = item.DESCRIPCION
                     historiaStore.Formulario.Plan_manejo_procedimientos.at(-1).codigo = item.CODIGO
                 },

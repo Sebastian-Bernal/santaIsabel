@@ -28,6 +28,7 @@ export function useHistoriaBuilder({
     const MedicosList = ref([])
     const CIE10 = ref([])
     const insumos = ref([])
+    const medicamentos = ref([])
     const id_paciente = ref(null)
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
@@ -37,13 +38,11 @@ export function useHistoriaBuilder({
         MedicosList.value = medicoStore.Medicos;
         CIE10.value = await storeCodigos.leerdatos();
         insumos.value = await insumoStore.listInsumos();
-<<<<<<< HEAD
-=======
 
         const response = await fetch('/data/medicamentos.json.gz')
         const data = await response.json()
         medicamentos.value = data
->>>>>>> d3784f8 (medicamentos)
+        console.log(medicamentos.value)
         varView.cargando = false
     });
 
@@ -691,12 +690,12 @@ export function useHistoriaBuilder({
                         placeholder: 'Medicamento',
                         tamaño: 'w-full',
                         upperCase: true,
-                        options: [],
-                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
-                        seleccionarItem: (item) => {
-                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
-                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
-                        },
+                            options: medicamentos,
+                            opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + '-' + item.consecutivocum
+                            },
                         ocultarError: true,
                     },
                     {
@@ -1045,12 +1044,12 @@ export function useHistoriaBuilder({
                         placeholder: 'Medicamento',
                         tamaño: 'w-full',
                         upperCase: true,
-                        options: [],
-                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
-                        seleccionarItem: (item) => {
-                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
-                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
-                        },
+                            options: medicamentos,
+                            opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
+                            seleccionarItem: (item) => {
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + item.consecutivocum
+                            },
                         ocultarError: true,
                     },
                     {
@@ -1873,11 +1872,11 @@ export function useHistoriaBuilder({
                             placeholder: 'Medicamento',
                             tamaño: 'w-full',
                             upperCase: true,
-                            options: [],
-                            opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                            options: medicamentos,
+                            opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
                             seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + item.consecutivocum
                             },
                         ocultarError: true,
                         },

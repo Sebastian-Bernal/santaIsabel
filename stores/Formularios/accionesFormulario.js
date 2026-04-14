@@ -44,6 +44,8 @@ import { validarYEnviarActualizarInusmo } from '~/Core/Historial/Insumos/PutInsu
 // Planes de Manejo
 import { validarYEnviarPlan } from '~/Core/Historial/PlanesManejo/PostPlanes';
 import { guardarConvenio } from '~/Core/Convenios/PostConvenios';
+import { guardarCie10 } from '~/Core/Codigos/PostCie10';
+import { guardarVadecum } from '~/Core/Codigos/PostVadecum';
 
 
 // Importa accion de cada formulario desde el core
@@ -178,6 +180,22 @@ export const accionesFormularios = {
     },
     ConvenioNuevo : async (data) => {
         const respuesta = await guardarConvenio(data.Convenio)
+        return respuesta
+    },
+    NuevoCie10 : async (data) => {
+        const respuesta = await guardarCie10({Cie10 : [data.Cie10]})
+        return respuesta
+    },
+    ModificarCie10 : async (data) => {
+        const respuesta = await guardarCie10(data.Cie10)
+        return respuesta
+    },
+    NuevoVadecum : async (data) => {
+        const respuesta = await guardarVadecum({vadecums: [data.Vadecum]})
+        return respuesta
+    },
+    ModificarVadecum : async (data) => {
+        const respuesta = await guardarVadecum(data.Vadecum)
         return respuesta
     },
 };

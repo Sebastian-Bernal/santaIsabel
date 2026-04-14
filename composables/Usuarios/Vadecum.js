@@ -69,7 +69,7 @@ export function useVadecumActions({
     return {
         agregarVadecum,
         verVadecum,
-        cerrar,
+        cerrarVadecum: cerrar,
         eliminarVadecums
     };
 }

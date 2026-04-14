@@ -16,7 +16,7 @@ export async function guardarVadecum(formData) {
             let options = {
                 metodo: metodo,
                 url: url,
-                data: formData,
+                body: formData,
                 token: token
             }
             const respuesta = await api.functionCall(options)

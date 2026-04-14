@@ -12,270 +12,338 @@ export function useVadecumBuilder({
 
     const builder = new FormularioBuilder();
 
-    builder
-        .setId(storeId)
-        .setStorePinia(storePinia)
-        .setShow(show)
-        .setCerrarModal(cerrarModal)
-        .setTipoFormulario(tipoFormulario)
-        .setTamaño('LG')
-        .setFondo('FondoClaroOutlined')
-        .setEsquemas([
-            {
-                titulo: 'Datos Básicos',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.expediente',
-                        tipo: 'input',
-                        label: 'Expediente',
-                        placeholder: 'Número de expediente',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.producto',
-                        tipo: 'input',
-                        label: 'Producto',
-                        placeholder: 'Nombre del producto',
-                        required: true
-                    },
-                    {
-                        modelo: 'Vadecum.titular',
-                        tipo: 'input',
-                        label: 'Titular',
-                        placeholder: 'Empresa titular',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.unidad',
-                        tipo: 'input',
-                        label: 'Unidad',
-                        placeholder: 'Unidad comercial',
-                        required: false
-                    }
-                ]
-            },
-            {
-                titulo: 'Registro Sanitario',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.registrosanitario',
-                        tipo: 'input',
-                        label: 'Registro Sanitario',
-                        placeholder: 'Número RS',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.fechaexpedicion',
-                        tipo: 'date',
-                        label: 'Fecha Expedición',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.fechavencimiento',
-                        tipo: 'date',
-                        label: 'Fecha Vencimiento',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.estadoregistro',
-                        tipo: 'select',
-                        label: 'Estado Registro',
-                        options: [
-                            { text: 'Activo', value: 'activo' },
-                            { text: 'Vencido', value: 'vencido' },
-                            { text: 'Suspendido', value: 'suspendido' }
-                        ]
-                    }
-                ]
-            },
-            {
-                titulo: 'Registro CUM',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.expedientecum',
-                        tipo: 'input',
-                        label: 'Expediente CUM',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.consecutivocum',
-                        tipo: 'input',
-                        label: 'Consecutivo CUM',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.cantidadcum',
-                        tipo: 'input',
-                        label: 'Cantidad CUM',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.estadocum',
-                        tipo: 'select',
-                        label: 'Estado CUM',
-                        options: [
-                            { text: 'Activo', value: 'activo' },
-                            { text: 'Inactivo', value: 'inactivo' }
-                        ]
-                    }
-                ]
-            },
-            {
-                titulo: 'Descripción Comercial',
-                columnas: 'w-full',
-                campos: [
-                    {
-                        modelo: 'Vadecum.descripcioncomercial',
-                        tipo: 'textarea',
-                        label: 'Descripción Comercial',
-                        placeholder: 'Descripción del producto',
-                        required: false
-                    }
-                ]
-            },
-            {
-                titulo: 'Datos Farmacéuticos',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.atc',
-                        tipo: 'input',
-                        label: 'Código ATC',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.descripcionatc',
-                        tipo: 'input',
-                        label: 'Descripción ATC',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.viaadministracion',
-                        tipo: 'input',
-                        label: 'Vía Administración',
-                        placeholder: 'Oral, IV, IM, etc',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.formafarmaceutica',
-                        tipo: 'input',
-                        label: 'Forma Farmacéutica',
-                        placeholder: 'Tableta, cápsula, inyección, etc',
-                        required: false
-                    }
-                ]
-            },
-            {
-                titulo: 'Componentes Activos',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.principioactivo',
-                        tipo: 'input',
-                        label: 'Principio Activo',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.concentracion',
-                        tipo: 'input',
-                        label: 'Concentración',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.unidadmedida',
-                        tipo: 'input',
-                        label: 'Unidad de Medida',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.cantidad',
-                        tipo: 'input',
-                        label: 'Cantidad',
-                        type: 'number',
-                        required: false
-                    }
-                ]
-            },
-            {
-                titulo: 'Información Adicional',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.unidadreferencia',
-                        tipo: 'input',
-                        label: 'Unidad de Referencia',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.nombrerol',
-                        tipo: 'input',
-                        label: 'Nombre del Rol',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.tiporol',
-                        tipo: 'input',
-                        label: 'Tipo de Rol',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.modalidad',
-                        tipo: 'input',
-                        label: 'Modalidad',
-                        required: false
-                    }
-                ]
-            },
-            {
-                titulo: 'Datos de Control',
-                columnas: 'w-full md:w-1/2',
-                campos: [
-                    {
-                        modelo: 'Vadecum.muestramedica',
-                        tipo: 'input',
-                        label: 'Muestra Médica',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.IUM',
-                        tipo: 'input',
-                        label: 'IUM',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.fechaactivo',
-                        tipo: 'date',
-                        label: 'Fecha Activo',
-                        required: false
-                    },
-                    {
-                        modelo: 'Vadecum.fechainactivo',
-                        tipo: 'date',
-                        label: 'Fecha Inactivo',
-                        required: false
-                    }
-                ]
-            }
-        ])
-        .setFooter({
-            botones: [
-                {
-                    label: 'Guardar',
-                    action: 'guardar',
-                    tipo: 'primary'
-                },
-                {
-                    label: soloVer ? 'Cerrar' : 'Cancelar',
-                    action: 'cerrar',
-                    tipo: 'secondary'
-                }
-            ],
-            mostrarEliminar: eliminar && !soloVer
-        })
-        .setSoloVer(soloVer);
+    if (eliminar) {
+        builder
+            .setFormularioTituloFormulario('Vádecum')
+            .setFormularioTipo(tipoFormulario)
+    }
 
-    return builder.build();
+    builder
+        .setFormularioFondo(true)
+        .setFormulariotamaño('SM')
+        .nuevaSeccion('Código Vádecum')
+        .setFormularioShow(show)
+        .setBotones([
+            { type: 'enviar', text: 'Enviar', color: 'bg-blue-500 hover:bg-blue-600', },
+            { type: 'cancelar', text: 'Cancelar', color: 'bg-gray-500 hover:bg-gray-600', accion: cerrarModal },
+        ])
+        .setStoreId(storeId)
+        .setStorePinia(storePinia)
+        .setEliminarFormulario(eliminar)
+        .setCamposRequeridos(['Vadecum.producto'])
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Datos basicos',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Número de expediente',
+            id: 'expediente',
+            name: 'expediente',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.expediente',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Nombre del producto',
+            id: 'producto',
+            name: 'producto',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.producto',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Empresa titular',
+            id: 'titular',
+            name: 'titular',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.titular',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Unidad comercial',
+            id: 'unidad',
+            name: 'unidad',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.unidad',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Registro sanitario',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Número RS',
+            id: 'registrosanitario',
+            name: 'registrosanitario',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.registrosanitario',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'date',
+            placeholder: 'Fecha Expedición',
+            id: 'fechaexpedicion',
+            name: 'fechaexpedicion',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.fechaexpedicion'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'date',
+            placeholder: 'Fecha Vencimiento',
+            id: 'fechavencimiento',
+            name: 'fechavencimiento',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.fechavencimiento'
+        })
+        .addCampo({
+            component: 'Select',
+            placeholder: 'Estado Registro',
+            id: 'estadoregistro',
+            name: 'estadoregistro',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.estadoregistro',
+            options: [
+                { label: 'Activo', value: 'activo' },
+                { label: 'Vencido', value: 'vencido' },
+                { label: 'Suspendido', value: 'suspendido' }
+            ]
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Expediente CUM',
+            id: 'expedientecum',
+            name: 'expedientecum',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.expedientecum',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Consecutivo CUM',
+            id: 'consecutivocum',
+            name: 'consecutivocum',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.consecutivocum',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Cantidad CUM',
+            id: 'cantidadcum',
+            name: 'cantidadcum',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.cantidadcum'
+        })
+        .addCampo({
+            component: 'Select',
+            placeholder: 'Estado CUM',
+            id: 'estadocum',
+            name: 'estadocum',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.estadocum',
+            options: [
+                { label: 'Activo', value: 'activo' },
+                { label: 'Inactivo', value: 'inactivo' }
+            ]
+        })
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Datos farmaceuticos',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Textarea',
+            placeholder: 'Descripción del producto',
+            id: 'descripcioncomercial',
+            name: 'descripcioncomercial',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.descripcioncomercial'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Código ATC',
+            id: 'atc',
+            name: 'atc',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.atc',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Descripción ATC',
+            id: 'descripcionatc',
+            name: 'descripcionatc',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.descripcionatc'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Oral, IV, IM, etc',
+            id: 'viaadministracion',
+            name: 'viaadministracion',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.viaadministracion'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Tableta, cápsula, inyección, etc',
+            id: 'formafarmaceutica',
+            name: 'formafarmaceutica',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.formafarmaceutica'
+        })
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Componentes activos',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Principio Activo',
+            id: 'principioactivo',
+            name: 'principioactivo',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.principioactivo'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Concentración',
+            id: 'concentracion',
+            name: 'concentracion',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.concentracion'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Unidad de Medida',
+            id: 'unidadmedida',
+            name: 'unidadmedida',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.unidadmedida'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'number',
+            placeholder: 'Cantidad',
+            id: 'cantidad',
+            name: 'cantidad',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.cantidad'
+        })
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Informacion adicional',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Unidad de Referencia',
+            id: 'unidadreferencia',
+            name: 'unidadreferencia',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.unidadreferencia'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Nombre del Rol',
+            id: 'nombrerol',
+            name: 'nombrerol',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.nombrerol'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Tipo de Rol',
+            id: 'tiporol',
+            name: 'tiporol',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.tiporol'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Modalidad',
+            id: 'modalidad',
+            name: 'modalidad',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.modalidad'
+        })
+        .addCampo({
+            component: 'Label',
+            text: '<i class="fa-solid fa-hospital text-purple-500 mr-1"></i>Datos de control',
+            tamaño: 'w-full md:col-span-2',
+            forLabel: 'muetramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'Muestra Médica',
+            id: 'muestramedica',
+            name: 'muestramedica',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.muestramedica'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'text',
+            placeholder: 'IUM',
+            id: 'IUM',
+            name: 'IUM',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.IUM',
+            upperCase: true
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'date',
+            placeholder: 'Fecha Activo',
+            id: 'fechaactivo',
+            name: 'fechaactivo',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.fechaactivo'
+        })
+        .addCampo({
+            component: 'Input',
+            type: 'date',
+            placeholder: 'Fecha Inactivo',
+            id: 'fechainactivo',
+            name: 'fechainactivo',
+            tamaño: 'w-full',
+            vmodel: 'Vadecum.fechainactivo'
+        })
+
+    builder.build()
+    return builder
 }

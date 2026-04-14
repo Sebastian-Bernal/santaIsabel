@@ -115,6 +115,11 @@ export async function cargarStore(storeName) {
       tablaStore = useVadecumStore();
       break;
     }
+    case 'Cie10': {
+      const { useCie10Store } = await import('~/stores/Formularios/Codigos/Cie10');
+      tablaStore = useCie10Store();
+      break;
+    }
     default:
       console.warn(`Store "${storeName}" no reconocido.`);
       break;

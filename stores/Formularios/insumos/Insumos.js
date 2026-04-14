@@ -118,7 +118,7 @@ export const useInsumosStore = defineStore('Insumos', {
                     )
 
                     const paciente = listPacientes.find(
-                        p => p.id_paciente === analisis?.id_paciente
+                        p => p.id_paciente === analisis?.id_paciente || p.id_paciente === mov.id_paciente
                     )
 
                     const insumo = insumosList.find(

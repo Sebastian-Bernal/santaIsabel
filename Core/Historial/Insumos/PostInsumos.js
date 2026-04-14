@@ -11,7 +11,6 @@ export const validarYEnviarNuevoInusmo = async (datos) => {
     if (
         !insumo?.nombre ||
         !insumo?.categoria ||
-        !insumo?.activoL ||
         insumo?.receta === undefined ||
         !insumo?.unidad ||
         insumo?.stock === undefined ||
@@ -55,7 +54,7 @@ export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
                 body: {
                     nombre: datos.Insumos.nombre,
                     categoria: datos.Insumos.categoria,
-                    activo: datos.Insumos.activoL,
+                    activo: datos.Insumos.activoL || 'N/A',
                     receta: datos.Insumos.receta,
                     unidad: datos.Insumos.unidad,
                     stock: datos.Insumos.stock,

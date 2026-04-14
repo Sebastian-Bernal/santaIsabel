@@ -54,7 +54,7 @@ onMounted(async () => {
     await llamadatos();
 });
 
-const builderTabla = new TablaBuilder();
+const builderTablaVademecum = new TablaBuilder();
 
 const propiedades = computed(() => {
     const pagina = new ComponenteBuilder();
@@ -136,20 +136,20 @@ const propiedades = computed(() => {
         })
         .setDatos(vadecumList);
 
-    const acciones = [];
+    const accionesVademecum = [];
     if (puedePut) {
-        acciones.push({ icon: "ver", action: verVadecum });
+        accionesVademecum.push({ icon: "ver", action: verVadecum });
     }
 
     if (acciones.length > 0) {
-        builderTabla.setAcciones({ icons: acciones, botones: true });
+        builderTablaVademecum.setAcciones({ icons: accionesVademecum, botones: true });
     }
 
     pagina
         .setFondo('FondoDefault')
         .setLayout('')
         .setContenedor('w-full')
-        .addComponente('Tabla', builderTabla);
+        .addComponente('Tabla', builderTablaVademecum);
 
     if (propiedadesVadecum) pagina.addComponente('Form', propiedadesVadecum);
     if (propiedadesVerVadecum) pagina.addComponente('Form', propiedadesVerVadecum);
