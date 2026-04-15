@@ -7,26 +7,15 @@ import { TablaBuilder } from '~/build/Constructores/TablaBuilder';
 import { useConvenioBuilder } from '~/build/Convenios/useConvenioBuilder';
 import { CardBuilder } from '~/build/Constructores/CardBuilder';
 import { useConvenioActions } from '~/composables/Usuarios/Convenio';
-import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente';
 
 const varView = useVarView();
 const notificaciones = useNotificacionesStore();
 const convenioStore = useConvenioStore();
 const convenioList = ref([]);
-const pacientesOptions = ref([]);
 const refresh = ref(1);
 
 const show = ref(false);
 const showVer = ref(false);
-
-async function cargarPacientes() {
-
-    const pacientesStore = usePacientesStore()
-    const pacientes = await pacientesStore.listPacientes(true)
-    pacientesOptions.value = pacientes.map(p => {return {value: p.id_paciente, label: p.name}})
-    console.log(pacientesOptions.value)
-
-}
 
 async function llamadatos() {
     convenioList.value = await convenioStore.listConvenios();
@@ -62,7 +51,6 @@ watch(() => showVer.value, async (estado) => {
 });
 
 onMounted(async () => {
-    await cargarPacientes();
     await llamadatos();
 });
 
@@ -115,7 +103,6 @@ const propiedades = computed(() => {
             verUser: true,
             eliminar: eliminarConvenios,
             soloVer: varView.soloVer,
-            pacientesOptions: pacientesOptions.value
         })
         : null;
 
@@ -127,7 +114,6 @@ const propiedades = computed(() => {
             show: show,
             tipoFormulario: 'Wizard',
             eliminar: eliminarConvenios,
-            pacientesOptions: pacientesOptions.value
         })
         : null;
 

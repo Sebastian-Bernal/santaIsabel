@@ -10,6 +10,7 @@ export function usePlanesBuilder({
     cerrarModal,
     formularioItem,
     show,
+    medicamentos,
     insumos,
     id_paciente,
     profesionales
@@ -57,7 +58,54 @@ export function usePlanesBuilder({
             .addCampo({
                 component: 'GroupCampos',
                 labelGroup: 'Insumos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', observacion: '' } },],
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', observacion: '', fecha_desde: '', fecha_hasta: '' } },],
+                tamaño: 'w-full md:col-span-2',
+                vmodel: 'Plan_manejo_medicamentos',
+                value: [],
+                campos: [
+                    {
+                        name: 'medicamento',
+                        id: 'Medicamento',
+                        typeCampo: 'SelectSearch',
+                        placeholder: 'Insumo',
+                        tamaño: 'w-full col-span-2',
+                        upperCase: true,
+                        options: medicamentos,
+                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.nombre
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).id_insumo = item.id
+                        },
+                    },
+                    {
+                        name: 'cantidad',
+                        id: 'cantidad',
+                        typeCampo: 'Input',
+                        type: 'number',
+                        placeholder: 'Cantidad',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'dosis',
+                        id: 'dosis',
+                        typeCampo: 'Input',
+                        placeholder: 'Dosis',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'observacion',
+                        id: 'observacion',
+                        typeCampo: 'Input',
+                        placeholder: 'Registrar Observacion / Autorizacion',
+                        tamaño: 'w-full'
+                    },
+                ],
+                containerCampos: 'grid grid-cols-2 gap-2'
+            })
+            .addCampo({
+                component: 'GroupCampos',
+                labelGroup: 'Insumos o Equipos Medicos Prestables (opcional)',
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', cantidad: '', observacion: '', fecha_desde: '', fecha_hasta: '' } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_medicamentos',
                 value: [],
@@ -85,17 +133,26 @@ export function usePlanesBuilder({
                         tamaño: 'w-full',
                     },
                     {
-                        name: 'dosis',
-                        id: 'dosis',
-                        typeCampo: 'Input',
-                        placeholder: 'Dosis',
-                        tamaño: 'w-full',
-                    },
-                    {
                         name: 'observacion',
                         id: 'observacion',
                         typeCampo: 'Input',
                         placeholder: 'Registrar Observacion / Autorizacion',
+                        tamaño: 'w-full md:col-span-2'
+                    },
+                    {
+                        name: 'fecha_desde',
+                        id: 'fecha_desde',
+                        typeCampo: 'Input',
+                        type: 'date',
+                        label: 'Fecha desde',
+                        tamaño: 'w-full'
+                    },
+                    {
+                        name: 'fecha_hasta',
+                        id: 'fecha_hasta',
+                        typeCampo: 'Input',
+                        type: 'date',
+                        label: 'Fecha hasta',
                         tamaño: 'w-full'
                     }
                 ],

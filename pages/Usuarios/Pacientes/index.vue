@@ -30,6 +30,7 @@ const pacientes = ref([]);
 const kardex = ref([]);
 let copiaKardex = [];
 const insumos = ref([]);
+const medicamentos = ref([])
 const profesionales = ref([])
 const refresh = ref(1);
 const celdasPintadasKardex = ref([]);
@@ -114,7 +115,9 @@ onMounted(async () => {
     const dataProfesionales = await profesionalStore.listMedicos(false)
     profesionales.value = dataProfesionales.map(p => {return {text: p.name, value: p.id_profesional}})
 
-    insumos.value = await insumoStore.listInsumos();
+    const listInsumos = await insumoStore.listInsumos();
+    insumos.value = listInsumos.filter(i => i.es_prestable)
+    medicamentos.value = listInsumos.filter(i => !i.es_prestable)
     cargandoColors.value = true
     celdasPintadasKardex.value = await traerCeldasPintadas()
     await apiRest.getData('Antecedentes', 'antecedentes')
@@ -240,6 +243,7 @@ const propiedades = computed(() => {
         },
         formularioItem: 'Medicamento',
         show: showItem,
+        medicamentos,
         insumos,
         profesionales
     })

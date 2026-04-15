@@ -26,7 +26,7 @@ export const validarYEnviarPlan = async (datos) => {
             datos.Plan_manejo_medicamentos = datos.Plan_manejo_medicamentos
                 .filter(d => d && Object.values(d).some(v => v !== '' && v != null))
                 .map((m, i) => {
-                    if (!m.medicamento || !m.dosis || isNaN(parseInt(m.cantidad))) {
+                    if (!m.medicamento || isNaN(parseInt(m.cantidad))) {
                         errores.push(`Medicamento ${i + 1} incompleto o cantidad inválida.`);
                     }
 

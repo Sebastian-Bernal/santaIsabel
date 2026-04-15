@@ -415,6 +415,12 @@ export function useFormularioCitaBuilder({
   if (variasCitas?.value) {
     builder
       .addCampo({
+        component: 'Label',
+        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
+        tamaño: 'w-full col-span-2',
+        forLabel: 'fechaInicial',
+      })
+      .addCampo({
         component: 'Input',
         type: 'number',
         label: 'Dias de separacion',
@@ -433,12 +439,6 @@ export function useFormularioCitaBuilder({
         name: 'cantidadCitas',
         tamaño: 'w-full md:col-span-1 col-span-2',
         vmodel: 'Cita.cantidadCitas',
-      })
-      .addCampo({
-        component: 'Label',
-        text: '<i class="fa-solid fa-gear text-blue-600 mr-1"></i>Agregar Varias Citas',
-        tamaño: 'w-full col-span-2',
-        forLabel: 'fechaInicial',
       })
   }
   if(verUser){

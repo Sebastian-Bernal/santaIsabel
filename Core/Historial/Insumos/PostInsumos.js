@@ -61,6 +61,7 @@ export const enviarFormularioNuevoInsumo = async (datos, reintento= false) => {
                     lote: datos.Insumos.lote,
                     vencimiento: datos.Insumos.vencimiento,
                     ubicacion: datos.Insumos.ubicacion,
+                    es_prestable: datos.Insumos.es_prestable,
                 }
 
             }

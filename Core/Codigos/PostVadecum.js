@@ -20,7 +20,7 @@ export async function guardarVadecum(formData) {
                 token: token
             }
             const respuesta = await api.functionCall(options)
-            return respuesta
+            return true
         } catch (error) {
             console.error('Fallo al guardar', error);
             return { success: false, error: error.message }

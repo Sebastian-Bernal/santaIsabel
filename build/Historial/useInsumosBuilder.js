@@ -46,8 +46,8 @@ export function useInsumosBuilder({
         .addCampo({
             component: 'Input',
             type: 'text',
-            label: 'Nombre del producto',
-            placeholder: 'Paracetamol en Tableta x500mg',
+            label: 'Nombre del producto/ Modelo/ Marca',
+            placeholder: 'Paracetamol en Tableta x500mg Ethics',
             id: 'nombre',
             name: 'nombre',
             tamaño: 'md:col-span-1 col-span-3',
@@ -57,9 +57,8 @@ export function useInsumosBuilder({
         .addCampo({
             component: 'Select',
             options: [
+                { value: 'Insumos médicos', text: 'Insumos médicos' },
                 { value: 'Medicamento', text: 'Medicamento' },
-                { value: 'Material Quirurgico', text: 'Material Quirurgico' },
-                { value: 'Insumo de Laboratorio', text: 'Insumo de Laboratorio' },
                 { value: 'Equipos médicos', text: 'Equipos médicos' },
                 { value: 'Otro', text: 'Otro' },
             ],
@@ -160,6 +159,20 @@ export function useInsumosBuilder({
             tamaño: 'md:col-span-1 col-span-3',
             vmodel: 'Insumos.ubicacion',
         })
+        if(insumoStore.Formulario.Insumos.categoria !== 'Medicamento'){
+            builder
+            .addCampo({
+                component: 'Select',
+                type: 'text',
+                label: '¿Es prestable?',
+                placeholder: 'Seleccione el tipo de insumo',
+                id: 'tipo',
+                name: 'tipo',
+                tamaño: 'md:col-span-1 col-span-3',
+                options: [{text: 'Prestable', value: '1'}, {text: 'No Prestable', value: '0'}],
+                vmodel: 'Insumos.es_prestable',
+            })
+        }
 
     if (soloVer) {
         // Construimos las cards dinámicamente

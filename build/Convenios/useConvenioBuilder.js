@@ -10,8 +10,7 @@ export function useConvenioBuilder({
     tipoFormulario = 'Wizard',
     soloVer = false,
     eliminar = null,
-    pacientesOptions = []
-} = {}) {
+}) {
 
     const builder = new FormularioBuilder();
     const store = useConvenioStore()
@@ -56,15 +55,6 @@ export function useConvenioBuilder({
                     }
                 }
             }
-        })
-        .addCampo({
-            component: 'SelectMultiple',
-            vmodel: 'Convenio.pacientes_ids',
-            label: 'Pacientes Asociados',
-            placeholder: 'Pacientes Asociados',
-            options: pacientesOptions,
-            required: false,
-            tamaño: 'w-full col-span-2',
         })
 
 
