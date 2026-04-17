@@ -114,33 +114,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 });
             }
 
-            // Validar Insumos
-            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => {
-                return d && Object.values(d).some(v => v !== '' && v != null);
-            });
-            datos.Plan_manejo_insumos.forEach((i, idx) => {
-                if (!i.nombre || isNaN(parseInt(i.cantidad))) {
-                    errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
-                }
-            });
-
-            // Validar Equipos
-            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => {
-                return d && Object.values(d).some(v => v !== '' && v != null);
-            });
-            datos.Plan_manejo_equipos.forEach((e, idx) => {
-                if (!e.descripcion || !e.uso) {
-                    errores.push(`Equipo ${idx + 1} incompleto.`);
-                }
-            });
-
-            // Validar Insumos con stock
-
-            // const insumosList = await apiRest.getOfflineData('Insumo')
-            // datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumosList, 'insumo', errores);
-            // datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumosList, 'medicamento', errores);
-            // datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumosList, 'equipo', errores);
-
             // Validar Cita
             if (!datos.Cita?.id) {
                 errores.push("El ID de la cita es obligatorio.");
@@ -168,23 +141,11 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 })),
                 Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => ({
                     medicamento: m.medicamento,
+                    codigo: m.codigo,
                     dosis: m.dosis,
                     cantidad: parseInt(m.cantidad),
                     id_insumo: m.id_insumo,
                     observacion: m.observacion
-                })),
-                Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
-                    nombre: i.nombre,
-                    cantidad: parseInt(i.cantidad),
-                    id_insumo: i.id_insumo,
-                    observacion: i.observacion
-                })),
-                Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
-                    descripcion: e.descripcion,
-                    uso: e.uso,
-                    id_insumo: e.id_insumo,
-                    usado: e.usado || false,
-                    observacion: e.observacion
                 })),
                 Cita: {
                     id: datos.Cita.id,
@@ -393,32 +354,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 }
             });
 
-            // Validar Insumos
-            datos.Plan_manejo_insumos = datos.Plan_manejo_insumos.filter(d => {
-                return d && Object.values(d).some(v => v !== '' && v != null);
-            });
-            datos.Plan_manejo_insumos.forEach((i, idx) => {
-                if (!i.nombre || isNaN(parseInt(i.cantidad))) {
-                    errores.push(`Insumo ${idx + 1} incompleto o cantidad inválida.`);
-                }
-            });
-
-            // Validar Equipos
-            datos.Plan_manejo_equipos = datos.Plan_manejo_equipos.filter(d => {
-                return d && Object.values(d).some(v => v !== '' && v != null);
-            });
-            datos.Plan_manejo_equipos.forEach((e, idx) => {
-                if (!e.descripcion || !e.uso) {
-                    errores.push(`Equipo ${idx + 1} incompleto.`);
-                }
-            });
-
-            // Validar Insumos con stock
-            // const insumos = await apiRest.getOfflineData('Insumo')
-            // datos.Plan_manejo_insumos = validarStock(datos.Plan_manejo_insumos, insumos, 'insumo', errores);
-            // datos.Plan_manejo_medicamentos = validarStock(datos.Plan_manejo_medicamentos, insumos, 'medicamento', errores);
-            // datos.Plan_manejo_equipos = validarStock(datos.Plan_manejo_equipos, insumos, 'equipo', errores);
-
             // Validar Cita
             if (!datos.Cita?.id) {
                 errores.push("El ID de la cita es obligatorio.");
@@ -480,6 +415,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                 },
                 Plan_manejo_medicamentos: datos.Plan_manejo_medicamentos.map(m => ({
                     medicamento: m.medicamento,
+                    codigo: m.codigo,
                     dosis: m.dosis,
                     cantidad: parseInt(m.cantidad),
                     id_insumo: m.id_insumo,
@@ -492,19 +428,6 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     id_medico: p.id_medico,
                     id_paciente: datos.HistoriaClinica.id_paciente,
                     observacion: p.observacion
-                })),
-                Plan_manejo_insumos: datos.Plan_manejo_insumos.map(i => ({
-                    nombre: i.nombre,
-                    cantidad: parseInt(i.cantidad),
-                    id_insumo: i.id_insumo,
-                    observacion: i.observacion
-                })),
-                Plan_manejo_equipos: datos.Plan_manejo_equipos.map(e => ({
-                    descripcion: e.descripcion,
-                    uso: e.uso,
-                    id_insumo: e.id_insumo,
-                    usado: e.usado || false,
-                    observacion: e.observacion
                 })),
                 Terapia: {
                     sesion: datos.Terapia.sesion,
@@ -541,50 +464,6 @@ function mostrarErrores(errores, notificacionesStore) {
         notificacionesStore.simple();
     });
     return false;
-}
-
-function validarStock(plan, listaReferencia, tipo, errores) {
-    plan = plan.filter(d => !Object.values(d).every(v => v === '' || v == null));
-
-    plan.forEach((item, idx) => {
-        // Validaciones básicas según tipo
-        if (tipo === 'insumo') {
-            if (!item.nombre || isNaN(parseInt(item.cantidad))) {
-                errores.push(`${tipo} ${idx + 1} incompleto o cantidad inválida.`);
-                return;
-            }
-        } else if (tipo === 'medicamento') {
-            if (!item.medicamento || !item.dosis || isNaN(parseInt(item.cantidad))) {
-                errores.push(`${tipo} ${idx + 1} incompleto o cantidad inválida.`);
-                return;
-            }
-        } else if (tipo === 'equipo') {
-            item.cantidad = item.usado ? 1 : 0
-            if (!item.descripcion || !item.uso) {
-                errores.push(`${tipo} ${idx + 1} incompleto o cantidad inválida.`);
-                return;
-            }
-        }
-
-        // Validación de stock si existe id
-        if (item.id_insumo) {
-            const encontrado = listaReferencia.find(ref => ref.id === item.id_insumo);
-            if (encontrado) {
-                const cantidadSolicitada = parseInt(item.cantidad);
-                const stockDisponible = parseInt(encontrado.stock);
-
-                if (cantidadSolicitada > stockDisponible) {
-                    errores.push(
-                        `${tipo} ${idx + 1} (${encontrado.nombre}) excede el stock disponible (${stockDisponible}).`
-                    );
-                }
-            } else {
-                errores.push(`${tipo} ${idx + 1} con id ${item.id_insumo} no existe en la lista de ${tipo}s.`);
-            }
-        }
-    });
-
-    return plan;
 }
 
 // Funcion para validar conexion a internet y enviar fomulario a API o a IndexedDB
@@ -664,6 +543,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     },
                     Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
                         medicamento: m.medicamento,
+                        codigo: m.codigo,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
                         id_insumo: m.id_insumo,
@@ -676,19 +556,6 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                         dias_asignados: p.dias_asignados,
                         id_paciente: p.id_paciente,
                         observacion: p.observacion
-                    })),
-                    Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
-                        nombre: i.nombre,
-                        cantidad: parseInt(i.cantidad),
-                        id_insumo: i.id_insumo,
-                        observacion: i.observacion
-                    })),
-                    Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
-                        descripcion: e.descripcion,
-                        uso: e.uso,
-                        usado: e.usado,
-                        id_insumo: e.id_insumo,
-                        observacion: e.observacion
                     })),
                     Cita: {
                         id: datos.Cita.id
@@ -798,7 +665,7 @@ export const enviarFormularioHistoria = async (datos, reintento = false) => {
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                // await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
                 varView.propiedadesPDF = {
                     id: respuesta.Analisis.id,
                     servicio: 'Medicina'
@@ -1000,7 +867,7 @@ export const enviarFormularioTerapia = async (datos, reintento = false) => {
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                // await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
                 varView.propiedadesPDF = {
                     id: respuesta.data.id_analisis,
                     servicio: 'Terapia'
@@ -1108,6 +975,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                     })),
                     Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
                         medicamento: m.medicamento,
+                        codigo: m.codigo,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
                         id_insumo: m.id_insumo,
@@ -1154,7 +1022,7 @@ export const enviarFormularioNutricion = async (datos, reintento = false) => {
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                // await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
                 varView.propiedadesPDF = {
                     id: respuesta.Analisis.id,
                     servicio: 'Evolucion'
@@ -1257,23 +1125,11 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                     })),
                     Plan_manejo_medicamentos: (datos.Plan_manejo_medicamentos ?? []).map(m => ({
                         medicamento: m.medicamento,
+                        codigo: m.codigo,
                         dosis: m.dosis,
                         cantidad: parseInt(m.cantidad),
                         id_insumo: m.id_insumo,
                         observacion: m.observacion
-                    })),
-                    Plan_manejo_insumos: (datos.Plan_manejo_insumos ?? []).map(i => ({
-                        nombre: i.nombre,
-                        cantidad: parseInt(i.cantidad),
-                        id_insumo: i.id_insumo,
-                        observacion: i.observacion
-                    })),
-                    Plan_manejo_equipos: (datos.Plan_manejo_equipos ?? []).map(e => ({
-                        descripcion: e.descripcion,
-                        uso: e.uso,
-                        usado: e.usado,
-                        id_insumo: e.id_insumo,
-                        observacion: e.observacion
                     })),
                     Cita: {
                         id: datos.Cita.id
@@ -1341,7 +1197,7 @@ export const enviarFormularioTrabajoSocial = async (datos, reintento = false) =>
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                // await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
                 varView.propiedadesPDF = {
                     id: respuesta.Analisis.id,
                     servicio: 'Trabajo Social'
@@ -1544,7 +1400,7 @@ export const enviarFormularioNota = async (datos, reintento = false) => {
                     }
                 };
 
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
+                // await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizar)))
                 varView.propiedadesPDF = {
                     id: respuesta.data.id_analisis,
                     servicio: 'Nota'

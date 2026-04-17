@@ -44,14 +44,21 @@ export function usePlanesBuilder({
             if(varView.getRol == 'Admin'){
                 builder
                 .addCampo({
-                    component: 'Select',
+                    component: 'SelectSearch',
                     name: 'profesional',
                     id: 'profesional',
                     label: 'Selecciona el profesional que autoriza',
                     placeholder: 'Profesional',
                     tamaño: 'w-full md:col-span-2',
                     options: profesionales,
-                    vmodel: 'id_profesional',
+                    opciones: [                    
+                        { value: 'name' },
+                        { text: 'Cedula', value: 'No_document' }
+                    ],
+                    seleccionarItem: (item) => {
+                        historiaStore.Formulario.id_profesional = item.id_profesional
+                    },
+                    vmodel: 'name',
                 })
             }
             builder
@@ -68,7 +75,7 @@ export function usePlanesBuilder({
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Insumo',
-                        tamaño: 'w-full col-span-2',
+                        tamaño: 'w-full md:col-span-2',
                         upperCase: true,
                         options: medicamentos,
                         opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
@@ -97,7 +104,7 @@ export function usePlanesBuilder({
                         id: 'observacion',
                         typeCampo: 'Input',
                         placeholder: 'Registrar Observacion / Autorizacion',
-                        tamaño: 'w-full'
+                        tamaño: 'w-ful md:col-span-2l'
                     },
                 ],
                 containerCampos: 'grid grid-cols-2 gap-2'
@@ -137,7 +144,7 @@ export function usePlanesBuilder({
                         id: 'observacion',
                         typeCampo: 'Input',
                         placeholder: 'Registrar Observacion / Autorizacion',
-                        tamaño: 'w-full md:col-span-2'
+                        tamaño: 'w-full'
                     },
                     {
                         name: 'fecha_desde',

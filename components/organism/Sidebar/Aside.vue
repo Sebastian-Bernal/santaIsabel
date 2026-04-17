@@ -144,7 +144,7 @@ function accesoRapidoSelected(nombre) {
 
             <!-- Estado expandido -->
             <div v-else
-                class="menu-expandido dark:bg-(--color-default-claro) bg-(--color-default-700) flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3">
+                class="menu-expandido dark:bg-(--color-default-claro) bg-(--color-default-700) flex flex-col justify-between w-full h-full shadow-lg rounded-lg py-4 px-3 scrollAside overflow-y-auto">
                 <!-- Header -->
                 <div>
                     <div
@@ -165,14 +165,14 @@ function accesoRapidoSelected(nombre) {
                     <div v-for="button in buttons" :key="button.nombre"
                         @click="() => { storeAside.activeButton(button.id); footer.cambiarIdActivo(0) }"
                         class="menu-item py-2 border-b border-gray-600 dark:border-gray-100 rounded-md transition">
-                        <a class="flex items-center justify-between gap-2 mb-2"
-                            :href="`/${button.nombre}/${button.secciones[0].titulo}`"
+                        <NuxtLink class="flex items-center justify-between gap-2 mb-2"
+                            :to="`/${button.nombre}/${button.secciones[0].titulo}`"
                             @click="footer.cambiarSecciones(button.secciones)">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">{{
                                 button.nombre }}</span>
                             <i class="fa-solid text-lg text-gray-400 dark:text-gray-600 transition"
                                 :class="button.icon"></i>
-                        </a>
+                        </NuxtLink>
                     </div>
 
                     <!-- Sección Explorar -->
@@ -182,36 +182,36 @@ function accesoRapidoSelected(nombre) {
                     <!-- Navegación por íconos -->
                     <div @click="cambiarEstadoFalse()">
 
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Empresas/Datos"
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Empresas/Datos"
                             @click="accesoRapidoSelected('Datos')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Datos</span>
                             <i class="fa-solid fa-building text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Historial/Historias"
+                        </NuxtLink>
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Historial/Historias"
                             @click="accesoRapidoSelected('Historias')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Historias</span>
                             <i class="fa-solid fa-file text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Pacientes"
+                        </NuxtLink>
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Usuarios/Pacientes"
                             @click="accesoRapidoSelected('Pacientes')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Pacientes</span>
                             <i class="fa-solid fa-user text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Profesional"
+                        </NuxtLink>
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Usuarios/Profesional"
                             @click="accesoRapidoSelected('Profesional')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Profesional</span>
                             <i class="fa-solid fa-user-doctor text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Usuarios/Citas"
+                        </NuxtLink>
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Usuarios/Citas"
                             @click="accesoRapidoSelected('Citas')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Citas</span>
                             <i class="fa-solid fa-calendar-day text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
-                        <a class="flex items-center justify-between gap-2 py-2" href="/Historial/Insumos"
+                        </NuxtLink>
+                        <NuxtLink class="flex items-center justify-between gap-2 py-2" to="/Historial/Insumos"
                             @click="accesoRapidoSelected('Inventario')">
                             <span class="text-gray-200 dark:text-gray-800 font-medium text-sm">Inventario</span>
                             <i class="fa-solid fa-store text-lg text-gray-400 dark:text-gray-600 transition"></i>
-                        </a>
+                        </NuxtLink>
                     </div>
                 </div>
 
@@ -346,4 +346,14 @@ function accesoRapidoSelected(nombre) {
         padding: 10px;
     }
 }
+
+.scrollAside {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-default) transparent;
+}
+
+.scrollAside::-webkit-scrollbar {
+    width: 2px;
+}
+
 </style>

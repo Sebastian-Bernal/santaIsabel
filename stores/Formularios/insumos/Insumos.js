@@ -15,6 +15,7 @@ const estructura = {
         ubicacion: '',
     },
     Movimiento: {
+        id_movimiento: '',
         cantidadMovimiento: '',
         tipoMovimiento: '',
         fechaMovimiento: '',

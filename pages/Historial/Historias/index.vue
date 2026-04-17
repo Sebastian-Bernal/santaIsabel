@@ -548,7 +548,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-hospital text-white',
                             iconBg: 'bg-inherit',
                             title: 'Consultas y Analisis',
-                            subtitle: 'Registro de consultas del paciente',
+                            subtitle: 'Registro de consultas del paciente: ' + analisis.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -585,7 +585,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-clipboard-list text-white',
                             iconBg: 'bg-inherit',
                             title: 'Diagnosticos',
-                            subtitle: 'Diagnosticos del paciente',
+                            subtitle: 'Diagnosticos del paciente: ' + diagnosticos.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -620,7 +620,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-heart-pulse text-white',
                             iconBg: 'bg-inherit',
                             title: 'Terapias',
-                            subtitle: 'Evoluciones de Procedimientos',
+                            subtitle: 'Evoluciones de Procedimientos: ' + evoluciones.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -655,7 +655,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-notes-medical text-white',
                             iconBg: 'bg-inherit',
                             title: 'Notas',
-                            subtitle: 'Registro de notas medicas',
+                            subtitle: 'Registro de notas medicas: ' + notas.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -690,7 +690,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-kit-medical text-white',
                             iconBg: 'bg-inherit',
                             title: 'Tratamientos del paciente',
-                            subtitle: 'Tratamientos del paciente',
+                            subtitle: 'Tratamientos del paciente: ' + tratamientos.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -725,7 +725,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-prescription-bottle-medical text-white',
                             iconBg: 'bg-inherit',
                             title: 'Medicacion',
-                            subtitle: 'Medicacion del paciente',
+                            subtitle: 'Medicacion del paciente: ' + medicinas.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -760,7 +760,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-user-check text-white',
                             iconBg: 'bg-inherit',
                             title: 'Evoluciones',
-                            subtitle: 'Evolucion del paciente',
+                            subtitle: 'Evolucion del paciente: ' + nutricion.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },
@@ -795,7 +795,7 @@ const propiedades = computed(() => {
                             icon: 'fa-solid fa-book-medical text-white',
                             iconBg: 'bg-inherit',
                             title: 'Trabajo Social',
-                            subtitle: 'Trabajo Social del paciente',
+                            subtitle: 'Trabajo Social del paciente: ' + trabajosSocial.value.length,
                             titleClass: 'text-white',
                             subtitleClass: 'text-gray-300!'
                         },

@@ -213,7 +213,7 @@ const itemsCompletos = computed(() =>
         <div v-if="showCampos" class="grid gap-3 bg-white dark:bg-gray-900 p-4 rounded-lg">
 
             <div :class="Propiedades.containerCampos">
-                <div v-for="campo in Propiedades.campos" :key="campo.name">
+                <div v-for="campo in Propiedades.campos" :key="campo.name" :class="campo.tamaño">
                     <component :is="campos[campo.typeCampo]" :modelValue="Propiedades.liveUpdate
                         ? items.at(-1)?.[campo.name]
                         : form[campo.name]" :Propiedades="campo"

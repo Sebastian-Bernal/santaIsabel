@@ -7,6 +7,18 @@ import { useVarView } from "~/stores/varview.js";
 import { ComponenteBuilder } from '~/build/Constructores/ComponentesBuilder';
 
 const varView = useVarView();
+const storeCodigos = useCodigos()
+
+const CIE10 = ref([])
+const medicamentos = ref([])
+
+onMounted(async () => {
+    CIE10.value = await storeCodigos.leerdatos();
+
+    // const response = await fetch('/data/medicamentos.json.gz')
+    // const data = await response.json()
+    // medicamentos.value = data
+})
 
 function cerrar() {
     varView.showNuevaHistoria = false
@@ -17,6 +29,9 @@ const { builder, PacientesList, id_paciente } = useHistoriaBuilder({
     storePinia: 'Historias',
     cerrarModal: cerrar,
     show: varView.showNuevaHistoria,
+    medicamentos,
+    CIE10
+
 });
 
 const propiedades = computed(() => {

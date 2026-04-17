@@ -31,6 +31,7 @@ const analisis = ref([])
 const insumos = ref([]);
 const movimientos = ref([])
 const movimentosPaciente = ref([])
+const optionsInsumos = ref(null)
 
 async function llamadatos() {
     insumos.value = await insumoStore.listInsumos();
@@ -232,7 +233,8 @@ const propiedades = computed(() => {
             storePinia: "Insumos",
             show: showMovimiento.value,
             medicosList: medicosList,
-            cerrarModal: () => { showMovimiento.value = false; }
+            cerrarModal: () => { showMovimiento.value = false; },
+            optionsInsumos
         })
         : null;
 

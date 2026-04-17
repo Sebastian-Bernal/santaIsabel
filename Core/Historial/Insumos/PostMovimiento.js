@@ -72,6 +72,7 @@ export const enviarFormularioInsumos = async (datos, reintento= false) => {
                     cantidadMovimiento: datos.Movimiento.cantidadMovimiento,
                     fechaMovimiento: datos.Movimiento.fechaMovimiento,
                     tipoMovimiento: datos.Movimiento.tipoMovimiento,
+                    id_movimiento: datos.Movimiento.id_movimiento
                 }
             }
             const respuesta = await api.functionCall(options)

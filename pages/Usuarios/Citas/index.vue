@@ -294,5 +294,5 @@ const propiedades = computed(() => {
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <Cita></Cita>
     <PDFServicio v-if="varView.showPDFServicio"></PDFServicio>
-    <Historia v-if="varView.showNuevaHistoria" />
+    <Historia v-if="varView.showNuevaHistoria"/>
 </template>

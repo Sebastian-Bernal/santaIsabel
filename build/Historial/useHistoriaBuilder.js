@@ -6,29 +6,24 @@ import { usePacientesStore } from '~/stores/Formularios/paciente/Paciente'
 import { onMounted, ref } from 'vue'
 import { useMedicosStore } from '~/stores/Formularios/profesional/Profesionales'
 import { CIF } from '~/data/CIF'
-import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
-
 
 export function useHistoriaBuilder({
     storeId,
     storePinia,
     cerrarModal,
     show,
+    medicamentos,
+    CIE10
 }) {
 
     const historiaStore = useHistoriasStore()
     const notificaciones = useNotificacionesStore()
     const pacienteStore = usePacientesStore()
     const medicoStore = useMedicosStore()
-    const storeCodigos = useCodigos()
-    const insumoStore = useInsumosStore()
     const varView = useVarView()
 
     const PacientesList = ref([])
     const MedicosList = ref([])
-    const CIE10 = ref([])
-    const insumos = ref([])
-    const medicamentos = ref([])
     const id_paciente = ref(null)
     const puedePostAnalisis = ref(varView.getPermisos.includes('Diagnosticos_view'))
 
@@ -36,13 +31,7 @@ export function useHistoriaBuilder({
         varView.cargando = true
         PacientesList.value = pacienteStore.Pacientes;
         MedicosList.value = medicoStore.Medicos;
-        CIE10.value = await storeCodigos.leerdatos();
-        insumos.value = await insumoStore.listInsumos();
 
-        const response = await fetch('/data/medicamentos.json.gz')
-        const data = await response.json()
-        medicamentos.value = data
-        console.log(medicamentos.value)
         varView.cargando = false
     });
 
@@ -131,6 +120,27 @@ export function useHistoriaBuilder({
             }
         }
     }
+
+    async function buscarMedicamentos(event) {
+        const term = event.target.value
+        if (!term) {
+            medicamentos.value = []
+            return
+        }
+        console.log(term)
+        const res = await fetch(`/api/medicamentos?q=${encodeURIComponent(term)}`)
+        if (!res.ok) {
+            console.error('Error al cargar medicamentos', res.status)
+            return
+        }
+        try {
+            console.log(res)
+            medicamentos.value = await res.json()
+        } catch (e) {
+            console.error('Respuesta no es JSON', e)
+        }
+    }
+
 
 
     const builder = new FormularioBuilder()
@@ -678,7 +688,7 @@ export function useHistoriaBuilder({
             .addCampo({
                 component: 'GroupCampos',
                 labelGroup: 'Medicamentos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', codigo: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_medicamentos',
                 value: [],
@@ -688,21 +698,32 @@ export function useHistoriaBuilder({
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Medicamento',
-                        tamaño: 'w-full',
+                        tamaño: 'w-full lg:col-span-3',
                         upperCase: true,
-                            options: medicamentos,
-                            opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + '-' + item.consecutivocum
-                            },
+                        options: medicamentos,
+                        opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).codigo = item.expedientecum + item.consecutivocum
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).dosis = item.viaadministracion
+                        },
                         ocultarError: true,
+                        events: {
+                            onInput: buscarMedicamentos
+                        }
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'codigo',
+                        typeCampo: 'Input',
+                        placeholder: 'Codigo Vademecum',
+                        tamaño: 'w-full',
                     },
                     {
                         name: 'cantidad',
                         id: 'cantidad',
                         typeCampo: 'Input',
-                        type: 'number',
+                        type: 'text',
                         placeholder: 'Cantidad',
                         tamaño: 'w-full',
                     },
@@ -713,15 +734,15 @@ export function useHistoriaBuilder({
                         placeholder: 'Dosis',
                         tamaño: 'w-full',
                     },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full col-span-2',
-                        }
+                    {
+                        name: 'observacion',
+                        id: 'observacion',
+                        typeCampo: 'Input',
+                        placeholder: 'Registrar Observacion...',
+                        tamaño: 'w-full lg:col-span-3',
+                    }
                 ],
-                containerCampos: 'grid grid-cols-2 gap-2'
+                containerCampos: 'grid lg:grid-cols-3 gap-2'
             })
 
     } else if (varView.tipoConsulta?.plantilla === 'Trabajo Social') {
@@ -941,98 +962,8 @@ export function useHistoriaBuilder({
 
             .addCampo({
                 component: 'GroupCampos',
-                labelGroup: 'Equipos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', uso: '', usado: false, id_paciente: id_paciente, observacion: '' } },],
-                tamaño: 'w-full md:col-span-2',
-                vmodel: 'Plan_manejo_equipos',
-                value: [],
-                campos: [
-                    {
-                        name: 'descripcion',
-                        id: 'descripcionEquipo',
-                        typeCampo: 'SelectSearch',
-                        placeholder: 'Descripcion',
-                        tamaño: 'w-full',
-                        upperCase: true,
-                        options: [],
-                        opciones: [{ value: 'nombre' }, { text: 'Cantidad', value: 'stock' }],
-                        seleccionarItem: (item) => {
-                            historiaStore.Formulario.Plan_manejo_equipos.at(-1).descripcion = item.nombre
-                            historiaStore.Formulario.Plan_manejo_equipos.at(-1).id_insumo = item.id
-                        },
-                        ocultarError: true,
-                    },
-                    {
-                        name: 'uso',
-                        id: 'usoEquipos',
-                        typeCampo: 'Input',
-                        placeholder: 'Uso',
-                        tamaño: 'w-full',
-                    },
-                    {
-                        name: 'usado',
-                        id: 'usado',
-                        typeCampo: 'Checkbox',
-                        placeholder: 'Quitar de inventario',
-                        tamaño: 'w-full',
-                    },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full col-span-2',
-                        }
-                ],
-                containerCampos: 'grid grid-cols-2 gap-2'
-            })
-
-            .addCampo({
-                component: 'GroupCampos',
-                labelGroup: 'Insumos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
-                tamaño: 'w-full md:col-span-2',
-                vmodel: 'Plan_manejo_insumos',
-                value: [],
-                campos: [
-                    {
-                        name: 'nombre',
-                        id: 'nombreInsumo',
-                        typeCampo: 'SelectSearch',
-                        placeholder: 'Nombre',
-                        tamaño: 'w-full',
-                        upperCase: true,
-                        options: [],
-                        opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
-                        seleccionarItem: (item) => {
-                            historiaStore.Formulario.Plan_manejo_insumos.at(-1).nombre = item.nombre
-                            historiaStore.Formulario.Plan_manejo_insumos.at(-1).id_insumo = item.id
-                        },
-                        ocultarError: true,
-                    },
-                    {
-                        name: 'cantidad',
-                        id: 'cantidadInsumo',
-                        typeCampo: 'Input',
-                        type: 'number',
-                        placeholder: 'Cantidad (número)',
-                        tamaño: 'w-full',
-                    },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full col-span-2',
-                        }
-                ],
-                containerCampos: 'grid grid-cols-2 gap-2'
-            })
-
-            .addCampo({
-                component: 'GroupCampos',
                 labelGroup: 'Medicamentos (opcional)',
-                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
+                buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', codigo: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
                 tamaño: 'w-full md:col-span-2',
                 vmodel: 'Plan_manejo_medicamentos',
                 value: [],
@@ -1042,22 +973,30 @@ export function useHistoriaBuilder({
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Medicamento',
-                        tamaño: 'w-full',
+                        tamaño: 'w-full lg:col-span-3',
                         upperCase: true,
-                            options: medicamentos,
-                            opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + item.consecutivocum
-                            },
+                        options: medicamentos,
+                        opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
+                        seleccionarItem: (item) => {
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).codigo = item.expedientecum + item.consecutivocum
+                            historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).dosis = item.viaadministracion
+                        },
                         ocultarError: true,
                     },
                     {
                         name: 'cantidad',
                         id: 'cantidad',
                         typeCampo: 'Input',
-                        type: 'number',
+                        type: 'text',
                         placeholder: 'Cantidad',
+                        tamaño: 'w-full',
+                    },
+                    {
+                        name: 'codigo',
+                        id: 'codigo',
+                        typeCampo: 'Input',
+                        placeholder: 'Codigo Vademecum',
                         tamaño: 'w-full',
                     },
                     {
@@ -1067,15 +1006,15 @@ export function useHistoriaBuilder({
                         placeholder: 'Dosis',
                         tamaño: 'w-full',
                     },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full col-span-2',
-                        }
+                    {
+                        name: 'observacion',
+                        id: 'observacion',
+                        typeCampo: 'Input',
+                        placeholder: 'Registrar Observacion...',
+                        tamaño: 'w-full lg:col-span-3',
+                    }
                 ],
-                containerCampos: 'grid grid-cols-2 gap-2'
+                containerCampos: 'grid lg:grid-cols-3 gap-2'
             })
 
 
@@ -1859,7 +1798,7 @@ export function useHistoriaBuilder({
                 .addCampo({
                     component: 'GroupCampos',
                     labelGroup: 'Medicamentos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
+                    buttons: [{ icon: 'fa-solid fa-capsules', label: 'Agregar', color: 'bg-blue-500', addItem: { medicamento: '', codigo: '', dosis: '', cantidad: '', id_paciente: id_paciente, observacion: '' } },],
                     tamaño: 'w-full md:col-span-2',
                     vmodel: 'Plan_manejo_medicamentos',
                     value: [],
@@ -1869,115 +1808,38 @@ export function useHistoriaBuilder({
                             name: 'medicamento',
                             id: 'Medicamento',
                             typeCampo: 'SelectSearch',
-                            placeholder: 'Medicamento',
-                            tamaño: 'w-full',
+                            placeholder: 'Producto',
+                            tamaño: 'w-full lg:col-span-3',
                             upperCase: true,
                             options: medicamentos,
                             opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
                             seleccionarItem: (item) => {
                                 historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
-                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).observacion = item.expedientecum + item.consecutivocum
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).codigo = item.expedientecum + item.consecutivocum
+                                historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).dosis = item.viaadministracion
                             },
-                        ocultarError: true,
+                            ocultarError: true,
                         },
                         {
-                            name: 'cantidad',
-                            id: 'cantidad',
+                            name: 'codigo',
+                            id: 'codigo',
                             typeCampo: 'Input',
-                            type: 'number',
-                            placeholder: 'Cantidad',
+                            placeholder: 'Codigo Vademecum',
                             tamaño: 'w-full',
                         },
                         {
                             name: 'dosis',
                             id: 'dosis',
                             typeCampo: 'Input',
-                            placeholder: 'Dosis',
+                            placeholder: 'Dosis Via de Administracion',
                             tamaño: 'w-full',
-                        },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full',
-                        }
-                    ],
-                    containerCampos: 'grid grid-cols-2 gap-2'
-                })
-
-                .addCampo({
-                    component: 'GroupCampos',
-                    labelGroup: 'Equipos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', usado: false, id_paciente: id_paciente, observacion: '' } },],
-                    tamaño: 'w-full md:col-span-2',
-                    vmodel: 'Plan_manejo_equipos',
-                    liveUpdate: true,
-                    value: [],
-                    campos: [
-                        {
-                            name: 'descripcion',
-                            id: 'descripcionEquipo',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Descripcion',
-                            tamaño: 'w-full',
-                            upperCase: true,
-                            options: [],
-                            opciones: [{ value: 'nombre' }, { text: 'Cantidad', value: 'stock' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_equipos.at(-1).descripcion = item.nombre
-                                historiaStore.Formulario.Plan_manejo_equipos.at(-1).id_insumo = item.id
-                            },
-                            ocultarError: true,
-                        },
-                        {
-                            name: 'uso',
-                            id: 'usoEquipos',
-                            typeCampo: 'Input',
-                            placeholder: 'Uso',
-                            tamaño: 'w-full',
-                        },
-                        {
-                            name: 'observacion',
-                            id: 'observacion',
-                            typeCampo: 'Input',
-                            placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full cols-span-2',
-                        }
-                    ],
-                    containerCampos: 'grid grid-cols-2 gap-2'
-                })
-
-                .addCampo({
-                    component: 'GroupCampos',
-                    labelGroup: 'Insumos (opcional)',
-                    buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente, observacion:'' } },],
-                    tamaño: 'w-full md:col-span-2',
-                    vmodel: 'Plan_manejo_insumos',
-                    liveUpdate: true,
-                    value: [],
-                    campos: [
-                        {
-                            name: 'nombre',
-                            id: 'nombreInsumo',
-                            typeCampo: 'SelectSearch',
-                            placeholder: 'Nombre',
-                            tamaño: 'w-full',
-                            upperCase: true,
-                            options: [],
-                            opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
-                            seleccionarItem: (item) => {
-                                historiaStore.Formulario.Plan_manejo_insumos.at(-1).nombre = item.nombre
-                                historiaStore.Formulario.Plan_manejo_insumos.at(-1).id_insumo = item.id
-                            },
-                        ocultarError: true,
                         },
                         {
                             name: 'cantidad',
-                            id: 'cantidadInsumo',
+                            id: 'cantidad',
                             typeCampo: 'Input',
-                            type: 'number',
-                            placeholder: 'Cantidad (número)',
+                            type: 'text',
+                            placeholder: 'Cantidad',
                             tamaño: 'w-full',
                         },
                         {
@@ -1985,11 +1847,96 @@ export function useHistoriaBuilder({
                             id: 'observacion',
                             typeCampo: 'Input',
                             placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full col-span-2',
+                            tamaño: 'w-full lg:col-span-3',
                         }
                     ],
-                    containerCampos: 'grid grid-cols-2 gap-2'
+                    containerCampos: 'grid lg:grid-cols-3 gap-2'
                 })
+
+            // .addCampo({
+            //     component: 'GroupCampos',
+            //     labelGroup: 'Equipos (opcional)',
+            //     buttons: [{ icon: 'fa-solid fa-stethoscope', label: 'Agregar', color: 'bg-blue-700', addItem: { descripcion: '', usado: false, id_paciente: id_paciente, observacion: '' } },],
+            //     tamaño: 'w-full md:col-span-2',
+            //     vmodel: 'Plan_manejo_equipos',
+            //     liveUpdate: true,
+            //     value: [],
+            //     campos: [
+            //         {
+            //             name: 'descripcion',
+            //             id: 'descripcionEquipo',
+            //             typeCampo: 'SelectSearch',
+            //             placeholder: 'Descripcion',
+            //             tamaño: 'w-full',
+            //             upperCase: true,
+            //             options: [],
+            //             opciones: [{ value: 'nombre' }, { text: 'Cantidad', value: 'stock' }],
+            //             seleccionarItem: (item) => {
+            //                 historiaStore.Formulario.Plan_manejo_equipos.at(-1).descripcion = item.nombre
+            //                 historiaStore.Formulario.Plan_manejo_equipos.at(-1).id_insumo = item.id
+            //             },
+            //             ocultarError: true,
+            //         },
+            //         {
+            //             name: 'uso',
+            //             id: 'usoEquipos',
+            //             typeCampo: 'Input',
+            //             placeholder: 'Uso',
+            //             tamaño: 'w-full',
+            //         },
+            //         {
+            //             name: 'observacion',
+            //             id: 'observacion',
+            //             typeCampo: 'Input',
+            //             placeholder: 'Registrar Observacion...',
+            //             tamaño: 'w-full cols-span-2',
+            //         }
+            //     ],
+            //     containerCampos: 'grid grid-cols-2 gap-2'
+            // })
+
+            // .addCampo({
+            //     component: 'GroupCampos',
+            //     labelGroup: 'Insumos (opcional)',
+            //     buttons: [{ icon: 'fa-solid fa-syringe', label: 'Agregar', color: 'bg-green-700', addItem: { nombre: '', cantidad: '', id_paciente: id_paciente, observacion:'' } },],
+            //     tamaño: 'w-full md:col-span-2',
+            //     vmodel: 'Plan_manejo_insumos',
+            //     liveUpdate: true,
+            //     value: [],
+            //     campos: [
+            //         {
+            //             name: 'nombre',
+            //             id: 'nombreInsumo',
+            //             typeCampo: 'SelectSearch',
+            //             placeholder: 'Nombre',
+            //             tamaño: 'w-full',
+            //             upperCase: true,
+            //             options: [],
+            //             opciones: [{ value: 'nombre' }, { text: 'Activo', value: 'activoL' }, { text: 'Cantidad', value: 'stock' }],
+            //             seleccionarItem: (item) => {
+            //                 historiaStore.Formulario.Plan_manejo_insumos.at(-1).nombre = item.nombre
+            //                 historiaStore.Formulario.Plan_manejo_insumos.at(-1).id_insumo = item.id
+            //             },
+            //         ocultarError: true,
+            //         },
+            //         {
+            //             name: 'cantidad',
+            //             id: 'cantidadInsumo',
+            //             typeCampo: 'Input',
+            //             type: 'number',
+            //             placeholder: 'Cantidad (número)',
+            //             tamaño: 'w-full',
+            //         },
+            //         {
+            //             name: 'observacion',
+            //             id: 'observacion',
+            //             typeCampo: 'Input',
+            //             placeholder: 'Registrar Observacion...',
+            //             tamaño: 'w-full col-span-2',
+            //         }
+            //     ],
+            //     containerCampos: 'grid grid-cols-2 gap-2'
+            // })
 
         }
     }

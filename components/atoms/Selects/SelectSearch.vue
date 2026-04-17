@@ -176,7 +176,7 @@ function handleEnter(event) {
         <input :value="modelValue"
             class="z-100 mt-1 h-8.75 text-gray-900 block px-3 py-2 pr-8 border border-gray-300 dark:text-white dark:border-blue-900 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             :class="[Propiedades.tamaño, {'cursor-not-allowed': Propiedades.disabled}]" type="text" autocomplete="off" :name="Propiedades.name" :id="Propiedades.id"
-            :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event)"
+            :placeholder="placeholder" :disabled="Propiedades.disabled" @input="handleInput($event); Propiedades.events?.onInput?.($event)"
             @click="Propiedades.events?.onClick" @change="Propiedades.events?.onChange?.($event)" @blur="handleBlur"
             @keyup.enter="handleEnter" @keydown="manejarTeclas" />
 

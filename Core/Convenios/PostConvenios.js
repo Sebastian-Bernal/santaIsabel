@@ -21,7 +21,7 @@ export async function guardarConvenio(form) {
 
 
             // Si form.logo es un Blob, conviértelo en File
-            if (form.logo) {
+            if (form.logo && form.logo instanceof Blob && form.logo.size > 0) {
                 const file = new File([form.logo], "logo.jpg", { type: form.logo.type });
                 formData.append("logo", file);
             }

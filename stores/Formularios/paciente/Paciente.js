@@ -33,6 +33,7 @@ export const usePacientesStore = defineStore('Pacientes', {
                 regimen: '',
                 vulnerabilidad: '',
                 estado: 1,
+                convenio_id: '',
             },
             Plan_manejo_procedimientos: [],
             Antecedentes: [],

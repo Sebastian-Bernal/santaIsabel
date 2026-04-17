@@ -104,6 +104,16 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
                 throw new Error(`Error en la petición: ${respuesta.status}`);
             }
 
+            if(respuesta.success) {
+                return true
+            }
+
+            // Detectar si la respuesta es PDF o JSON
+            const contentType = respuesta.headers.get('Content-Type');
+
+            if (contentType && !contentType.includes('application/pdf')) {
+                return true
+            }
             const blob = await respuesta.blob();
             const url = window.URL.createObjectURL(blob);
 
@@ -117,15 +127,17 @@ const enviarFormularioActualizarMedicamento = async (datos) => {
                 }
             }
 
-            // Descargar
+            // Descargar el archivo
             const a = document.createElement('a');
             a.href = url;
-            a.download = fileName; // nombre dinámico
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             a.remove();
+            window.URL.revokeObjectURL(url);
 
             setTimeout(() => window.URL.revokeObjectURL(url), 10000);
+
             return true
         } catch (error) {
             console.error('Fallo al enviar.', error);

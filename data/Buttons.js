@@ -79,6 +79,10 @@ export const buttons = ref([
                 ruta: '/Usuarios/Pacientes'
             },
             {
+                titulo: "Kardex",
+                ruta: '/Usuarios/Pacientes/Kardex'
+            },
+            {
                 titulo: "Profesional",
                 ruta: '/Usuarios/Profesional'
             },

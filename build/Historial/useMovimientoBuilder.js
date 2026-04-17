@@ -1,6 +1,7 @@
 // builders/useFormularioCitaBuilder.js
 import { FormularioBuilder } from '~/build/Constructores/FormBuilder'
 import { useInsumosStore } from '~/stores/Formularios/insumos/Insumos'
+import { decryptData } from '~/composables/Formulario/crypto';
 
 export function useMovimientoBuilder({
     storeId,
@@ -8,12 +9,46 @@ export function useMovimientoBuilder({
     show,
     cerrarModal,
     medicosList,
+    optionsInsumos
 }) {
     const insumoStore = useInsumosStore();
+
     function seleccionarMedico(medico) {
         insumoStore.Formulario.Insumos.name_medico = medico.name
         insumoStore.Formulario.Movimiento.id_medico = medico.id_profesional
     }
+
+  async function changeTipoMovimiento(event) {
+    const tipoMovimiento = event.target.value
+console.log(insumoStore.Formulario.Insumos.id)
+    if (tipoMovimiento === 'Devuelto') {
+      const varView = useVarView()
+
+      const api = useApiRest()
+      const config = useRuntimeConfig()
+      const token = decryptData(localStorage.getItem('token'))
+
+      let options = {
+        metodo: 'POST',
+        url: config.public.insumosPrestados,
+        token: token,
+        body: {
+          id_insumo: insumoStore.Formulario.Insumos.id
+        }
+      }
+
+      const respuesta = await api.functionCall(options)
+
+      if (respuesta.success) {
+
+        optionsInsumos.value = respuesta.data
+      }
+
+
+    }
+
+  }
+
     const builder = new FormularioBuilder()
     builder
         .setStoreId(storeId)
@@ -84,6 +119,7 @@ export function useMovimientoBuilder({
             options: [
                 { value: 'Ingreso', text: 'Ingreso' },
                 { value: 'Egreso', text: 'Egreso' },
+                { value: 'Devuelto', text: 'Devuelto'}
             ],
             label: 'Tipo',
             placeholder: 'Seleccione tipo de movimiento',
@@ -91,8 +127,34 @@ export function useMovimientoBuilder({
             name: 'tipoMovimiento',
             tamaño: 'md:col-span-1 col-span-3',
             minlength: 3,
-            vmodel: 'Movimiento.tipoMovimiento'
+            vmodel: 'Movimiento.tipoMovimiento',
+            events: {
+                onChange: changeTipoMovimiento
+            }
         })
+        if(insumoStore.Formulario.Movimiento.tipoMovimiento == 'Devuelto'){
+           builder
+            .addCampo({
+                component: 'SelectSearch',
+                options: optionsInsumos,
+                opciones: [
+                    { value: 'paciente' },
+                    { text: 'Cedula', value: 'documento' },
+                    { text: 'Fecha hasta', value: 'fecha_hasta'}
+                ],
+                seleccionarItem: (item) => {
+                    insumoStore.Formulario.Movimiento.id_movimiento = item.id_movimiento
+                },
+                label: 'Insumos Prestados',
+                placeholder: 'Seleccione el paciente al que se le presto el insumo',
+                id: 'tipoMovimiento',
+                name: 'tipoMovimiento',
+                tamaño: 'w-full md:col-span-1 col-span-2',
+                minlength: 3,
+                vmodel: 'Movimiento.paciente'
+            }) 
+        }
+        builder
         .addCampo({
             component: 'Label',
             text: '<i class="fa-solid fa-user text-blue-500 mr-1"></i>Encargado del Movimiento',

@@ -460,7 +460,7 @@ const obtenerTituloTooltip = (texto) => {
 
                 <!-- COLUMNAS SCROLLEABLES O VISIBLES -->
                 <div ref="headerInner"
-                    class="w-full sticky top-0 z-3 grid justify-between text-xs bg-(--color-default) dark:bg-(--color-default-600) border-b border-gray-200 dark:border-gray-700 font-bold"
+                    class="w-full sticky top-0 z-3 grid justify-between text-xs bg-(--color-default) dark:bg-(--color-default-600) border-b border-gray-200 dark:border-gray-700 font-semibold"
                     :class="[Propiedades.headerTabla?.color, { 'rounded-rt-lg': props.Propiedades.configuracion.tipo === 'pinned', 'rounded-t-lg': props.Propiedades.configuracion.tipo !== 'pinned' }]"
                     :style="estiloColumnasScrollable" role="row">
 
@@ -513,7 +513,7 @@ const obtenerTituloTooltip = (texto) => {
 
                 <div v-for="(fila, id) in datosPaginados" role="row"
                     :class="{ 'bg-yellow-50 dark:bg-yellow-900/20': filaFueCambiada(fila.id) }"
-                    class="bodyTable justify-between flex w-max min-w-full odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700">
+                    class="bodyTable justify-between flex w-max min-w-full odd:bg-gray-100 odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700">
                     <div
                         class="relative before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-blue-500 before:scale-y-0 group-hover:before:scale-y-100 before:transition-transform before:duration-200">
                     </div>
@@ -561,7 +561,7 @@ const obtenerTituloTooltip = (texto) => {
                             }">
                                 {{ fila[col.titulo] }}
                                 <!-- Tooltip con div -->
-                            <!-- <div v-if="necesitaTooltip(fila[col.titulo])" class="tooltip">
+                                <!-- <div v-if="necesitaTooltip(fila[col.titulo])" class="tooltip">
                                 {{ obtenerTituloTooltip(fila[col.titulo]) }}
                             </div> -->
                             </p>
@@ -584,7 +584,7 @@ const obtenerTituloTooltip = (texto) => {
                             <!-- Boton de tablas ocultas por responsive  -->
                             <button @click="activarCollapse(id, Propiedades.headerTabla.titulo)"
                                 v-if="collapse && props.Propiedades.configuracion.tipo !== 'pinned'"
-                                class="flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 text-xs rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
+                                class="flex items-center justify-center bg-gray-200 dark:bg-gray-700 w-6 h-6 text-xs rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
                                 <i v-if="!activeCollapse || id !== idActivo"
                                     class="fa-solid fa-angle-down text-gray-600 dark:text-gray-200"></i>
                                 <i v-if="activeCollapse && id === idActivo"
@@ -595,7 +595,7 @@ const obtenerTituloTooltip = (texto) => {
                             <div class="relative inline-block text-left">
                                 <button @click="mostrarAcciones(id)"
                                     v-if="collapse && Propiedades.acciones.icons.length > 1 || Propiedades.acciones.icons.length > 3"
-                                    class="btn-accionesOcultas flex items-center justify-center bg-gray-300 dark:bg-gray-700 w-6 h-6 rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
+                                    class="btn-accionesOcultas flex items-center justify-center bg-gray-200 dark:bg-gray-700 w-6 h-6 rounded-md transition-all duration-300 cursor-pointer active:scale-95 hover:opacity-75">
                                     <i
                                         class="fa-solid fa-ellipsis-vertical text-gray-600 dark:text-gray-200 text-xs"></i>
                                 </button>
@@ -634,15 +634,33 @@ const obtenerTituloTooltip = (texto) => {
 
                 <!-- filas vacías para rellenar -->
                 <div v-if="datosPaginados?.length > 0" v-for="n in (itemsPorPagina - datosPaginados.length)"
-                    :key="`empty-${n}`"
-                    class="bodyTable w-full justify-between grid p-2 text-center hover:bg-(--color-default-claro) odd:bg-(--color-default-claro-100) odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800 dark:hover:bg-gray-700 dark:odd:hover:bg-gray-700"
-                    :style="estiloColumnasScrollable" role="row">
+                    :key="`empty-${n}`" class="bodyTable justify-between flex w-max min-w-full odd:bg-gray-100 odd:hover:bg-(--color-default-claro) dark:odd:bg-gray-800  dark:odd:hover:bg-gray-700 group transition-colors duration-150 hover:bg-(--color-default-claro) dark:hover:bg-gray-700" role="row">
 
-                    <div v-for="(col, key) in columnasScrollable" :key="key" role="cell"
-                        :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
-                        <p class="text-transparent select-none">.</p>
+                    <div v-if="props.Propiedades.configuracion.tipo === 'pinned'"
+                        class="sticky left-0 z-20 shadow-[4px_0_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-[4px_0_6px_-1px_rgba(255,255,255,0.05)] flex flex-col justify-center backdrop-blur-3xl">
+                        <div class="grid w-full justify-between " :style="estiloColumnasPinned">
+                            <div v-for="col in columnasPinned" :key="key" :style="{ width: `${col.tamaño}px` }">
+                                <p class="text-transparent select-none p-2">.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- columnas scrolleables -->
+                    <div class="grid w-full justify-between text-center" :style="estiloColumnasScrollable">
+                        <div v-for="(col, key) in columnasScrollable" :key="key" role="cell"
+                            :style="{ width: `${col.tamaño}px`, minWidth: '60px' }">
+                            <p class="text-transparent select-none p-2">.</p>
+                        </div>
+                    </div>
+
+                    <!-- bloque de acciones vacío para mantener ancho -->
+                    <div v-if="Propiedades.acciones.botones"
+                        class="flex items-center justify-center accionesTabla text-center gap-2 group"
+                        :class="Propiedades.acciones.class">
+                        <!-- vacío -->
                     </div>
                 </div>
+
+
 
             </div>
 
