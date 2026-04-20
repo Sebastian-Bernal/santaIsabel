@@ -982,6 +982,9 @@ export function useHistoriaBuilder({
                             historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).codigo = item.expedientecum + item.consecutivocum
                             historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).dosis = item.viaadministracion
                         },
+                        events: {
+                            onInput: buscarMedicamentos
+                        },
                         ocultarError: true,
                     },
                     {
@@ -1817,6 +1820,9 @@ export function useHistoriaBuilder({
                                 historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).medicamento = item.producto
                                 historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).codigo = item.expedientecum + item.consecutivocum
                                 historiaStore.Formulario.Plan_manejo_medicamentos.at(-1).dosis = item.viaadministracion
+                            },
+                            events: {
+                                onInput: buscarMedicamentos
                             },
                             ocultarError: true,
                         },
