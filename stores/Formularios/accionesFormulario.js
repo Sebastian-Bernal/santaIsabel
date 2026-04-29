@@ -18,7 +18,6 @@ import { validarYEnviarDatosEmpresa } from '~/Core/Empresa/Configuracion/Empresa
 import { validarYEnviarDatosSoftware } from '~/Core/Empresa/Configuracion/Software/POSTSoftware';
 import { validarYEnviarDatosFacturacion } from '~/Core/Empresa/Facturacion/POSTFacturacion';
 // Nota
-import { validarYEnviarNuevaNota } from '~/Core/Historial/Notas/POSTNota';
 import { validarYEnviarActualizarNota } from '~/Core/Historial/Notas/PUTNota';
 // Usuarios
 import { validarYEnviarNuevoUsuario } from '~/Core/Empresa/Usuario/NuevoUsuario';
@@ -116,10 +115,6 @@ export const accionesFormularios = {
     },
     DatosFacturacion: async (data) => {
         const respuesta = await validarYEnviarDatosFacturacion(data)
-        return respuesta
-    },
-    NuevaNota: async (data) => {
-        const respuesta = await validarYEnviarNuevaNota(data)
         return respuesta
     },
     ActualizarNota: async (data) => {

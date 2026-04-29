@@ -63,7 +63,7 @@ export const useCodigos = defineStore('CodigosCie10', {
 
             const codigosWeb = await traerCie_10()
 
-            const codigosWebNormalizados = codigosWeb.map(item => ({
+            const codigosWebNormalizados = codigosWeb?.map(item => ({
                 code: item.codigo,
                 description: item.nombre
             }));

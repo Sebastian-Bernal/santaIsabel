@@ -188,7 +188,7 @@ const verHistoria = async (his) => {
 
 async function cargaHistorial(id) {
     console.log("Cargando historial para paciente ID:", id);
-    try {
+
         varView.cargando = true;
 
         // Reiniciar valores
@@ -224,9 +224,11 @@ async function cargaHistorial(id) {
                 analisisDatos.push({ ...analisis, profesional: profesional ? profesional.name : 'No encontrado', fecha: formatDate(analisis.created_at) });
             } else if (analisis.servicio === 'Nota') {
                 let nota = await historiasStore.listDatos(analisis.id, 'Nota', 'id_analisis')
-                notas.value.push({ ...nota[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado', id: nota[0].id });
+                if(nota.length === 0) continue;
+                notas.value.push({ ...nota?.[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado', id: nota?.[0].id });
             } else if (analisis.servicio === 'Terapia') {
                 let terapia = await historiasStore.listDatos(analisis.id, 'Terapia', 'id_analisis')
+                if(terapia.length === 0) continue;
                 evoluciones.value.push({ ...terapia[0], ...analisis, profesional: profesional ? profesional.name : 'No encontrado' });
             }
         }
@@ -318,11 +320,9 @@ async function cargaHistorial(id) {
         trabajosSocial.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         medicinas.value.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-    } catch (error) {
-        console.error("Error cargando historial:", error);
-    } finally {
+
         varView.cargando = false;
-    }
+    
 }
 
 // Manejo de modales ver, actualizar
