@@ -1,5 +1,4 @@
 import { ref, computed, watch } from 'vue';
-import { nombresMeses } from '~/data/Fechas';
 
 export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []) {
     const busqueda = ref('');
@@ -99,7 +98,8 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
         // Aplicar filtro combinado de fecha
         if (filtroFecha.mes || filtroFecha.año) {
             resultado = resultado.filter(item => {
-                const fecha = new Date(item["fecha"]);
+                const colDef = columnas.find(c => c.tipo === 'mes' || c.tipo === 'año');
+                const fecha = new Date(item[colDef?.columnaReal || 'fecha'] + "T00:00:00");
                 const mes = fecha.getMonth() + 1;
                 const año = fecha.getFullYear();
 

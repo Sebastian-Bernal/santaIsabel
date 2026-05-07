@@ -9,6 +9,7 @@ import { storeToRefs } from 'pinia';
 import { useOrdenamiento } from '~/composables/Tabla/useDatosOrdenadosTabla';
 import { usePaginacion } from '~/composables/Tabla/usePaginacion';
 import { useCitasActions } from '~/composables/Citas/Citas';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita';
 
 const props = defineProps({
     citas: {
@@ -469,7 +470,7 @@ function changeShowPendientes() {
 
         </div>
 
-        <div v-if="citasFiltradas.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
+        <div v-if="citasFiltradas?.length < 1 && !props.Propiedades.showTodas || datosOrdenados.length < 1"
             class="w-full py-8 flex justify-center">
             <h2 class="text-lg text-gray-500">No hay citas programadas.</h2>
         </div>

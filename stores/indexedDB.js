@@ -9,7 +9,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             almacen: '',
             aguardar: {},
             respuesta: null,
-            EXPECTED_VERSION: 1,
+            EXPECTED_VERSION: 5,
         };
     },
     actions: {
@@ -19,6 +19,37 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                 const request = indexedDB.open('db-thesalus', 1)
                 request.onupgradeneeded = (event) => {
                     const db = event.target.result
+                    const stores = [
+                        'Paciente',
+                        'Profesional',
+                        'InformacionUser',
+                        'Diagnosticos',
+                        'DiagnosticosCIF',
+                        'Antecedentes',
+                        'Enfermedad',
+                        'HistoriaClinica',
+                        'ExamenFisico',
+                        'Analisis',
+                        'Plan_manejo_medicamentos',
+                        'Plan_manejo_procedimientos',
+                        'Plan_manejo_insumos',
+                        'Plan_manejo_equipos',
+                        'Cita',
+                        'Empresa',
+                        'Software',
+                        'Facturacion',
+                        'Nota',
+                        'Descripcion_nota',
+                        'EPS',
+                        'Profesion',
+                        'Terapia',
+                        'Servicio',
+                        'Insumo',
+                        'Movimiento',
+                        'Kardex',
+                        'CeldaColors',
+                        'Historial_cambio_sonda'
+                    ]
                     const pacientes = db.createObjectStore('Paciente', { keyPath: 'id', autoIncrement: true });
                     pacientes.createIndex("buscapaciente", "id", { unique: false });
 
@@ -61,7 +92,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const planManejoEquipos = db.createObjectStore('Plan_manejo_equipos', { keyPath: 'id', autoIncrement: true });
                     planManejoEquipos.createIndex("buscaequipos", "descripcion", { unique: false });
 
-                    const citas = db.createObjectStore('Cita', { keyPath: 'id' });
+                    const citas = db.createObjectStore('Cita', { keyPath: 'key' });
                     citas.createIndex("buscaCita", "id", { unique: false });
 
                     const empresa = db.createObjectStore('Empresa', { keyPath: 'no_identificacion' });
@@ -112,6 +143,15 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                         versionStore.put({ id: 1, version: this.EXPECTED_VERSION });
                     }
 
+                    // Tabla de control de actualizaciones
+                    if (!db.objectStoreNames.contains("LastUpdate")) {
+                        const updateStore = db.createObjectStore("LastUpdate", { keyPath: "store" });
+                        // Insertar cada store con lastUpdated = 0 por defecto
+                        stores.forEach(name => {
+                            updateStore.put({ store: name, lastUpdated: 0 });
+                        });
+                    }
+
                 }
 
                 request.onerror = (event) => {
@@ -124,9 +164,23 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     resolve(this.bd)
                 }
             })
+        },
 
+        async necesitaRefrescar(storeName, limiteMs = 5 * 60 * 1000) {
+            if (!this.bd) {
+                await this.initialize()
+            }
+            const tx = this.bd.transaction("LastUpdate", "readonly");
+            const store = tx.objectStore("LastUpdate");
+            const req = store.get(storeName);
 
-
+            return new Promise(resolve => {
+                req.onsuccess = () => {
+                    const info = req.result;
+                    const ahora = Date.now();
+                    resolve(!info || (ahora - info.lastUpdated) > limiteMs);
+                };
+            });
         },
 
         async leerdatos() {
@@ -387,8 +441,37 @@ export const useIndexedDBStore = defineStore("indexeddb", {
 
                 request.onerror = (event) => reject(event.target.errorCode);
             });
-        }
+        },
 
+        async getData(key) {
+            if (!this.bd) await this.initialize()
+            return new Promise((resolve, reject) => {
+                const tx = this.bd.transaction('Cita', 'readonly')
+                const store = tx.objectStore('Cita')
+
+                const request = store.get(key)
+                request.onsuccess = () => {
+                    const result = request.result
+                    resolve(result ? result.citas : [])
+                }
+                request.onerror = () => reject(request.error)
+            })
+        },
+
+        async setData(key, data) {
+            if (!this.bd) await this.initialize()
+            return new Promise((resolve, reject) => {
+                const tx = this.bd.transaction('Cita', 'readwrite')
+                const store = tx.objectStore('Cita')
+
+                // Aseguramos que sea clonable
+                const limpio = JSON.parse(JSON.stringify(data))
+                const request = store.put({ key: key, citas: limpio })
+
+                request.onsuccess = () => resolve(request.result)
+                request.onerror = () => reject(request.error)
+            })
+        }
 
     }
 })

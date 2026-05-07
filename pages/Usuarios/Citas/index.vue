@@ -9,6 +9,7 @@ import { ref, onMounted } from 'vue'
 import { CardBuilder } from '~/build/Constructores/CardBuilder'
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder'
 import { useCitasActions } from '~/composables/Citas/Citas'
+import { storeToRefs } from 'pinia'
 
 const varView = useVarView()
 const citasStore = useCitasStore();
@@ -24,6 +25,8 @@ const {
     fechaActual
 } = storeToRefs(calendarioCitasStore);
 
+const { Citas } = storeToRefs(citasStore)
+
 const {
   cancelarCita,
   activarCita,
@@ -35,15 +38,16 @@ const {
   fecha
 })
 
-async function llamadatos() {
-    citas.value = await citasStore.listCitas();
+async function llamadatos(cambio) {
+    citas.value = await citasStore.citasHoy(true, cambio);
+    citas.value = Citas.value
     varView.datosActualizados()
 }
 // Watch para actualizar citas al agregar nueva
 watch(() => varView.showNuevaCita,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
-            await llamadatos();
+            await llamadatos(true);
         }
     }
 );
@@ -51,7 +55,7 @@ watch(() => varView.showNuevaCita,
 watch(() => varView.showActualizarCita,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
-            await llamadatos();
+            await llamadatos(true);
             refresh.value++;
         }
     }
@@ -60,14 +64,14 @@ watch(() => varView.showActualizarCita,
 watch(() => varView.showNuevaHistoria,
     async (estado) => {
         if(!estado && varView.cambioEnApi){
-            await llamadatos();
+            await llamadatos(true);
         }
     }
 );
 
 onMounted(async () => {
-    citas.value = await citasStore.listCitas(false)
-    await llamadatos()
+    citas.value = await citasStore.citasHoy(false)
+    await llamadatos(false)
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 
@@ -203,7 +207,7 @@ const propiedades = computed(() => {
                 ]
             })
             .addComponente('Citas', builderCitas
-                .setCitas(citas)
+                .setCitas(Citas)
                 .setShowTodas(false)
                 .setFiltros([
                     { columna: 'servicio', placeholder: 'Servicio', }, 
@@ -216,7 +220,7 @@ const propiedades = computed(() => {
                 pagina
                 .setContenedor('grid lg:grid-cols-[1.7fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-6 gap-3')
                 .addComponente('Calendario', builderCalendario
-                    .setCitas(citas)
+                    .setCitas(Citas)
                 )
             } else {
                 pagina
@@ -259,19 +263,22 @@ const propiedades = computed(() => {
                     ],
                     noBuscarPor: ['name_medico']
                     })
-                    .setDatos(citas)
+                    .setDatos(Citas)
                     .setAcciones(
                         { icons: [
                             { icon: isActualizarCita, action: actualizarCita },
                             { icon: citaEliminada, action: isCancelarCita },
                             { icon: citaRealizada, action: isActivarCita },
-                        ], botones: true }
+                        ], botones: true,
+                            // siguientePagina: citasStore.citasPaginada,
+                            // anteriorPagina: citasStore.citasPaginada,
+                        }
                     )
                 )
             } else {
                 pagina
                 .addComponente('Citas', builderCitas
-                    .setCitas(citas)
+                    .setCitas(Citas)
                     .setShowTodas(true)
                     .setFiltros([
                         { columna: 'servicio', placeholder: 'Servicio', }, 

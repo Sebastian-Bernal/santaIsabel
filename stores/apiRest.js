@@ -383,13 +383,8 @@ export const useApiRest = defineStore('apiRest', {
                         datos = await respuesta.data;
                         // guardar en IndexedDB para uso offline
                         if (almacen !== '') {
-                            const store = useIndexedDBStore();
-                            store.almacen = almacen;
-                            await store.bulkPut(datos)
+                            this.postOfflineData(almacen)
                         };
-                        // for (const item of datos) {
-                        //     await store.actualiza({ ...item })
-                        // };
                     }
 
                 } catch (error) {
@@ -412,5 +407,14 @@ export const useApiRest = defineStore('apiRest', {
             const todosLosDatos = await store.leerdatos();
             return todosLosDatos
         },
+
+        async postOfflineData(almacen, datos) {
+            const store = useIndexedDBStore();
+            store.almacen = almacen;
+            await store.bulkPut(datos)
+
+            store.almacen = 'LastUpdate'
+            await store.actualiza({ store: almacen, lastUpdate: Date.now() })
+        }
     }
 })

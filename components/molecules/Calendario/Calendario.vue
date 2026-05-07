@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useCalendarioCitas } from '~/stores/Calendario.js'
 import { diasSemana } from '~/data/Fechas.js'
 import { storeToRefs } from 'pinia';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita';
 
 const props = defineProps({
     citas: {
@@ -18,6 +19,7 @@ const props = defineProps({
 const calendarioCitasStore = useCalendarioCitas();
 const Citas = ref(props.Propiedades.citas);
 const notificacionesStore = useNotificacionesStore();
+const citasStore = useCitasStore()
 
 const {
     mensaje,
@@ -126,6 +128,8 @@ const anteriorMes = () => {
         meses.value--
         mesActual.value--;
     }
+
+    citasStore.citasPorRango(`${años.value}-${meses.value}-01`,`${años.value}-${meses.value}-31`)
 };
 
 const siguienteMes = () => {
@@ -137,6 +141,7 @@ const siguienteMes = () => {
         mesActual.value++;
         meses.value++
     }
+    citasStore.citasPorRango(`${años.value}-${meses.value}-01`,`${años.value}-${meses.value}-31`)
 };
 
 </script>

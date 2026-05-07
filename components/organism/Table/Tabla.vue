@@ -710,7 +710,7 @@ const obtenerTituloTooltip = (texto) => {
             <ButtonRounded tooltip="Atras" :disabled="paginaActual === 1"
                 color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="paginaAnterior()">
-                <i class="fa-solid fa-chevron-left"></i>
+                <i class="fa-solid fa-chevron-left" @click="props.Propiedades.acciones.paginaAnterior?.(paginaActual + 1, itemsPorPagina)"></i>
             </ButtonRounded>
             <div class="flex gap-2 pagina select-none">
 
@@ -731,7 +731,7 @@ const obtenerTituloTooltip = (texto) => {
             <ButtonRounded :disabled="paginaActual === (totalPaginas == 0 ? 1 : totalPaginas)" tooltip="Siguiente"
                 color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="siguientePagina()">
-                <i class="fa-solid fa-chevron-right"></i>
+                <i class="fa-solid fa-chevron-right" @click="props.Propiedades.acciones.siguientePagina?.(paginaActual + 1, itemsPorPagina)"></i>
             </ButtonRounded>
         </div>
 

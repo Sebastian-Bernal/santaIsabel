@@ -1014,8 +1014,8 @@ const propiedades = computed(() => {
                         { columna: 'nombreServicio', placeholder: 'Servicio', },
                         { columna: 'profesional', placeholder: 'Profesional' },
                         { columna: 'tipoAnalisis', placeholder: 'Estado' },
-                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
-                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha_nota', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha_nota', placeholder: 'Año', tipo: 'año' },
                     ],
                     acciones: [
                         {
@@ -1204,8 +1204,8 @@ const propiedades = computed(() => {
                     titulo: 'Historial de cambios de sonda',
                     color: 'bg-[var(--color-default-600)] text-white',
                     filtros: [
-                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
-                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                        { columna: 'fecha_mes', columnaReal: 'fecha_cambio', placeholder: 'Mes', tipo: 'mes' },
+                        { columna: 'fecha_año', columnaReal: 'fecha_cambio', placeholder: 'Año', tipo: 'año' },
                     ],
                 })
             )

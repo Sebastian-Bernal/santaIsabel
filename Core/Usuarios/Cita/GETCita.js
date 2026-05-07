@@ -11,7 +11,7 @@ export async function traerCitas () {
             // mandar a api
             let options = {
                 metodo: 'GET',
-                url: config.public.citas,
+                url: config.public.citasHoy,
                 token: token
             }
             const respuesta = await api.functionCall(options)
@@ -54,7 +54,7 @@ export async function traerCitasHoy () {
     }
 }
 
-export async function traerCitasPorRango (rango) {
+export async function traerCitasPorRango (inicio, fin) {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(localStorage.getItem('token'))
@@ -68,8 +68,8 @@ export async function traerCitasPorRango (rango) {
                 url: config.public.citasPorRango,
                 token: token,
                 body: {
-                    inicio: rango.fechaInicion,
-                    fin: rango.fechaFin,
+                    inicio,
+                    fin,
                 }
             }
             const respuesta = await api.functionCall(options)
@@ -85,7 +85,7 @@ export async function traerCitasPorRango (rango) {
     }
 }
 
-export async function traerCitasPaginadas (configuracion) {
+export async function traerCitasPaginadas (pagina, por_pagina) {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(localStorage.getItem('token'))
@@ -99,14 +99,14 @@ export async function traerCitasPaginadas (configuracion) {
                 url: config.public.citasPaginadas,
                 token: token,
                 body: {
-                    pagina: configuracion.pagina,
-                    por_pagina: configuracion.por_pagina,
+                    pagina,
+                    por_pagina,
                 }
             }
             const respuesta = await api.functionCall(options)
 
             if(respuesta.success){
-                return respuesta.data
+                return respuesta.data.data
             }
         } catch (error) {
             console.error('Fallo al traer datos', error);

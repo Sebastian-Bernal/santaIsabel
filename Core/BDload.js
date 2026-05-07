@@ -13,7 +13,7 @@ export async function traerDatos(onProgress = () => {}) {
 
         const pasos = [
             { texto: 'Cargando historias clínicas...', fn: () => historiaStore.indexDBDatos() },
-            { texto: 'Cargando citas...', fn: () => citasStore.indexDBDatos() },
+            { texto: 'Cargando citas...', fn: () => citasStore.listCitas() },
             { texto: 'Cargando profesionales...', fn: () => profesionalesStore.indexDBDatos() },
             { texto: 'Cargando pacientes...', fn: () => pacientesStore.indexDBDatos() },
         ];
