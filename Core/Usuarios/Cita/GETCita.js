@@ -85,7 +85,7 @@ export async function traerCitasPorRango (inicio, fin) {
     }
 }
 
-export async function traerCitasPaginadas (pagina, por_pagina) {
+export async function traerCitasPaginadas (ultimo_id, por_pagina) {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(localStorage.getItem('token'))
@@ -99,14 +99,14 @@ export async function traerCitasPaginadas (pagina, por_pagina) {
                 url: config.public.citasPaginadas,
                 token: token,
                 body: {
-                    pagina,
+                    ultimo_id,
                     por_pagina,
                 }
             }
             const respuesta = await api.functionCall(options)
 
             if(respuesta.success){
-                return respuesta.data.data
+                return respuesta.data
             }
         } catch (error) {
             console.error('Fallo al traer datos', error);

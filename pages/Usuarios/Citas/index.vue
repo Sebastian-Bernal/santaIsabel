@@ -70,8 +70,8 @@ watch(() => varView.showNuevaHistoria,
 );
 
 onMounted(async () => {
-    citas.value = await citasStore.citasHoy(false)
-    await llamadatos(false)
+    citas.value = await citasStore.citasHoy(true)
+    await llamadatos(true)
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 
@@ -85,6 +85,7 @@ const agregarCita = () => {
 
 // Funciones para manejar visibilidad de Pagina
 const showFila = () => {
+    citasStore.contexto = 'Tabla'
     varView.showEnFila = !varView.showEnFila
 };
 
@@ -211,8 +212,7 @@ const propiedades = computed(() => {
                 .setShowTodas(false)
                 .setFiltros([
                     { columna: 'servicio', placeholder: 'Servicio', }, 
-                    { columna: 'estado', placeholder: 'Estado', }, 
-                    { columna: 'name_medico', placeholder: 'Profesional'}, 
+                    { columna: 'estado', placeholder: 'Estado', },
                     { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' }
                 ])
             )
@@ -243,6 +243,7 @@ const propiedades = computed(() => {
                 pagina
                 .addComponente('Tabla', tablabuilder
                     .setColumnas([
+                        {titulo: 'id', value: 'id', tamaño: 60},
                     { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'name_paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },
@@ -255,11 +256,11 @@ const propiedades = computed(() => {
                     buscador: true,
                     excel: true,
                     filtros: [
-                        { columna: 'servicio', placeholder: 'Servicio', }, 
-                        { columna: 'estado', placeholder: 'Estado', }, 
-                        { columna: 'name_medico', placeholder: 'Profesional'},
-                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes' },
-                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
+                        { columna: 'servicio', placeholder: 'Servicio', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} }, 
+                        { columna: 'estado', placeholder: 'Estado', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} }, 
+                        { columna: 'name_medico', placeholder: 'Profesional', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
                     ],
                     noBuscarPor: ['name_medico']
                     })
@@ -270,8 +271,8 @@ const propiedades = computed(() => {
                             { icon: citaEliminada, action: isCancelarCita },
                             { icon: citaRealizada, action: isActivarCita },
                         ], botones: true,
-                            // siguientePagina: citasStore.citasPaginada,
-                            // anteriorPagina: citasStore.citasPaginada,
+                            siguientePagina: citasStore.citasPaginada,
+                            anteriorPagina: citasStore.citasPaginada,
                         }
                     )
                 )
@@ -283,7 +284,6 @@ const propiedades = computed(() => {
                     .setFiltros([
                         { columna: 'servicio', placeholder: 'Servicio', }, 
                         { columna: 'estado', placeholder: 'Estado', }, 
-                        {columna: 'name_medico', placeholder: 'Profesional'},
                         { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' },
                         { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
                     ])

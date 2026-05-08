@@ -2,6 +2,7 @@ import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/use
 import { useNotificacionesStore } from '~/stores/notificaciones.js'
 import { decryptData } from '~/composables/Formulario/crypto';
 import { useDatosServicioStore } from '~/stores/Formularios/empresa/Servicio';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita';
 
 // funcion para Validar campos del formulario Nueva Cita
 export const validarYEnviarNuevaCita = async (datos) => {
@@ -201,6 +202,7 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(localStorage.getItem('token'))
+    const citasStore = useCitasStore()
 
     const online = navigator.onLine;
     if (online) {
@@ -244,6 +246,7 @@ export const enviarFormularioCita = async (datos, reintento = false) => {
                     }
                 }
                 await guardarEnDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                citasStore.mesCitaGuardada = respuesta.data.fecha
                 console.log('datos actualizados')
                 return true
             }

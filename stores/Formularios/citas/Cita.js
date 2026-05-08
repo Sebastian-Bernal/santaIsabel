@@ -27,7 +27,10 @@ export const useCitasStore = defineStore('Citas', {
     state: () => ({
         Formulario: estructuraCita,
         Cita: JSON.parse(JSON.stringify(estructuraCita)), // estructura base compartida
-        Citas: []
+        Citas: [],
+        contexto: '',
+        ultimo_id: 1,
+        mesCitaGuardada: 0,
     }),
 
     getters: {
@@ -37,39 +40,39 @@ export const useCitasStore = defineStore('Citas', {
 
         async obtenerCitas(key, fetchFn) {
             const indexedDB = useIndexedDBStore()
+            const apiRest = useApiRest()
 
             // Buscar en IndexedDB primero
-            let citas = await indexedDB.getData(key)
+            let keyCita = await indexedDB.getData(key)
 
-            if (citas && citas.length > 0) {
-                // indexedDB.almacen = 'Cita'
-                // const keys = await indexedDB.leerdatos()
-                // const mapa = new Map()
-
-                // for (const c of citas) {
-                //     mapa.set(c.id, c)
-                // }
-
-                // for (const k of keys) {
-                //     for (const c of k.citas) {
-                //         mapa.set(c.id, c) // si ya existe, se sobrescribe y no se duplica
-                //     }
-                // }
-
-                // const todas = Array.from(mapa.values())
-                // for(const k of keys){
-                //     citas.push(...k.citas)
-                // }
+            if (keyCita) {
+                indexedDB.almacen = 'Cita'
+                let citas = await indexedDB.leerdatos()
                 this.Citas = await this.filtrarPorRol(citas)
                 return this.Citas
             }
 
             // Si no hay datos locales, llamar online
-            citas = await fetchFn()
+            let citas = await fetchFn()
 
-            this.Citas = await this.filtrarPorRol(citas)
-            await indexedDB.setData(key, citas)
+            // ── CONTEXTO TABLA: filtrar duplicados y acumular ──────────────────
+            if (this.contexto === 'Tabla') {
+                const idsActuales = new Set(this.Citas.map(c => c.id))
+                citas = citas.filter(c => !idsActuales.has(c.id))  // solo las nuevas
 
+                citas = await this.filtrarPorRol(citas)
+                await apiRest.postOfflineData('KeyCitas', [{ key }])
+                await apiRest.postOfflineData('Cita', citas)        // guarda solo las nuevas
+
+                this.Citas = [...this.Citas, ...citas]              // acumula sobre las existentes
+                return this.Citas
+            }
+
+            citas = await this.filtrarPorRol(citas)
+            await apiRest.postOfflineData('KeyCitas', [{ key: key }])
+            await apiRest.postOfflineData('Cita', citas)
+
+            this.Citas = citas
             return this.Citas
         },
 
@@ -92,7 +95,11 @@ export const useCitasStore = defineStore('Citas', {
         },
 
         async citasHoy(online, cambio) {
-            const key = `Cita:hoy`
+            const key = cambio ? `Cita:cambio:${Date.now()}` : `Cita:hoy`
+            
+            if(cambio) {
+                return await this.obtenerCitas.call(this, key, () => traerCitasPorRango(this.mesCitaGuardada, this.mesCitaGuardada))
+            }
             if (online || cambio) {
                 return await this.obtenerCitas.call(this, key, () => traerCitasHoy())
             }
@@ -107,12 +114,18 @@ export const useCitasStore = defineStore('Citas', {
             return await this.obtenerCitas.call(this, key, () => traerCitasPorRango(inicio, fin))
         },
 
-        async citasPaginada(pagina, por_pagina) {
-            const key = `Cita:pagina:${pagina}:${por_pagina}`
-            return await this.obtenerCitas.call(this, key, () => traerCitasPaginadas(pagina, por_pagina))
+        async citasPaginada(datos, por_pagina) {
+            this.contexto = 'Tabla'
+
+            const ultimo_id = datos.length > 0
+                ? Math.max(...datos.map(c => c.id))
+                : 0
+            const key = `Cita:cursor:${ultimo_id}`
+            return await this.obtenerCitas.call(this, key, () => traerCitasPaginadas(ultimo_id, por_pagina))
         },
 
         async citasFiltradas(filtros) {
+            this.contexto = 'Filtrar'
             const key = `Cita:filtros:${JSON.stringify(filtros)}`
             return await this.obtenerCitas.call(this, key, () => traerCitasFiltradas(filtros))
         },

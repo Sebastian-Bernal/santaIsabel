@@ -9,7 +9,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             almacen: '',
             aguardar: {},
             respuesta: null,
-            EXPECTED_VERSION: 5,
+            EXPECTED_VERSION: 2,
         };
     },
     actions: {
@@ -92,8 +92,10 @@ export const useIndexedDBStore = defineStore("indexeddb", {
                     const planManejoEquipos = db.createObjectStore('Plan_manejo_equipos', { keyPath: 'id', autoIncrement: true });
                     planManejoEquipos.createIndex("buscaequipos", "descripcion", { unique: false });
 
-                    const citas = db.createObjectStore('Cita', { keyPath: 'key' });
+                    const citas = db.createObjectStore('Cita', { keyPath: 'id' });
                     citas.createIndex("buscaCita", "id", { unique: false });
+
+                    const keyCitas = db.createObjectStore('KeyCitas', { keyPath: 'key' });
 
                     const empresa = db.createObjectStore('Empresa', { keyPath: 'no_identificacion' });
                     empresa.createIndex("buscaEmpresa", "no_identificacion", { unique: false });
@@ -446,13 +448,13 @@ export const useIndexedDBStore = defineStore("indexeddb", {
         async getData(key) {
             if (!this.bd) await this.initialize()
             return new Promise((resolve, reject) => {
-                const tx = this.bd.transaction('Cita', 'readonly')
-                const store = tx.objectStore('Cita')
+                const tx = this.bd.transaction('KeyCitas', 'readonly')
+                const store = tx.objectStore('KeyCitas')
 
                 const request = store.get(key)
                 request.onsuccess = () => {
                     const result = request.result
-                    resolve(result ? result.citas : [])
+                    resolve(result ? result : false)
                 }
                 request.onerror = () => reject(request.error)
             })

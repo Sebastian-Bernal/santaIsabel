@@ -51,7 +51,6 @@ const {
     borrarFiltros
 } = useOrdenamiento(props.Propiedades.datos.content || ref([]), props.Propiedades.headerTabla.filtros, props.Propiedades.headerTabla.noBuscarPor);
 
-
 // Paginador
 const {
     paginaActual,
@@ -402,7 +401,7 @@ const obtenerTituloTooltip = (texto) => {
                     tamaño: 'md:w-[180px] w-full',
                     estilo: 'bg-white dark:bg-gray-900',
                     options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
-                }" v-model="filtros[filtro.columna]" />
+                }" v-model="filtros[filtro.columna]" @change="async() => {filtro.accion?.(filtros)}"/>
             </div>
         </div>
         <div v-if="mostrarFiltrosAvanzados"
@@ -414,7 +413,7 @@ const obtenerTituloTooltip = (texto) => {
                 tamaño: 'w-full',
                 estilo: 'bg-white dark:bg-gray-900',
                 options: [{ text: 'Todos', value: '' }, ...filtro.datos,],
-            }" v-model="filtros[filtro.columna]" />
+            }" v-model="filtros[filtro.columna]" @change="async() => {filtro.accion?.(filtros)}"/>
         </div>
     </div>
 
@@ -660,8 +659,6 @@ const obtenerTituloTooltip = (texto) => {
                     </div>
                 </div>
 
-
-
             </div>
 
         </div>
@@ -710,7 +707,7 @@ const obtenerTituloTooltip = (texto) => {
             <ButtonRounded tooltip="Atras" :disabled="paginaActual === 1"
                 color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="paginaAnterior()">
-                <i class="fa-solid fa-chevron-left" @click="props.Propiedades.acciones.paginaAnterior?.(paginaActual + 1, itemsPorPagina)"></i>
+                <i class="fa-solid fa-chevron-left"></i>
             </ButtonRounded>
             <div class="flex gap-2 pagina select-none">
 
@@ -729,9 +726,9 @@ const obtenerTituloTooltip = (texto) => {
 
             </div>
             <ButtonRounded :disabled="paginaActual === (totalPaginas == 0 ? 1 : totalPaginas)" tooltip="Siguiente"
-                color="p-1.5 text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
+                color=" text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="siguientePagina()">
-                <i class="fa-solid fa-chevron-right" @click="props.Propiedades.acciones.siguientePagina?.(paginaActual + 1, itemsPorPagina)"></i>
+                <i class="fa-solid fa-chevron-right p-1.5" @click="props.Propiedades.acciones.siguientePagina?.(datosPaginados, itemsPorPagina)"></i>
             </ButtonRounded>
         </div>
 
