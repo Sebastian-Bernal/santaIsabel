@@ -230,7 +230,7 @@ const propiedades = computed(() => {
             showItem.value = false
         },
         formularioItem: 'Medicamento',
-        show: showItem,
+        show: showItem.value,
         medicamentos,
         insumos,
         profesionales
@@ -269,7 +269,7 @@ const propiedades = computed(() => {
 
     if (puedediagnosticar) {
         acciones.push({
-            icon: "fa-solid fa-store text-green-700 dark:text-gray-300", action: (fila) => {
+            icon: "fa-solid fa-notes-medical text-green-700 dark:text-gray-300", action: (fila) => {
                 showItem.value = true
                 varView.tipoHistoria = 'Medicamento'
                 pacientesStore.PacienteSeleccionado = fila.id_paciente

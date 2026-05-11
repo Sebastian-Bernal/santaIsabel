@@ -309,6 +309,8 @@ async function cargaHistorial(id) {
             diagnosticosCIF.value = diagnosticosPorAnalisis.map(d => d.diagnosticoCIF).flat();
         }
 
+        console.log(diagnosticos.value)
+
         kardex.value = await historiasStore.listDatos(parseInt(id), 'Kardex', 'id_paciente');
         historialCambioSonda.value = await historiasStore.listDatos(kardex.value[0]?.id, 'Historial_cambio_sonda', 'id_kardex');
 

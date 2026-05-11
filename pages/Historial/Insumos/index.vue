@@ -136,7 +136,7 @@ const agregarMovimiento = (insumo) => {
     showMovimiento.value = true;
 }
 
-async function cerrar () {
+async function cerrar() {
     varView.importarArchivo = false
     await llamadatos()
     refresh.value += 1
@@ -154,6 +154,14 @@ function validarStock(insumo) {
     }
 
 }
+
+const formularioInsumo =
+    useInsumosBuilder({
+        storeId: "NuevoInsumo",
+        storePinia: "Insumos",
+        show: show,
+        cerrarModal: () => { show.value = false; }
+    });
 // Construccion de pagina
 
 const propiedades = computed(() => {
@@ -203,16 +211,6 @@ const propiedades = computed(() => {
             )
         return pagina.build()
     }
-
-
-    const formularioInsumo = puedePost
-        ? useInsumosBuilder({
-            storeId: "NuevoInsumo",
-            storePinia: "Insumos",
-            show: show.value,
-            cerrarModal: () => { show.value = false; }
-        })
-        : null;
 
     const formularioVerInsumo = puedePut
         ? useInsumosBuilder({
@@ -287,7 +285,6 @@ const propiedades = computed(() => {
             { titulo: "name_medico", value: "Profesional", tamaño: 200, ordenar: true },
             { titulo: "nombre", value: "Nombre", tamaño: 200 },
             { titulo: "activoL", value: "Activo", tamaño: 120 },
-            { titulo: "nombreServicio", value: "Servicio", tamaño: 150 },
             { titulo: "categoria", value: "Tipo", tamaño: 200, ordenar: true },
             { titulo: "dosis", value: "Dosis", tamaño: 150 },
         ])

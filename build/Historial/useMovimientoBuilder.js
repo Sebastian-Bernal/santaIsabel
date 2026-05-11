@@ -86,6 +86,7 @@ console.log(insumoStore.Formulario.Insumos.id)
                 { value: 'Medicamento', text: 'Medicamento' },
                 { value: 'Material Quirurgico', text: 'Material Quirurgico' },
                 { value: 'Insumo de Laboratorio', text: 'Insumo de Laboratorio' },
+                { value: 'Insumos médicos', text: 'Insumos médicos' },
                 { value: 'Equipos médicos', text: 'Equipos médicos' },
                 { value: 'Otro', text: 'Otro' },
             ],

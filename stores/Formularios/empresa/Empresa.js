@@ -52,7 +52,9 @@ export const useEmpresaStore = defineStore('Empresa', {
 
         async indexDBDatos() {
             const api = useApiRest()
-            await api.getData('Empresa', 'empresas')
+            const empresa = await api.getData('Empresa', 'empresas')
+            this.Formulario.Empresa = empresa[0]
+
         },
     }
 });

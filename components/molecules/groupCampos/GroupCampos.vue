@@ -203,7 +203,7 @@ const itemsCompletos = computed(() =>
                 <ButtonRounded v-if="Propiedades.labelGroup && !Propiedades.disabled" @click="showCampos = !showCampos" color="w-7.5 h-7.5 flex justify-center items-center gap-1 hover:bg-gray-200 
                             hover:dark:bg-gray-700 bg-inherit cursor-pointer rounded-full" tooltip="Desplegar/ocultar">
                     <i class="fa-solid text-blue-700 font-bold"
-                        :class="{ 'fa-angle-up': showCampos, 'fa-angle-down': !showCampos }">
+                        :class="{ 'fa-angle-up': showCampos, 'fa-plus': !showCampos }">
                     </i>
                 </ButtonRounded>
             </div>

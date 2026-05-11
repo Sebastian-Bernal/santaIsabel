@@ -698,7 +698,7 @@ export function useHistoriaBuilder({
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Medicamento',
-                        tamaño: 'w-full lg:col-span-3',
+                        tamaño: 'w-full lg:col-span-2',
                         upperCase: true,
                         options: medicamentos,
                         opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
@@ -713,13 +713,6 @@ export function useHistoriaBuilder({
                         }
                     },
                     {
-                        name: 'codigo',
-                        id: 'codigo',
-                        typeCampo: 'Input',
-                        placeholder: 'Codigo Vademecum',
-                        tamaño: 'w-full',
-                    },
-                    {
                         name: 'cantidad',
                         id: 'cantidad',
                         typeCampo: 'Input',
@@ -731,7 +724,7 @@ export function useHistoriaBuilder({
                         name: 'dosis',
                         id: 'dosis',
                         typeCampo: 'Input',
-                        placeholder: 'Dosis',
+                        placeholder: 'Dosis - Via de Administracion',
                         tamaño: 'w-full',
                     },
                     {
@@ -739,10 +732,10 @@ export function useHistoriaBuilder({
                         id: 'observacion',
                         typeCampo: 'Input',
                         placeholder: 'Registrar Observacion...',
-                        tamaño: 'w-full lg:col-span-3',
+                        tamaño: 'w-full lg:col-span-2',
                     }
                 ],
-                containerCampos: 'grid lg:grid-cols-3 gap-2'
+                containerCampos: 'grid lg:grid-cols-2 gap-2'
             })
 
     } else if (varView.tipoConsulta?.plantilla === 'Trabajo Social') {
@@ -973,7 +966,7 @@ export function useHistoriaBuilder({
                         id: 'Medicamento',
                         typeCampo: 'SelectSearch',
                         placeholder: 'Medicamento',
-                        tamaño: 'w-full lg:col-span-3',
+                        tamaño: 'w-full lg:col-span-2',
                         upperCase: true,
                         options: medicamentos,
                         opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
@@ -996,17 +989,10 @@ export function useHistoriaBuilder({
                         tamaño: 'w-full',
                     },
                     {
-                        name: 'codigo',
-                        id: 'codigo',
-                        typeCampo: 'Input',
-                        placeholder: 'Codigo Vademecum',
-                        tamaño: 'w-full',
-                    },
-                    {
                         name: 'dosis',
                         id: 'dosis',
                         typeCampo: 'Input',
-                        placeholder: 'Dosis',
+                        placeholder: 'Dosis - Via de Administracion',
                         tamaño: 'w-full',
                     },
                     {
@@ -1014,10 +1000,10 @@ export function useHistoriaBuilder({
                         id: 'observacion',
                         typeCampo: 'Input',
                         placeholder: 'Registrar Observacion...',
-                        tamaño: 'w-full lg:col-span-3',
+                        tamaño: 'w-full lg:col-span-2',
                     }
                 ],
-                containerCampos: 'grid lg:grid-cols-3 gap-2'
+                containerCampos: 'grid lg:grid-cols-2 gap-2'
             })
 
 
@@ -1812,7 +1798,7 @@ export function useHistoriaBuilder({
                             id: 'Medicamento',
                             typeCampo: 'SelectSearch',
                             placeholder: 'Producto',
-                            tamaño: 'w-full lg:col-span-3',
+                            tamaño: 'w-full lg:col-span-2',
                             upperCase: true,
                             options: medicamentos,
                             opciones: [{ value: 'producto' }, { text: 'Activo', value: 'principioactivo' }, { text: 'Expediente CUM', value: 'expedientecum' }],
@@ -1827,17 +1813,10 @@ export function useHistoriaBuilder({
                             ocultarError: true,
                         },
                         {
-                            name: 'codigo',
-                            id: 'codigo',
-                            typeCampo: 'Input',
-                            placeholder: 'Codigo Vademecum',
-                            tamaño: 'w-full',
-                        },
-                        {
                             name: 'dosis',
                             id: 'dosis',
                             typeCampo: 'Input',
-                            placeholder: 'Dosis Via de Administracion',
+                            placeholder: 'Dosis - Via de Administracion',
                             tamaño: 'w-full',
                         },
                         {
@@ -1853,10 +1832,10 @@ export function useHistoriaBuilder({
                             id: 'observacion',
                             typeCampo: 'Input',
                             placeholder: 'Registrar Observacion...',
-                            tamaño: 'w-full lg:col-span-3',
+                            tamaño: 'w-full lg:col-span-2',
                         }
                     ],
-                    containerCampos: 'grid lg:grid-cols-3 gap-2'
+                    containerCampos: 'grid lg:grid-cols-2 gap-2'
                 })
 
             // .addCampo({

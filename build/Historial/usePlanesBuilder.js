@@ -27,7 +27,7 @@ export function usePlanesBuilder({
         .setFormularioTipo('solo')
         .setBotones([
             { text: 'Agregar', color: 'bg-blue-500 hover:bg-blue-600', type: 'enviar' },
-            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cancelar' },
+            { text: 'Atrás', accion: cerrarModal, color: 'bg-gray-500 hover:bg-gray-600', type: 'cerrar' },
         ])
     // 📌 Sección: Datos
     if (formularioItem === 'Medicamento') {

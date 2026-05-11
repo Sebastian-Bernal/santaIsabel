@@ -13,7 +13,6 @@ import { storeToRefs } from 'pinia'
 
 const varView = useVarView()
 const citasStore = useCitasStore();
-const citas = ref([]);
 
 const calendarioCitasStore = useCalendarioCitas();
 const show = ref(false);
@@ -39,8 +38,7 @@ const {
 })
 
 async function llamadatos(cambio) {
-    citas.value = await citasStore.citasHoy(true, cambio);
-    citas.value = Citas.value
+    await citasStore.citasHoy(true, cambio);
     varView.datosActualizados()
 }
 // Watch para actualizar citas al agregar nueva
@@ -70,8 +68,7 @@ watch(() => varView.showNuevaHistoria,
 );
 
 onMounted(async () => {
-    citas.value = await citasStore.citasHoy(true)
-    await llamadatos(true)
+    await citasStore.citasHoy(false)
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 
@@ -243,7 +240,6 @@ const propiedades = computed(() => {
                 pagina
                 .addComponente('Tabla', tablabuilder
                     .setColumnas([
-                        {titulo: 'id', value: 'id', tamaño: 60},
                     { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'name_paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },

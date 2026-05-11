@@ -1,5 +1,6 @@
-import { guardarEnDB, actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
+import { actualizarEnIndexedDB } from '~/composables/Formulario/useIndexedDBManager.js';
 import { decryptData } from '~/composables/Formulario/crypto';
+import { useEmpresaStore } from '~/stores/Formularios/empresa/Empresa';
 
 // funcion para Validar campos del formulario Nuevo Paciente
 export const validarYEnviarDatosEmpresa = async (datos) => {
@@ -61,8 +62,7 @@ const enviarFormulario = async (datos) => {
     const api = useApiRest();
     const config = useRuntimeConfig()
     const token = decryptData(localStorage.getItem('token'))
-
-    const id_temporal = await guardarEnDB(JSON.parse(JSON.stringify({ Empresa: { ...datos.Empresa, sincronizado: 0 } })));
+    const empresaStore = useEmpresaStore();
 
     const online = navigator.onLine;
     if (online) {
@@ -73,6 +73,7 @@ const enviarFormulario = async (datos) => {
                 url: config.public.empresas,
                 token: token,
                 body: {
+                    id: datos.Empresa.id,
                     nombre: datos.Empresa.nombre,
                     no_identificacion: datos.Empresa.no_identificacion,
                     DV: datos.Empresa.DV,
@@ -100,8 +101,6 @@ const enviarFormulario = async (datos) => {
             if (respuesta.success) {
                 const datosActualizadosLocal = {
                     Empresa: {
-                        id_temporal: id_temporal.data,
-                        sincronizado: 1,
                         id: respuesta.data.id,
                         nombre: respuesta.data.nombre,
                         no_identificacion: respuesta.data.no_identificacion,
@@ -126,6 +125,7 @@ const enviarFormulario = async (datos) => {
                     }
                 }
                 await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
+                empresaStore.Formulario.Empresa = datosActualizadosLocal.Empresa
                 return true
             }
 

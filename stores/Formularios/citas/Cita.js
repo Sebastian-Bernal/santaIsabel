@@ -134,7 +134,8 @@ export const useCitasStore = defineStore('Citas', {
             const varView = useVarView()
             // Filtrar por medico si el rol es Profesional
             const rol = varView.getRol;
-            const citasFiltradas = citas
+
+            let citasFiltradas = citas
             if (rol === 'Profesional') {
                 const idUsuario = varView.getUser.id;
                 const profesionalStore = useMedicosStore()
@@ -145,6 +146,12 @@ export const useCitasStore = defineStore('Citas', {
                     return cita.id_medico === idProfesional
                 });
             }
+
+            citasFiltradas = citasFiltradas.sort((a, b) => {
+                const fechaA = new Date(`${a.fecha}T${a.hora}`);
+                const fechaB = new Date(`${b.fecha}T${b.hora}`);
+                return fechaB - fechaA;
+            });
             return citasFiltradas
         },
 

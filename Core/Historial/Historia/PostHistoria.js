@@ -5,12 +5,15 @@ import { enviarEvolucion } from './Evolucion.js';
 import { enviarTrabajoSocial } from './TrabajoSocial.js';
 import { enviarNota } from './Nota.js';
 import { enviarMedicina } from './Medicina.js';
+import { useCitasStore } from '~/stores/Formularios/citas/Cita.js';
 
 // funcion para Validar campos del formulario Historia Clinica
 export const validarYEnviarRegistrarHistoria = async (datos) => {
     const notificacionesStore = useNotificacionesStore();
     const calendarioStore = useCalendarioCitas();
     const varView = useVarView();
+    const citasStore = useCitasStore();
+    citasStore.mesCitaGuardada = datos.Cita.fecha;
 
     const errores = [];
     // --- Validaciones por tipo de consulta ---

@@ -728,10 +728,9 @@ const obtenerTituloTooltip = (texto) => {
             <ButtonRounded :disabled="paginaActual === (totalPaginas == 0 ? 1 : totalPaginas)" tooltip="Siguiente"
                 color=" text-gray-500! dark:text-gray-400! hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-30 transition"
                 @click="siguientePagina()">
-                <i class="fa-solid fa-chevron-right p-1.5" @click="props.Propiedades.acciones.siguientePagina?.(datosPaginados, itemsPorPagina)"></i>
+                <i class="fa-solid fa-chevron-right p-1.5 w-full rounded-full" @click="props.Propiedades.acciones.siguientePagina?.(datosPaginados, itemsPorPagina)"></i>
             </ButtonRounded>
         </div>
-
 
         <div class="flex items-center">
             <p class="text-sm text-gray-500 md:block hidden">Número de registros</p>

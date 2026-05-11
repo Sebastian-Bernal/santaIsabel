@@ -227,9 +227,11 @@ export const useHistoriasStore = defineStore('HistoriaClinica', {
 
             }
 
-            await apiRest.getData('Diagnosticos', 'diagnosticos')
-            await apiRest.getData('DiagnosticosCIF', 'diagnosticosCIF')
+            const diagnosticos = await apiRest.getData('Diagnosticos', 'diagnosticos')
+            await apiRest.postOfflineData('Diagnosticos', diagnosticos)
 
+            const diagnosticosCif = await apiRest.getData('DiagnosticosCIF', 'diagnosticosCIF')
+            await apiRest.postOfflineData('DiagnosticosCIF', diagnosticosCif)
         },
 
         async cargarConCache() {

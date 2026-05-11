@@ -241,7 +241,7 @@ function accesoRapidoSelected(nombre) {
     /* ancho colapsado */
     grid-area: aside;
     width: 50px;
-    height: 80vh;
+    height: 85vh;
     padding: 10px 0;
     transition: width 0.4s ease, transform 0.6s ease, opacity 0.6s ease;
 
