@@ -55,24 +55,15 @@ export const useCitasStore = defineStore('Citas', {
             // Si no hay datos locales, llamar online
             let citas = await fetchFn()
 
-            // ── CONTEXTO TABLA: filtrar duplicados y acumular ──────────────────
-            if (this.contexto === 'Tabla') {
-                const idsActuales = new Set(this.Citas.map(c => c.id))
-                citas = citas.filter(c => !idsActuales.has(c.id))  // solo las nuevas
+            const idsActuales = new Set(this.Citas.map(c => c.id))
+            let nuevasCitas = citas.filter(c => !idsActuales.has(c.id))  // solo las nuevas
 
-                citas = await this.filtrarPorRol(citas)
-                await apiRest.postOfflineData('KeyCitas', [{ key }])
-                await apiRest.postOfflineData('Cita', citas)        // guarda solo las nuevas
+            nuevasCitas = await this.filtrarPorRol(nuevasCitas)
 
-                this.Citas = [...this.Citas, ...citas]              // acumula sobre las existentes
-                return this.Citas
-            }
-
-            citas = await this.filtrarPorRol(citas)
+            this.Citas = [...this.Citas, ...nuevasCitas]
             await apiRest.postOfflineData('KeyCitas', [{ key: key }])
-            await apiRest.postOfflineData('Cita', citas)
+            await apiRest.postOfflineData('Cita', nuevasCitas)
 
-            this.Citas = citas
             return this.Citas
         },
 
