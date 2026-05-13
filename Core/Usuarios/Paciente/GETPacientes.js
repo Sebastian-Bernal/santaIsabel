@@ -8,11 +8,12 @@ export async function traerPacientes({ online = true, filtrar = true } = {}) {
   const rol = varView.getRol;
   const apiRest = useApiRest();
   const store = useIndexedDBStore();
-
+  
   let usuarios = ''
   let pacientes = ''
   let EPSs = ''
   if (online) {
+    // si es llamada a la api
 
     const token = decryptData(localStorage.getItem('token'))
     const config = useRuntimeConfig()
@@ -45,7 +46,7 @@ export async function traerPacientes({ online = true, filtrar = true } = {}) {
     }
   } else {
 
-    // Obtener datos según si está online o no
+    // Obtener datos de indexedDB
     const getData = async (entidad, key) => {
       store.almacen = entidad;
       return await store.leerdatos();

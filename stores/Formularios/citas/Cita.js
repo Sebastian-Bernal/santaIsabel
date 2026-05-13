@@ -133,7 +133,7 @@ export const useCitasStore = defineStore('Citas', {
                 const profesionales = await profesionalStore.listMedicos()
                 const idProfesional = profesionales.find(p => p.id_infoUsuario === idUsuario)?.id_profesional
 
-                citas = citas.filter(cita => {
+                citasFiltradas = citas.filter(cita => {
                     return cita.id_medico === idProfesional
                 });
             }
