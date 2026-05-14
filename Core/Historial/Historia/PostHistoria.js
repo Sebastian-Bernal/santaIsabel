@@ -130,6 +130,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
                     id_servicio: datos.Analisis.id_servicio,
+                    created_at: datos.Analisis.created_at
                 },
                 Diagnosticos: (datos.Diagnosticos ?? []).map(d => ({
                     descripcion: d.descripcion,
@@ -209,7 +210,8 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     analisis: datos.Analisis.analisis,
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
-                    id_servicio: datos.Cita.id_servicio
+                    id_servicio: datos.Cita.id_servicio,
+                    created_at: datos.Analisis.created_at
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,
@@ -523,6 +525,7 @@ export const validarYEnviarRegistrarHistoria = async (datos) => {
                     tipoAnalisis: datos.Analisis.tipoAnalisis,
                     id_medico: datos.Cita.id_medico,
                     id_servicio: datos.Cita.id_servicio,
+                    created_at: datos.Analisis.created_at
                 },
                 Diagnosticos: datos.Diagnosticos.map(d => ({
                     descripcion: d.descripcion,

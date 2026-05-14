@@ -182,23 +182,6 @@ const enviarFormularioCita = async (datos, reintento = false) => {
             const respuesta = await api.functionCall(options)
 
             if (respuesta.success) {
-                const datosActualizadosLocal = {
-                    Cita: {
-                        sincronizado: 1,
-                        id: respuesta.data.id,
-                        id_paciente: respuesta.data.id_paciente,
-                        id_medico: respuesta.data.id_medico,
-                        id_servicio: respuesta.data.id_servicio,
-                        motivo: respuesta.data.motivo,
-                        fecha: respuesta.data.fecha,
-                        fechaHasta: respuesta.data.fechaHasta,
-                        hora: respuesta.data.hora,
-                        estado: respuesta.data.estado,
-                        id_procedimiento: respuesta.data.id_procedimiento
-                    }
-                }
-                await actualizarEnIndexedDB(JSON.parse(JSON.stringify(datosActualizadosLocal)));
-                console.log('datos actualizados')
                 return true
             }
         } catch (error) {

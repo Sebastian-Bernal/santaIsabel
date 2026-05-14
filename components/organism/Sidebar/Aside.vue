@@ -96,12 +96,12 @@ function accesoRapidoSelected(nombre) {
                     varView.expandido = true;
                     cambiarEstadoFalse()
                 }" tooltip="Abrir Menú" tooltip-position="right"
-                    color="flex items-center justify-center w-10 h-10 rounded-full md:text-gray-200 text-white font-bold md:dark:text-black transition">
+                    color="flex items-center justify-center w-10 h-10 mb-3 rounded-full md:text-gray-200 text-white font-bold md:dark:text-black transition">
                     <i class="fa-solid fa-angle-right text-lg"></i>
                 </ButtonRounded>
 
                 <!-- Navegación por íconos -->
-                <nav class="flex md:flex-col flex-row items-center gap-6" @click="cambiarEstadoFalse()">
+                <nav class="flex md:flex-col flex-row items-center lg:gap-6 gap-3" @click="cambiarEstadoFalse()">
                     <!-- <ButtonAside v-for="button in buttons" :key="button.nombre" :data="button" /> -->
                     <NuxtLink to="/Empresas/Datos" @click="accesoRapidoSelected('Datos')">
                         <ButtonRounded tooltip="Datos" tooltip-position="right"
@@ -136,7 +136,7 @@ function accesoRapidoSelected(nombre) {
                 </nav>
 
                 <!-- Perfil / Logout -->
-                <a href="/" class="flex-col items-center gap-3 md:flex flex-none">
+                <a href="/" class="flex-col items-center gap-3 md:flex flex-none my-3">
                     <i
                         class="fa-solid fa-right-from-bracket text-lg text-white md:text-gray-300 dark:text-black hover:text-red-600 cursor-pointer"></i>
                 </a>

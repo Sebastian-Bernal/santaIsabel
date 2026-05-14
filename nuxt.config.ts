@@ -79,6 +79,7 @@ export default defineNuxtConfig({
       codesVadecum: 'api/v1/vadecum',
       convenios: 'api/v1/convenios',
       insumosPrestados: 'api/v1/insumosPrestados',
+      filtrosCitas: 'api/v1/filtrosCitas',
     }
   },
 

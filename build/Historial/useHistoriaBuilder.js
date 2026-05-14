@@ -471,6 +471,25 @@ export function useHistoriaBuilder({
                 ]
             })
 
+            //--- Label: Fecha ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fechaEvolucion',
+                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de registro',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Fecha ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.created_at',
+                type: 'date',
+                id: 'fechaEvolucion',
+                name: 'fechaEvolucion',
+                placeholder: 'Selecciona la fecha',
+                tamaño: 'w-full',
+            })
+
             .nuevaSeccion('Examen Fisico')
             .addCampo({
                 component: 'Label',
@@ -830,6 +849,25 @@ export function useHistoriaBuilder({
                     { text: 'Conyuge', value: 'Conyuge' },
                     { text: 'Hermano/a', value: 'Hermano/a' }
                 ]
+            })
+
+            //--- Label: Fecha ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fechaTrabajoSocial',
+                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de registro',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Fecha ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.created_at',
+                type: 'date',
+                id: 'fechaTrabajoSocial',
+                name: 'fechaTrabajoSocial',
+                placeholder: 'Selecciona la fecha',
+                tamaño: 'w-full',
             })
 
             .nuevaSeccion(varView.tipoConsulta.name)
@@ -1418,6 +1456,25 @@ export function useHistoriaBuilder({
                     { text: 'Conyuge', value: 'Conyuge' },
                     { text: 'Hermano/a', value: 'Hermano/a' }
                 ]
+            })
+
+            //--- Label: Fecha ---
+            .addCampo({
+                component: 'Label',
+                forLabel: 'fechaMedicina',
+                text: '<i class="fa-solid fa-calendar-day text-blue-500 mr-1"></i>Fecha de registro',
+                tamaño: 'w-full md:col-span-2'
+            })
+
+            // --- Input: Fecha ---
+            .addCampo({
+                component: 'Input',
+                vmodel: 'Analisis.created_at',
+                type: 'date',
+                id: 'fechaMedicina',
+                name: 'fechaMedicina',
+                placeholder: 'Selecciona la fecha',
+                tamaño: 'w-full',
             })
             .nuevaSeccion('Consulta')
             .addCampo({

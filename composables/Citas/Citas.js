@@ -196,6 +196,8 @@ export function useCitasActions({ fecha }) {
             ? fecha.value.split('/').reverse().join('-')
             : cita.fecha
 
+        historiaStore.Formulario.Analisis.created_at = fechaForm
+
         if (varView.tipoConsulta.plantilla === 'Terapia') {
             Object.assign(historiasStore.Formulario.Terapia, {
                 id_procedimiento: cita.id_procedimiento,
@@ -220,7 +222,6 @@ export function useCitasActions({ fecha }) {
                 examenFisico[0] ? examenes.push(examenFisico[0]) : ''
             }
 
-            console.log(examenes)
             Object.assign(historiasStore.Formulario.ExamenFisico, {
                 signosVitales : {
                     ta: examenes.at(-1).signosVitales.ta,

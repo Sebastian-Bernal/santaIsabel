@@ -10,6 +10,7 @@ import { CardBuilder } from '~/build/Constructores/CardBuilder'
 import { TablaBuilder } from '~/build/Constructores/TablaBuilder'
 import { useCitasActions } from '~/composables/Citas/Citas'
 import { storeToRefs } from 'pinia'
+import { traerFiltros } from '~/Core/Usuarios/Cita/GETCita'
 
 const varView = useVarView()
 const citasStore = useCitasStore();
@@ -17,6 +18,7 @@ const citasStore = useCitasStore();
 const calendarioCitasStore = useCalendarioCitas();
 const show = ref(false);
 const refresh = ref(1);
+const filtros = ref([])
 
 const {
     fecha,
@@ -27,14 +29,14 @@ const {
 const { Citas } = storeToRefs(citasStore)
 
 const {
-  cancelarCita,
-  activarCita,
-  actualizarCita,
-  showMotivoCancelacion,
-  showMotivoEdicion,
-  showObservacion
+    cancelarCita,
+    activarCita,
+    actualizarCita,
+    showMotivoCancelacion,
+    showMotivoEdicion,
+    showObservacion
 } = useCitasActions({
-  fecha
+    fecha
 })
 
 async function llamadatos(cambio) {
@@ -44,7 +46,7 @@ async function llamadatos(cambio) {
 // Watch para actualizar citas al agregar nueva
 watch(() => varView.showNuevaCita,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
             await llamadatos(true);
         }
     }
@@ -52,7 +54,7 @@ watch(() => varView.showNuevaCita,
 
 watch(() => varView.showActualizarCita,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
             await llamadatos(true);
             refresh.value++;
         }
@@ -61,7 +63,7 @@ watch(() => varView.showActualizarCita,
 
 watch(() => varView.showNuevaHistoria,
     async (estado) => {
-        if(!estado && varView.cambioEnApi){
+        if (!estado && varView.cambioEnApi) {
             await llamadatos(true);
         }
     }
@@ -69,6 +71,7 @@ watch(() => varView.showNuevaHistoria,
 
 onMounted(async () => {
     await citasStore.citasHoy(false)
+    filtros.value = await traerFiltros()
     // Rellenar fecha del formulario
     citasStore.Formulario.Cita.fecha = calendarioCitasStore.fecha.split('/').reverse().join('-')
 
@@ -90,52 +93,48 @@ const showCalendario = () => {
     varView.showCalendario = !varView.showCalendario
 };
 
-const showTabla = () => {
-    varView.showEnTabla = !varView.showEnTabla
-}
-
-function citaEliminada (cita) {
-    if(cita.estado == 'Inactiva'){
+function citaEliminada(cita) {
+    if (cita.estado == 'Inactiva') {
         return 'borrar'
     } else if (cita.estado == 'cancelada') {
         return 'observacion eliminada'
     }
 }
 
-function isCancelarCita (cita) {
-    if(cita.estado == 'cancelada'){
+function isCancelarCita(cita) {
+    if (cita.estado == 'cancelada') {
         showMotivoCancelacion(cita)
     } else {
         cancelarCita(cita)
     }
 }
 
-function isCitaActualizada (cita) {
-    if(cita.estado == 'Inactiva' && cita.showMotivoEdicion){
+function isCitaActualizada(cita) {
+    if (cita.estado == 'Inactiva' && cita.showMotivoEdicion) {
         return 'observacion editada'
     } else {
         return ''
     }
 }
 
-function isActualizarCita (cita) {
-    if(cita.estado == 'Inactiva'){
+function isActualizarCita(cita) {
+    if (cita.estado == 'Inactiva') {
         return 'actualizar'
     }
 }
 
-function citaRealizada (cita) {
-    if(cita.estado == 'Realizada'){
+function citaRealizada(cita) {
+    if (cita.estado == 'Realizada') {
         return 'observacion completada'
-    } else if(cita.estado == 'Inactiva') {
+    } else if (cita.estado == 'Inactiva') {
         return 'completar'
     }
 }
 
-function isActivarCita (cita) {
-    if(cita.estado == 'Realizada'){
+function isActivarCita(cita) {
+    if (cita.estado == 'Realizada') {
         showObservacion(cita)
-    } else if(cita.estado == 'Inactiva'){
+    } else if (cita.estado == 'Inactiva') {
         activarCita(cita)
     }
 }
@@ -208,83 +207,68 @@ const propiedades = computed(() => {
                 .setCitas(Citas)
                 .setShowTodas(false)
                 .setFiltros([
-                    { columna: 'servicio', placeholder: 'Servicio', }, 
+                    { columna: 'servicio', placeholder: 'Servicio', },
                     { columna: 'estado', placeholder: 'Estado', },
                     { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' }
                 ])
             )
-            if(varView.showCalendario){
-                pagina
+        if (varView.showCalendario) {
+            pagina
                 .setContenedor('grid lg:grid-cols-[1.7fr_1fr] md:grid-cols-[1fr_1fr] grid-cols-1 lg:gap-6 gap-3')
                 .addComponente('Calendario', builderCalendario
                     .setCitas(Citas)
                 )
-            } else {
-                pagina
+        } else {
+            pagina
                 .setContenedor('grid grid-cols-1 gap-3')
-            }
+        }
     } else if (varView.showEnFila) {
         pagina
             .setHeaderPage({
                 titulo: 'Calendario de tu Agenda',
                 descripcion: 'Visualiza y administra la agenda de citas.',
                 button: [
-                    !varView.showEnTabla ? { text: 'Tabla', icon: 'fa-solid fa-table', color: 'bg-[var(--color-default-400)]', action: showTabla } :
-                    { text: 'Tarjeta', icon: 'fa-solid fa-address-card', color: 'bg-[var(--color-default-400)]', action: showTabla },
                     { text: 'En Lista', icon: 'fa-solid fa-table', color: 'bg-blue-700', action: showFila },
                     puedePost ? { text: 'Agendar', icon: 'fa-solid fa-plus', color: 'bg-blue-500', action: agregarCita } : '',
                 ]
             })
             .setContenedor('grid grid-cols-1 gap-3')
-            if(varView.showEnTabla){
-                pagina
-                .addComponente('Tabla', tablabuilder
-                    .setColumnas([
+        pagina
+            .addComponente('Tabla', tablabuilder
+                .setColumnas([
                     { titulo: 'fecha', value: 'Fecha', tamaño: 110, ordenar: true },
                     { titulo: 'name_paciente', value: 'Paciente', tamaño: 250, ordenar: true },
                     { titulo: 'name_medico', value: 'Profesional', tamaño: 200 },
                     { titulo: 'motivo', value: 'Motivo', tamaño: 200 },
                     { titulo: 'servicio', value: 'Servicio', tamaño: 200 },
                     { titulo: 'estado', value: 'Estado', tamaño: 100, ordenar: true },
-                    ])
-                    .setHeaderTabla({
+                ])
+                .setHeaderTabla({
                     color: 'bg-[var(--color-default)] text-white',
                     buscador: true,
                     excel: true,
                     filtros: [
-                        { columna: 'servicio', placeholder: 'Servicio', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} }, 
-                        { columna: 'estado', placeholder: 'Estado', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} }, 
-                        { columna: 'name_medico', placeholder: 'Profesional', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
-                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
-                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año', accion: (filtros) => {console.log(filtros); citasStore.citasFiltradas(filtros)} },
+                        { columna: 'servicio', placeholder: 'Servicio', options: filtros.value.servicios.map(s => ({ text: s, value: s })), accion: (filtros) => { console.log(filtros); citasStore.citasFiltradas(filtros) } },
+                        { columna: 'estado', placeholder: 'Estado', accion: (filtros) => { console.log(filtros); citasStore.citasFiltradas(filtros) } },
+                        { columna: 'name_medico', placeholder: 'Profesional', options: filtros.value.medicos.map(m => ({ text: m, value: m })), accion: (filtros) => { console.log(filtros); citasStore.citasFiltradas(filtros) } },
+                        { columna: 'fecha_mes', columnaReal: 'fecha', placeholder: 'Mes', tipo: 'mes', accion: (filtros) => { console.log(filtros); citasStore.citasFiltradas(filtros) } },
+                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año', options: filtros.value.años.map(a => ({ text: String(a), value: a })), accion: (filtros) => { console.log(filtros); citasStore.citasFiltradas(filtros) } },
                     ],
                     noBuscarPor: ['name_medico']
-                    })
-                    .setDatos(Citas)
-                    .setAcciones(
-                        { icons: [
+                })
+                .setDatos(Citas)
+                .setAcciones(
+                    {
+                        icons: [
                             { icon: isActualizarCita, action: actualizarCita },
                             { icon: citaEliminada, action: isCancelarCita },
                             { icon: citaRealizada, action: isActivarCita },
                         ], botones: true,
-                            siguientePagina: citasStore.citasPaginada,
-                            anteriorPagina: citasStore.citasPaginada,
-                        }
-                    )
+                        siguientePagina: citasStore.citasPaginada,
+                        anteriorPagina: citasStore.citasPaginada,
+                    }
                 )
-            } else {
-                pagina
-                .addComponente('Citas', builderCitas
-                    .setCitas(Citas)
-                    .setShowTodas(true)
-                    .setFiltros([
-                        { columna: 'servicio', placeholder: 'Servicio', }, 
-                        { columna: 'estado', placeholder: 'Estado', }, 
-                        { columna: 'fecha', placeholder: 'Mes', tipo: 'mes' },
-                        { columna: 'fecha_año', columnaReal: 'fecha', placeholder: 'Año', tipo: 'año' },
-                    ])
-                )
-            }
+            )
 
     }
 
@@ -297,5 +281,5 @@ const propiedades = computed(() => {
     <Pagina :Propiedades="propiedades" :key="refresh" />
     <Cita></Cita>
     <PDFServicio v-if="varView.showPDFServicio"></PDFServicio>
-    <Historia v-if="varView.showNuevaHistoria"/>
+    <Historia v-if="varView.showNuevaHistoria" />
 </template>

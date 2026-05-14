@@ -55,14 +55,18 @@ export const useCitasStore = defineStore('Citas', {
             // Si no hay datos locales, llamar online
             let citas = await fetchFn()
 
-            const idsActuales = new Set(this.Citas.map(c => c.id))
-            let nuevasCitas = citas.filter(c => !idsActuales.has(c.id))  // solo las nuevas
+            citas = await this.filtrarPorRol(citas)
 
-            nuevasCitas = await this.filtrarPorRol(nuevasCitas)
+            const mapaCitas = new Map(this.Citas.map(c => [c.id, c]))
 
-            this.Citas = [...this.Citas, ...nuevasCitas]
+            for (const cita of citas) {
+                mapaCitas.set(cita.id, cita) // si existe se actualiza si no se agrega
+            }
+
+            this.Citas = Array.from(mapaCitas.values())
+
             await apiRest.postOfflineData('KeyCitas', [{ key: key }])
-            await apiRest.postOfflineData('Cita', nuevasCitas)
+            await apiRest.postOfflineData('Cita', this.Citas)
 
             return this.Citas
         },

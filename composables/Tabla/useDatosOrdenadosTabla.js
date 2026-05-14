@@ -179,7 +179,7 @@ export function useOrdenamiento(datos = ref([]), columnas = [], noBuscarPor = []
                 ];
                 return {
                     ...col,
-                    datos: valoresUnicos.map(v => ({ text: v, value: v }))
+                    datos: col.options ? col.options : valoresUnicos.map(v => ({ text: v, value: v }))
                 };
             }
         });

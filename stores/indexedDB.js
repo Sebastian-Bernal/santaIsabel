@@ -300,7 +300,7 @@ export const useIndexedDBStore = defineStore("indexeddb", {
             return new Promise((resolve, reject) => {
                 let transaccion = this.bd.transaction(this.almacen, "readwrite");
                 let STlee = transaccion.objectStore(this.almacen);
-
+                console.log(datos, this.almacen)
                 for (const item of datos) {
                     // limpiar datos para evitar DataCloneError
                     const limpio = JSON.parse(JSON.stringify(item));
